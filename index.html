@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JoBiN · IT Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg:        #05080f;
+  --surface:   #0b1120;
+  --surface2:  #111927;
+  --border:    rgba(99,202,255,0.12);
+  --border2:   rgba(99,202,255,0.22);
+  --accent:    #3ec9ff;
+  --accent2:   #00e5c3;
+  --accent3:   #a259ff;
+  --warn:      #ff9d3e;
+  --red:       #ff4e6a;
+  --text:      #d8eeff;
+  --muted:     #587191;
+  --glow:      0 0 30px rgba(62,201,255,0.25);
+  --glow2:     0 0 25px rgba(0,229,195,0.2);
+  --radius:    18px;
+  --radius-lg: 28px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── CANVAS BG ── */
+#bgCanvas {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+
+.noise {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+/* ── LAYOUT ── */
+.shell {
+  position: relative; z-index: 10;
+  max-width: 1280px; margin: 0 auto;
+  padding: 2rem 2rem 3rem;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  min-height: 100vh;
+  gap: 2rem;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: rgba(11,17,32,0.75);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+  animation: fadeDown 0.6s ease both;
+}
+
+.brand {
+  display: flex; align-items: center; gap: 1rem;
+}
+
+.brand-mark {
+  width: 50px; height: 50px;
+  background: linear-gradient(135deg, #3ec9ff 0%, #00e5c3 100%);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 1.3rem;
+  color: #05080f;
+  box-shadow: var(--glow);
+  flex-shrink: 0;
+}
+
+.brand-info h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 1.5rem;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+}
+
+.brand-info p {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.topbar-right {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+
+.clock-group {
+  display: flex; gap: 0.6rem;
+}
+
+.clock-pill {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+}
+
+.clock-pill .flag { font-size: 1rem; }
+.clock-pill .time { color: var(--accent); font-weight: 500; }
+.clock-pill .label { color: var(--muted); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; }
+
+.lock-btn {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  border: 1px solid var(--border2);
+  border-radius: 40px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem; font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative; overflow: hidden;
+}
+
+.lock-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  opacity: 0; transition: opacity 0.3s;
+}
+
+.lock-btn:hover::before { opacity: 0.1; }
+.lock-btn.unlocked { border-color: var(--accent2); color: var(--accent2); }
+.lock-btn.locked { border-color: var(--red); color: var(--warn); }
+.lock-btn span { position: relative; }
+.lock-btn i { position: relative; }
+
+/* ── AUTO-LOCK COUNTDOWN ── */
+.auto-lock-wrap {
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.countdown-ring {
+  position: relative; width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+}
+.countdown-num {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem; font-weight: 700;
+  color: var(--accent); line-height: 1;
+}
+.countdown-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+@keyframes warnPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── STATUS BAR ── */
+.statusbar {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.7rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  animation: fadeDown 0.6s 0.1s ease both;
+}
+
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent2);
+  box-shadow: 0 0 8px var(--accent2);
+  flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.status-ticker {
+  display: flex; gap: 2.5rem; overflow: hidden; flex: 1;
+}
+
+.status-item {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem; color: var(--muted);
+  white-space: nowrap;
+}
+
+.status-item i { color: var(--accent); font-size: 0.65rem; }
+.status-item strong { color: var(--text); }
+
+.status-date {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem; color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── TILE GRID ── */
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.2em;
+  display: flex; align-items: center; gap: 0.6rem;
+  margin-bottom: 1rem;
+  animation: fadeUp 0.5s 0.2s ease both;
+}
+
+.section-label::after {
+  content: ''; flex: 1;
+  height: 1px; background: var(--border);
+}
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.2rem;
+  animation: fadeUp 0.6s 0.25s ease both;
+}
+
+.tile {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem 1.5rem 1.4rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+  user-select: none;
+}
+
+.tile::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--tc1, #3ec9ff), var(--tc2, #00e5c3));
+  opacity: 0; transition: opacity 0.35s;
+  border-radius: inherit;
+}
+
+.tile::after {
+  content: '';
+  position: absolute;
+  top: -60%; right: -30%;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, var(--tc1, #3ec9ff) 0%, transparent 70%);
+  opacity: 0.06; transition: all 0.4s;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.tile:hover::after { opacity: 0.12; transform: scale(1.3); }
+.tile:hover { border-color: var(--border2); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.4), var(--glow); }
+.tile:hover::before { opacity: 0.04; }
+.tile:active { transform: translateY(-1px) scale(0.98); }
+
+.tile.disabled {
+  cursor: not-allowed;
+  filter: saturate(0.3) brightness(0.6);
+  pointer-events: none;
+}
+
+/* tile colors */
+.tile[data-sys="URLs"] { --tc1: #3ec9ff; --tc2: #0090d9; }
+.tile[data-sys="Credentials"] { --tc1: #ff4e6a; --tc2: #ff9d3e; }
+.tile[data-sys="Server Info"] { --tc1: #00e5c3; --tc2: #00a887; }
+.tile[data-sys="AHM IP"] { --tc1: #a259ff; --tc2: #6a35e8; }
+.tile[data-sys="AHQS IP"] { --tc1: #ff9d3e; --tc2: #ff6b35; }
+.tile[data-sys="Ittem Code"] { --tc1: #3ec9ff; --tc2: #a259ff; }
+.tile[data-sys="Jobin Sticky"] { --tc1: #ffe066; --tc2: #ff9d3e; }
+.tile[data-sys="Ticket"] { --tc1: #00e5c3; --tc2: #3ec9ff; }
+
+.tile-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+
+.tile-icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--tc1), var(--tc2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; color: #fff;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+}
+
+.tile-arrow {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; color: var(--muted);
+  transition: all 0.25s;
+}
+
+.tile:hover .tile-arrow { background: var(--tc1); border-color: var(--tc1); color: #fff; transform: translate(2px,-2px); }
+
+.tile-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700; font-size: 1.15rem;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.2rem;
+}
+
+.tile-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+
+.tile-footer {
+  display: flex; gap: 0.5rem;
+}
+
+.chip {
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+.chip.accent { background: rgba(62,201,255,0.08); border-color: rgba(62,201,255,0.2); color: var(--accent); }
+.chip.green { background: rgba(0,229,195,0.08); border-color: rgba(0,229,195,0.2); color: var(--accent2); }
+.chip.purple { background: rgba(162,89,255,0.08); border-color: rgba(162,89,255,0.2); color: var(--accent3); }
+
+/* locked overlay per tile */
+.tile-lock-overlay {
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(5,8,15,0.5);
+  backdrop-filter: blur(4px);
+  opacity: 0; transition: opacity 0.3s;
+  pointer-events: none;
+}
+.tile.disabled .tile-lock-overlay { opacity: 1; }
+.tile-lock-overlay i { font-size: 1.4rem; color: rgba(255,255,255,0.25); }
+
+/* ── FOOTER ── */
+.footer {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+
+.footer-left {
+  display: flex; gap: 1.5rem; flex-wrap: wrap;
+}
+
+.footer-item {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem; color: var(--muted);
+}
+
+.footer-item i { color: var(--accent); }
+
+.footer-right {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem; color: var(--muted);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+
+.ver-badge {
+  padding: 0.15rem 0.55rem;
+  background: rgba(62,201,255,0.08);
+  border: 1px solid rgba(62,201,255,0.2);
+  border-radius: 20px; color: var(--accent);
+  font-size: 0.6rem;
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(5,8,15,0.85);
+  backdrop-filter: blur(10px);
+  display: none; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2.5rem 2rem;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6), var(--glow);
+  animation: scaleIn 0.3s cubic-bezier(0.23,1,0.32,1) both;
+  text-align: center;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9) translateY(10px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.modal-icon {
+  width: 64px; height: 64px; border-radius: 20px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; color: #05080f;
+  margin: 0 auto 1.5rem;
+  box-shadow: var(--glow);
+}
+
+.modal-card h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 1.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.modal-card p {
+  color: var(--muted); font-size: 0.85rem; margin-bottom: 1.8rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.pass-input {
+  width: 100%; padding: 0.9rem 1.2rem;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem; letter-spacing: 0.15em;
+  text-align: center; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  margin-bottom: 0.75rem;
+}
+
+.pass-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(62,201,255,0.12);
+}
+
+.error-msg {
+  color: var(--red); font-size: 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 1rem;
+  min-height: 1.2em;
+  opacity: 0; transition: opacity 0.2s;
+}
+
+.error-msg.show { opacity: 1; }
+
+.modal-actions {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; border: none; outline: none;
+  transition: all 0.25s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #05080f;
+}
+
+.btn-primary:hover { transform: translateY(-2px); box-shadow: var(--glow); }
+
+.btn-secondary {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.btn-secondary:hover { border-color: var(--border2); color: var(--text); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown {
+  from { transform: translateY(-16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* stagger tiles */
+.tile:nth-child(1) { animation: fadeUp 0.5s 0.3s both; }
+.tile:nth-child(2) { animation: fadeUp 0.5s 0.36s both; }
+.tile:nth-child(3) { animation: fadeUp 0.5s 0.42s both; }
+.tile:nth-child(4) { animation: fadeUp 0.5s 0.48s both; }
+.tile:nth-child(5) { animation: fadeUp 0.5s 0.54s both; }
+.tile:nth-child(6) { animation: fadeUp 0.5s 0.60s both; }
+.tile:nth-child(7) { animation: fadeUp 0.5s 0.66s both; }
+.tile:nth-child(8) { animation: fadeUp 0.5s 0.72s both; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+
+@media (max-width: 640px) {
+  .shell { padding: 1rem 1rem 2rem; }
+  .brand-info h1 { font-size: 1.2rem; }
+  .clock-group { display: none; }
+  .tile-grid { grid-template-columns: 1fr 1fr; }
+  .tile { padding: 1.2rem 1rem; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+<div class="noise"></div>
+
+<div class="shell">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">CJ</div>
+      <div class="brand-info">
+        <h1>JoBiN PoRtAl</h1>
+        <p>CJ Tech IT Support · Command Center</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="clock-group">
+        <div class="clock-pill">
+          <span class="flag">🇦🇪</span>
+          <div>
+            <div class="time" id="uaeTime">--:--:--</div>
+            <div class="label">UAE</div>
+          </div>
+        </div>
+        <div class="clock-pill">
+          <span class="flag">🇮🇳</span>
+          <div>
+            <div class="time" id="indiaTime">--:--:--</div>
+            <div class="label">IST</div>
+          </div>
+        </div>
+      </div>
+      <div class="auto-lock-wrap" id="autoLockWrap" style="display:none;">
+        <div class="countdown-ring">
+          <svg width="36" height="36" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(99,202,255,0.12)" stroke-width="2.5"/>
+            <circle id="countdownArc" cx="18" cy="18" r="15" fill="none"
+              stroke="var(--accent)" stroke-width="2.5"
+              stroke-dasharray="94.2" stroke-dashoffset="0"
+              stroke-linecap="round"
+              transform="rotate(-90 18 18)"
+              style="transition: stroke 0.5s, stroke-dashoffset 1s linear;"/>
+          </svg>
+          <span id="countdownSec" class="countdown-num">60</span>
+        </div>
+        <span class="countdown-label">auto‑lock</span>
+      </div>
+      <button class="lock-btn locked" id="lockBtn">
+        <i class="fas fa-lock" id="lockIcon"></i>
+        <span id="lockLabel">Locked</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- STATUS BAR -->
+  <div class="statusbar">
+    <div class="status-dot"></div>
+    <div class="status-ticker">
+      <div class="status-item"><i class="fas fa-server"></i> <strong>26</strong>&nbsp;Servers</div>
+      <div class="status-item"><i class="fas fa-network-wired"></i> <strong>28</strong>&nbsp;Interfaces</div>
+      <div class="status-item"><i class="fas fa-ticket-alt"></i> <strong>7</strong>&nbsp;Open Tickets</div>
+      <div class="status-item"><i class="fas fa-shield-alt"></i> TPM 2.0 · Secure</div>
+      <div class="status-item"><i class="fas fa-ethernet"></i> 100GbE Fabric</div>
+      <div class="status-item"><i class="fas fa-cloud"></i> Hybrid Mesh Active</div>
+    </div>
+    <div class="status-date" id="dateStr">--</div>
+  </div>
+
+  <!-- TILES -->
+  <div>
+    <div class="section-label"><i class="fas fa-th-large" style="color:var(--accent);font-size:0.7rem;"></i> System Modules</div>
+    <div class="tile-grid" id="tileGrid">
+
+      <div class="tile disabled" data-sys="URLs" data-url="file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/index.html.html">
+        <div class="tile-lock-overlay"><i class="fas fa-lock"></i></div>
+        <div class="tile-header">
+          <div class="tile-icon"><i class="fas fa-link"></i></div>
+          <div class="tile-arrow"><i class="fas fa-arrow-up-right"></i></div>
+        </div>
+        <div class="tile-name">URLs</div>
+        <div class="tile-meta">Bookmarks & Links</div>
+        <div class="tile-footer">
+          <div class="chip accent">CJ</div>
+          <div class="chip">JoBiN</div>
+        </div>
+      </div>
+
+      <div class="tile disabled" data-sys="Credentials" data-url="file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/CREDENTIAL.html">
+        <div class="tile-lock-overlay"><i class="fas fa-lock"></i></div>
+        <div class="tile-header">
+          <div class="tile-icon"><i class="fas fa-key"></i></div>
+          <div class="tile-arrow"><i class="fas fa-arrow-up-right"></i></div>
+        </div>
+        <div class="tile-name">CrEd</div>
+        <div class="tile-meta">Credential Vault</div>
+        <div class="tile-footer">
+          <div class="chip accent">Encrypted</div>
+          <div class="chip">Vault</div>
+        </div>
+      </div>
+
+      <div class="tile disabled" data-sys="Server Info" data-url="file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/Server%20New.html">
+        <div class="tile-lock-overlay"><i class="fas fa-lock"></i></div>
+        <div class="tile-header">
+          <div class="tile-icon"><i class="fas fa-server"></i></div>
+          <div class="tile-arrow"><i class="fas fa-arrow-up-right"></i></div>
+        </div>
+        <div class="tile-name">Server Info</div>
+        <div class="tile-meta">Infrastructure</div>
+        <div class="tile-footer">
+          <div class="chip green">26 Servers</div>
+          <div class="chip">28 Ifaces</div>
+        </div>
+      </div>
+
+      <div class="tile disabled" data-sys="AHM IP" data-url="file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/AHM%20IP.html">
+        <div class="tile-lock-overlay"><i class="fas fa-lock"></i></div>
+        <div class="tile-header">
+          <div class="tile-icon"><i class="fas fa-network-wired"></i></div>
+          <div class="tile-arrow"><i class="fas fa-arrow-up-right"></i></div>
+        </div>
+        <div class="tile-name">AHM IP</div>
+        <div class="tile-meta">10.2.1.0 / 24</div>
+        <div class="tile-footer">
+          <div class="chip purple">Gateway</div>
+          <div class="chip">/24</div>
+        </div>
+      </div>
+
+      <div class="tile disabled" data-sys="AHQS IP" data-url="file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/%20AHQ%20IP.html">
+        <div class="tile-lock-overlay"><i class="fas fa-lock"></i></div>
+        <div class="tile-header">
+          <div class="tile-icon"><i class="fas fa-globe-asia"></i></div>
+          <div class="tile-arrow"><i class="fas fa-arrow-up-right"></i></div>
+        </div>
+        <div class="tile-name">AHQS IP</div>
+        <div class="tile-meta">10.5.10.0 / 24</div>
+        <div class="tile-footer">
+          <div class="chip accent">DHCP</div>
+          <div class="chip">/24</div>
+        </div>
+      </div>
+
+      <div class="tile disabled" data-sys="Ittem Code" data-url="/Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/Ittem%20Code.html">
+        <div class="tile-lock-overlay"><i class="fas fa-lock"></i></div>
+        <div class="tile-header">
+          <div class="tile-icon"><i class="fas fa-barcode"></i></div>
+          <div class="tile-arrow"><i class="fas fa-arrow-up-right"></i></div>
+        </div>
+        <div class="tile-name">Ittem Code</div>
+        <div class="tile-meta">Ecapex Items</div>
+        <div class="tile-footer">
+          <div class="chip accent">8932</div>
+          <div class="chip green">In Use</div>
+        </div>
+      </div>
+
+      <div class="tile disabled" data-sys="Jobin Sticky" data-url="file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/Jobin%20Sticky.html">
+        <div class="tile-lock-overlay"><i class="fas fa-lock"></i></div>
+        <div class="tile-header">
+          <div class="tile-icon"><i class="fas fa-sticky-note"></i></div>
+          <div class="tile-arrow"><i class="fas fa-arrow-up-right"></i></div>
+        </div>
+        <div class="tile-name">Sticky Notes</div>
+        <div class="tile-meta">Reminders & Notes</div>
+        <div class="tile-footer">
+          <div class="chip accent">Jobin</div>
+          <div class="chip">Personal</div>
+        </div>
+      </div>
+
+      <div class="tile disabled" data-sys="Ticket" data-url="file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/Ticket.html">
+        <div class="tile-lock-overlay"><i class="fas fa-lock"></i></div>
+        <div class="tile-header">
+          <div class="tile-icon"><i class="fas fa-ticket-alt"></i></div>
+          <div class="tile-arrow"><i class="fas fa-arrow-up-right"></i></div>
+        </div>
+        <div class="tile-name">Tickets</div>
+        <div class="tile-meta">Service Desk · SNOW</div>
+        <div class="tile-footer">
+          <div class="chip accent">7 Open</div>
+          <div class="chip green">SNOW</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-left">
+      <div class="footer-item"><i class="fas fa-fingerprint"></i> Jobin Digital Portal</div>
+      <div class="footer-item"><i class="fas fa-shield-alt"></i> TPM 2.0 · Secure Boot</div>
+      <div class="footer-item"><i class="fas fa-ethernet"></i> 100GbE Fabric</div>
+      <div class="footer-item"><i class="fas fa-cloud"></i> Hybrid Mesh</div>
+    </div>
+    <div class="footer-right">
+      <div class="ver-badge">v3.2</div>
+      IT Command Center · JoBiN
+    </div>
+  </footer>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-card">
+    <div class="modal-icon"><i class="fas fa-fingerprint"></i></div>
+    <h2 id="modalTitle">Unlock Portal</h2>
+    <p id="modalSub">Enter your master passkey to continue</p>
+    <input type="password" class="pass-input" id="passInput" placeholder="••••••••" autocomplete="off">
+    <div class="error-msg" id="errorMsg">⛔ Incorrect passkey — try again</div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="unlockBtn">Unlock</button>
+      <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── ANIMATED GRID BACKGROUND ── */
+(function() {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const particles = Array.from({ length: 55 }, () => ({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    vx: (Math.random() - 0.5) * 0.35,
+    vy: (Math.random() - 0.5) * 0.35,
+    size: Math.random() * 1.8 + 0.4,
+    alpha: Math.random() * 0.5 + 0.1,
+    color: Math.random() > 0.5 ? '#3ec9ff' : '#00e5c3'
+  }));
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // faint grid
+    ctx.strokeStyle = 'rgba(62,201,255,0.03)';
+    ctx.lineWidth = 1;
+    const gs = 80;
+    for (let x = 0; x < canvas.width; x += gs) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    for (let y = 0; y < canvas.height; y += gs) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+
+    // connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 130) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(62,201,255,${0.06 * (1 - dist / 130)})`;
+          ctx.lineWidth = 0.8;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // dots
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── CLOCKS & DATE ── */
+(function() {
+  function pad(n) { return String(n).padStart(2,'0'); }
+  function fmt(d) { return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; }
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  function tick() {
+    const now = new Date();
+    const uae = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Dubai' }));
+    const ind = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    document.getElementById('uaeTime').textContent = fmt(uae);
+    document.getElementById('indiaTime').textContent = fmt(ind);
+    const d = now;
+    document.getElementById('dateStr').textContent =
+      `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
+  tick(); setInterval(tick, 1000);
+})();
+
+/* ── LOCK / UNLOCK LOGIC + AUTO-LOCK ── */
+(function() {
+  const PASS         = 'Jobin';
+  const AUTO_LOCK_S  = 60;   // auto-lock after 60 seconds of inactivity
+
+  let locked = true;
+  let autoLockTimer = null;
+  let countdownInterval = null;
+  let remainingSec = AUTO_LOCK_S;
+
+  const lockBtn        = document.getElementById('lockBtn');
+  const lockIcon       = document.getElementById('lockIcon');
+  const lockLabel      = document.getElementById('lockLabel');
+  const tiles          = document.querySelectorAll('.tile');
+  const overlay        = document.getElementById('modalOverlay');
+  const passInput      = document.getElementById('passInput');
+  const errorMsg       = document.getElementById('errorMsg');
+  const unlockBtn      = document.getElementById('unlockBtn');
+  const cancelBtn      = document.getElementById('cancelBtn');
+  const autoLockWrap   = document.getElementById('autoLockWrap');
+  const countdownSec   = document.getElementById('countdownSec');
+  const countdownArc   = document.getElementById('countdownArc');
+  const countdownRing  = document.querySelector('.countdown-ring');
+
+  const CIRCUMFERENCE = 2 * Math.PI * 15; // r=15 → ~94.25
+
+  function updateArc(sec) {
+    const frac = sec / AUTO_LOCK_S;
+    const offset = CIRCUMFERENCE * (1 - frac);
+    countdownArc.style.strokeDashoffset = offset;
+    countdownSec.textContent = sec;
+
+    // colour transitions
+    countdownArc.classList.remove('warn', 'critical');
+    countdownRing.classList.remove('warn', 'critical');
+    if (sec <= 10) {
+      countdownArc.classList.add('critical');
+      countdownRing.classList.add('critical');
+      countdownSec.style.color = 'var(--red)';
+    } else if (sec <= 20) {
+      countdownArc.classList.add('warn');
+      countdownRing.classList.add('warn');
+      countdownSec.style.color = 'var(--warn)';
+    } else {
+      countdownSec.style.color = 'var(--accent)';
+      countdownArc.style.stroke = 'var(--accent)';
+    }
+  }
+
+  function startCountdown() {
+    stopCountdown();
+    remainingSec = AUTO_LOCK_S;
+    updateArc(remainingSec);
+    autoLockWrap.style.display = 'flex';
+    countdownInterval = setInterval(() => {
+      remainingSec--;
+      updateArc(remainingSec);
+      if (remainingSec <= 0) {
+        stopCountdown();
+        setLocked(true);
+      }
+    }, 1000);
+  }
+
+  function stopCountdown() {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+    autoLockWrap.style.display = 'none';
+  }
+
+  function resetCountdown() {
+    if (!locked) startCountdown();
+  }
+
+  // Activity events reset the countdown
+  const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'];
+  ACTIVITY_EVENTS.forEach(evt =>
+    document.addEventListener(evt, () => { if (!locked) resetCountdown(); }, { passive: true })
+  );
+
+  function setLocked(v) {
+    locked = v;
+    tiles.forEach(t => v ? t.classList.add('disabled') : t.classList.remove('disabled'));
+    lockBtn.className = 'lock-btn ' + (v ? 'locked' : 'unlocked');
+    lockIcon.className = v ? 'fas fa-lock' : 'fas fa-unlock-alt';
+    lockLabel.textContent = v ? 'Locked' : 'Unlocked';
+    if (v) {
+      stopCountdown();
+      // show lock modal after forced auto-lock (if not already open)
+      if (!overlay.classList.contains('open')) openModal();
+    } else {
+      startCountdown();
+    }
+  }
+
+  function openModal() {
+    passInput.value = ''; errorMsg.classList.remove('show');
+    overlay.classList.add('open');
+    setTimeout(() => passInput.focus(), 100);
+  }
+
+  function closeModal() { overlay.classList.remove('open'); }
+
+  lockBtn.addEventListener('click', () => {
+    if (locked) openModal();
+    else setLocked(true);
+  });
+
+  unlockBtn.addEventListener('click', () => {
+    if (passInput.value === PASS) {
+      setLocked(false); closeModal();
+    } else {
+      errorMsg.classList.add('show');
+      passInput.value = ''; passInput.focus();
+    }
+  });
+
+  cancelBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  passInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlockBtn.click(); });
+
+  tiles.forEach(tile => {
+    tile.addEventListener('click', () => {
+      if (locked) return;
+      const url = tile.dataset.url;
+      if (url && url !== '#') window.open(url, '_blank');
+    });
+  });
+})();
+</script>
+</body>
+</html>

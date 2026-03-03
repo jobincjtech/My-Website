@@ -1,0 +1,3293 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aster Hospital - Digital Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00d4aa;
+            --secondary-color: #1a1a2e;
+            --accent-color: #16213e;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --border-radius: 15px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* Add login check overlay style */
+        .login-check-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--secondary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-check-box {
+            background: var(--glass-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-check-box h2 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .login-check-box p {
+            margin-bottom: 1.5rem;
+        }
+
+        .login-check-box button {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .login-check-box button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Rest of your existing styles... */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* ... (keep all your existing styles exactly as they were) ... */
+    </style>
+</head>
+<body>
+    <!-- Login Check Overlay - shown if not authenticated -->
+    <div id="loginCheckOverlay" class="login-check-overlay">
+        <div class="login-check-box">
+            <h2><i class="fas fa-lock"></i> Authentication Required</h2>
+            <p>You need to be logged in to access the Aster Digital Portal.</p>
+            <button onclick="window.location.href='index.html'">Go to Login Page</button>
+        </div>
+    </div>
+
+    <!-- The rest of your portal content (hidden by default) -->
+    <div id="portalContent" style="display: none;">
+        <!-- Your entire existing portal content goes here -->
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-hospital"></i>
+                    JoBiN Digital Portal
+                </div>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#quick-access"><i class="fas fa-th"></i> Quick Access</a></li>
+                        <li><a href="#categories"><i class="fas fa-list"></i> Categories</a></li>
+                        <li><a href="#resources"><i class="fas fa-database"></i> Resources</a></li>
+                        <li><a href="#support"><i class="fas fa-headset"></i> Support</a></li>
+                    </ul>
+                    <div class="search-container">
+                        <input type="text" class="search-bar" placeholder="Search..." id="searchInput">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    <div class="menu-toggle" id="menuToggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Mobile Sidebar -->
+        <div class="mobile-sidebar" id="mobileSidebar">
+            <div class="sidebar-header">
+                <h2>Aster Hospital</h2>
+                <p>Digital Portal</p>
+            </div>
+            <div class="sidebar-content">
+                <ul class="sidebar-links">
+                    <li><a href="#quick-access"><i class="fas fa-th"></i> Quick Access</a></li>
+                    <li><a href="#categories"><i class="fas fa-list"></i> Categories</a></li>
+                    <li><a href="#resources"><i class="fas fa-database"></i> Resources</a></li>
+                    <li><a href="#support"><i class="fas fa-headset"></i> Support</a></li>
+                    <li><a href="#profile"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="#settings"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Floating Action Button -->
+        <div class="fab" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+        </div>
+
+        <script>
+            // Check authentication on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                const isAuthenticated = sessionStorage.getItem('authenticated') === 'true';
+                
+                if (isAuthenticated) {
+                    document.getElementById('loginCheckOverlay').style.display = 'none';
+                    document.getElementById('portalContent').style.display = 'block';
+                } else {
+                    document.getElementById('loginCheckOverlay').style.display = 'flex';
+                    document.getElementById('portalContent').style.display = 'none';
+                }
+            });
+
+            // Logout function
+            function logout() {
+                sessionStorage.removeItem('authenticated');
+                window.location.href = 'index.html';
+            }
+
+            // Your existing JavaScript functions...
+            // Toggle category cards
+            function toggleCategory(header) {
+                const card = header.parentElement;
+                const content = card.querySelector('.category-content');
+                const icon = header.querySelector('.expand-icon');
+                
+                card.classList.toggle('active');
+                if (card.classList.contains('active')) {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    content.style.maxHeight = '0';
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            }
+
+            // ... (keep all your existing JavaScript functions) ...
+        </script>
+    </div>
+</body>
+</html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aster Hospital - Digital Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00d4aa;
+            --secondary-color: #1a1a2e;
+            --accent-color: #16213e;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --border-radius: 15px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 170, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 212, 170, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(1deg); }
+            66% { transform: translate(20px, -10px) rotate(-1deg); }
+        }
+
+        /* Header */
+        header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-color), #00ffcc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            -webkit-text-fill-color: var(--primary-color);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 170, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover {
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--primary-color);
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-color);
+            margin: 3px 0;
+            transition: var(--transition);
+            border-radius: 3px;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: relative;
+        }
+
+        .search-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 0.5rem 2.5rem 0.5rem 1rem;
+            color: var(--text-light);
+            width: 200px;
+            transition: var(--transition);
+        }
+
+        .search-bar:focus {
+            outline: none;
+            width: 250px;
+            border-color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Quick Access Grid */
+        .quick-access {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), #00ffcc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 columns instead of 4 */
+    gap: 15px; /* Adjust spacing between cards */
+    padding: 10px;
+        }
+
+        .quick-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quick-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 212, 170, 0.1) 0%, transparent 70%);
+            transform: scale(0);
+            transition: transform 0.5s;
+        }
+
+        .quick-card:hover::before {
+            transform: scale(1);
+        }
+
+        .quick-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.3);
+            border-color: rgba(0, 212, 170, 0.5);
+        }
+
+        .quick-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-card p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        /* Dropdown Categories */
+        .categories-section {
+            margin-bottom: 3rem;
+        }
+
+        .category-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.category-card {
+    flex: 1 1 calc(16.666% - 15px); /* 6 items per row (100%/6) minus gap */
+    min-width: 180px; /* Minimum card width */
+
+        }
+
+        .category-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(0, 212, 170, 0.05));
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .category-header:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.2), rgba(0, 212, 170, 0.1));
+        }
+
+        .category-header h3 {
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .category-card.active .category-content {
+            max-height: 500px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .category-card.active .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .category-links {
+            padding: 1rem 1.5rem;
+        }
+
+        .category-links a {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: var(--transition);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .category-links a::before {
+            content: '▸';
+            position: absolute;
+            left: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .category-links a:hover {
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--primary-color);
+            padding-left: 2rem;
+        }
+
+        .category-links a:hover::before {
+            transform: translateX(5px);
+        }
+
+        /* Tables Section */
+        .tables-section {
+            margin-top: 3rem;
+        }
+
+        .table-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(0, 212, 170, 0.05));
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+            padding: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        td a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        td a:hover {
+            text-decoration: underline;
+            color: #00ffcc;
+        }
+
+        /* Mobile Sidebar */
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 280px;
+            height: 100vh;
+            background: var(--secondary-color);
+            box-shadow: var(--shadow);
+            transition: left 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .mobile-sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, var(--primary-color), #00ffcc);
+            padding: 2rem 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .sidebar-content {
+            padding: 1.5rem;
+        }
+
+        .sidebar-links {
+            list-style: none;
+        }
+
+        .sidebar-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            display: block;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .sidebar-links a:hover {
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--primary-color);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 998;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* HIS Selector */
+        .his-selector {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .his-selector h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .his-form {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .his-form select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-light);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 250px;
+            cursor: pointer;
+        }
+
+        .his-form select option {
+            background: var(--secondary-color);
+        }
+
+        .his-form button {
+            background: linear-gradient(135deg, var(--primary-color), #00ffcc);
+            border: none;
+            color: var(--secondary-color);
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .his-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 170, 0.4);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), #00ffcc);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 212, 170, 0.4);
+            transition: var(--transition);
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(0, 212, 170, 0.6);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .header-content {
+                padding: 1rem;
+            }
+
+            .search-bar {
+                width: 150px;
+            }
+
+            .search-bar:focus {
+                width: 180px;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .quick-grid,
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .his-form {
+                flex-direction: column;
+            }
+
+            .his-form select,
+            .his-form button {
+                width: 100%;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Pulse Animation for Icons */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Table toggle icon */
+        .toggle-icon {
+            float: right;
+            transition: var(--transition);
+        }
+    </style>
+</head>
+<body>
+<script>
+    // Toggle category cards
+    function toggleCategory(header) {
+        const card = header.parentElement;
+        const content = card.querySelector('.category-content');
+        const icon = header.querySelector('.expand-icon');
+        
+        card.classList.toggle('active');
+        if (card.classList.contains('active')) {
+            content.style.maxHeight = content.scrollHeight + 'px';
+            icon.style.transform = 'rotate(180deg)';
+        } else {
+            content.style.maxHeight = '0';
+            icon.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    // Toggle table bodies
+    function toggleTableBody(header) {
+        const container = header.parentElement;
+        const scroll = container.querySelector('.table-scroll');
+        const icon = header.querySelector('.toggle-icon');
+        
+        scroll.style.display = scroll.style.display === 'none' ? 'block' : 'none';
+        icon.style.transform = scroll.style.display === 'none' ? 'rotate(0deg)' : 'rotate(180deg)';
+    }
+
+    // Open selected URL from dropdown
+    function openSelectedUrl() {
+        const select = document.getElementById('urlSelect');
+        const url = select.options[select.selectedIndex].value;
+        window.open(url, '_blank');
+    }
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileSidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('overlay');
+
+    menuToggle.addEventListener('click', function() {
+        this.classList.toggle('active');
+        mobileSidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    });
+
+    overlay.addEventListener('click', function() {
+        this.classList.remove('active');
+        mobileSidebar.classList.remove('active');
+        menuToggle.classList.remove('active');
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+            // Implement search functionality here
+            alert('Search functionality would be implemented here');
+        }
+    });
+
+    // Initialize all tables to be collapsed by default
+    document.addEventListener('DOMContentLoaded', function() {
+        const tableScrolls = document.querySelectorAll('.table-scroll');
+        tableScrolls.forEach(scroll => {
+            scroll.style.display = 'none';
+        });
+    });
+</script>
+    
+
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <div class="sidebar-header">
+            <h2>Aster Hospital</h2>
+            <p>Digital Portal</p>
+        </div>
+        <div class="sidebar-content">
+            <ul class="sidebar-links">
+                <li><a href="#quick-access"><i class="fas fa-th"></i> Quick Access</a></li>
+                <li><a href="#categories"><i class="fas fa-list"></i> Categories</a></li>
+                <li><a href="#resources"><i class="fas fa-database"></i> Resources</a></li>
+                <li><a href="#support"><i class="fas fa-headset"></i> Support</a></li>
+                <li><a href="#profile"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a href="#settings"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- HIS Selector -->
+        <div class="his-selector">
+            <h3><i class="fas fa-server"></i> HIS Page Navigation</h3>
+            <div class="his-form">
+                <select id="urlSelect">
+                    <option value="http://172.19.8.24/">172.19.8.24 - Mankhool Alternet URL</option>
+                    <option value="http://172.19.8.24:8081/">172.19.8.24:8081 - Mankhool Default URL</option>
+                    <option value="http://172.19.241.4/">172.19.241.4 - Mankhool .22 URL</option>
+                    <option value="http://172.19.241.15/">172.19.241.15 - Mankhool Doctor -241.15</option>
+                    <option value="http://172.19.241.6/">172.19.241.6 - Mankhool Nurse 241.6</option>
+                    <option value="http://172.19.241.4/">172.19.241.4 - Mankhool .22:8080 URL</option>
+                    <option value="http://172.19.241.4/">172.19.241.4 - Mankhool .22:8098 URL</option>
+                    <option value="http://172.19.241.4/">172.19.241.4 - Azure URL - </option>
+                    <option value="http://172.19.241.10:8081/">172.19.241.10:8081 - Azure-doctor</option>
+                    <option value="http://172.19.8.24:8084/">172.19.8.24:8084 - Nurses(8084)</option>
+                    <option value="http://172.19.241.4/">172.19.241.4 - OPD Nurses (8085)</option>
+                    <option value="http://172.19.241.5/">172.19.241.5 - Aster Qusais Default</option>
+                    <option value="http://172.19.241.4/">172.19.241.4 - Aster Cedar</option>
+                    <option value="http://172.19.241.4/">172.19.241.4 - Azure Connect</option>
+                    <option value="http://172.19.241.21/">172.19.241.21 - Aster RCM Team</option>
+                    <option value="http://172.19.241.10/" selected>172.19.241.10 Azure Nurse</option>
+                    <option value="https://hisuae.asterhospital.com/">External-public</option>
+                    <option value="https://hisuat.ahosp.me/">UAT</option>
+                    <option value="http://172.19.8.33:8081/Login.aspx">33 Dev URL</option>
+                    <option value="http://172.23.204.18:500/">OMAN UAT</option>
+                </select>
+                <button onclick="openSelectedUrl()">
+                    <i class="fas fa-external-link-alt"></i> Open
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Access Section -->
+        <section class="quick-access" id="quick-access">
+            <h2 class="section-title">
+                <i class="fas fa-star pulse"></i> Quick Access
+            </h2>
+            <div class="quick-grid">
+                <div class="quick-card" onclick="window.open('https://astermate.ahosp.me/Login', '_blank')">
+                    <h3><i class="fas fa-user-plus"></i> AsterMate</h3>
+                    <p>Access AsterMate portal</p>
+                </div>
+                <div class="quick-card" onclick="window.open('https://risuae.alif.onl/risng/ui/html/1.php', '_blank')">
+                    <h3><i class="fas fa-user-plus"></i> Moksha UAE</h3>
+                    <p>Access Moksha UAE</p>
+                </div>
+				<div class="quick-card" onclick="window.open('http://172.19.241.46/risng/ui/html/1.php', '_blank')">
+                    <h3><i class="fas fa-user-plus"></i> Moksha</h3>
+                    <p>Access Moksha Local</p>
+                </div>
+                <div class="quick-card" onclick="window.open('https://ahosp.me/adm/Login', '_blank')">
+                    <h3><i class="fas fa-user-plus"></i> QMS</h3>
+                    <p>Access QMS</p>
+                </div>
+                <div class="quick-card" onclick="window.open('file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/CREDENTIAL.html', '_blank')">
+                    <h3><i class="fas fa-user-plus"></i> Credentials</h3>
+                    <p>Credentials</p>
+                </div>
+                <div class="quick-card" onclick="window.open('file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/Server%20New.html', '_blank')">
+                    <h3><i class="fas fa-user-plus"></i> Server info</h3>
+                    <p>Server Info</p>
+                </div>
+                <div class="quick-card" onclick="window.open('file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/Ticket.html', '_blank')">
+                    <h3><i class="fas fa-user-plus"></i> TICKET</h3>
+                    <p>Access TICKET</p>
+                </div>
+				<div class="quick-card" onclick="window.open('file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/%20AHQ%20IP.html', '_blank')">
+                    <h3><i class="fas fa-user-plus"></i> AHQ IP</h3>
+                    <p>Printer $ DR IP $ Token</p>
+                </div>
+                <div class="quick-card" onclick="window.open('file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/Ittem%20Code.html', '_blank')">
+                    <h3><i class="fas fa-user-plus"></i> Ittem Code</h3>
+                    <p>Ecapex Ittem Code</p>
+                </div>
+                <div class="quick-card" onclick="window.open('file:///Volumes/JOBIN/CJ/RDP/Login/Joby%20Pages/AHM%20IP.html', '_blank')">
+                    <h3><i class="fas fa-user-plus"></i> AHM IP</h3>
+                    <p>Access AHM IP</p>
+                </div>
+            </div>
+        </section>
+
+        <!--- Categories Section --->
+		        <section class="categories-section" id="categories">
+            <h2 class="section-title">
+                <i class="fas fa-folder-open"></i> Department Categories
+            </h2>
+            <div class="category-grid">
+                <!-- E Triage Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-pills"></i> E - Triage</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://ahops.alif.onl/?EID=9">CTAS Token Aneesa</a>
+                            <a target="_blank" href="https://ahops.alif.onl/erdisplay?EID=9">CTAS Display Aneesa</a>
+                            <a target="_blank" href="https://ahops.alif.onl/Dashboard?EID=9">CTAS Dashboard Aneesa</a>
+                            <a target="_blank" href="https://ahops.alif.onl/Dashboard/?EID=29&Room=1">CTAS Dashboard Aneesa New</a>
+                            <a target="_blank" href="https://ahops.alif.onl/ERQ/?EID=29&Room=1">Etriage CTAS Token calling</a>
+                            <a target="_blank" href="https://api.asterhospital.com/cTAS/tn.aspx?FID=9">Etriage CTAS New Token</a>
+                            <a target="_blank" href="https://api.asterhospital.com/cTAS/ctas.aspx?FID=9">Etriage CTAS list</a>
+                            <a target="_blank" href="https://ehr.ahosp.me/EMPChk/tn.aspx?FID=9">Etriage Digital Token</a>
+                            <a target="_blank" href="https://ehr.ahosp.me/EMPChk/CTAS.aspx?FID=9">Etriage List New</a>
+                            <a target="_blank" href="http://172.19.8.22:88/T/triage.aspx?FID=9">Etriage List Old</a>
+                            <a target="_blank" href="https://api.asterhospital.com/s/triage.aspx?fid=9">Etriage List old api</a>
+                            <a target="_blank" href="https://triage.dcas.gov.ae/Default.aspx">DCAS</a>
+                            <a target="_blank" href="https://ahosp.me/SR/Login?Logout=1">ER Token Print</a>
+                            <a target="_blank" href="https://ahosp.me/ersr/selfreg/?FID=9&Uid=1">ER Self Registration old</a>
+                            <a target="_blank" href="https://ahosp.me/erk/?fid=9">ER- Self Registartion New</a>
+                            <a target="_blank" href="http://172.19.8.22:888/ERDashboard/?FID=9">ER New Dashboard Display</a>
+                            <a target="_blank" href="http://172.19.8.22:888/erdisplay?fid=9">ER Display</a>
+                            <a target="_blank" href="http://172.19.25.50:8030//?FID=9&Uid=1">ER- Self Registartion old</a>
+                            <a target="_blank" href="https://play.google.com/apps/test/com.astermateDoc06/38">ER- Dr AsterMate APP</a>
+                            <a href="#" onclick="javascript:OpenUrl('EMR/ETriage.aspx?Mpg=P1516');">Etriage HIS</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Token Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-shield-alt"></i> Token</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://ehr.ahosp.me/EMPChk/tn.aspx?FID=9">Etriage Digital Token</a>
+                            <a target="_blank" href="https://qms.alif.onl/?EID=9&Zone=1">Aneesa OPD Token</a>
+                            <a target="_blank" href="https://ahops.alif.onl/?EID=9">CTAS Token Aneesa</a>
+                            <a target="_blank" href="https://api.asterhospital.com/cTAS/tn.aspx?FID=9">Etriage CTAS New Token</a>
+                            <a target="_blank" href="https://ahosp.me/SR/Login?Logout=1">ER Token print</a>
+                            <a target="_blank" href="https://api.asterhospital.com/TKn1xyz009876/?zoneId=5">New Token</a>
+                            <a target="_blank" href="http://172.19.8.24:8088/?zoneid=5">Token</a>
+                            <a target="_blank" href="https://ahosp.me/erk/tn?fid=9">ER Token print</a>
+                            <a target="_blank" href="https://ahosp.me/WebToken/?ZoneId=9">Pharmacy Token Vinod</a>
+                            <a target="_blank" href="http://172.19.241.4:8085/?Zoneid=9">Pharmacy Token New</a>
+                            <a target="_blank" href="https://api.asterhospital.com/tk/ph/?zoneid=9&location=pharmacy">Pharmacy Token Old</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PACS Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-laptop-medical"></i> PACS</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="http://172.19.241.46">Moksha L</a>
+                            <a target="_blank" href="https://risuae.alif.onl/risng/ui/html/1.php">Moksha Uae</a>
+                            <a target="_blank" href="https://pacs.asterclinics.com/risng/ui/html/1.php">Moksha Clinic</a>
+                            <a target="_blank" href="http://172.19.8.20:9999/mdathena/">Moksha Cache AHM</a>
+                            <a target="_blank" href="http://172.19.58.110:9999/mdathena/">Moksha Cache AHQ</a>
+                            <a target="_blank" href="http://172.19.170.110:9999/mdathena/">Moksha Cache AHSJ</a>
+                            <a target="_blank" href="http://172.19.113.50:9999/mdathena/">Moksha Cache ACD</a>
+                            <a target="_blank" href="http://172.19.241.47:9999/mdathena/">Moksha Central</a>
+                            <a target="_blank" href="https://pacsuae.asterhospital.com/login">PACS UAE</a>
+                            <a target="_blank" href="https://172.19.241.5/login">PACS Local</a>
+                            <a target="_blank" href="https://172.19.241.7/login">PACS UAT</a>
+                            <a target="_blank" href="http://172.19.8.25/login">AHM Cache</a>
+                            <a target="_blank" href="http://172.19.58.25/login">AHQ Cache</a>
+                            <a target="_blank" href="http://172.19.8.16/login">CEDAR Cache</a>
+                            <a target="_blank" href="http://172.19.58.16/login">SHARJAH Cache</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AHM Asset Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-flask"></i> AHM Asset</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://asterdmhealthcare-my.sharepoint.com/:x:/r/personal/tanka_prasad_asterdmhealthcare_com/_layouts/15/doc2.aspx?sourcedoc=%7B9C953860-2580-487D-8FC9-B74C2A24E585%7D&file=AHM%20Asset%20details.xlsx&action=default&mobileredirect=true">AHM IP Tanka</a>
+                            <a target="_blank" href="https://asterdmhealthcare-my.sharepoint.com/:x:/r/personal/jobin_joseph_asterhospital_com/_layouts/15/Doc.aspx?sourcedoc=%7B21ED3EBB-96E3-4249-8291-66ED94170968%7D&file=AHM%20Asset%20Jobin.xlsx&action=default&mobileredirect=true">AHM IP Jobin</a>
+                            <a target="_blank" href="https://asterdmhealthcare-my.sharepoint.com/:x:/r/personal/jobin_joseph_asterhospital_com/_layouts/15/Doc.aspx?sourcedoc=%7B94D81190-E3D9-4795-9F25-0D4757247481%7D&file=AHM%20PC%20IP.xlsx&fromShare=true&action=default&mobileredirect=true">AHM static IP </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Server Info Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Server Info</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="file:///C:/Users/ASTER/OneDrive%20-%20Aster%20DM%20Healthcare/Desktop/CJ/Server%20New.html">Server Info</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Jobin CJ Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Jobin CJ</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://online.dib.ae/">DIB</a>
+                            <a target="_blank" href="https://web.whatsapp.com/">Whatsapp web</a>
+                            <a target="_blank" href="https://mail.google.com/mail/u/0/#inbox/">Gmail</a>
+                            <a target="_blank" href="https://mail.yahoo.com/d/folders/1?guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&guce_referrer_sig=AQAAADkQs1H2-SqgkTg86ZhQLhu_rGuU3AFFT5F1U3fe40RAcVnxsE8OGW4zYve8MtVbHxENwU0d2ADCmeWslfyOE6C4duVDM9VtRNkfZWqaG52i8ZNq2xRy8kKBMEXTWFfJ-HilDI-_OpG7Ut35oFIxyzTLyPtq2rfiGYVzfkHCK-BS/">Yahoo</a>
+                            <a target="_blank" href="https://www.facebook.com//">FB</a>
+                            <a target="_blank" href="https://www.hik-connect.com/views/login/index.html?jump=1#/login">Hik Connect</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CCTV AHM Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-chart-bar"></i> CCTV AHM</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+						    <a target="_blank" href="https://cloud.jarvis.live">JAVRIS</a>
+                            <a target="_blank" href="https://aster.irisvisionai.io/login">Iris Vision</a>
+                            <a target="_blank" href="http://172.19.25.240/doc/index.html#/portal/login">NVR3</a>
+                            <a target="_blank" href="http://172.19.25.241/doc/index.html#/portal/login">NVR6</a>
+                            <a target="_blank" href="http://172.19.25.242/doc/index.html#/portal/login">NVR4</a>
+                            <a target="_blank" href="http://172.19.25.243/doc/index.html#/portal/login">NVR1</a>
+                            <a target="_blank" href="http://172.19.25.244/doc/index.html#/portal/login">NVR2</a>
+                            <a target="_blank" href="http://172.19.25.245/doc/index.html#/portal/login">NVR5</a>
+                            <a target="_blank" href="http://172.19.113.100/doc/index.html#/portal/login">Cedar Admin</a>
+							<a target="_blank" href="http://172.19.128.223/doc/index.html#/portal/login">Sonapur1</a>
+							<a target="_blank" href="http://172.19.128.225/doc/index.html#/portal/login">Sonapur2</a>
+							<a target="_blank" href="http://172.19.125.224/doc/index.html#/portal/login">Sonapur3</a>
+							<a target="_blank" href="http://172.19.112.150/doc/index.html#/portal/login">Cedar Hospital</a>
+                            <a target="_blank" href="http://172.19.113.75/?_=187466397807">Cedar New</a>
+                            <a target="_blank" href="http://172.19.1.143/doc/index.html#/portal/login">ADSC</a>
+                            <a target="_blank" href="http://172.19.49.236">IT Cam</a>
+                            <a target="_blank" href="http://172.19.161.10/">Sharjah Admin Office</a>
+                            <a target="_blank" href="https://www.hik-connect.com/views/login/index.html?jump=1#/login">Hik Connect</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PA System Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> PA System</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="http://172.19.1.250/cgi-bin/luci">PA ADSC</a>
+                            <a target="_blank" href="http://172.19.17.25/cgi-bin/luci">PA AHM</a>
+                            <a target="_blank" href="http://172.19.168.15/cgi-bin/luci">PA Sharja</a>
+                            <a target="_blank" href="http://172.19.132.10/cgi-bin/luci">PA Sonapur</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Patient Portal Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Patient Portal</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://pp.ahosp.me/admin">Patient Portal Admin</a>
+                            <a target="_blank" href="https://pp.ahosp.me/">Patient Portal</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- QMS Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> QMS</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://app.aster.om/qmsadmnew/">QMS Oman</a>
+                            <a target="_blank" href="https://ahosp.me/adm/Login">QMS dubai</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ELigibility Check Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Eligibility Check</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://rcm.mantys.in/dashboard/v2/eligibility/dashboard">Eligibility Dashboard</a>
+                            <a target="_blank" href="https://rcm-dev.mantys.in/">Eligibility Dashboard new</a>
+                        </div>
+                    </div>
+                </div>
+				<!-- OXE Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> OXE</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://172.19.17.10/#/login">AHM OXE</a>
+                            <a target="_blank" href="https://172.19.56.5/#/home/configuration">AHQ OXE</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- OmniVista Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> OmniVista</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://asterhospitaluae.ov.ovcirrus.com/login.html">Omni Vista AP</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AsterLite Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> AsterLite</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://ahosp.me/rxl/">Aster Lite</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- OT Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> OT</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://ahops.alif.onl/OTD?EID=9">OT Display New Aneesa</a>
+                            <a target="_blank" href="http://172.19.8.22:888/?FacilityID=9">OT Display New</a>
+                            <a target="_blank" href="http://172.19.8.22:888/">OT Display Old</a>
+                            <a target="_blank" href="http://172.19.8.22:8008/changestatus?FacilityID=9">Change OT status</a>
+                            <a target="_blank" href="https://ahosp.me/OT/">OT Video Upload Portal</a>
+                            <a target="_blank" href="https://ahosp.me/DigitalOT/Login">Digital OT</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nursing Assignment Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Nursing Assignment</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="http://172.19.58.3:88/assignment">Nurse Assignment</a>
+                            <a target="_blank" href="http://172.19.8.85:8008/assignment">OT NS Assignment</a>
+                            <a target="_blank" href="http://172.19.8.22:8008/changestatus?FACILITYID=9">Nurse Assignment E Wing</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Census Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Census</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://pp.ahosp.me/hospitalCensus">Census New</a>
+                            <a target="_blank" href="https://ahospcencus.azurewebsites.net/">Census Old</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Token Display URL Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Token Display URL</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="http://172.19.8.32/?zoneid=5">AHM Display</a>
+                            <a target="_blank" href="https://api.asterhospital.com/QMS/?zoneid=5">AHQ,AHM,ACD</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ward Display URL Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> ward Display URL</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=5FE">E Wing Display</a>
+                            <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=4FD">D wing</a>
+                            <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=4FC">C wing</a>
+                            <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=3FB">B wing</a>
+                            <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=3FA">A wing</a>
+                            <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=ICU">ICU</a>
+                            <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=LR">LDR </a>
+                            <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=CICU">CICU</a>
+                            <a target="_blank" href="https://ahops.alif.onl/OTD?EID=9">OT Display</a>
+                            <a target="_blank" href="https://ahops.alif.onl/erdisplay?EID=9">Triage display</a>
+                            <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=NICU">NICU </a>
+                            <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=DIALYSIS">Dialisys </a>
+                            <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=ENDOSCOPY">Endoscopy </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lab Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Lab</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="http://172.19.241.10/Login.aspx?ReturnUrl=%2fWardManagement%2fWardDetaildoctorwise.aspx%3fMpg%3dP312&Mpg=P312">BCMA</a>
+                            <a href="#" onclick="javascript:OpenUrl('Bloodbank/BloodProcess.aspx?Mpg=P1554');">Blood tran (BCBT)</a>
+                            <a href="#" onclick="javascript:OpenUrl('Bloodbank/BloodProcess.aspx?Mpg=P1554');">Blood Request</a>
+                            <a target="_blank" href="https://bct.asterhospital.com/Barcode.aspx">BCT</a>
+                            <a target="_blank" href="http://172.19.8.85:6323/?fid=9">TV Blood Request</a>
+                            <a target="_blank" href="https://bct.asterhospital.com/BcBtList.aspx">BCBT List</a>
+                            <a target="_blank" href="https://ehr.ahosp.me/EMPChk/Emp.aspx/?FID=9">Health Chkp</a>
+                            <a href="#" onclick="javascript:OpenUrl('LIS/Phlebotomy/ChangeStation.aspx?MD=LIS&Mpg=P598');">***For Do Change Station***</a>
+                            <a href="#" onclick="javascript:OpenUrl('LIS/Format/TemplateLabMachine.aspx');">Machine Setup</a>
+                            <a href="#" onclick="javascript:OpenUrl('EMR/Dashboard/ProviderParts/LabResults.aspx?Mpg=P952');">Provide Dashboard</a>
+                            <a href="#" onclick="javascript:OpenUrl('LIS/Format/SignatureSetup.aspx?MD=BOTH&Mpg=P568');">Lab Signature Setup</a>
+                            <a href="#" onclick="javascript:OpenUrl('MPages/ServiceLokup.aspx?MD=BOTH&Mpg=P567');">Service Tagging</a>
+                            <a href="#" onclick="javascript:OpenUrl('LIS/Phlebotomy/InvestigationResult.aspx?Mpg=P599');">LAB Result Entry</a>
+                            <a href="#" onclick="javascript:OpenUrl('LIS/Phlebotomy/Phlebotomy.aspx?PT=COLL&MD=');">Phlebotomy</a>
+                            <a href="#" onclick="javascript:OpenUrl('LIS/Phlebotomy/Phlebotomy.aspx?PT=COLL&MD=');">LIS</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Barcoded Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Barcoded</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a href="#" onclick="javascript:OpenUrl('Bloodbank/BloodProcess.aspx?Mpg=P1554');">BCBT-LAB-Screen</a>
+                            <a href="#" onclick="javascript:OpenUrl('LIS/Phlebotomy/InvestigationResult.aspx');">Result Entry</a>
+                            <a href="#" onclick="javascript:OpenUrl('LIS/Phlebotomy/Phlebotomy.aspx?PT=STATUS&MD=LIS');">LIS Search</a>
+                            <a href="https://bct.asterhospital.com/Barcode.aspx" onclick="">BarCode URL</a>
+                            <a href="https://bct.asterhospital.com/BcBtList.aspx" onclick="">BCBT Rover Page</a>
+                            <a href="https://bct.asterhospital.com/BCSSIssueReturn.aspx" onclick="">BCSS</a>
+                            <a href="http://172.19.8.85:6323/?fid=9" target="_blank" >Lab BCBT TV</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Oracle password Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Oracle password</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://asterconnect.asterdmhealthcare.com/">Oracle Password rst</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Manage Engine Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Manage Engine</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://itservicedesk.asterdmhealthcare.com/">Ticket</a>
+                            <a target="_blank" href="https://medc.asterdmhealthcare.com:8383//">ME</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Doctor SMS Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Doctor SMS</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="http://172.19.241.37:801/pcr/smsx?auto=1">Doctors SMS</a>
+                            <a target="_blank" href="https://smartmessaging.etisalat.ae:9093/login">Etisalat SMS</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Wish List Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Wish List</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://pp.ahosp.me/wishas">Wishlist</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- OPD Pathway Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> OPD Pathway</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                            <a target="_blank" href="https://pp.ahosp.me/opdpathway?x=NTA3NDkxOTc3eDIwMjUtMDItMjU=">OPD Pathway</a>
+                            <a target="_blank" href="https://astermate.ahosp.me/PatientPathway">OPD Pathway New</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Asset Tag Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Asset Tag</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="http://10.10.232.104/FAT_ASTER/login">Asset Tag</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Silver Peak Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Silver Peak</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://20.203.28.64/9.3.5.40043/webclient/html/login.html">Aruba</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Intranet Page Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Intranet Page</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="http://172.19.8.32:88/">8.32</a>
+                            <a target="_blank" href="http://172.19.241.36:88/">241.36</a>
+                            <a target="_blank" href="https://pp.ahosp.me/intranet">JD</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ISBAR Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> ISBAR</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://pp.ahosp.me/ISBAR/">Isbar</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Referal MGT System Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Referal MGT System</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://ehr.ahosp.me/LR/login?Dest=REF">Clinic Referal</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Patient Service Rqst Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Patient Service Rqst</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://ehr.ahosp.me/LR/login?Dest=REF">Clinic Referal</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- WVD Url Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> WVD Url</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://client.wvd.microsoft.com/arm/webclient/index.html">WVD</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Turbo List Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Turbo List</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="http://172.19.8.24:8088/turbo//?fid=9">Turbo List</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- MPT Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> MPT</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://www.ezetap.com/portal/login/">MPT Login</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- External Billing Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> External Billing</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://ahosp.me/econ/payment/pd.aspx">Auto Bill</a>
+                            <a target="_blank" href="https://payment.asterhospital.com/payment">Manual Bill</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Printer HP Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Printer HP</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://hp-sds-europe.insightportal.net/PortalWeb/login">AHM & ADSC List</a>
+                            <a target="_blank" href="https://hp-sds-europe.insightportal.net/PortalWeb/login">Token Below 20%</a>
+                            <a target="_blank" href="https://hp-sds-europe.insightportal.net/PortalWeb/login">HP</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AMS Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> AMS</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://ahosp.me/ams/">AMS</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Offline EMR Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Offline EMR</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="file:///C:/Users/ASTER/OneDrive%20-%20Aster%20DM%20Healthcare/Desktop/Offline%20EMR.html">Offline EMR AHM</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Email Pswrd rst Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Email Pswrd rst</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://passwordreset.asterdmhealthcare.com/authorization.do">Email Pasrd reset</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Email Pswrd rst Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Email Pswrd rst</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://passwordreset.asterdmhealthcare.com/authorization.do">Email Pasrd reset</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 3M Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> 3M</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="http://172.19.8.48:8080/LaunchCRS.html">Insurance 3M</a>
+                        </div>
+                    </div>
+                </div>
+				
+				<!-- BioMetric -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> BioMetric</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://app.ezpz.ae/">BioMetric new</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Astermate OTP$tagging Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Astermate OTP$tagging </h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://astermate.ahosp.me/UserAuthDetails">Astermate OTP</a>
+                           <a target="_blank" href="https://astermate.ahosp.me/DeviceMapping">Payment tagging</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- HTML Editor Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> HTML Editor</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://html-online.com/">Html Editor</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Self registration Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Self registration</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://ss.alif.onl/?EID=9&Zone=5">OP Self Registartion</a>
+                           <a target="_blank" href="https://ahops.alif.onl/?EID=9">ER Self Registartion</a>
+                           <a target="_blank" href="https://myhealth.alif.onl/SelfRegistration">Self Registartion</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Etisalat SMS Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Etisalat SMS</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="https://html-online.com/">Html Editor</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Referal DR Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Referal DR</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="http://172.19.241.10/ICM/ReferralFeedback.aspx?Mpg=P1511">Referal DR</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Inventory Category -->
+                <div class="category-card">
+                    <div class="category-header" onclick="toggleCategory(this)">
+                        <h3><i class="fas fa-globe"></i> Inventory</h3>
+                        <i class="fas fa-chevron-down expand-icon"></i>
+                    </div>
+                    <div class="category-content">
+                        <div class="category-links">
+                           <a target="_blank" href="http://172.19.241.10/Pharmacy/Indent/IndentApprovalSetup.aspx">Indent Approval Access</a>
+                           <a target="_blank" href="http://172.19.241.10/EMRBILLING/Popup/PatientIntimationStatus.aspx?PT=PHR&Mpg=P343#">Inventory</a>
+                           <a target="_blank" href="http://172.19.241.10/Pharmacy/ChangeStore.aspx?Mpg=P335">Change Store</a>
+                           <a target="_blank" href="http://172.19.241.10/Pharmacy/Indent/DEPIndent.aspx?Mpg=P420">Dept Indent Status</a>
+                           <a target="_blank" href="http://172.19.241.10/Pharmacy/Indent/DEPIndentSearch.aspx?Mpg=P421">Indent Approval</a>
+                           <a target="_blank" href="http://172.19.241.10/Pharmacy/Master/ItemWiseStock.aspx?Mpg=P775">Ittem Wise Stock</a>
+                           <a target="_blank" href="http://172.19.241.10/Pharmacy/ItemMasterDetails.aspx">Ittem Master</a>
+                           <a target="_blank" href="http://172.19.241.10/Pharmacy/Indent/IndentApprovalSetup.aspx">Grant Store Access</a>
+                           <a target="_blank" href="http://172.19.241.10/Pharmacy/ReportCommonSTB.aspx?RN=STB&Mpg=P354">Stock Ledger/Bin Card</a>
+                           <a target="_blank" href="http://172.19.241.10/Pharmacy/SaleIssue/PharmacyRequestFromWard.aspx">Requst from Ward</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tables Section -->
+        <section class="tables-section" id="resources">
+            <h2 class="section-title">
+                <i class="fas fa-database"></i> Resource Information
+            </h2>
+
+            <!-- Token Display Table -->
+            <div class="table-container">
+                <div class="table-header" onclick="toggleTableBody(this)">
+                    <h3>
+                        <i class="fas fa-desktop"></i> Token Display Systems
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </h3>
+                </div>
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Zone</th>
+                                <th>Device</th>
+                                <th>IP Address</th>
+                                <th>Location</th>
+                                <th>URL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Zone 5</td>
+                                <td>Mini PC</td>
+                                <td>172.19.24.77</td>
+                                <td>Counter 7</td>
+                                <td><a href="http://172.19.241.24/?zoneid=5" target="_blank">View Display</a></td>
+                            </tr>
+                            <tr>
+                                <td>Zone 3</td>
+                                <td>Mini PC</td>
+                                <td>172.19.24.231</td>
+                                <td>Ortho OPD</td>
+                                <td><a href="http://172.19.241.24/?zoneid=3" target="_blank">View Display</a></td>
+                            </tr>
+                            <tr>
+                                <td>Zone 4</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.116</td>
+                                <td>Cardiology OPD</td>
+                                <td><a href="http://172.19.241.24/?zoneid=4" target="_blank">View Display</a></td>
+                            </tr>
+                            <tr>
+                                <td>Zone 2</td>
+                                <td>Mini PC</td>
+                                <td>172.19.24.233</td>
+                                <td>Gynaec OPD</td>
+                                <td><a href="http://172.19.241.24/?zoneid=2" target="_blank">View Display</a></td>
+                            </tr>
+                            <tr>
+                                <td>Zone 1</td>
+                                <td>Mini PC</td>
+                                <td>172.19.24.126</td>
+                                <td>Pediatric Old</td>
+                                <td><a href="http://172.19.241.24/?zoneid=1" target="_blank">View Display</a></td>
+                            </tr>
+                            <tr>
+                                <td>Zone 9</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.248</td>
+                                <td>Pharmacy counter</td>
+                                <td><a href="http://172.19.241.24/?zoneid=9" target="_blank">View Display</a></td>
+                            </tr>
+                            <tr>
+                                <td>Zone 5</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.186</td>
+                                <td>Main Reception</td>
+                                <td><a href="http://172.19.241.24/?zoneid=5" target="_blank">View Display</a></td>
+                            </tr>
+                            <tr>
+                                <td>Zone 1</td>
+                                <td>Mini PC</td>
+                                <td>172.19.24.17</td>
+                                <td>Pediatric New</td>
+                                <td><a href="http://172.19.241.24/?zoneid=1" target="_blank">View Display</a></td>
+                            </tr>
+                            <tr>
+                                <td>Zone 22</td>
+                                <td>Mini PC</td>
+                                <td>172.19.24.118</td>
+                                <td>GF New Opd</td>
+                                <td><a href="http://172.19.241.24/?zoneid=22" target="_blank">View Display</a></td>
+                            </tr>
+                            <tr>
+                                <td>Zone 18</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.108</td>
+                                <td>Radiology</td>
+                                <td><a href="http://172.19.241.24/?zoneid=18" target="_blank">View Display</a></td>
+                            </tr>
+                            <tr>
+                                <td>Zone 0</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.36</td>
+                                <td>Lab Reception</td>
+                                <td><a href="http://172.19.8.85:6323/?fid=9" target="_blank">View Display</a></td>
+                            </tr>
+                            <tr>
+                                <td>Zone 15</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.106</td>
+                                <td>Sample collection</td>
+                                <td><a href="http://172.19.241.24/?zoneid=15" target="_blank">View Display</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Ward Display Table -->
+            <div class="table-container">
+                <div class="table-header" onclick="toggleTableBody(this)">
+                    <h3>
+                        <i class="fas fa-bed"></i> Ward Display Systems
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </h3>
+                </div>
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL No</th>
+                                <th>Device</th>
+                                <th>IP</th>
+                                <th>Rooms</th>
+                                <th>Floor</th>
+                                <th>URL</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.241</td>
+                                <td>501 to 510 (510a/510b)</td>
+                                <td>5th Floor</td>
+                                <td><a href="https://ahops.alif.onl/WD?EID=9&Zone=5FE" target="_blank">View Display</a></td>
+                                <td>E Wing</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.242</td>
+                                <td>415 to 427 (420a/b,427a/b)</td>
+                                <td>4th Floor</td>
+                                <td><a href="https://ahops.alif.onl/WD?EID=9&Zone=4FD" target="_blank">View Display</a></td>
+                                <td>D Wing</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.243</td>
+                                <td>401 to 414 (412a/412b)</td>
+                                <td>4th Floor</td>
+                                <td><a href="https://ahops.alif.onl/WD?EID=9&Zone=4FC" target="_blank">View Display</a></td>
+                                <td>C Wing</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.244</td>
+                                <td>314 to 324 ( 324a/324b)</td>
+                                <td>3rd Floor</td>
+                                <td><a href="https://ahops.alif.onl/WD?EID=9&Zone=3FB" target="_blank">View Display</a></td>
+                                <td>B Wing</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.245</td>
+                                <td>room 301 to 313</td>
+                                <td>3rd Floor</td>
+                                <td><a href="https://ahops.alif.onl/WD?EID=9&Zone=3FA" target="_blank">View Display</a></td>
+                                <td>A Wing</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.246</td>
+                                <td>2201 to 2005</td>
+                                <td>ICU</td>
+                                <td><a href="https://ahops.alif.onl/WD?EID=9&Zone=ICU" target="_blank">View Display</a></td>
+                                <td>ICU</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.247</td>
+                                <td>2001 to 2006</td>
+                                <td>LDR Room</td>
+                                <td><a href="https://ahops.alif.onl/WD?EID=9&Zone=LR" target="_blank">View Display</a></td>
+                                <td>LDR Room</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.249</td>
+                                <td>C001 to C005</td>
+                                <td>CICU</td>
+                                <td><a href="https://ahops.alif.onl/WD?EID=9&Zone=CICU" target="_blank">View Display</a></td>
+                                <td>CICU</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Mini PC</td>
+                                <td>172.19.24.36</td>
+                                <td>C001 to C005</td>
+                                <td>ER Dashboard</td>
+                                <td><a href="http://172.19.8.22:888/ERDashboard/?FID=9" target="_blank">View Display</a></td>
+                                <td>ER Dashboard</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.100</td>
+                                <td>C001 to C005</td>
+                                <td>ER Display</td>
+                                <td><a href="http://172.19.8.22:888/erdisplay?fid=9" target="_blank">View Display</a></td>
+                                <td>ER Display</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.105</td>
+                                <td>C001 to C005</td>
+                                <td>HR Bday</td>
+                                <td><a href="https://pp.ahosp.me/wishas" target="_blank">View Display</a></td>
+                                <td>HR Bday</td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td>Mini PC</td>
+                                <td>172.19.13.102</td>
+                                <td>C001 to C005</td>
+                                <td>OT Display</td>
+                                <td><a href="https://ahops.alif.onl/OTD?EID=9" target="_blank">View Display</a></td>
+                                <td>OT Display</td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td>Mini PC</td>
+                                <td>172.19.1.244</td>
+                                <td>Media player</td>
+                                <td>ADSC Display</td>
+                                <td>Media Player</td>
+                                <td>ADSC Display</td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td>Mini PC</td>
+                                <td>172.19.1.245</td>
+                                <td>Media Player</td>
+                                <td>ADSC Display</td>
+                                <td>Media Player</td>
+                                <td>adsc Display</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Printer Resources Table -->
+            <div class="table-container">
+                <div class="table-header" onclick="toggleTableBody(this)">
+                    <h3>
+                        <i class="fas fa-print"></i> Printer Resources
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </h3>
+                </div>
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>cn</th>
+                                <th>Host Name</th>
+                                <th>Serial Number</th>
+                                <th>Printer Model</th>
+                                <th>IP Address</th>
+                                <th>Mac Address</th>
+                                <th>Dept</th>
+                                <th>Facility</th>
+                                <th>URL</th>
+                                <th>Remote</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>AH-AHM-OT</td>
+                                <td>CNBRQ308P2</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.162</td>
+                                <td>C0180352E328</td>
+                                <td>OT</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.162/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.162/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>AH-AHM-GYNEC-NS</td>
+                                <td>CNBRQ308PD</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.163</td>
+                                <td>C0180352F3BB</td>
+                                <td>Gynec NS</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.163/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.163/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>AH-AHM-NICU</td>
+                                <td>CNBRQ308K4</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.24.42</td>
+                                <td>C0180357B184</td>
+                                <td>NICU</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.24.42/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.24.42/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>AH-AHM-RADIOLOGY-RECEPTION</td>
+                                <td>CNBRQ308P6</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.164</td>
+                                <td>C0180352F3E3</td>
+                                <td>Radiology Reception</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.164/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.164/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>AH-AHM-INSURANCE-MAIN-RECEPTION</td>
+                                <td>CNBRQ308RK</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.199</td>
+                                <td>C01803520B99</td>
+                                <td>Insurance Paedia</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.165/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.165/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>AH-AHM-MAIN-STORE</td>
+                                <td>CNBRQ308Q3</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.166</td>
+                                <td>C0180352F3EB</td>
+                                <td>MAIN STORE</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.166/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.166/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>AH-AHM-BIOMED</td>
+                                <td>CNBRQ308N0</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>Flood</td>
+                                <td>C0180352F3DF</td>
+                                <td>BIOMED</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.11.217/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.11.217/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>AH-AHM-PEDIATRIC-RECEPTION</td>
+                                <td>CNBRQ308SR</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.167</td>
+                                <td>C0180352F3E9</td>
+                                <td>Pediatric Rec</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.167/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.167/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>AH-AHM-ICU</td>
+                                <td>CNBRQ790FS</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.168</td>
+                                <td>C0180352F3AF</td>
+                                <td>ICU</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.168/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.168/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>AH-AHM-2ND-DSU</td>
+                                <td>CNBRQ308RP</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.169</td>
+                                <td>C0180352F3B0</td>
+                                <td>2ND DSU</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.169/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.169/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td>AH-AHM-LABOUR</td>
+                                <td>CNBRQ30908</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.170</td>
+                                <td>C0180357A159</td>
+                                <td>Labour NS</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.170/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.170/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td>AH-AHM-QUALITY</td>
+                                <td>CNBRQ308ZD</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.24.47</td>
+                                <td>C0180357B109</td>
+                                <td>Quality</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.10.32/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td>AH-AHM-GYNEC-RECEPTION</td>
+                                <td>CNBRQ308WP</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.171</td>
+                                <td>C01803520B12</td>
+                                <td>Gynec Rec</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.171/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.171/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>14</td>
+                                <td>AH-AHM-BWING</td>
+                                <td>CNBRQ308Z2</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.172</td>
+                                <td>C0180357A15B</td>
+                                <td>B WING</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.172/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.172/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>15</td>
+                                <td>AH-AHM-CWING</td>
+                                <td>CNBRQ3092P</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.173</td>
+                                <td>C0180357A10B</td>
+                                <td>C Wing</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.173/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.173/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>16</td>
+                                <td>AH-AHM-ORTHO-RECEPTION</td>
+                                <td>CNBRQ3092G</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.174</td>
+                                <td>C018035771B6</td>
+                                <td>Ortho Rec</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.174/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.174/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>17</td>
+                                <td>AH-AHM-ORTHO-NS</td>
+                                <td>CNBRQ308Y7</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.24.49</td>
+                                <td>C01803579173</td>
+                                <td>Ortho NS</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.24.49/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.24.49/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>18</td>
+                                <td>AH-AHM-IMOPD</td>
+                                <td>CNBRQ308FC</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.175</td>
+                                <td>C0180352F33A</td>
+                                <td>IM OPD</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.175/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.175/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>19</td>
+                                <td>AH-AHM-DWING</td>
+                                <td>CNBRQ308KF</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.176</td>
+                                <td>C0180352F3FD</td>
+                                <td>D Wing</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.176/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.176/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>20</td>
+                                <td>AH-AHM-MARKETING</td>
+                                <td>CNBRQ308J8</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.11.6</td>
+                                <td>C0180357B17A</td>
+                                <td>BD</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.11.6/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.10.11.6/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>21</td>
+                                <td>AH-AHM-EWING</td>
+                                <td>CNBRQ308JW</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.177</td>
+                                <td>C0180357B17D</td>
+                                <td>E Wing</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.177/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.177/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>22</td>
+                                <td>AH-AHM-OBSERVATION</td>
+                                <td>CNBRQ308LS</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.178</td>
+                                <td>C0180352F3E7</td>
+                                <td>OBSERVATION</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.178/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.178/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>23</td>
+                                <td>AH-AHM-KITCHEN</td>
+                                <td>CNBRQ308F1</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.179</td>
+                                <td>C0180357915B</td>
+                                <td>Kitchen</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.179/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.179/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>24</td>
+                                <td>AH-AHM-HR</td>
+                                <td>CNBRQ308M3</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.10.5</td>
+                                <td>C0180352F3CD</td>
+                                <td>HR</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.194/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.194/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>25</td>
+                                <td>AH-AHM-AWING</td>
+                                <td>CNBRQ308WY</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.180</td>
+                                <td>C018035791D7</td>
+                                <td>A WING</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.180/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.180/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>26</td>
+                                <td>AH-AHM-MAINRECEPTION-N</td>
+                                <td>CNBRQ308V8</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.181</td>
+                                <td>C01803520B9A</td>
+                                <td>Main Reception</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.181/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.181/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>27</td>
+                                <td>AH-AHM-PEDIATRIC-NS</td>
+                                <td>CNBRQ308QJ</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.182</td>
+                                <td>C0180352F3EA</td>
+                                <td>Pediatric NS</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.182/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.182/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>28</td>
+                                <td>AH-AHM-MRD</td>
+                                <td>CNBRQ308QP</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.183</td>
+                                <td>C01803520B14</td>
+                                <td>MRD</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.25.183/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.183/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>29</td>
+                                <td>AH-AHM-PHARMACYSTORE</td>
+                                <td>CNBRQ308VQ</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.184</td>
+                                <td>C01803520B9F</td>
+                                <td>Pharmacy Store</td>
+                                <td>AHM</td>
+                                <td><a href="https://Flood/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.184/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>30</td>
+                                <td>AH-AHM-MEP</td>
+                                <td>CNBRQ308VH</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.24.24</td>
+                                <td>C01803520B94</td>
+                                <td>MEP</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.24.24/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.10.24.24/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>31</td>
+                                <td>AH-AHM-ERNS</td>
+                                <td>CNBRQ308WB</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.25.185</td>
+                                <td>C0180352E325</td>
+                                <td>ER NS</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.10.183/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.25.185/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            <tr>
+                                <td>32</td>
+                                <td>AH-AHM-NURSINGADMIN</td>
+                                <td>CNBRQ308W4</td>
+                                <td>HP LJ MGD MFP E42540F</td>
+                                <td>172.19.24.46</td>
+                                <td>C0180352F3A9</td>
+                                <td>Nursing Admin</td>
+                                <td>AHM</td>
+                                <td><a href="https://172.19.24.46/" target="_blank">Web Interface</a></td>
+                                <td><a href="https://172.19.24.46/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+                            </tr>
+                            </tr>
+<tr>
+    <td>33</td>
+    <td>AH-AHM-CSE</td>
+    <td>CNBRQ308CW</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.25.186</td>
+    <td>C018035781D9</td>
+    <td>CSE</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.25.186/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.25.186/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>34</td>
+    <td>AH-AHM-COO</td>
+    <td>CNCRQ3H2SH</td>
+    <td>HP CLJ MGD MFP E47528F</td>
+    <td>172.19.24.26</td>
+    <td>A8B13B691D98</td>
+    <td>Mohit Sir</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.24.26/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.24.26/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>35</td>
+    <td>AH-AHM-CARDIOLOGY-REC</td>
+    <td>CNBRQ308RX</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.25.195</td>
+    <td>C0180352E32D</td>
+    <td>CARDIOLOGY RECEPTION</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.25.195/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.25.195/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>36</td>
+    <td>AH-AHM-ER-BILLING</td>
+    <td>CNBRQ308T8</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.9</td>
+    <td>C01803520BA5</td>
+    <td>ER Billing</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.24.9/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.24.9/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>37</td>
+    <td>AH-AHM-ER MOD</td>
+    <td>CNBRQ308N5</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.18</td>
+    <td>ER MOD</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.24.18/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.10.24.18/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>38</td>
+    <td>AH-AHM-IP-BILLING</td>
+    <td>CNBRQ308JZ</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.25.187</td>
+    <td>IP BILLING</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.25.187/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.25.187/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>39</td>
+    <td>AH-AHM-PHARMACY-APPROVAL</td>
+    <td>CNBRQ4814G</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.25.188</td>
+    <td>A8B13B6A8FC8</td>
+    <td>PHARMACY-APPROVAL</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.25.188/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.25.188/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>40</td>
+    <td>AH-AHM-LAB</td>
+    <td>CNBRQ4811Z</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.25.189</td>
+    <td>A8B13B6A6FDC</td>
+    <td>Lab</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.25.189/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.25.189/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>41</td>
+    <td>AH-AHM-PHARMACY-COUNTER</td>
+    <td>CNBRQ7902W</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.25.190</td>
+    <td>A8B13B6A9F16</td>
+    <td>PHARMACY COUNTER</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.25.190/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.25.190/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>42</td>
+    <td>AH-AHM-IP-PHARMACY</td>
+    <td>CNBRQ308YX</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.99</td>
+    <td>C018035791B1</td>
+    <td>IP Pharmacy</td>
+    <td>AHM</td>
+    <td></td>
+    <td><a href="https://172.19.24.99/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>43</td>
+    <td>AH-AHM-COVID-RECEPTION</td>
+    <td>CNBRQ4810P</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.25.196</td>
+    <td>A8B13B6A8F47</td>
+    <td>COVID RECEPTION</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.25.196/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.25.196/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>44</td>
+    <td>AH-AHM-INSURANCE</td>
+    <td>CNBRQ4812W</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.25.191</td>
+    <td>A8B13B6A6FFF</td>
+    <td>INSURANCE</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.25.191/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.25.191/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>45</td>
+    <td>AH-AHM-CATHLAB</td>
+    <td>CNBRQ48151</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.96</td>
+    <td>A8B13B6A8FCE</td>
+    <td>CATHLAB</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.10.40/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+    <td></td>
+</tr>
+<tr>
+    <td>46</td>
+    <td>ADSE Reception</td>
+    <td>CNBRQ480KN</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.1.141</td>
+    <td>A8B13B6A8F3E</td>
+    <td>ADSE Reception</td>
+    <td>ADSE</td>
+    <td><a href="https://172.19.1.141/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.10.141/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>47</td>
+    <td>ADSE-NS</td>
+    <td>CNBRQ480LS</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.1.162</td>
+    <td>A8B13B6AAFAE</td>
+    <td>ADSE NS</td>
+    <td>ADSE</td>
+    <td><a href="https://172.19.1.162/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.10.162/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>48</td>
+    <td>AH-AHM-CICU</td>
+    <td>CNBRQ480JW</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.48</td>
+    <td>A8B13B6ABF97</td>
+    <td>CICU</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.24.48/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.24.48/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>49</td>
+    <td>AH-AHM-RECOVERY</td>
+    <td>CNBRQ480KH</td>
+    <td>HP LJ MGD MFP E42541F</td>
+    <td>172.19.24.40</td>
+    <td>A8B13B6AAFBE</td>
+    <td>Recovery</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.24.40/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.24.40/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>50</td>
+    <td>AH-AHM-MEDICAL-TRANSCRIPTION</td>
+    <td>CNBRQ4815P</td>
+    <td>HP LJ MGD MFP E42541F</td>
+    <td>172.19.25.192</td>
+    <td>A8B13B6A8F48</td>
+    <td>MTR</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.25.192/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.25.192/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>51</td>
+    <td>AH-AHM-ADMISSION-COUNTER</td>
+    <td>CNBRQ308H3</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.25.197</td>
+    <td>C01803579111</td>
+    <td>ADMISSION 4TH FLOOR&nbsp;</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.25.197/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.25.197/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>52</td>
+    <td>AH-AHM-MAINRECEPTION1</td>
+    <td>CNBRQ308T3</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.119</td>
+    <td>CO180357A1F2</td>
+    <td>MAIN RECEPTION 1</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.24.92/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.24.92/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>53</td>
+    <td>AH-AHM-GASTROOPD</td>
+    <td>CNBRQ30918</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.91</td>
+    <td>C01803578199</td>
+    <td>Gastro OPD C-7</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.24.91/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.24.91/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>54</td>
+    <td>AH-AHM-DIALYSIS</td>
+    <td>CNBRQ308HM</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.94</td>
+    <td>C0180357B1F8</td>
+    <td>Dialysis</td>
+    <td>AHM</td>
+    <td></td>
+    <td><a href="https://172.19.24.94/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>55</td>
+    <td>AH-AHM-warclerkB</td>
+    <td>CNBRQ308ML</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.95</td>
+    <td>#REF!</td>
+    <td>WARD CLERK B WING</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.10.24.95/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+    <td></td>
+</tr>
+<tr>
+    <td>56</td>
+    <td>AH-AHM-OPINSURANCE</td>
+    <td>CNBRQ308YQ</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.25.198</td>
+    <td>C01803578192</td>
+    <td>INSURANCE APPROVEL - mark</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.25.198/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.25.198/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>57</td>
+    <td>AH-AHM-ENDOSCOPYRECEPTION</td>
+    <td>CNBRQ308JG</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.25.130</td>
+    <td>C0180357B15B</td>
+    <td>Endoscopy Reception</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.11.213/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.11.213/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>58</td>
+    <td>NPI52F3DE</td>
+    <td>CNBRQ308NV</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.244</td>
+    <td>C0180352F3DE</td>
+    <td>CSSD</td>
+    <td>AHM</td>
+    <td></td>
+    <td></td>
+</tr>
+<tr>
+    <td>59</td>
+    <td>AH-AHM-DSU5</td>
+    <td>CNBRQ3090P</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.7</td>
+    <td>C0180352E331</td>
+    <td>DSU 5TH FLOOR</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.24.7/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.24.7/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>60</td>
+    <td>AH-AHM-NEWEDOSCOPY</td>
+    <td>CNBRQ308TD</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.92</td>
+    <td>C01803520B8E</td>
+    <td>NEW ENDOSCOPY</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.24.92/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.10.24.92/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>61</td>
+    <td>NPI57B189</td>
+    <td>CNBRQ308F8</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.93</td>
+    <td>C0180357B189</td>
+    <td>OLD ENDOSCOPY</td>
+    <td>AHM</td>
+    <td></td>
+    <td><a href="https://172.19.24.93/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>62</td>
+    <td>AH-AHM-DRNAVEED</td>
+    <td>CNBRQ308LD</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.34</td>
+    <td>C0180352F2F7</td>
+    <td>Dr Naveed</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.24.34/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.24.34/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>63</td>
+    <td>ADSC-P-PHARMACY</td>
+    <td>CNBRQ480M9</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.1.179</td>
+    <td>adse pHARMACY</td>
+    <td>ADSE</td>
+    <td><a href="https://172.19.1.179/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.10.136/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>64</td>
+    <td>ADSE OBSERVATION</td>
+    <td>CNBRQ4812M</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.1.177</td>
+    <td>ADSE OBSERVATION</td>
+    <td>ADSE</td>
+    <td></td>
+    <td></td>
+</tr>
+<tr>
+    <td>65</td>
+    <td>ADSE OT</td>
+    <td>CNBRQ79174</td>
+    <td>HP LJ MGD MFP E42541F</td>
+    <td>172.19.1.206</td>
+    <td>ADSE OT</td>
+    <td>ADSE</td>
+    <td><a href="https://172.19.1.206/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.1.206/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>66</td>
+    <td>AH-AHM-MAIN-BILLING</td>
+    <td>CNBRQ308PK</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.25.193</td>
+    <td>Main Billing</td>
+    <td>AHM</td>
+    <td><a href="https://172.19.25.193/" target="_blank">Web Interface</a></td>
+    <td><a href="https://172.19.25.193/hp/device/RemoteControlPanel/Index?private=0" target="_blank">Remote Control</a></td>
+</tr>
+<tr>
+    <td>67</td>
+    <td>Backup</td>
+    <td>CNBRQ480SN</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>Backup</td>
+    <td>AHM</td>
+    <td></td>
+    <td></td>
+    <td></td>
+</tr>
+<tr>
+    <td>68</td>
+    <td>AH-AHM-PHARMACY STORE NEW</td>
+    <td>CNBRQ7902K</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.8</td>
+    <td>Pharmacy  Store New</td>
+    <td></td>
+    <td></td>
+    <td></td>
+</tr>
+<tr>
+    <td>69</td>
+    <td>Backup</td>
+    <td>CNBRQ788JS</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>Backup</td>
+    <td>AHM</td>
+    <td></td>
+    <td></td>
+    <td></td>
+</tr>
+<tr>
+    <td>70</td>
+    <td>Backup</td>
+    <td>CNCRQDP5TD</td>
+    <td>HP CLJ MGD MFP E47528F</td>
+    <td>Backup</td>
+    <td>AHM</td>
+    <td></td>
+    <td></td>
+    <td></td>
+</tr>
+<tr>
+    <td>71</td>
+    <td>AH-AHM-BIOMED1</td>
+    <td>CNBRQ480J2</td>
+    <td>HP LJ MGD MFP E42540F</td>
+    <td>172.19.24.5</td>
+    <td>AHM</td>
+    <td></td>
+    <td></td>
+    <td></td>
+</tr>
+<tr>
+    <td>72</td>
+    <td>Backup</td>
+    <td>CNBRQ480KW</td>
+    <td>HP CLJ MGD MFP E47528F</td>
+    <td>Backup</td>
+    <td>AHM</td>
+    <td></td>
+    <td></td>
+    <td></td>
+</tr>
+<tr>
+    <td>73</td>
+    <td>ADSC-Colour</td>
+    <td>CNCRSDB493</td>
+    <td>HP CLJ MGD MFP E47528F</td>
+    <td>172.19.1.161</td>
+    <td>ADSC</td>
+    <td></td>
+    <td></td>
+    <td></td>
+</tr>
+</tbody>
+                    </table>
+                </div>
+            </div>
+<!-- Doctors IP AHM & ADSC Table -->
+<div class="table-container">
+    <div class="table-header" onclick="toggleTableBody(this)">
+        <h3>
+            <i class="fas fa-print"></i> Doctors IP AHM & ADSC
+            <i class="fas fa-chevron-down toggle-icon"></i>
+        </h3>
+    </div>
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th>SL No</th>
+                    <th>IP</th>
+                    <th>CLINIC</th>
+                    <th>ZONE</th>
+                    <th>Host Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>1</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.1</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 1</strong></td>
+                    <td style="width: 61.75px;"><strong>4</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC2</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>2</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.2</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 2</strong></td>
+                    <td style="width: 61.75px;"><strong>4</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-DRNAVEED</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>3</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.3</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 3</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC03</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>4</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.4</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 4</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC-4</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>5</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.5</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 5</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC5</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>6</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.6</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 6</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC06</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>7</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.7</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 7</strong></td>
+                    <td style="width: 61.75px;"><strong>3</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC07</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>8</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.8</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 8</strong></td>
+                    <td style="width: 61.75px;"><strong>3</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC08</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>9</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.9</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 9</strong></td>
+                    <td style="width: 61.75px;"><strong>3</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINI9</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>10</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.10</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic10</strong></td>
+                    <td style="width: 61.75px;"><strong>3</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC10N</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>11</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.11</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic11</strong></td>
+                    <td style="width: 61.75px;"><strong>3</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC11</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>12</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.12</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic12</strong></td>
+                    <td style="width: 61.75px;"><strong>3</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC12</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>12</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.24.79</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic12A</strong></td>
+                    <td style="width: 61.75px;"><strong>3</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-INS10</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>13</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.13</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 13</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC014</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>14</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.14</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 14</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC014</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>15</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.15</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 15</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC15</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>16</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.16</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 16</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC-16</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>17</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.17</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 17</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC017</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>18</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.18</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 18</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC018</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>19</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.19</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 19</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC29</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>20</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.20</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 20</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC020</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>21</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.21</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 21</strong></td>
+                    <td style="width: 61.75px;"><strong>2</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC21</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>22</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.22</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 22</strong></td>
+                    <td style="width: 61.75px;"><strong>2</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC-22</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>23</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.23</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 23</strong></td>
+                    <td style="width: 61.75px;"><strong>2</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC23</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>24</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.24</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 24</strong></td>
+                    <td style="width: 61.75px;"><strong>2</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC24</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>25</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.25</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 25</strong></td>
+                    <td style="width: 61.75px;"><strong>1</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC-25</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>26</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.26</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 26</strong></td>
+                    <td style="width: 61.75px;"><strong>1</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC26</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>27</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.27</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 27</strong></td>
+                    <td style="width: 61.75px;"><strong>1</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC27</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>28</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.28</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 28</strong></td>
+                    <td style="width: 61.75px;"><strong>1</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC028</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>29</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.29</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 29</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC-29</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>30</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.30</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 30</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC-30</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>31</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.31</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 31</strong></td>
+                    <td style="width: 61.75px;"><strong>5</strong></td>
+                    <td style="width: 150.656px;"><strong>AHM-D-CLINIC31</strong></td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>32</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.32</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 32</strong></td>
+                    <td style="width: 61.75px;"><strong>22</strong></td>
+                    <td style="width: 150.656px;">AHM-D-CLINIC32</td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>33</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.33</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 33&nbsp;</strong></td>
+                    <td style="width: 61.75px;"><strong>22</strong></td>
+                    <td style="width: 150.656px;">AHM-D-DRSACHIN</td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>34</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.34</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 34</strong></td>
+                    <td style="width: 61.75px;"><strong>22</strong></td>
+                    <td style="width: 150.656px;">&nbsp;</td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>35</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.25.35</strong></td>
+                    <td style="width: 117.698px;"><strong>Clinic 35</strong></td>
+                    <td style="width: 61.75px;"><strong>22</strong></td>
+                    <td style="width: 150.656px;">&nbsp;</td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>36</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.10.46</strong></td>
+                    <td style="width: 117.698px;"><strong>DR launch OT</strong></td>
+                    <td style="width: 61.75px;"><strong>ot</strong></td>
+                    <td style="width: 150.656px;">&nbsp;</td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>37</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.1.175</strong></td>
+                    <td style="width: 117.698px;"><strong>ADSC Clinic 01</strong></td>
+                    <td style="width: 61.75px;"><strong>ADSC</strong></td>
+                    <td style="width: 150.656px;">&nbsp;</td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>38</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.1.187</strong></td>
+                    <td style="width: 117.698px;"><strong>ADSC Clinic 02</strong></td>
+                    <td style="width: 61.75px;"><strong>ADSC</strong></td>
+                    <td style="width: 150.656px;">&nbsp;</td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>39</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.1.185</strong></td>
+                    <td style="width: 117.698px;"><strong>ADSC Clinic 03</strong></td>
+                    <td style="width: 61.75px;"><strong>ADSC</strong></td>
+                    <td style="width: 150.656px;">&nbsp;</td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>40</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.1.101</strong></td>
+                    <td style="width: 117.698px;"><strong>ADSC Clinic 04</strong></td>
+                    <td style="width: 61.75px;"><strong>ADSC</strong></td>
+                    <td style="width: 150.656px;">&nbsp;</td>
+                </tr>
+                <tr style="text-align: center;">
+                    <td style="width: 44.1979px;"><strong>41</strong></td>
+                    <td style="width: 117.698px;"><strong>172.19.13.237</strong></td>
+                    <td style="width: 117.698px;"><strong>ER Self Reg</strong></td>
+                    <td style="width: 61.75px;"><strong>ER</strong></td>
+                    <td style="width: 150.656px;">&nbsp;</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

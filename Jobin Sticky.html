@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Pro · reminders & highlights</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0a0e17;
+            background-image: radial-gradient(circle at 15% 30%, #1f3348 0%, #0b111c 90%);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            display: flex;
+            justify-content: center;
+            animation: bgPulse 8s infinite alternate ease-in-out;
+        }
+
+        @keyframes bgPulse {
+            0% { background-color: #0a0e17; }
+            100% { background-color: #0f1825; }
+        }
+
+        .app-wrapper {
+            max-width: 1300px;
+            width: 100%;
+        }
+
+        /* header with glow */
+        .header-card {
+            background: rgba(18, 28, 40, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            border-radius: 40px;
+            padding: 1.2rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px -12px #00a6ff30, 0 0 0 1px #2c4c6e inset;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            animation: slideGlow 1.2s ease-out;
+        }
+
+        @keyframes slideGlow {
+            0% { opacity: 0; transform: translateY(-25px); box-shadow: 0 0 0 #00ffff00; }
+            100% { opacity: 1; transform: translateY(0); box-shadow: 0 20px 40px -12px #00a6ff30; }
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-icon {
+            background: #00b4d8;
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #0a0e17;
+            box-shadow: 0 0 15px #00b4d8aa;
+        }
+
+        .brand h1 {
+            color: white;
+            font-weight: 600;
+            font-size: 1.9rem;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 5px #00a6ff50;
+        }
+
+        .brand p {
+            color: #9cb8d9;
+            font-size: 0.9rem;
+        }
+
+        .lock-area {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #1b2637;
+            padding: 0.7rem 1.8rem;
+            border-radius: 60px;
+            border: 1px solid #2f4b70;
+            box-shadow: 0 5px 15px #00000050;
+        }
+
+        .lock-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .lock-status i {
+            font-size: 1.3rem;
+        }
+
+        .btn {
+            border: none;
+            background: #2d3f5c;
+            color: white;
+            font-weight: 600;
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            box-shadow: 0 5px 12px #00000060;
+            border: 1px solid #3d5a7c;
+        }
+
+        .btn-primary {
+            background: #0077be;
+            border: 1px solid #4aa9ff;
+        }
+
+        .btn-primary:hover {
+            background: #005f9e;
+            transform: scale(1.04);
+            box-shadow: 0 0 18px #0077be;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #4c7a9c;
+            color: #d1e2f5;
+        }
+
+        .btn-outline:hover {
+            background: #1e3450;
+            border-color: #86bafe;
+        }
+
+        .add-btn {
+            background: #0077be;
+            border: none;
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 0 15px #0077be;
+        }
+
+        .add-btn:disabled {
+            opacity: 0.3;
+            filter: grayscale(1);
+            pointer-events: none;
+            box-shadow: none;
+        }
+
+        /* notes header */
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0 1.5rem;
+        }
+
+        .notes-header h2 {
+            font-weight: 600;
+            color: #c7e2ff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 2px 5px #00000070;
+        }
+
+        /* notes grid */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .note-card {
+            background: #16202e;
+            border-radius: 32px;
+            padding: 1.2rem 1.5rem 1.2rem 1.5rem;
+            box-shadow: 0 18px 30px -8px #000000cc, 0 0 0 1px #2d4f73 inset;
+            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+            border: 1px solid #2b4b6e;
+            color: #e6f1ff;
+            animation: cardFloat 6s infinite alternate;
+        }
+
+        .note-card.reminder-set {
+            border: 2px solid #f1c40f;
+            box-shadow: 0 0 20px #f39c12, 0 18px 30px -8px #000000cc;
+        }
+
+        @keyframes cardFloat {
+            0% { box-shadow: 0 18px 30px -8px #000000cc; }
+            100% { box-shadow: 0 22px 40px -4px #0059b3; }
+        }
+
+        .note-card:hover {
+            transform: translateY(-6px);
+            border-color: #0077be;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: #c3dcff;
+            width: 100%;
+        }
+
+        .title-wrap i {
+            color: #00b4d8;
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .note-card.expanded .title-wrap i {
+            transform: rotate(90deg);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: 8px;
+            align-items: center;
+        }
+
+        .card-actions button {
+            background: none;
+            border: none;
+            color: #a0c2e5;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.1s;
+            padding: 6px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-actions button:hover {
+            background: #2a4058;
+            color: white;
+            transform: scale(1.1);
+            text-shadow: 0 0 8px #00a6ff;
+        }
+
+        .reminder-badge {
+            color: #f1c40f !important;
+        }
+
+        .note-desc {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s;
+            background: #1e2b3c;
+            margin-top: 0;
+            border-radius: 24px;
+            padding: 0 1rem;
+            border-left: 3px solid #0077be;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #cbd5e8;
+            cursor: copy;
+        }
+
+        .note-card.expanded .note-desc {
+            max-height: 450px;
+            opacity: 1;
+            margin-top: 18px;
+            padding: 1rem 1.2rem;
+        }
+
+        .desc-timestamp {
+            display: block;
+            margin-top: 12px;
+            font-size: 0.75rem;
+            color: #6b8fb0;
+            border-top: 1px dashed #2f5375;
+            padding-top: 8px;
+        }
+
+        .reminder-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #2a4055;
+            border-radius: 20px;
+            padding: 4px 12px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #f1c40f;
+            border: 1px solid #f39c12;
+        }
+
+        .copy-highlight {
+            background: #2a4b6e !important;
+            transition: background 0.2s;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem;
+            background: #101b26;
+            border-radius: 50px;
+            color: #6b93bb;
+            border: 2px dashed #2f5375;
+            font-size: 1.2rem;
+        }
+
+        /* modal dark */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 5, 15, 0.85);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeModal 0.2s;
+        }
+
+        @keyframes fadeModal {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: #1c2938;
+            width: 90%;
+            max-width: 480px;
+            border-radius: 40px;
+            padding: 2.2rem;
+            box-shadow: 0 30px 60px #000000d0, 0 0 0 1px #0077be inset;
+            animation: popModal 0.3s;
+            color: white;
+        }
+
+        @keyframes popModal {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-content h3 {
+            color: #c3dcff;
+            margin-bottom: 1.8rem;
+            font-size: 1.9rem;
+            font-weight: 600;
+        }
+
+        .modal-content input, .modal-content textarea, .modal-content select {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            background: #101b26;
+            border: 1.5px solid #2b4f77;
+            border-radius: 30px;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            transition: 0.2s;
+        }
+
+        .modal-content input:focus, .modal-content textarea:focus {
+            border-color: #0077be;
+            outline: none;
+            box-shadow: 0 0 15px #0077be70;
+            background: #0a141f;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .close-modal {
+            background: #2c4058;
+            color: white;
+            border: 1px solid #4e7097;
+        }
+
+        .save-modal {
+            background: #0077be;
+            color: white;
+            padding: 0.85rem 2.2rem;
+        }
+
+        /* password modal smaller */
+        .password-modal .modal-content {
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .password-input {
+            background: #0f1a26;
+            border: 1.5px solid #2d5980;
+            color: white;
+            padding: 1.2rem;
+            border-radius: 60px;
+            width: 100%;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* toast */
+        .copy-feedback {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e3b4f;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 60px;
+            box-shadow: 0 10px 25px #00000080;
+            font-weight: 500;
+            border-left: 5px solid #2ecc71;
+            z-index: 3000;
+            animation: fadeToast 2s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fadeToast {
+            0% { opacity: 0; transform: translateY(20px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+    </style>
+</head>
+<body>
+<div class="app-wrapper">
+
+    <!-- header with unlock/lock -->
+    <div class="header-card">
+        <div class="brand">
+            <div class="brand-icon"><i class="fas fa-ticket-alt"></i></div>
+            <div>
+                <h1>IT incident vault</h1>
+                <p><i class="fas fa-circle" style="font-size: 0.5rem; color: #5cb85c;"></i> tickets · complaints · daily notes</p>
+            </div>
+        </div>
+        <div class="lock-area" id="lockArea">
+            <div class="lock-status" id="lockStatus">
+                <i class="fas fa-lock" id="lockIcon"></i>
+                <span id="lockText">locked</span>
+            </div>
+            <button class="btn btn-primary" id="unlockBtn"><i class="fas fa-key"></i> Unlock</button>
+            <button class="btn btn-outline hidden" id="lockBtn"><i class="fas fa-lock"></i> Lock</button>
+        </div>
+    </div>
+
+    <!-- notes toolbar -->
+    <div class="notes-header">
+        <h2><i class="fas fa-clipboard-list" style="color: #0077be;"></i> all tickets <span id="noteCount"></span></h2>
+        <button class="btn add-btn" id="addNoteBtn" disabled><i class="fas fa-plus-circle"></i> new ticket</button>
+    </div>
+
+    <!-- notes grid -->
+    <div id="notesGrid" class="notes-grid"></div>
+
+    <!-- Note modal (add/edit) -->
+    <div id="noteModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle"><i class="fas fa-pen"></i> ticket</h3>
+            <input type="text" id="noteTitleInput" placeholder="short title (e.g. CRM outage)">
+            <textarea id="noteDescInput" placeholder="full description / caller / action ..." rows="4"></textarea>
+            <div class="modal-actions">
+                <button class="btn close-modal" id="cancelModalBtn"><i class="fas fa-times"></i> cancel</button>
+                <button class="btn save-modal" id="saveNoteBtn"><i class="fas fa-save"></i> save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reminder modal -->
+    <div id="reminderModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-bell" style="color: #f1c40f;"></i> set reminder</h3>
+            <input type="datetime-local" id="reminderDatetime" class="password-input" style="margin-bottom: 0.5rem;">
+            <p style="font-size:0.8rem; color:#9bb5d4; margin-bottom:1.5rem;">leave empty to clear reminder</p>
+            <div class="modal-actions">
+                <button class="btn close-modal" id="cancelReminderBtn">cancel</button>
+                <button class="btn btn-primary" id="saveReminderBtn"><i class="fas fa-check"></i> apply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password modal -->
+    <div id="passwordModal" class="modal password-modal">
+        <div class="modal-content">
+            <i class="fas fa-shield-alt" style="font-size: 3rem; color: #0077be; margin-bottom: 0.5rem;"></i>
+            <h3 style="font-size: 1.8rem;">unlock required</h3>
+            <input type="password" id="passwordInput" class="password-input" placeholder="enter password" autocomplete="off">
+            <div class="modal-actions" style="justify-content: center;">
+                <button class="btn close-modal" id="cancelPasswordBtn">cancel</button>
+                <button class="btn btn-primary" id="submitPasswordBtn"><i class="fas fa-unlock-alt"></i> unlock</button>
+            </div>
+            <p style="margin-top: 1rem; color: #95bde5; font-size: 0.9rem;">(default password: <strong>Jobin</strong>)</p>
+        </div>
+    </div>
+
+    <!-- toast -->
+    <div id="copyToast" class="copy-feedback" style="display: none;">Copied!</div>
+</div>
+
+<script>
+    (function() {
+        const VALID_PASSWORD = "Jobin";
+
+        let notes = [];
+        let isUnlocked = false;
+        let currentEditId = null;
+        let currentReminderId = null; // for reminder modal
+
+        // DOM elements
+        const lockIcon = document.getElementById('lockIcon');
+        const lockText = document.getElementById('lockText');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const lockBtn = document.getElementById('lockBtn');
+        const addNoteBtn = document.getElementById('addNoteBtn');
+        const notesGrid = document.getElementById('notesGrid');
+        const noteModal = document.getElementById('noteModal');
+        const passwordModal = document.getElementById('passwordModal');
+        const reminderModal = document.getElementById('reminderModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const noteTitleInput = document.getElementById('noteTitleInput');
+        const noteDescInput = document.getElementById('noteDescInput');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const saveNoteBtn = document.getElementById('saveNoteBtn');
+        const noteCountSpan = document.getElementById('noteCount');
+        const passwordInput = document.getElementById('passwordInput');
+        const submitPasswordBtn = document.getElementById('submitPasswordBtn');
+        const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+        const copyToast = document.getElementById('copyToast');
+        const reminderDatetime = document.getElementById('reminderDatetime');
+        const cancelReminderBtn = document.getElementById('cancelReminderBtn');
+        const saveReminderBtn = document.getElementById('saveReminderBtn');
+
+        const STORAGE_KEY = 'itpro_notes_vault';
+
+        function loadNotes() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    notes = JSON.parse(stored);
+                } catch { notes = []; }
+            }
+            if (!notes.length) {
+                const now = new Date();
+                notes = [
+                    { id: Date.now() - 500000, title: '🔴 DB server latency', description: 'Sales complaints: queries >20s. Check indexes on order table.', created: new Date(Date.now() - 86400000).toISOString(), reminder: null },
+                    { id: Date.now() - 300000, title: '📧 SMTP relay down', description: 'Marketing cannot send campaigns. Restart service required.', created: new Date(Date.now() - 172800000).toISOString(), reminder: null },
+                    { id: Date.now() - 100000, title: '🖥️ VPN auth loop', description: 'Remote user J.Smith: 2FA not accepted. Re-sync token.', created: new Date().toISOString(), reminder: null }
+                ];
+            }
+            // ensure created and reminder fields exist
+            notes.forEach(n => {
+                if (!n.created) n.created = new Date().toISOString();
+                if (!n.hasOwnProperty('reminder')) n.reminder = null;
+            });
+            saveNotes();
+        }
+
+        function saveNotes() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+        }
+
+        function showToast(msg) {
+            copyToast.textContent = msg || 'Copied!';
+            copyToast.style.display = 'block';
+            setTimeout(() => {
+                copyToast.style.display = 'none';
+            }, 2000);
+        }
+
+        function formatDateTime(isoString) {
+            if (!isoString) return '';
+            const d = new Date(isoString);
+            return d.toLocaleString();
+        }
+
+        // Copy handler (only when unlocked)
+        function attachCopyHandlers() {
+            document.querySelectorAll('.note-desc').forEach(descEl => {
+                descEl.removeEventListener('click', copyHandler);
+                descEl.addEventListener('click', copyHandler);
+            });
+        }
+
+        function copyHandler(e) {
+            if (!isUnlocked) {
+                showToast('🔒 Unlock to copy');
+                return;
+            }
+            const card = e.currentTarget.closest('.note-card');
+            if (!card) return;
+            const noteId = card.dataset.noteId;
+            const note = notes.find(n => n.id == noteId);
+            if (!note || !note.description) return;
+
+            navigator.clipboard.writeText(note.description).then(() => {
+                e.currentTarget.classList.add('copy-highlight');
+                setTimeout(() => e.currentTarget.classList.remove('copy-highlight'), 200);
+                showToast('📋 Note copied');
+            }).catch(() => showToast('Copy failed'));
+        }
+
+        function renderNotes() {
+            if (!notesGrid) return;
+            if (notes.length === 0) {
+                notesGrid.innerHTML = `<div class="empty-state"><i class="fas fa-database fa-3x" style="margin-bottom: 1rem; opacity: 0.5;"></i><br />no tickets yet. unlock and add one.</div>`;
+                noteCountSpan.innerText = '(0)';
+                return;
+            }
+
+            notes.sort((a,b) => (b.id || 0) - (a.id || 0));
+            let html = '';
+
+            notes.forEach(note => {
+                const title = note.title || 'untitled';
+                const noteId = note.id;
+                const createdStr = formatDateTime(note.created);
+                const reminderStr = note.reminder ? formatDateTime(note.reminder) : null;
+                const hasReminder = !!note.reminder;
+
+                // Build action buttons (visible only if unlocked)
+                let actionsHtml = `<div class="card-actions">`;
+                if (isUnlocked) {
+                    actionsHtml += `
+                        <button class="reminder-btn" data-id="${noteId}" title="set reminder"><i class="fas fa-bell ${hasReminder ? 'reminder-badge' : ''}"></i></button>
+                        <button class="edit-note" data-id="${noteId}" title="edit"><i class="fas fa-edit"></i></button>
+                        <button class="delete-note" data-id="${noteId}" title="delete"><i class="fas fa-trash-alt"></i></button>
+                    `;
+                }
+                actionsHtml += `</div>`;
+
+                // Description block with created and reminder info
+                let descHtml = `${escapeHtml(note.description || '').replace(/\n/g, '<br>')}`;
+                descHtml += `<span class="desc-timestamp"><i class="far fa-calendar-alt"></i> created: ${escapeHtml(createdStr)}</span>`;
+                if (reminderStr) {
+                    descHtml += `<div class="reminder-info"><i class="fas fa-bell"></i> reminder: ${escapeHtml(reminderStr)}</div>`;
+                }
+
+                const reminderClass = hasReminder ? 'reminder-set' : '';
+
+                html += `
+                    <div class="note-card ${reminderClass}" data-note-id="${noteId}" id="card-${noteId}">
+                        <div class="note-header">
+                            <div class="title-wrap">
+                                <i class="fas fa-chevron-right"></i>
+                                <span>${escapeHtml(title)}</span>
+                            </div>
+                            ${actionsHtml}
+                        </div>
+                        <div class="note-desc">${descHtml}</div>
+                    </div>
+                `;
+            });
+
+            notesGrid.innerHTML = html;
+            noteCountSpan.innerText = `(${notes.length})`;
+
+            // Expand/collapse on header
+            document.querySelectorAll('.note-card').forEach(card => {
+                const header = card.querySelector('.note-header');
+                header.addEventListener('click', function(e) {
+                    if (e.target.closest('.card-actions')) return;
+                    card.classList.toggle('expanded');
+                });
+            });
+
+            attachCopyHandlers();
+        }
+
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe.replace(/[&<>"]/g, m => {
+                if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; if(m === '"') return '&quot;';
+                return m;
+            });
+        }
+
+        function setLockState(unlocked) {
+            isUnlocked = unlocked;
+            if (unlocked) {
+                lockIcon.className = 'fas fa-lock-open';
+                lockText.innerText = 'unlocked';
+                unlockBtn.classList.add('hidden');
+                lockBtn.classList.remove('hidden');
+                addNoteBtn.disabled = false;
+            } else {
+                lockIcon.className = 'fas fa-lock';
+                lockText.innerText = 'locked';
+                unlockBtn.classList.remove('hidden');
+                lockBtn.classList.add('hidden');
+                addNoteBtn.disabled = true;
+            }
+            renderNotes();
+        }
+
+        function openNoteModal(editId = null) {
+            if (!isUnlocked) { alert('Unlock first.'); return; }
+            if (editId) {
+                const note = notes.find(n => n.id == editId);
+                if (note) {
+                    noteTitleInput.value = note.title || '';
+                    noteDescInput.value = note.description || '';
+                    currentEditId = editId;
+                    modalTitle.innerHTML = '<i class="fas fa-pen"></i> edit ticket';
+                } else return;
+            } else {
+                noteTitleInput.value = '';
+                noteDescInput.value = '';
+                currentEditId = null;
+                modalTitle.innerHTML = '<i class="fas fa-plus-circle"></i> new ticket';
+            }
+            noteModal.style.display = 'flex';
+        }
+
+        function closeNoteModal() { noteModal.style.display = 'none'; }
+        function openPasswordModal() { passwordInput.value = ''; passwordModal.style.display = 'flex'; }
+        function closePasswordModal() { passwordModal.style.display = 'none'; }
+        function closeReminderModal() { reminderModal.style.display = 'none'; currentReminderId = null; }
+
+        function handleSaveNote() {
+            if (!isUnlocked) { closeNoteModal(); return; }
+            const title = noteTitleInput.value.trim();
+            const desc = noteDescInput.value.trim();
+            if (!title || !desc) {
+                alert('Both title and description required.');
+                return;
+            }
+            if (currentEditId) {
+                const idx = notes.findIndex(n => n.id == currentEditId);
+                if (idx !== -1) {
+                    notes[idx].title = title;
+                    notes[idx].description = desc;
+                    // don't update created
+                }
+            } else {
+                const newNote = {
+                    id: Date.now() + Math.floor(Math.random()*1000),
+                    title: title,
+                    description: desc,
+                    created: new Date().toISOString(),
+                    reminder: null
+                };
+                notes.push(newNote);
+            }
+            saveNotes();
+            renderNotes();
+            closeNoteModal();
+        }
+
+        function deleteNoteById(id) {
+            if (!isUnlocked) { alert('Unlock to delete'); return; }
+            if (confirm('Delete this ticket permanently?')) {
+                notes = notes.filter(n => n.id != id);
+                saveNotes();
+                renderNotes();
+            }
+        }
+
+        function openReminderModal(noteId) {
+            if (!isUnlocked) { alert('Unlock to set reminder'); return; }
+            const note = notes.find(n => n.id == noteId);
+            if (!note) return;
+            currentReminderId = noteId;
+            // set datetime-local value from existing reminder (if any)
+            if (note.reminder) {
+                // format to YYYY-MM-DDTHH:mm
+                const d = new Date(note.reminder);
+                const year = d.getFullYear();
+                const month = String(d.getMonth()+1).padStart(2,'0');
+                const day = String(d.getDate()).padStart(2,'0');
+                const hours = String(d.getHours()).padStart(2,'0');
+                const mins = String(d.getMinutes()).padStart(2,'0');
+                reminderDatetime.value = `${year}-${month}-${day}T${hours}:${mins}`;
+            } else {
+                reminderDatetime.value = '';
+            }
+            reminderModal.style.display = 'flex';
+        }
+
+        function handleSaveReminder() {
+            if (!currentReminderId || !isUnlocked) { closeReminderModal(); return; }
+            const idx = notes.findIndex(n => n.id == currentReminderId);
+            if (idx === -1) return;
+            const datetimeValue = reminderDatetime.value; // string or empty
+            if (datetimeValue) {
+                // store as ISO string
+                const reminderDate = new Date(datetimeValue);
+                if (!isNaN(reminderDate.getTime())) {
+                    notes[idx].reminder = reminderDate.toISOString();
+                } else {
+                    notes[idx].reminder = null;
+                }
+            } else {
+                notes[idx].reminder = null;
+            }
+            saveNotes();
+            renderNotes();
+            closeReminderModal();
+        }
+
+        // Event listeners
+        unlockBtn.addEventListener('click', openPasswordModal);
+        lockBtn.addEventListener('click', () => setLockState(false));
+        submitPasswordBtn.addEventListener('click', function() {
+            if (passwordInput.value.trim() === VALID_PASSWORD) {
+                setLockState(true);
+                closePasswordModal();
+            } else {
+                alert('Incorrect password. Hint: "Jobin" (case-sensitive)');
+            }
+        });
+        cancelPasswordBtn.addEventListener('click', closePasswordModal);
+        window.addEventListener('click', (e) => {
+            if (e.target === passwordModal) closePasswordModal();
+            if (e.target === noteModal) closeNoteModal();
+            if (e.target === reminderModal) closeReminderModal();
+        });
+
+        addNoteBtn.addEventListener('click', () => openNoteModal(null));
+
+        // grid delegation for edit/delete/reminder
+        notesGrid.addEventListener('click', (e) => {
+            const editBtn = e.target.closest('.edit-note');
+            const deleteBtn = e.target.closest('.delete-note');
+            const reminderBtn = e.target.closest('.reminder-btn');
+
+            if (reminderBtn) {
+                e.stopPropagation();
+                const id = reminderBtn.getAttribute('data-id');
+                if (id) openReminderModal(id);
+            } else if (editBtn) {
+                e.stopPropagation();
+                if (!isUnlocked) { alert('Unlock to edit'); return; }
+                const id = editBtn.getAttribute('data-id');
+                if (id) openNoteModal(id);
+            } else if (deleteBtn) {
+                e.stopPropagation();
+                if (!isUnlocked) { alert('Unlock to delete'); return; }
+                const id = deleteBtn.getAttribute('data-id');
+                if (id) deleteNoteById(id);
+            }
+        });
+
+        cancelModalBtn.addEventListener('click', closeNoteModal);
+        saveNoteBtn.addEventListener('click', handleSaveNote);
+        cancelReminderBtn.addEventListener('click', closeReminderModal);
+        saveReminderBtn.addEventListener('click', handleSaveReminder);
+
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submitPasswordBtn.click();
+        });
+
+        // initial
+        loadNotes();
+        setLockState(false);
+    })();
+</script>
+</body>
+</html>

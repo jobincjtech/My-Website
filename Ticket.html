@@ -1,0 +1,3705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Ticket Tracking System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #9b59b6;
+            --purple-color: #8e44ad;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --border-radius: 10px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fb 0%, #e8edf5 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #1a2530);
+            color: white;
+            padding: 25px 30px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+        }
+        
+        .header-left h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header-left h1 i {
+            color: var(--secondary-color);
+            text-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .header-left p {
+            color: #bdc3c7;
+            font-size: 16px;
+            margin-left: 45px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .admin-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .admin-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--success-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Password Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            font-size: 20px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal-body {
+            margin-bottom: 25px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        /* Module Selection Page */
+        .module-selection {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .module-selection h2 {
+            font-size: 32px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .module-selection p {
+            color: #7f8c8d;
+            font-size: 18px;
+            margin-bottom: 50px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .module-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .module-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 40px 30px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+        
+        .module-card.tickets::before {
+            background: linear-gradient(90deg, var(--secondary-color), #2980b9);
+        }
+        
+        .module-card.issues::before {
+            background: linear-gradient(90deg, var(--danger-color), #c0392b);
+        }
+        
+        .module-card.implementations::before {
+            background: linear-gradient(90deg, var(--purple-color), #8e44ad);
+        }
+        
+        .module-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--secondary-color);
+        }
+        
+        .module-card.tickets:hover {
+            border-color: var(--secondary-color);
+        }
+        
+        .module-card.issues:hover {
+            border-color: var(--danger-color);
+        }
+        
+        .module-card.implementations:hover {
+            border-color: var(--purple-color);
+        }
+        
+        .module-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            height: 100px;
+            width: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .module-card.tickets .module-icon {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2));
+            color: var(--secondary-color);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .module-card.issues .module-icon {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.2));
+            color: var(--danger-color);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
+        }
+        
+        .module-card.implementations .module-icon {
+            background: linear-gradient(135deg, rgba(142, 68, 173, 0.1), rgba(142, 68, 173, 0.2));
+            color: var(--purple-color);
+            box-shadow: 0 5px 15px rgba(142, 68, 173, 0.2);
+        }
+        
+        .module-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .module-card p {
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .stats-card {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #95a5a6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .tickets .stat-value {
+            color: var(--secondary-color);
+        }
+        
+        .issues .stat-value {
+            color: var(--danger-color);
+        }
+        
+        .implementations .stat-value {
+            color: var(--purple-color);
+        }
+        
+        /* Module View */
+        .module-view {
+            display: none;
+        }
+        
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 25px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .module-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .module-title h2 {
+            font-size: 28px;
+            color: var(--primary-color);
+        }
+        
+        .back-to-modules {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2);
+        }
+        
+        .back-to-modules:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .module-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            font-size: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #1a2530);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #219653);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #e67e22);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #c0392b);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+        }
+        
+        .btn-purple {
+            background: linear-gradient(135deg, var(--purple-color), #8e44ad);
+            color: white;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-card h3 {
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .stat-item.pending {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(243, 156, 18, 0.2));
+            color: var(--warning-color);
+        }
+        
+        .stat-item.in-progress {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2));
+            color: var(--secondary-color);
+        }
+        
+        .stat-item.resolved {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(39, 174, 96, 0.2));
+            color: var(--success-color);
+        }
+        
+        .stat-item.new-impl {
+            background: linear-gradient(135deg, rgba(142, 68, 173, 0.1), rgba(142, 68, 173, 0.2));
+            color: var(--purple-color);
+        }
+        
+        .stat-value-lg {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label-lg {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+        }
+        
+        .chart-container h3 {
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-placeholder {
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 8px;
+            color: #95a5a6;
+            font-size: 18px;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        /* Form Container */
+        .form-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .form-header {
+            padding: 20px 30px;
+            background: linear-gradient(to right, var(--secondary-color), #2980b9);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .form-header h3 {
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-body {
+            padding: 30px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-full-width {
+            grid-column: span 2;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+        
+        input, select, textarea {
+            padding: 14px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Table Container */
+        .table-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+        }
+        
+        th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom: 2px solid #eee;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        
+        tr {
+            transition: var(--transition);
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .item-row {
+            cursor: pointer;
+        }
+        
+        .item-details {
+            display: none;
+            background-color: #f8f9fa;
+        }
+        
+        .item-details.active {
+            display: table-row;
+        }
+        
+        .details-cell {
+            padding: 0;
+        }
+        
+        .details-content {
+            padding: 25px 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .detail-group {
+            margin-bottom: 15px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .detail-value {
+            color: #555;
+            font-size: 15px;
+        }
+        
+        .full-width-detail {
+            grid-column: span 2;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            display: inline-block;
+            min-width: 100px;
+        }
+        
+        .status-pending {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.15), rgba(243, 156, 18, 0.25));
+            color: var(--warning-color);
+        }
+        
+        .status-in-progress {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.25));
+            color: var(--secondary-color);
+        }
+        
+        .status-resolved, .status-completed {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.15), rgba(39, 174, 96, 0.25));
+            color: var(--success-color);
+        }
+        
+        .status-on-hold {
+            background: linear-gradient(135deg, rgba(149, 165, 166, 0.15), rgba(149, 165, 166, 0.25));
+            color: #7f8c8d;
+        }
+        
+        .priority-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            display: inline-block;
+            min-width: 70px;
+        }
+        
+        .priority-high {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.25));
+            color: var(--danger-color);
+        }
+        
+        .priority-medium {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.15), rgba(243, 156, 18, 0.25));
+            color: var(--warning-color);
+        }
+        
+        .priority-low {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.25));
+            color: var(--secondary-color);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
+        }
+        
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+        
+        .empty-state h3 {
+            font-size: 22px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            font-size: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .old-item {
+            background-color: #fff8e1;
+        }
+        
+        .very-old-item {
+            background-color: #ffebee;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--primary-color);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 25px;
+            color: #7f8c8d;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+        }
+        
+        .sort-controls {
+            display: flex;
+            justify-content: flex-end;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sort-controls select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            min-width: 180px;
+        }
+        
+        .item-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .item-main {
+            flex: 1;
+        }
+        
+        .item-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+        
+        .item-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        .item-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .expand-icon {
+            color: #bdc3c7;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+        
+        .item-row.expanded .expand-icon {
+            transform: rotate(180deg);
+            color: var(--secondary-color);
+        }
+        
+        /* Alert */
+        .alert {
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+        
+        .alert-warning {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(243, 156, 18, 0.2));
+            border-left: 4px solid var(--warning-color);
+            color: var(--warning-color);
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.2));
+            border-left: 4px solid var(--danger-color);
+            color: var(--danger-color);
+        }
+        
+        /* File Save Button */
+        .file-save-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            background: linear-gradient(135deg, var(--success-color), #219653);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+            transition: var(--transition);
+        }
+        
+        .file-save-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4);
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: var(--primary-color);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-fill.pending {
+            background: linear-gradient(90deg, var(--warning-color), #f7b731);
+        }
+        
+        .progress-fill.in-progress {
+            background: linear-gradient(90deg, var(--secondary-color), #45aaf2);
+        }
+        
+        .progress-fill.resolved {
+            background: linear-gradient(90deg, var(--success-color), #26de81);
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none;
+        }
+        
+        .active-module {
+            display: block;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        @media (max-width: 1200px) {
+            .module-cards {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-full-width {
+                grid-column: span 1;
+            }
+            
+            .details-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .full-width-detail {
+                grid-column: span 1;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .module-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .module-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .file-save-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Modal -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-lock"></i> Admin Authentication</h3>
+                <button class="btn btn-small btn-secondary" id="closePasswordModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="adminPassword">Enter Admin Password</label>
+                    <input type="password" id="adminPassword" placeholder="Enter password to enable Admin Mode">
+                    <small style="color: #7f8c8d; margin-top: 5px; display: block;">Default password: jobin</small>
+                </div>
+                <div id="passwordError" style="color: var(--danger-color); margin-top: 10px; display: none;">
+                    <i class="fas fa-exclamation-circle"></i> Incorrect password!
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelPassword">Cancel</button>
+                <button class="btn btn-success" id="submitPassword">Submit</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Clear Data Confirmation Modal -->
+    <div class="modal-overlay" id="clearDataModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Confirm Data Deletion</h3>
+                <button class="btn btn-small btn-secondary" id="closeClearDataModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to clear ALL data? This action cannot be undone.</p>
+                <p style="margin-top: 10px; font-size: 14px; color: var(--danger-color);">
+                    <i class="fas fa-exclamation-circle"></i> All tickets, issues, and implementations will be permanently deleted.
+                </p>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label for="clearDataPassword">Enter Admin Password to confirm</label>
+                    <input type="password" id="clearDataPassword" placeholder="Enter admin password">
+                </div>
+                <div id="clearDataError" style="color: var(--danger-color); margin-top: 10px; display: none;">
+                    <i class="fas fa-exclamation-circle"></i> Incorrect password!
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelClearData">Cancel</button>
+                <button class="btn btn-danger" id="confirmClearData">Clear All Data</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1><i class="fas fa-ticket-alt"></i> IT Ticket Tracking System</h1>
+                <p>Professional IT issue management and tracking solution</p>
+            </div>
+            <div class="admin-controls">
+                <div class="admin-toggle">
+                    <span>Admin Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="adminToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button class="btn btn-danger" id="clearDataBtn">
+                    <i class="fas fa-trash-alt"></i> Clear Data
+                </button>
+            </div>
+        </header>
+        
+        <!-- File Save Button -->
+        <button class="file-save-btn" id="saveToFileBtn">
+            <i class="fas fa-download"></i> Save Data to File
+        </button>
+        
+        <!-- Module Selection Page -->
+        <div class="module-selection" id="moduleSelection">
+            <h2>Select Tracking Module</h2>
+            <p>Choose a module to track and manage IT tickets, issues, or new implementations. Each module is designed for specific tracking needs.</p>
+            
+            <div class="module-cards">
+                <div class="module-card tickets" data-module="tickets">
+                    <div class="module-icon">
+                        <i class="fas fa-list-alt"></i>
+                    </div>
+                    <h3>Tickets</h3>
+                    <p>Track all IT support tickets with details like ticket number, technicians, and status. Ideal for daily IT support operations.</p>
+                    <div class="stats-card">
+                        <div class="stat">
+                            <div class="stat-value" id="ticketPendingCount">0</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="ticketInProgressCount">0</div>
+                            <div class="stat-label">In Progress</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="ticketResolvedCount">0</div>
+                            <div class="stat-label">Resolved</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="module-card issues" data-module="issues">
+                    <div class="module-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Pending Issues</h3>
+                    <p>Focus on pending and ongoing issues with priority tracking. Export or print pending issues for follow-up.</p>
+                    <div class="stats-card">
+                        <div class="stat">
+                            <div class="stat-value" id="issuePendingCount">0</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="issueInProgressCount">0</div>
+                            <div class="stat-label">In Progress</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="issueResolvedCount">0</div>
+                            <div class="stat-label">Resolved</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="module-card implementations" data-module="implementations">
+                    <div class="module-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>New Implementations</h3>
+                    <p>Track new feature requests and implementations. Manage project status, priority, and assignment.</p>
+                    <div class="stats-card">
+                        <div class="stat">
+                            <div class="stat-value" id="implPendingCount">0</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="implInProgressCount">0</div>
+                            <div class="stat-label">In Progress</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="implCompletedCount">0</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Section -->
+            <div class="dashboard-cards">
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-chart-pie"></i> Overall Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item pending">
+                            <div class="stat-value-lg" id="overallPending">0</div>
+                            <div class="stat-label-lg">Total Pending</div>
+                        </div>
+                        <div class="stat-item in-progress">
+                            <div class="stat-value-lg" id="overallInProgress">0</div>
+                            <div class="stat-label-lg">Total In Progress</div>
+                        </div>
+                        <div class="stat-item resolved">
+                            <div class="stat-value-lg" id="overallResolved">0</div>
+                            <div class="stat-label-lg">Total Resolved</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-clock"></i> Old Items Alert</h3>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Items pending >5 days</span>
+                            <span id="oldItemsPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill pending" id="oldItemsProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 14px; color: #7f8c8d;">
+                        <i class="fas fa-info-circle"></i> <span id="oldItemsCount">0</span> items have been pending for more than 5 days
+                    </p>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-database"></i> Data Summary</h3>
+                    <div style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Tickets:</span>
+                            <span id="totalTickets">0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Issues:</span>
+                            <span id="totalIssues">0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Implementations:</span>
+                            <span id="totalImplementations">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chart Section -->
+            <div class="chart-container">
+                <h3><i class="fas fa-chart-bar"></i> Status Distribution</h3>
+                <div class="chart-placeholder" id="statusChart">
+                    <i class="fas fa-chart-pie" style="font-size: 48px; color: #bdc3c7;"></i>
+                    <p>Status distribution chart will be shown here</p>
+                    <div style="display: flex; gap: 20px; margin-top: 20px;">
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <div style="width: 15px; height: 15px; background-color: var(--warning-color); border-radius: 3px;"></div>
+                            <span>Pending</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <div style="width: 15px; height: 15px; background-color: var(--secondary-color); border-radius: 3px;"></div>
+                            <span>In Progress</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <div style="width: 15px; height: 15px; background-color: var(--success-color); border-radius: 3px;"></div>
+                            <span>Resolved/Completed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <p>Data is stored locally in your browser. Click "Save Data to File" to backup your data.</p>
+                <p><i class="fas fa-lock"></i> Admin Mode requires password authentication</p>
+            </div>
+        </div>
+        
+        <!-- Tickets Module -->
+        <div class="module-view" id="ticketsModule">
+            <div class="module-header">
+                <div class="module-title">
+                    <button class="back-to-modules">
+                        <i class="fas fa-arrow-left"></i> Back to Modules
+                    </button>
+                    <h2><i class="fas fa-list-alt"></i> Tickets Management</h2>
+                </div>
+                <div class="module-actions">
+                    <button class="btn btn-info" id="exportTicketsBtn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="btn btn-primary" id="addTicketBtn">
+                        <i class="fas fa-plus"></i> Add New Ticket
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-cards">
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-chart-pie"></i> Tickets Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item pending">
+                            <div class="stat-value-lg" id="ticketPendingStats">0</div>
+                            <div class="stat-label-lg">Pending</div>
+                        </div>
+                        <div class="stat-item in-progress">
+                            <div class="stat-value-lg" id="ticketInProgressStats">0</div>
+                            <div class="stat-label-lg">In Progress</div>
+                        </div>
+                        <div class="stat-item resolved">
+                            <div class="stat-value-lg" id="ticketResolvedStats">0</div>
+                            <div class="stat-label-lg">Resolved</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-clock"></i> Priority Distribution</h3>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>High Priority</span>
+                            <span id="ticketHighPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill pending" id="ticketHighProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Medium Priority</span>
+                            <span id="ticketMediumPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill in-progress" id="ticketMediumProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Low Priority</span>
+                            <span id="ticketLowPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill resolved" id="ticketLowProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-calendar"></i> Recent Activity</h3>
+                    <div style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Last Added:</span>
+                            <span id="ticketLastAdded">None</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Last Updated:</span>
+                            <span id="ticketLastUpdated">None</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Oldest Pending:</span>
+                            <span id="ticketOldestPending">None</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="ticketAlert" class="alert alert-warning hidden">
+                <div>
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="ticketAlertText">There are <span id="oldTicketsCount">0</span> tickets pending for more than 5 days</span>
+                </div>
+                <button class="btn btn-warning btn-small" id="showOldTicketsBtn">View</button>
+            </div>
+            
+            <div class="form-container" id="ticketFormContainer">
+                <div class="form-header">
+                    <h3><i class="fas fa-ticket-alt"></i> <span id="ticketFormTitle">Add New Ticket</span></h3>
+                    <button class="btn btn-small btn-secondary" id="closeTicketForm">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+                <div class="form-body">
+                    <form id="ticketForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ticketDate">Date</label>
+                                <input type="date" id="ticketDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ticketNumber">Ticket Number</label>
+                                <input type="text" id="ticketNumber" placeholder="TKT-2023-001" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ticketIssue">Issue Title</label>
+                                <input type="text" id="ticketIssue" placeholder="Brief issue title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ticketPriority">Priority</label>
+                                <select id="ticketPriority" required>
+                                    <option value="">Select Priority</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group form-full-width">
+                                <label for="ticketDescription">Description</label>
+                                <textarea id="ticketDescription" placeholder="Detailed description of the issue..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="createdTech">Created By</label>
+                                <input type="text" id="createdTech" placeholder="Technician name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="assignedTech">Assigned To</label>
+                                <input type="text" id="assignedTech" placeholder="Technician name" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ticketStatus">Status</label>
+                                <select id="ticketStatus" required>
+                                    <option value="">Select Status</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Resolved">Resolved</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ticketCategory">Category</label>
+                                <select id="ticketCategory">
+                                    <option value="">Select Category</option>
+                                    <option value="Hardware">Hardware</option>
+                                    <option value="Software">Software</option>
+                                    <option value="Network">Network</option>
+                                    <option value="Security">Security</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="cancelTicketBtn">Cancel</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Save Ticket
+                            </button>
+                        </div>
+                        <input type="hidden" id="ticketId">
+                    </form>
+                </div>
+            </div>
+            
+            <div class="sort-controls">
+                <select id="ticketSort">
+                    <option value="status">Sort by Status (Pending First)</option>
+                    <option value="priority">Sort by Priority (High First)</option>
+                    <option value="date">Sort by Date (Newest First)</option>
+                </select>
+            </div>
+            
+            <div class="table-container">
+                <table id="ticketsTable">
+                    <thead>
+                        <tr>
+                            <th width="100">Date</th>
+                            <th>Issue Title & Details</th>
+                            <th width="120">Ticket #</th>
+                            <th width="100">Priority</th>
+                            <th width="120">Status</th>
+                            <th width="120">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ticketsBody">
+                        <!-- Tickets will be loaded here -->
+                    </tbody>
+                </table>
+                <div id="ticketsEmptyState" class="empty-state hidden">
+                    <i class="fas fa-ticket-alt"></i>
+                    <h3>No Tickets Found</h3>
+                    <p>You haven't added any tickets yet. Click "Add New Ticket" to create your first ticket.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Issues Module -->
+        <div class="module-view" id="issuesModule">
+            <div class="module-header">
+                <div class="module-title">
+                    <button class="back-to-modules">
+                        <i class="fas fa-arrow-left"></i> Back to Modules
+                    </button>
+                    <h2><i class="fas fa-exclamation-triangle"></i> Pending Issues</h2>
+                </div>
+                <div class="module-actions">
+                    <button class="btn btn-info" id="printIssuesBtn">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                    <button class="btn btn-info" id="exportIssuesBtn">
+                        <i class="fas fa-download"></i> Export CSV
+                    </button>
+                    <button class="btn btn-primary" id="addIssueBtn">
+                        <i class="fas fa-plus"></i> Add New Issue
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-cards">
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-chart-pie"></i> Issues Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item pending">
+                            <div class="stat-value-lg" id="issuePendingStats">0</div>
+                            <div class="stat-label-lg">Pending</div>
+                        </div>
+                        <div class="stat-item in-progress">
+                            <div class="stat-value-lg" id="issueInProgressStats">0</div>
+                            <div class="stat-label-lg">In Progress</div>
+                        </div>
+                        <div class="stat-item resolved">
+                            <div class="stat-value-lg" id="issueResolvedStats">0</div>
+                            <div class="stat-label-lg">Resolved</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-clock"></i> Priority Distribution</h3>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>High Priority</span>
+                            <span id="issueHighPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill pending" id="issueHighProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Medium Priority</span>
+                            <span id="issueMediumPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill in-progress" id="issueMediumProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Low Priority</span>
+                            <span id="issueLowPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill resolved" id="issueLowProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-calendar"></i> Recent Activity</h3>
+                    <div style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Last Added:</span>
+                            <span id="issueLastAdded">None</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Last Updated:</span>
+                            <span id="issueLastUpdated">None</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Oldest Pending:</span>
+                            <span id="issueOldestPending">None</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="issueAlert" class="alert alert-danger hidden">
+                <div>
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="issueAlertText">There are <span id="oldIssuesCount">0</span> issues pending for more than 5 days</span>
+                </div>
+                <button class="btn btn-danger btn-small" id="showOldIssuesBtn">View</button>
+            </div>
+            
+            <div class="form-container" id="issueFormContainer">
+                <div class="form-header">
+                    <h3><i class="fas fa-exclamation-triangle"></i> <span id="issueFormTitle">Add New Issue</span></h3>
+                    <button class="btn btn-small btn-secondary" id="closeIssueForm">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+                <div class="form-body">
+                    <form id="issueForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="issueDate">Reported Date</label>
+                                <input type="date" id="issueDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="issueTicketNumber">Ticket Number</label>
+                                <input type="text" id="issueTicketNumber" placeholder="TKT-2023-001" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="issueTitle">Issue Title</label>
+                                <input type="text" id="issueTitle" placeholder="Brief issue title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="issuePriority">Priority</label>
+                                <select id="issuePriority" required>
+                                    <option value="">Select Priority</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group form-full-width">
+                                <label for="issueDescription">Description</label>
+                                <textarea id="issueDescription" placeholder="Detailed description of the issue..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="reportedBy">Reported By</label>
+                                <input type="text" id="reportedBy" placeholder="Person who reported" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="assignedBy">Assigned By</label>
+                                <input type="text" id="assignedBy" placeholder="Person who assigned" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="issueStatus">Status</label>
+                                <select id="issueStatus" required>
+                                    <option value="">Select Status</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Resolved">Resolved</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="issueCategory">Category</label>
+                                <select id="issueCategory">
+                                    <option value="">Select Category</option>
+                                    <option value="Critical">Critical</option>
+                                    <option value="High Priority">High Priority</option>
+                                    <option value="Medium Priority">Medium Priority</option>
+                                    <option value="Low Priority">Low Priority</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="cancelIssueBtn">Cancel</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Save Issue
+                            </button>
+                        </div>
+                        <input type="hidden" id="issueId">
+                    </form>
+                </div>
+            </div>
+            
+            <div class="sort-controls">
+                <select id="issueSort">
+                    <option value="status">Sort by Status (Pending First)</option>
+                    <option value="priority">Sort by Priority (High First)</option>
+                    <option value="date">Sort by Date (Newest First)</option>
+                </select>
+            </div>
+            
+            <div class="table-container">
+                <table id="issuesTable">
+                    <thead>
+                        <tr>
+                            <th width="100">Reported Date</th>
+                            <th>Issue Title & Details</th>
+                            <th width="120">Reported By</th>
+                            <th width="100">Priority</th>
+                            <th width="120">Status</th>
+                            <th width="120">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="issuesBody">
+                        <!-- Issues will be loaded here -->
+                    </tbody>
+                </table>
+                <div id="issuesEmptyState" class="empty-state hidden">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>No Issues Found</h3>
+                    <p>You haven't added any issues yet. Click "Add New Issue" to create your first issue.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Implementations Module -->
+        <div class="module-view" id="implementationsModule">
+            <div class="module-header">
+                <div class="module-title">
+                    <button class="back-to-modules">
+                        <i class="fas fa-arrow-left"></i> Back to Modules
+                    </button>
+                    <h2><i class="fas fa-rocket"></i> New Implementations</h2>
+                </div>
+                <div class="module-actions">
+                    <button class="btn btn-info" id="exportImplBtn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="btn btn-primary" id="addImplBtn">
+                        <i class="fas fa-plus"></i> Add New Implementation
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-cards">
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-chart-pie"></i> Implementation Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item pending">
+                            <div class="stat-value-lg" id="implPendingStats">0</div>
+                            <div class="stat-label-lg">Pending</div>
+                        </div>
+                        <div class="stat-item in-progress">
+                            <div class="stat-value-lg" id="implInProgressStats">0</div>
+                            <div class="stat-label-lg">In Progress</div>
+                        </div>
+                        <div class="stat-item resolved">
+                            <div class="stat-value-lg" id="implCompletedStats">0</div>
+                            <div class="stat-label-lg">Completed</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-clock"></i> Priority Distribution</h3>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>High Priority</span>
+                            <span id="implHighPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill pending" id="implHighProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Medium Priority</span>
+                            <span id="implMediumPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill in-progress" id="implMediumProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Low Priority</span>
+                            <span id="implLowPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill resolved" id="implLowProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-calendar"></i> Recent Activity</h3>
+                    <div style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Last Added:</span>
+                            <span id="implLastAdded">None</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Last Updated:</span>
+                            <span id="implLastUpdated">None</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Oldest Pending:</span>
+                            <span id="implOldestPending">None</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="implAlert" class="alert alert-warning hidden">
+                <div>
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="implAlertText">There are <span id="oldImplCount">0</span> implementations pending for more than 5 days</span>
+                </div>
+                <button class="btn btn-warning btn-small" id="showOldImplBtn">View</button>
+            </div>
+            
+            <div class="form-container" id="implFormContainer">
+                <div class="form-header">
+                    <h3><i class="fas fa-rocket"></i> <span id="implFormTitle">Add New Implementation</span></h3>
+                    <button class="btn btn-small btn-secondary" id="closeImplForm">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+                <div class="form-body">
+                    <form id="implForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="implDate">Request Date</label>
+                                <input type="date" id="implDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="implNumber">Request #</label>
+                                <input type="text" id="implNumber" placeholder="IMP-2023-001" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="implTitle">Implementation Title</label>
+                                <input type="text" id="implTitle" placeholder="Title of the new implementation" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="implPriority">Priority</label>
+                                <select id="implPriority" required>
+                                    <option value="">Select Priority</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group form-full-width">
+                                <label for="implDescription">Description</label>
+                                <textarea id="implDescription" placeholder="Detailed description of the implementation..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="requestedBy">Requested By</label>
+                                <input type="text" id="requestedBy" placeholder="Person/department" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="assignedToImpl">Assigned To</label>
+                                <input type="text" id="assignedToImpl" placeholder="Person/team assigned" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="implStatus">Status</label>
+                                <select id="implStatus" required>
+                                    <option value="">Select Status</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="On Hold">On Hold</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="implCategory">Category</label>
+                                <select id="implCategory">
+                                    <option value="">Select Category</option>
+                                    <option value="New Feature">New Feature</option>
+                                    <option value="Enhancement">Enhancement</option>
+                                    <option value="Integration">Integration</option>
+                                    <option value="Upgrade">Upgrade</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="cancelImplBtn">Cancel</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Save Implementation
+                            </button>
+                        </div>
+                        <input type="hidden" id="implId">
+                    </form>
+                </div>
+            </div>
+            
+            <div class="sort-controls">
+                <select id="implSort">
+                    <option value="status">Sort by Status (Pending First)</option>
+                    <option value="priority">Sort by Priority (High First)</option>
+                    <option value="date">Sort by Date (Newest First)</option>
+                </select>
+            </div>
+            
+            <div class="table-container">
+                <table id="implTable">
+                    <thead>
+                        <tr>
+                            <th width="100">Request Date</th>
+                            <th>Implementation Title & Details</th>
+                            <th width="120">Requested By</th>
+                            <th width="100">Priority</th>
+                            <th width="120">Status</th>
+                            <th width="120">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="implBody">
+                        <!-- Implementations will be loaded here -->
+                    </tbody>
+                </table>
+                <div id="implEmptyState" class="empty-state hidden">
+                    <i class="fas fa-rocket"></i>
+                    <h3>No Implementations Found</h3>
+                    <p>You haven't added any implementations yet. Click "Add New Implementation" to create your first request.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>IT Ticket Tracking System &copy; <span id="currentYear"></span> | Data is stored locally in your browser | Click "Save Data to File" to backup your data</p>
+            <p><i class="fas fa-lock"></i> Admin Mode requires password authentication | Default password: jobin</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const adminToggle = document.getElementById('adminToggle');
+        const clearDataBtn = document.getElementById('clearDataBtn');
+        const saveToFileBtn = document.getElementById('saveToFileBtn');
+        const moduleSelection = document.getElementById('moduleSelection');
+        
+        // Modals
+        const passwordModal = document.getElementById('passwordModal');
+        const clearDataModal = document.getElementById('clearDataModal');
+        
+        // Module Views
+        const ticketsModule = document.getElementById('ticketsModule');
+        const issuesModule = document.getElementById('issuesModule');
+        const implementationsModule = document.getElementById('implementationsModule');
+        
+        // Back buttons
+        const backToModulesBtns = document.querySelectorAll('.back-to-modules');
+        
+        // Module cards
+        const moduleCards = document.querySelectorAll('.module-card');
+        
+        // Data storage
+        let tickets = [];
+        let issues = [];
+        let implementations = [];
+        let isAdminMode = false;
+        let editingTicketId = null;
+        let editingIssueId = null;
+        let editingImplId = null;
+        let currentModule = null;
+        
+        // Password configuration
+        const ADMIN_PASSWORD = "jobin"; // Default password
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current year in footer
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            
+            // Set default date values in forms to today
+            const now = new Date();
+            document.getElementById('ticketDate').valueAsDate = now;
+            document.getElementById('issueDate').valueAsDate = now;
+            document.getElementById('implDate').valueAsDate = now;
+            
+            // Load data from localStorage
+            loadData();
+            
+            // Update statistics on module selection page
+            updateModuleSelectionStats();
+            updateDashboardStats();
+            
+            // Set up event listeners
+            setupEventListeners();
+        });
+        
+        // Load data from localStorage
+        function loadData() {
+            const savedTickets = localStorage.getItem('itTickets');
+            const savedIssues = localStorage.getItem('itIssues');
+            const savedImpl = localStorage.getItem('itImplementations');
+            
+            if (savedTickets) {
+                tickets = JSON.parse(savedTickets);
+            }
+            
+            if (savedIssues) {
+                issues = JSON.parse(savedIssues);
+            }
+            
+            if (savedImpl) {
+                implementations = JSON.parse(savedImpl);
+            }
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('itTickets', JSON.stringify(tickets));
+            localStorage.setItem('itIssues', JSON.stringify(issues));
+            localStorage.setItem('itImplementations', JSON.stringify(implementations));
+            
+            // Update stats on module selection page
+            updateModuleSelectionStats();
+            updateDashboardStats();
+            
+            // Update module-specific stats if in a module
+            if (currentModule === 'tickets') {
+                updateTicketStats();
+                updateTicketProgressBars();
+                updateTicketRecentActivity();
+            } else if (currentModule === 'issues') {
+                updateIssueStats();
+                updateIssueProgressBars();
+                updateIssueRecentActivity();
+            } else if (currentModule === 'implementations') {
+                updateImplStats();
+                updateImplProgressBars();
+                updateImplRecentActivity();
+            }
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Admin mode toggle - requires password
+            adminToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (!isAdminMode) {
+                    // Show password modal to enable admin mode
+                    showPasswordModal();
+                } else {
+                    // Disable admin mode immediately
+                    isAdminMode = false;
+                    this.checked = false;
+                    if (currentModule === 'tickets') renderTicketsTable();
+                    if (currentModule === 'issues') renderIssuesTable();
+                    if (currentModule === 'implementations') renderImplTable();
+                }
+            });
+            
+            // Clear data button - requires password
+            clearDataBtn.addEventListener('click', function() {
+                showClearDataModal();
+            });
+            
+            // Save data to file button
+            saveToFileBtn.addEventListener('click', function() {
+                saveDataToFile();
+            });
+            
+            // Password modal
+            document.getElementById('closePasswordModal').addEventListener('click', function() {
+                hidePasswordModal();
+            });
+            
+            document.getElementById('cancelPassword').addEventListener('click', function() {
+                hidePasswordModal();
+            });
+            
+            document.getElementById('submitPassword').addEventListener('click', function() {
+                const password = document.getElementById('adminPassword').value;
+                if (password === ADMIN_PASSWORD) {
+                    isAdminMode = true;
+                    adminToggle.checked = true;
+                    hidePasswordModal();
+                    if (currentModule === 'tickets') renderTicketsTable();
+                    if (currentModule === 'issues') renderIssuesTable();
+                    if (currentModule === 'implementations') renderImplTable();
+                    alert('Admin Mode enabled successfully!');
+                } else {
+                    document.getElementById('passwordError').style.display = 'block';
+                }
+            });
+            
+            // Clear data modal
+            document.getElementById('closeClearDataModal').addEventListener('click', function() {
+                hideClearDataModal();
+            });
+            
+            document.getElementById('cancelClearData').addEventListener('click', function() {
+                hideClearDataModal();
+            });
+            
+            document.getElementById('confirmClearData').addEventListener('click', function() {
+                const password = document.getElementById('clearDataPassword').value;
+                if (password === ADMIN_PASSWORD) {
+                    clearAllData();
+                    hideClearDataModal();
+                } else {
+                    document.getElementById('clearDataError').style.display = 'block';
+                }
+            });
+            
+            // Module selection
+            moduleCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const module = this.getAttribute('data-module');
+                    openModule(module);
+                });
+            });
+            
+            // Back to modules buttons
+            backToModulesBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    closeCurrentModule();
+                });
+            });
+            
+            // Setup module-specific event listeners
+            setupTicketsModule();
+            setupIssuesModule();
+            setupImplementationsModule();
+        }
+        
+        // Setup Tickets Module
+        function setupTicketsModule() {
+            // Add ticket button
+            document.getElementById('addTicketBtn').addEventListener('click', function() {
+                showTicketForm();
+            });
+            
+            // Close ticket form
+            document.getElementById('closeTicketForm').addEventListener('click', function() {
+                hideTicketForm();
+            });
+            
+            // Cancel ticket form
+            document.getElementById('cancelTicketBtn').addEventListener('click', function() {
+                hideTicketForm();
+            });
+            
+            // Ticket form submission
+            document.getElementById('ticketForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveTicket();
+            });
+            
+            // Ticket sort
+            document.getElementById('ticketSort').addEventListener('change', function() {
+                renderTicketsTable();
+            });
+            
+            // Export tickets
+            document.getElementById('exportTicketsBtn').addEventListener('click', function() {
+                exportTicketsToCSV();
+            });
+            
+            // Show old tickets
+            document.getElementById('showOldTicketsBtn').addEventListener('click', function() {
+                highlightOldTickets();
+            });
+        }
+        
+        // Setup Issues Module
+        function setupIssuesModule() {
+            // Add issue button
+            document.getElementById('addIssueBtn').addEventListener('click', function() {
+                showIssueForm();
+            });
+            
+            // Close issue form
+            document.getElementById('closeIssueForm').addEventListener('click', function() {
+                hideIssueForm();
+            });
+            
+            // Cancel issue form
+            document.getElementById('cancelIssueBtn').addEventListener('click', function() {
+                hideIssueForm();
+            });
+            
+            // Issue form submission
+            document.getElementById('issueForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveIssue();
+            });
+            
+            // Issue sort
+            document.getElementById('issueSort').addEventListener('change', function() {
+                renderIssuesTable();
+            });
+            
+            // Print issues
+            document.getElementById('printIssuesBtn').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Export issues
+            document.getElementById('exportIssuesBtn').addEventListener('click', function() {
+                exportIssuesToCSV();
+            });
+            
+            // Show old issues
+            document.getElementById('showOldIssuesBtn').addEventListener('click', function() {
+                highlightOldIssues();
+            });
+        }
+        
+        // Setup Implementations Module
+        function setupImplementationsModule() {
+            // Add implementation button
+            document.getElementById('addImplBtn').addEventListener('click', function() {
+                showImplForm();
+            });
+            
+            // Close implementation form
+            document.getElementById('closeImplForm').addEventListener('click', function() {
+                hideImplForm();
+            });
+            
+            // Cancel implementation form
+            document.getElementById('cancelImplBtn').addEventListener('click', function() {
+                hideImplForm();
+            });
+            
+            // Implementation form submission
+            document.getElementById('implForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveImpl();
+            });
+            
+            // Implementation sort
+            document.getElementById('implSort').addEventListener('change', function() {
+                renderImplTable();
+            });
+            
+            // Export implementations
+            document.getElementById('exportImplBtn').addEventListener('click', function() {
+                exportImplToCSV();
+            });
+            
+            // Show old implementations
+            document.getElementById('showOldImplBtn').addEventListener('click', function() {
+                highlightOldImpl();
+            });
+        }
+        
+        // Show password modal
+        function showPasswordModal() {
+            passwordModal.style.display = 'flex';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('passwordError').style.display = 'none';
+        }
+        
+        // Hide password modal
+        function hidePasswordModal() {
+            passwordModal.style.display = 'none';
+        }
+        
+        // Show clear data modal
+        function showClearDataModal() {
+            clearDataModal.style.display = 'flex';
+            document.getElementById('clearDataPassword').value = '';
+            document.getElementById('clearDataError').style.display = 'none';
+        }
+        
+        // Hide clear data modal
+        function hideClearDataModal() {
+            clearDataModal.style.display = 'none';
+        }
+        
+        // Clear all data
+        function clearAllData() {
+            localStorage.clear();
+            tickets = [];
+            issues = [];
+            implementations = [];
+            
+            // Update UI
+            updateModuleSelectionStats();
+            updateDashboardStats();
+            if (currentModule === 'tickets') {
+                renderTicketsTable();
+                updateTicketStats();
+                updateTicketProgressBars();
+                updateTicketRecentActivity();
+            }
+            if (currentModule === 'issues') {
+                renderIssuesTable();
+                updateIssueStats();
+                updateIssueProgressBars();
+                updateIssueRecentActivity();
+            }
+            if (currentModule === 'implementations') {
+                renderImplTable();
+                updateImplStats();
+                updateImplProgressBars();
+                updateImplRecentActivity();
+            }
+            
+            // Hide forms if they're open
+            hideAllForms();
+            
+            alert('All data has been cleared successfully!');
+        }
+        
+        // Save data to file
+        function saveDataToFile() {
+            const allData = {
+                tickets: tickets,
+                issues: issues,
+                implementations: implementations,
+                lastSaved: new Date().toISOString(),
+                totalItems: tickets.length + issues.length + implementations.length
+            };
+            
+            const dataStr = JSON.stringify(allData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const currentDate = new Date().toISOString().slice(0, 10);
+            const filename = `it-ticket-data-${currentDate}.json`;
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show success message
+            alert(`Data saved to file: ${filename}\nTotal items saved: ${allData.totalItems}`);
+        }
+        
+        // Open module
+        function openModule(module) {
+            moduleSelection.style.display = 'none';
+            currentModule = module;
+            
+            if (module === 'tickets') {
+                ticketsModule.classList.add('active-module');
+                renderTicketsTable();
+                updateTicketStats();
+                updateTicketProgressBars();
+                updateTicketRecentActivity();
+            } else if (module === 'issues') {
+                issuesModule.classList.add('active-module');
+                renderIssuesTable();
+                updateIssueStats();
+                updateIssueProgressBars();
+                updateIssueRecentActivity();
+            } else if (module === 'implementations') {
+                implementationsModule.classList.add('active-module');
+                renderImplTable();
+                updateImplStats();
+                updateImplProgressBars();
+                updateImplRecentActivity();
+            }
+        }
+        
+        // Close current module
+        function closeCurrentModule() {
+            ticketsModule.classList.remove('active-module');
+            issuesModule.classList.remove('active-module');
+            implementationsModule.classList.remove('active-module');
+            
+            hideAllForms();
+            
+            moduleSelection.style.display = 'block';
+            currentModule = null;
+            
+            // Update stats on module selection page
+            updateModuleSelectionStats();
+            updateDashboardStats();
+        }
+        
+        // Show ticket form
+        function showTicketForm() {
+            resetTicketForm();
+            document.getElementById('ticketFormContainer').style.display = 'block';
+            document.getElementById('ticketFormTitle').textContent = 'Add New Ticket';
+            document.getElementById('ticketDate').valueAsDate = new Date();
+        }
+        
+        // Hide ticket form
+        function hideTicketForm() {
+            document.getElementById('ticketFormContainer').style.display = 'none';
+            resetTicketForm();
+        }
+        
+        // Show issue form
+        function showIssueForm() {
+            resetIssueForm();
+            document.getElementById('issueFormContainer').style.display = 'block';
+            document.getElementById('issueFormTitle').textContent = 'Add New Issue';
+            document.getElementById('issueDate').valueAsDate = new Date();
+        }
+        
+        // Hide issue form
+        function hideIssueForm() {
+            document.getElementById('issueFormContainer').style.display = 'none';
+            resetIssueForm();
+        }
+        
+        // Show implementation form
+        function showImplForm() {
+            resetImplForm();
+            document.getElementById('implFormContainer').style.display = 'block';
+            document.getElementById('implFormTitle').textContent = 'Add New Implementation';
+            document.getElementById('implDate').valueAsDate = new Date();
+        }
+        
+        // Hide implementation form
+        function hideImplForm() {
+            document.getElementById('implFormContainer').style.display = 'none';
+            resetImplForm();
+        }
+        
+        // Hide all forms
+        function hideAllForms() {
+            hideTicketForm();
+            hideIssueForm();
+            hideImplForm();
+        }
+        
+        // Reset ticket form
+        function resetTicketForm() {
+            document.getElementById('ticketForm').reset();
+            document.getElementById('ticketId').value = '';
+            editingTicketId = null;
+        }
+        
+        // Reset issue form
+        function resetIssueForm() {
+            document.getElementById('issueForm').reset();
+            document.getElementById('issueId').value = '';
+            editingIssueId = null;
+        }
+        
+        // Reset implementation form
+        function resetImplForm() {
+            document.getElementById('implForm').reset();
+            document.getElementById('implId').value = '';
+            editingImplId = null;
+        }
+        
+        // Save ticket
+        function saveTicket() {
+            const ticketData = {
+                id: editingTicketId || Date.now().toString(),
+                date: document.getElementById('ticketDate').value,
+                issue: document.getElementById('ticketIssue').value,
+                description: document.getElementById('ticketDescription').value,
+                ticketNumber: document.getElementById('ticketNumber').value,
+                createdTech: document.getElementById('createdTech').value,
+                assignedTech: document.getElementById('assignedTech').value,
+                priority: document.getElementById('ticketPriority').value,
+                status: document.getElementById('ticketStatus').value,
+                category: document.getElementById('ticketCategory').value || 'Other',
+                lastUpdated: new Date().toISOString()
+            };
+            
+            if (editingTicketId) {
+                // Update existing ticket
+                const index = tickets.findIndex(t => t.id === editingTicketId);
+                if (index !== -1) {
+                    tickets[index] = ticketData;
+                }
+                editingTicketId = null;
+            } else {
+                // Add new ticket
+                tickets.push(ticketData);
+            }
+            
+            // Save to localStorage
+            saveData();
+            
+            // Reset form and hide it
+            hideTicketForm();
+            
+            // Update UI
+            renderTicketsTable();
+            updateTicketStats();
+            updateTicketProgressBars();
+            updateTicketRecentActivity();
+            updateModuleSelectionStats();
+            updateDashboardStats();
+        }
+        
+        // Save issue
+        function saveIssue() {
+            const issueData = {
+                id: editingIssueId || Date.now().toString(),
+                date: document.getElementById('issueDate').value,
+                issue: document.getElementById('issueTitle').value,
+                description: document.getElementById('issueDescription').value,
+                ticketNumber: document.getElementById('issueTicketNumber').value,
+                reportedBy: document.getElementById('reportedBy').value,
+                assignedBy: document.getElementById('assignedBy').value,
+                priority: document.getElementById('issuePriority').value,
+                status: document.getElementById('issueStatus').value,
+                category: document.getElementById('issueCategory').value || 'Medium Priority',
+                lastUpdated: new Date().toISOString()
+            };
+            
+            if (editingIssueId) {
+                // Update existing issue
+                const index = issues.findIndex(i => i.id === editingIssueId);
+                if (index !== -1) {
+                    issues[index] = issueData;
+                }
+                editingIssueId = null;
+            } else {
+                // Add new issue
+                issues.push(issueData);
+            }
+            
+            // Save to localStorage
+            saveData();
+            
+            // Reset form and hide it
+            hideIssueForm();
+            
+            // Update UI
+            renderIssuesTable();
+            updateIssueStats();
+            updateIssueProgressBars();
+            updateIssueRecentActivity();
+            updateModuleSelectionStats();
+            updateDashboardStats();
+        }
+        
+        // Save implementation
+        function saveImpl() {
+            const implData = {
+                id: editingImplId || Date.now().toString(),
+                date: document.getElementById('implDate').value,
+                title: document.getElementById('implTitle').value,
+                description: document.getElementById('implDescription').value,
+                number: document.getElementById('implNumber').value,
+                requestedBy: document.getElementById('requestedBy').value,
+                assignedTo: document.getElementById('assignedToImpl').value,
+                priority: document.getElementById('implPriority').value,
+                status: document.getElementById('implStatus').value,
+                category: document.getElementById('implCategory').value || 'Other',
+                lastUpdated: new Date().toISOString()
+            };
+            
+            if (editingImplId) {
+                // Update existing implementation
+                const index = implementations.findIndex(i => i.id === editingImplId);
+                if (index !== -1) {
+                    implementations[index] = implData;
+                }
+                editingImplId = null;
+            } else {
+                // Add new implementation
+                implementations.push(implData);
+            }
+            
+            // Save to localStorage
+            saveData();
+            
+            // Reset form and hide it
+            hideImplForm();
+            
+            // Update UI
+            renderImplTable();
+            updateImplStats();
+            updateImplProgressBars();
+            updateImplRecentActivity();
+            updateModuleSelectionStats();
+            updateDashboardStats();
+        }
+        
+        // Render tickets table
+        function renderTicketsTable() {
+            const tbody = document.getElementById('ticketsBody');
+            
+            if (tickets.length === 0) {
+                document.getElementById('ticketsEmptyState').classList.remove('hidden');
+                tbody.innerHTML = '';
+                return;
+            }
+            
+            document.getElementById('ticketsEmptyState').classList.add('hidden');
+            
+            // Sort tickets based on selected sort option
+            let sortedTickets = [...tickets];
+            const sortBy = document.getElementById('ticketSort').value;
+            
+            if (sortBy === 'status') {
+                const statusOrder = { 'Pending': 1, 'In Progress': 2, 'Resolved': 3 };
+                sortedTickets.sort((a, b) => {
+                    if (a.status !== b.status) return statusOrder[a.status] - statusOrder[b.status];
+                    if (a.priority !== b.priority) {
+                        const priorityOrder = { 'High': 1, 'Medium': 2, 'Low': 3 };
+                        return priorityOrder[a.priority] - priorityOrder[b.priority];
+                    }
+                    return new Date(b.date) - new Date(a.date);
+                });
+            } else if (sortBy === 'priority') {
+                const priorityOrder = { 'High': 1, 'Medium': 2, 'Low': 3 };
+                sortedTickets.sort((a, b) => {
+                    if (a.priority !== b.priority) return priorityOrder[a.priority] - priorityOrder[b.priority];
+                    const statusOrder = { 'Pending': 1, 'In Progress': 2, 'Resolved': 3 };
+                    if (a.status !== b.status) return statusOrder[a.status] - statusOrder[b.status];
+                    return new Date(b.date) - new Date(a.date);
+                });
+            } else {
+                sortedTickets.sort((a, b) => new Date(b.date) - new Date(a.date));
+            }
+            
+            let html = '';
+            sortedTickets.forEach(ticket => {
+                const ticketDate = new Date(ticket.date);
+                const today = new Date();
+                const daysDiff = Math.floor((today - ticketDate) / (1000 * 60 * 60 * 24));
+                
+                let rowClass = 'item-row';
+                if (ticket.status !== 'Resolved') {
+                    if (daysDiff > 10) rowClass += ' very-old-item';
+                    else if (daysDiff > 5) rowClass += ' old-item';
+                }
+                
+                html += `
+                    <tr class="${rowClass}" data-id="${ticket.id}">
+                        <td>${formatDate(ticket.date)}</td>
+                        <td>
+                            <div class="item-summary">
+                                <div class="item-main">
+                                    <div class="item-title">${ticket.issue}</div>
+                                    <div class="item-meta">
+                                        <span><i class="fas fa-user"></i> ${ticket.createdTech}</span>
+                                        <span><i class="fas fa-user-check"></i> ${ticket.assignedTech}</span>
+                                        <span><i class="fas fa-tag"></i> ${ticket.category}</span>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-down expand-icon"></i>
+                            </div>
+                        </td>
+                        <td><strong>${ticket.ticketNumber}</strong></td>
+                        <td><span class="priority-badge priority-${ticket.priority.toLowerCase()}">${ticket.priority}</span></td>
+                        <td><span class="status-badge status-${ticket.status.toLowerCase().replace(' ', '-')}">${ticket.status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                ${isAdminMode ? `
+                                    <button class="btn btn-warning btn-small edit-item" data-id="${ticket.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-small delete-item" data-id="${ticket.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : `
+                                    <span class="tooltip">
+                                        <button class="btn btn-secondary btn-small" disabled>
+                                            <i class="fas fa-lock"></i>
+                                        </button>
+                                        <span class="tooltip-text">Enable Admin Mode to edit</span>
+                                    </span>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="item-details" data-id="${ticket.id}">
+                        <td colspan="6" class="details-cell">
+                            <div class="details-content">
+                                <div class="detail-group">
+                                    <div class="detail-label">Created By</div>
+                                    <div class="detail-value">${ticket.createdTech}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Assigned To</div>
+                                    <div class="detail-value">${ticket.assignedTech}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Category</div>
+                                    <div class="detail-value">${ticket.category}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Priority</div>
+                                    <div class="detail-value"><span class="priority-badge priority-${ticket.priority.toLowerCase()}">${ticket.priority}</span></div>
+                                </div>
+                                <div class="full-width-detail">
+                                    <div class="detail-label">Description</div>
+                                    <div class="detail-value">${ticket.description}</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+            
+            // Add event listeners to expand/collapse rows
+            document.querySelectorAll('#ticketsBody .item-row').forEach(row => {
+                row.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const detailsRow = document.querySelector(`#ticketsBody .item-details[data-id="${id}"]`);
+                    
+                    // Close other open rows
+                    document.querySelectorAll('#ticketsBody .item-details.active').forEach(activeRow => {
+                        if (activeRow.getAttribute('data-id') !== id) {
+                            activeRow.classList.remove('active');
+                            const correspondingRow = document.querySelector(`#ticketsBody .item-row[data-id="${activeRow.getAttribute('data-id')}"]`);
+                            if (correspondingRow) {
+                                correspondingRow.classList.remove('expanded');
+                            }
+                        }
+                    });
+                    
+                    // Toggle current row
+                    detailsRow.classList.toggle('active');
+                    this.classList.toggle('expanded');
+                });
+            });
+            
+            // Add event listeners to edit/delete buttons
+            document.querySelectorAll('#ticketsBody .edit-item').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const ticketId = this.getAttribute('data-id');
+                    editTicket(ticketId);
+                });
+            });
+            
+            document.querySelectorAll('#ticketsBody .delete-item').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const ticketId = this.getAttribute('data-id');
+                    if (confirm('Are you sure you want to delete this ticket?')) {
+                        tickets = tickets.filter(t => t.id !== ticketId);
+                        saveData();
+                        renderTicketsTable();
+                        updateTicketStats();
+                        updateTicketProgressBars();
+                        updateTicketRecentActivity();
+                        updateModuleSelectionStats();
+                        updateDashboardStats();
+                    }
+                });
+            });
+            
+            // Update old tickets alert
+            updateOldTicketsAlert();
+        }
+        
+        // Render issues table
+        function renderIssuesTable() {
+            const tbody = document.getElementById('issuesBody');
+            
+            if (issues.length === 0) {
+                document.getElementById('issuesEmptyState').classList.remove('hidden');
+                tbody.innerHTML = '';
+                return;
+            }
+            
+            document.getElementById('issuesEmptyState').classList.add('hidden');
+            
+            // Sort issues based on selected sort option
+            let sortedIssues = [...issues];
+            const sortBy = document.getElementById('issueSort').value;
+            
+            if (sortBy === 'status') {
+                const statusOrder = { 'Pending': 1, 'In Progress': 2, 'Resolved': 3 };
+                sortedIssues.sort((a, b) => {
+                    if (a.status !== b.status) return statusOrder[a.status] - statusOrder[b.status];
+                    if (a.priority !== b.priority) {
+                        const priorityOrder = { 'High': 1, 'Medium': 2, 'Low': 3 };
+                        return priorityOrder[a.priority] - priorityOrder[b.priority];
+                    }
+                    return new Date(b.date) - new Date(a.date);
+                });
+            } else if (sortBy === 'priority') {
+                const priorityOrder = { 'High': 1, 'Medium': 2, 'Low': 3 };
+                sortedIssues.sort((a, b) => {
+                    if (a.priority !== b.priority) return priorityOrder[a.priority] - priorityOrder[b.priority];
+                    const statusOrder = { 'Pending': 1, 'In Progress': 2, 'Resolved': 3 };
+                    if (a.status !== b.status) return statusOrder[a.status] - statusOrder[b.status];
+                    return new Date(b.date) - new Date(a.date);
+                });
+            } else {
+                sortedIssues.sort((a, b) => new Date(b.date) - new Date(a.date));
+            }
+            
+            let html = '';
+            sortedIssues.forEach(issue => {
+                const issueDate = new Date(issue.date);
+                const today = new Date();
+                const daysDiff = Math.floor((today - issueDate) / (1000 * 60 * 60 * 24));
+                
+                let rowClass = 'item-row';
+                if (issue.status !== 'Resolved') {
+                    if (daysDiff > 10) rowClass += ' very-old-item';
+                    else if (daysDiff > 5) rowClass += ' old-item';
+                }
+                
+                html += `
+                    <tr class="${rowClass}" data-id="${issue.id}">
+                        <td>${formatDate(issue.date)}</td>
+                        <td>
+                            <div class="item-summary">
+                                <div class="item-main">
+                                    <div class="item-title">${issue.issue}</div>
+                                    <div class="item-meta">
+                                        <span><i class="fas fa-user"></i> ${issue.reportedBy}</span>
+                                        <span><i class="fas fa-user-tie"></i> ${issue.assignedBy}</span>
+                                        <span><i class="fas fa-tag"></i> ${issue.category}</span>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-down expand-icon"></i>
+                            </div>
+                        </td>
+                        <td>${issue.reportedBy}</td>
+                        <td><span class="priority-badge priority-${issue.priority.toLowerCase()}">${issue.priority}</span></td>
+                        <td><span class="status-badge status-${issue.status.toLowerCase().replace(' ', '-')}">${issue.status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                ${isAdminMode ? `
+                                    <button class="btn btn-warning btn-small edit-item" data-id="${issue.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-small delete-item" data-id="${issue.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : `
+                                    <span class="tooltip">
+                                        <button class="btn btn-secondary btn-small" disabled>
+                                            <i class="fas fa-lock"></i>
+                                        </button>
+                                        <span class="tooltip-text">Enable Admin Mode to edit</span>
+                                    </span>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="item-details" data-id="${issue.id}">
+                        <td colspan="6" class="details-cell">
+                            <div class="details-content">
+                                <div class="detail-group">
+                                    <div class="detail-label">Reported By</div>
+                                    <div class="detail-value">${issue.reportedBy}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Assigned By</div>
+                                    <div class="detail-value">${issue.assignedBy}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Ticket Number</div>
+                                    <div class="detail-value">${issue.ticketNumber}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Category</div>
+                                    <div class="detail-value">${issue.category}</div>
+                                </div>
+                                <div class="full-width-detail">
+                                    <div class="detail-label">Description</div>
+                                    <div class="detail-value">${issue.description}</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+            
+            // Add event listeners to expand/collapse rows
+            document.querySelectorAll('#issuesBody .item-row').forEach(row => {
+                row.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const detailsRow = document.querySelector(`#issuesBody .item-details[data-id="${id}"]`);
+                    
+                    // Close other open rows
+                    document.querySelectorAll('#issuesBody .item-details.active').forEach(activeRow => {
+                        if (activeRow.getAttribute('data-id') !== id) {
+                            activeRow.classList.remove('active');
+                            const correspondingRow = document.querySelector(`#issuesBody .item-row[data-id="${activeRow.getAttribute('data-id')}"]`);
+                            if (correspondingRow) {
+                                correspondingRow.classList.remove('expanded');
+                            }
+                        }
+                    });
+                    
+                    // Toggle current row
+                    detailsRow.classList.toggle('active');
+                    this.classList.toggle('expanded');
+                });
+            });
+            
+            // Add event listeners to edit/delete buttons
+            document.querySelectorAll('#issuesBody .edit-item').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const issueId = this.getAttribute('data-id');
+                    editIssue(issueId);
+                });
+            });
+            
+            document.querySelectorAll('#issuesBody .delete-item').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const issueId = this.getAttribute('data-id');
+                    if (confirm('Are you sure you want to delete this issue?')) {
+                        issues = issues.filter(i => i.id !== issueId);
+                        saveData();
+                        renderIssuesTable();
+                        updateIssueStats();
+                        updateIssueProgressBars();
+                        updateIssueRecentActivity();
+                        updateModuleSelectionStats();
+                        updateDashboardStats();
+                    }
+                });
+            });
+            
+            // Update old issues alert
+            updateOldIssuesAlert();
+        }
+        
+        // Render implementations table
+        function renderImplTable() {
+            const tbody = document.getElementById('implBody');
+            
+            if (implementations.length === 0) {
+                document.getElementById('implEmptyState').classList.remove('hidden');
+                tbody.innerHTML = '';
+                return;
+            }
+            
+            document.getElementById('implEmptyState').classList.add('hidden');
+            
+            // Sort implementations based on selected sort option
+            let sortedImpl = [...implementations];
+            const sortBy = document.getElementById('implSort').value;
+            
+            if (sortBy === 'status') {
+                const statusOrder = { 'Pending': 1, 'In Progress': 2, 'On Hold': 3, 'Completed': 4 };
+                sortedImpl.sort((a, b) => {
+                    if (a.status !== b.status) return statusOrder[a.status] - statusOrder[b.status];
+                    if (a.priority !== b.priority) {
+                        const priorityOrder = { 'High': 1, 'Medium': 2, 'Low': 3 };
+                        return priorityOrder[a.priority] - priorityOrder[b.priority];
+                    }
+                    return new Date(b.date) - new Date(a.date);
+                });
+            } else if (sortBy === 'priority') {
+                const priorityOrder = { 'High': 1, 'Medium': 2, 'Low': 3 };
+                sortedImpl.sort((a, b) => {
+                    if (a.priority !== b.priority) return priorityOrder[a.priority] - priorityOrder[b.priority];
+                    const statusOrder = { 'Pending': 1, 'In Progress': 2, 'On Hold': 3, 'Completed': 4 };
+                    if (a.status !== b.status) return statusOrder[a.status] - statusOrder[b.status];
+                    return new Date(b.date) - new Date(a.date);
+                });
+            } else {
+                sortedImpl.sort((a, b) => new Date(b.date) - new Date(a.date));
+            }
+            
+            let html = '';
+            sortedImpl.forEach(impl => {
+                const implDate = new Date(impl.date);
+                const today = new Date();
+                const daysDiff = Math.floor((today - implDate) / (1000 * 60 * 60 * 24));
+                
+                let rowClass = 'item-row';
+                if (impl.status !== 'Completed') {
+                    if (daysDiff > 10) rowClass += ' very-old-item';
+                    else if (daysDiff > 5) rowClass += ' old-item';
+                }
+                
+                html += `
+                    <tr class="${rowClass}" data-id="${impl.id}">
+                        <td>${formatDate(impl.date)}</td>
+                        <td>
+                            <div class="item-summary">
+                                <div class="item-main">
+                                    <div class="item-title">${impl.title}</div>
+                                    <div class="item-meta">
+                                        <span><i class="fas fa-user"></i> ${impl.requestedBy}</span>
+                                        <span><i class="fas fa-user-check"></i> ${impl.assignedTo}</span>
+                                        <span><i class="fas fa-tag"></i> ${impl.category}</span>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-down expand-icon"></i>
+                            </div>
+                        </td>
+                        <td>${impl.requestedBy}</td>
+                        <td><span class="priority-badge priority-${impl.priority.toLowerCase()}">${impl.priority}</span></td>
+                        <td><span class="status-badge status-${impl.status.toLowerCase().replace(' ', '-')}">${impl.status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                ${isAdminMode ? `
+                                    <button class="btn btn-warning btn-small edit-item" data-id="${impl.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-small delete-item" data-id="${impl.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : `
+                                    <span class="tooltip">
+                                        <button class="btn btn-secondary btn-small" disabled>
+                                            <i class="fas fa-lock"></i>
+                                        </button>
+                                        <span class="tooltip-text">Enable Admin Mode to edit</span>
+                                    </span>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="item-details" data-id="${impl.id}">
+                        <td colspan="6" class="details-cell">
+                            <div class="details-content">
+                                <div class="detail-group">
+                                    <div class="detail-label">Requested By</div>
+                                    <div class="detail-value">${impl.requestedBy}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Assigned To</div>
+                                    <div class="detail-value">${impl.assignedTo}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Request #</div>
+                                    <div class="detail-value">${impl.number}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Category</div>
+                                    <div class="detail-value">${impl.category}</div>
+                                </div>
+                                <div class="full-width-detail">
+                                    <div class="detail-label">Description</div>
+                                    <div class="detail-value">${impl.description}</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+            
+            // Add event listeners to expand/collapse rows
+            document.querySelectorAll('#implBody .item-row').forEach(row => {
+                row.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const detailsRow = document.querySelector(`#implBody .item-details[data-id="${id}"]`);
+                    
+                    // Close other open rows
+                    document.querySelectorAll('#implBody .item-details.active').forEach(activeRow => {
+                        if (activeRow.getAttribute('data-id') !== id) {
+                            activeRow.classList.remove('active');
+                            const correspondingRow = document.querySelector(`#implBody .item-row[data-id="${activeRow.getAttribute('data-id')}"]`);
+                            if (correspondingRow) {
+                                correspondingRow.classList.remove('expanded');
+                            }
+                        }
+                    });
+                    
+                    // Toggle current row
+                    detailsRow.classList.toggle('active');
+                    this.classList.toggle('expanded');
+                });
+            });
+            
+            // Add event listeners to edit/delete buttons
+            document.querySelectorAll('#implBody .edit-item').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const implId = this.getAttribute('data-id');
+                    editImpl(implId);
+                });
+            });
+            
+            document.querySelectorAll('#implBody .delete-item').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const implId = this.getAttribute('data-id');
+                    if (confirm('Are you sure you want to delete this implementation?')) {
+                        implementations = implementations.filter(i => i.id !== implId);
+                        saveData();
+                        renderImplTable();
+                        updateImplStats();
+                        updateImplProgressBars();
+                        updateImplRecentActivity();
+                        updateModuleSelectionStats();
+                        updateDashboardStats();
+                    }
+                });
+            });
+            
+            // Update old implementations alert
+            updateOldImplAlert();
+        }
+        
+        // Edit ticket
+        function editTicket(id) {
+            const ticket = tickets.find(t => t.id === id);
+            if (!ticket) return;
+            
+            document.getElementById('ticketDate').value = ticket.date;
+            document.getElementById('ticketIssue').value = ticket.issue;
+            document.getElementById('ticketDescription').value = ticket.description;
+            document.getElementById('ticketNumber').value = ticket.ticketNumber;
+            document.getElementById('createdTech').value = ticket.createdTech;
+            document.getElementById('assignedTech').value = ticket.assignedTech;
+            document.getElementById('ticketPriority').value = ticket.priority;
+            document.getElementById('ticketStatus').value = ticket.status;
+            document.getElementById('ticketCategory').value = ticket.category;
+            document.getElementById('ticketId').value = ticket.id;
+            
+            editingTicketId = ticket.id;
+            
+            // Show the form
+            document.getElementById('ticketFormTitle').textContent = 'Edit Ticket';
+            document.getElementById('ticketFormContainer').style.display = 'block';
+        }
+        
+        // Edit issue
+        function editIssue(id) {
+            const issue = issues.find(i => i.id === id);
+            if (!issue) return;
+            
+            document.getElementById('issueDate').value = issue.date;
+            document.getElementById('issueTitle').value = issue.issue;
+            document.getElementById('issueDescription').value = issue.description;
+            document.getElementById('issueTicketNumber').value = issue.ticketNumber;
+            document.getElementById('reportedBy').value = issue.reportedBy;
+            document.getElementById('assignedBy').value = issue.assignedBy;
+            document.getElementById('issuePriority').value = issue.priority;
+            document.getElementById('issueStatus').value = issue.status;
+            document.getElementById('issueCategory').value = issue.category;
+            document.getElementById('issueId').value = issue.id;
+            
+            editingIssueId = issue.id;
+            
+            // Show the form
+            document.getElementById('issueFormTitle').textContent = 'Edit Issue';
+            document.getElementById('issueFormContainer').style.display = 'block';
+        }
+        
+        // Edit implementation
+        function editImpl(id) {
+            const impl = implementations.find(i => i.id === id);
+            if (!impl) return;
+            
+            document.getElementById('implDate').value = impl.date;
+            document.getElementById('implTitle').value = impl.title;
+            document.getElementById('implDescription').value = impl.description;
+            document.getElementById('implNumber').value = impl.number;
+            document.getElementById('requestedBy').value = impl.requestedBy;
+            document.getElementById('assignedToImpl').value = impl.assignedTo;
+            document.getElementById('implPriority').value = impl.priority;
+            document.getElementById('implStatus').value = impl.status;
+            document.getElementById('implCategory').value = impl.category;
+            document.getElementById('implId').value = impl.id;
+            
+            editingImplId = impl.id;
+            
+            // Show the form
+            document.getElementById('implFormTitle').textContent = 'Edit Implementation';
+            document.getElementById('implFormContainer').style.display = 'block';
+        }
+        
+        // Update module selection stats
+        function updateModuleSelectionStats() {
+            // Tickets stats
+            const ticketPending = tickets.filter(t => t.status === 'Pending').length;
+            const ticketInProgress = tickets.filter(t => t.status === 'In Progress').length;
+            const ticketResolved = tickets.filter(t => t.status === 'Resolved').length;
+            
+            document.getElementById('ticketPendingCount').textContent = ticketPending;
+            document.getElementById('ticketInProgressCount').textContent = ticketInProgress;
+            document.getElementById('ticketResolvedCount').textContent = ticketResolved;
+            
+            // Issues stats
+            const issuePending = issues.filter(i => i.status === 'Pending').length;
+            const issueInProgress = issues.filter(i => i.status === 'In Progress').length;
+            const issueResolved = issues.filter(i => i.status === 'Resolved').length;
+            
+            document.getElementById('issuePendingCount').textContent = issuePending;
+            document.getElementById('issueInProgressCount').textContent = issueInProgress;
+            document.getElementById('issueResolvedCount').textContent = issueResolved;
+            
+            // Implementations stats
+            const implPending = implementations.filter(i => i.status === 'Pending').length;
+            const implInProgress = implementations.filter(i => i.status === 'In Progress').length;
+            const implCompleted = implementations.filter(i => i.status === 'Completed').length;
+            
+            document.getElementById('implPendingCount').textContent = implPending;
+            document.getElementById('implInProgressCount').textContent = implInProgress;
+            document.getElementById('implCompletedCount').textContent = implCompleted;
+        }
+        
+        // Update dashboard stats
+        function updateDashboardStats() {
+            const allItems = [...tickets, ...issues, ...implementations];
+            
+            // Overall stats
+            const overallPending = allItems.filter(item => item.status === 'Pending').length;
+            const overallInProgress = allItems.filter(item => item.status === 'In Progress').length;
+            const overallResolved = allItems.filter(item => item.status === 'Resolved' || item.status === 'Completed').length;
+            
+            document.getElementById('overallPending').textContent = overallPending;
+            document.getElementById('overallInProgress').textContent = overallInProgress;
+            document.getElementById('overallResolved').textContent = overallResolved;
+            
+            // Old items
+            const oldItems = allItems.filter(item => {
+                if (item.status === 'Resolved' || item.status === 'Completed') return false;
+                const itemDate = new Date(item.date);
+                const today = new Date();
+                const daysDiff = Math.floor((today - itemDate) / (1000 * 60 * 60 * 24));
+                return daysDiff > 5;
+            });
+            
+            const oldItemsCount = oldItems.length;
+            const totalItems = allItems.length;
+            const oldItemsPercent = totalItems > 0 ? Math.round((oldItemsCount / totalItems) * 100) : 0;
+            
+            document.getElementById('oldItemsCount').textContent = oldItemsCount;
+            document.getElementById('oldItemsPercent').textContent = `${oldItemsPercent}%`;
+            document.getElementById('oldItemsProgress').style.width = `${oldItemsPercent}%`;
+            
+            // Data summary
+            document.getElementById('totalTickets').textContent = tickets.length;
+            document.getElementById('totalIssues').textContent = issues.length;
+            document.getElementById('totalImplementations').textContent = implementations.length;
+        }
+        
+        // Update ticket stats
+        function updateTicketStats() {
+            const pending = tickets.filter(t => t.status === 'Pending').length;
+            const inProgress = tickets.filter(t => t.status === 'In Progress').length;
+            const resolved = tickets.filter(t => t.status === 'Resolved').length;
+            
+            document.getElementById('ticketPendingStats').textContent = pending;
+            document.getElementById('ticketInProgressStats').textContent = inProgress;
+            document.getElementById('ticketResolvedStats').textContent = resolved;
+        }
+        
+        // Update issue stats
+        function updateIssueStats() {
+            const pending = issues.filter(i => i.status === 'Pending').length;
+            const inProgress = issues.filter(i => i.status === 'In Progress').length;
+            const resolved = issues.filter(i => i.status === 'Resolved').length;
+            
+            document.getElementById('issuePendingStats').textContent = pending;
+            document.getElementById('issueInProgressStats').textContent = inProgress;
+            document.getElementById('issueResolvedStats').textContent = resolved;
+        }
+        
+        // Update implementation stats
+        function updateImplStats() {
+            const pending = implementations.filter(i => i.status === 'Pending').length;
+            const inProgress = implementations.filter(i => i.status === 'In Progress').length;
+            const completed = implementations.filter(i => i.status === 'Completed').length;
+            
+            document.getElementById('implPendingStats').textContent = pending;
+            document.getElementById('implInProgressStats').textContent = inProgress;
+            document.getElementById('implCompletedStats').textContent = completed;
+        }
+        
+        // Update ticket progress bars
+        function updateTicketProgressBars() {
+            const totalTickets = tickets.length;
+            if (totalTickets === 0) {
+                document.getElementById('ticketHighPercent').textContent = '0%';
+                document.getElementById('ticketHighProgress').style.width = '0%';
+                document.getElementById('ticketMediumPercent').textContent = '0%';
+                document.getElementById('ticketMediumProgress').style.width = '0%';
+                document.getElementById('ticketLowPercent').textContent = '0%';
+                document.getElementById('ticketLowProgress').style.width = '0%';
+                return;
+            }
+            
+            const highTickets = tickets.filter(t => t.priority === 'High').length;
+            const mediumTickets = tickets.filter(t => t.priority === 'Medium').length;
+            const lowTickets = tickets.filter(t => t.priority === 'Low').length;
+            
+            const highPercent = Math.round((highTickets / totalTickets) * 100);
+            const mediumPercent = Math.round((mediumTickets / totalTickets) * 100);
+            const lowPercent = Math.round((lowTickets / totalTickets) * 100);
+            
+            document.getElementById('ticketHighPercent').textContent = `${highPercent}%`;
+            document.getElementById('ticketHighProgress').style.width = `${highPercent}%`;
+            document.getElementById('ticketMediumPercent').textContent = `${mediumPercent}%`;
+            document.getElementById('ticketMediumProgress').style.width = `${mediumPercent}%`;
+            document.getElementById('ticketLowPercent').textContent = `${lowPercent}%`;
+            document.getElementById('ticketLowProgress').style.width = `${lowPercent}%`;
+        }
+        
+        // Update issue progress bars
+        function updateIssueProgressBars() {
+            const totalIssues = issues.length;
+            if (totalIssues === 0) {
+                document.getElementById('issueHighPercent').textContent = '0%';
+                document.getElementById('issueHighProgress').style.width = '0%';
+                document.getElementById('issueMediumPercent').textContent = '0%';
+                document.getElementById('issueMediumProgress').style.width = '0%';
+                document.getElementById('issueLowPercent').textContent = '0%';
+                document.getElementById('issueLowProgress').style.width = '0%';
+                return;
+            }
+            
+            const highIssues = issues.filter(i => i.priority === 'High').length;
+            const mediumIssues = issues.filter(i => i.priority === 'Medium').length;
+            const lowIssues = issues.filter(i => i.priority === 'Low').length;
+            
+            const highPercent = Math.round((highIssues / totalIssues) * 100);
+            const mediumPercent = Math.round((mediumIssues / totalIssues) * 100);
+            const lowPercent = Math.round((lowIssues / totalIssues) * 100);
+            
+            document.getElementById('issueHighPercent').textContent = `${highPercent}%`;
+            document.getElementById('issueHighProgress').style.width = `${highPercent}%`;
+            document.getElementById('issueMediumPercent').textContent = `${mediumPercent}%`;
+            document.getElementById('issueMediumProgress').style.width = `${mediumPercent}%`;
+            document.getElementById('issueLowPercent').textContent = `${lowPercent}%`;
+            document.getElementById('issueLowProgress').style.width = `${lowPercent}%`;
+        }
+        
+        // Update implementation progress bars
+        function updateImplProgressBars() {
+            const totalImpl = implementations.length;
+            if (totalImpl === 0) {
+                document.getElementById('implHighPercent').textContent = '0%';
+                document.getElementById('implHighProgress').style.width = '0%';
+                document.getElementById('implMediumPercent').textContent = '0%';
+                document.getElementById('implMediumProgress').style.width = '0%';
+                document.getElementById('implLowPercent').textContent = '0%';
+                document.getElementById('implLowProgress').style.width = '0%';
+                return;
+            }
+            
+            const highImpl = implementations.filter(i => i.priority === 'High').length;
+            const mediumImpl = implementations.filter(i => i.priority === 'Medium').length;
+            const lowImpl = implementations.filter(i => i.priority === 'Low').length;
+            
+            const highPercent = Math.round((highImpl / totalImpl) * 100);
+            const mediumPercent = Math.round((mediumImpl / totalImpl) * 100);
+            const lowPercent = Math.round((lowImpl / totalImpl) * 100);
+            
+            document.getElementById('implHighPercent').textContent = `${highPercent}%`;
+            document.getElementById('implHighProgress').style.width = `${highPercent}%`;
+            document.getElementById('implMediumPercent').textContent = `${mediumPercent}%`;
+            document.getElementById('implMediumProgress').style.width = `${mediumPercent}%`;
+            document.getElementById('implLowPercent').textContent = `${lowPercent}%`;
+            document.getElementById('implLowProgress').style.width = `${lowPercent}%`;
+        }
+        
+        // Update ticket recent activity
+        function updateTicketRecentActivity() {
+            if (tickets.length === 0) {
+                document.getElementById('ticketLastAdded').textContent = 'None';
+                document.getElementById('ticketLastUpdated').textContent = 'None';
+                document.getElementById('ticketOldestPending').textContent = 'None';
+                return;
+            }
+            
+            // Last added
+            const sortedByDate = [...tickets].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const lastAdded = sortedByDate[0];
+            document.getElementById('ticketLastAdded').textContent = lastAdded ? formatDate(lastAdded.date) : 'None';
+            
+            // Last updated (using lastUpdated field if available, otherwise use date)
+            const sortedByLastUpdated = [...tickets].sort((a, b) => {
+                const dateA = a.lastUpdated ? new Date(a.lastUpdated) : new Date(a.date);
+                const dateB = b.lastUpdated ? new Date(b.lastUpdated) : new Date(b.date);
+                return dateB - dateA;
+            });
+            const lastUpdated = sortedByLastUpdated[0];
+            document.getElementById('ticketLastUpdated').textContent = lastUpdated ? formatDate(lastUpdated.lastUpdated || lastUpdated.date) : 'None';
+            
+            // Oldest pending
+            const pendingTickets = tickets.filter(t => t.status === 'Pending');
+            if (pendingTickets.length > 0) {
+                const sortedByOldest = [...pendingTickets].sort((a, b) => new Date(a.date) - new Date(b.date));
+                const oldestPending = sortedByOldest[0];
+                document.getElementById('ticketOldestPending').textContent = oldestPending ? `${formatDate(oldestPending.date)} (${oldestPending.ticketNumber})` : 'None';
+            } else {
+                document.getElementById('ticketOldestPending').textContent = 'None';
+            }
+        }
+        
+        // Update issue recent activity
+        function updateIssueRecentActivity() {
+            if (issues.length === 0) {
+                document.getElementById('issueLastAdded').textContent = 'None';
+                document.getElementById('issueLastUpdated').textContent = 'None';
+                document.getElementById('issueOldestPending').textContent = 'None';
+                return;
+            }
+            
+            // Last added
+            const sortedByDate = [...issues].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const lastAdded = sortedByDate[0];
+            document.getElementById('issueLastAdded').textContent = lastAdded ? formatDate(lastAdded.date) : 'None';
+            
+            // Last updated
+            const sortedByLastUpdated = [...issues].sort((a, b) => {
+                const dateA = a.lastUpdated ? new Date(a.lastUpdated) : new Date(a.date);
+                const dateB = b.lastUpdated ? new Date(b.lastUpdated) : new Date(b.date);
+                return dateB - dateA;
+            });
+            const lastUpdated = sortedByLastUpdated[0];
+            document.getElementById('issueLastUpdated').textContent = lastUpdated ? formatDate(lastUpdated.lastUpdated || lastUpdated.date) : 'None';
+            
+            // Oldest pending
+            const pendingIssues = issues.filter(i => i.status === 'Pending');
+            if (pendingIssues.length > 0) {
+                const sortedByOldest = [...pendingIssues].sort((a, b) => new Date(a.date) - new Date(b.date));
+                const oldestPending = sortedByOldest[0];
+                document.getElementById('issueOldestPending').textContent = oldestPending ? `${formatDate(oldestPending.date)} (${oldestPending.ticketNumber})` : 'None';
+            } else {
+                document.getElementById('issueOldestPending').textContent = 'None';
+            }
+        }
+        
+        // Update implementation recent activity
+        function updateImplRecentActivity() {
+            if (implementations.length === 0) {
+                document.getElementById('implLastAdded').textContent = 'None';
+                document.getElementById('implLastUpdated').textContent = 'None';
+                document.getElementById('implOldestPending').textContent = 'None';
+                return;
+            }
+            
+            // Last added
+            const sortedByDate = [...implementations].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const lastAdded = sortedByDate[0];
+            document.getElementById('implLastAdded').textContent = lastAdded ? formatDate(lastAdded.date) : 'None';
+            
+            // Last updated
+            const sortedByLastUpdated = [...implementations].sort((a, b) => {
+                const dateA = a.lastUpdated ? new Date(a.lastUpdated) : new Date(a.date);
+                const dateB = b.lastUpdated ? new Date(b.lastUpdated) : new Date(b.date);
+                return dateB - dateA;
+            });
+            const lastUpdated = sortedByLastUpdated[0];
+            document.getElementById('implLastUpdated').textContent = lastUpdated ? formatDate(lastUpdated.lastUpdated || lastUpdated.date) : 'None';
+            
+            // Oldest pending
+            const pendingImpl = implementations.filter(i => i.status === 'Pending');
+            if (pendingImpl.length > 0) {
+                const sortedByOldest = [...pendingImpl].sort((a, b) => new Date(a.date) - new Date(b.date));
+                const oldestPending = sortedByOldest[0];
+                document.getElementById('implOldestPending').textContent = oldestPending ? `${formatDate(oldestPending.date)} (${oldestPending.number})` : 'None';
+            } else {
+                document.getElementById('implOldestPending').textContent = 'None';
+            }
+        }
+        
+        // Update old tickets alert
+        function updateOldTicketsAlert() {
+            const oldTickets = tickets.filter(ticket => {
+                if (ticket.status === 'Resolved') return false;
+                const ticketDate = new Date(ticket.date);
+                const today = new Date();
+                const daysDiff = Math.floor((today - ticketDate) / (1000 * 60 * 60 * 24));
+                return daysDiff > 5;
+            });
+            
+            if (oldTickets.length > 0) {
+                document.getElementById('oldTicketsCount').textContent = oldTickets.length;
+                document.getElementById('ticketAlert').classList.remove('hidden');
+            } else {
+                document.getElementById('ticketAlert').classList.add('hidden');
+            }
+        }
+        
+        // Update old issues alert
+        function updateOldIssuesAlert() {
+            const oldIssues = issues.filter(issue => {
+                if (issue.status === 'Resolved') return false;
+                const issueDate = new Date(issue.date);
+                const today = new Date();
+                const daysDiff = Math.floor((today - issueDate) / (1000 * 60 * 60 * 24));
+                return daysDiff > 5;
+            });
+            
+            if (oldIssues.length > 0) {
+                document.getElementById('oldIssuesCount').textContent = oldIssues.length;
+                document.getElementById('issueAlert').classList.remove('hidden');
+            } else {
+                document.getElementById('issueAlert').classList.add('hidden');
+            }
+        }
+        
+        // Update old implementations alert
+        function updateOldImplAlert() {
+            const oldImpl = implementations.filter(impl => {
+                if (impl.status === 'Completed') return false;
+                const implDate = new Date(impl.date);
+                const today = new Date();
+                const daysDiff = Math.floor((today - implDate) / (1000 * 60 * 60 * 24));
+                return daysDiff > 5;
+            });
+            
+            if (oldImpl.length > 0) {
+                document.getElementById('oldImplCount').textContent = oldImpl.length;
+                document.getElementById('implAlert').classList.remove('hidden');
+            } else {
+                document.getElementById('implAlert').classList.add('hidden');
+            }
+        }
+        
+        // Highlight old tickets
+        function highlightOldTickets() {
+            const rows = document.querySelectorAll('#ticketsBody .item-row');
+            rows.forEach(row => {
+                row.classList.remove('very-old-item', 'old-item');
+            });
+            
+            renderTicketsTable();
+            
+            // Scroll to first old ticket
+            const firstOldTicket = document.querySelector('#ticketsBody .old-item, #ticketsBody .very-old-item');
+            if (firstOldTicket) {
+                firstOldTicket.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstOldTicket.click(); // Open the details
+            }
+        }
+        
+        // Highlight old issues
+        function highlightOldIssues() {
+            const rows = document.querySelectorAll('#issuesBody .item-row');
+            rows.forEach(row => {
+                row.classList.remove('very-old-item', 'old-item');
+            });
+            
+            renderIssuesTable();
+            
+            // Scroll to first old issue
+            const firstOldIssue = document.querySelector('#issuesBody .old-item, #issuesBody .very-old-item');
+            if (firstOldIssue) {
+                firstOldIssue.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstOldIssue.click(); // Open the details
+            }
+        }
+        
+        // Highlight old implementations
+        function highlightOldImpl() {
+            const rows = document.querySelectorAll('#implBody .item-row');
+            rows.forEach(row => {
+                row.classList.remove('very-old-item', 'old-item');
+            });
+            
+            renderImplTable();
+            
+            // Scroll to first old implementation
+            const firstOldImpl = document.querySelector('#implBody .old-item, #implBody .very-old-item');
+            if (firstOldImpl) {
+                firstOldImpl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstOldImpl.click(); // Open the details
+            }
+        }
+        
+        // Export tickets to CSV
+        function exportTicketsToCSV() {
+            const pendingTickets = tickets.filter(ticket => ticket.status !== 'Resolved');
+            
+            if (pendingTickets.length === 0) {
+                alert('No pending tickets to export.');
+                return;
+            }
+            
+            let csvContent = "Date,Ticket Number,Issue,Description,Priority,Status,Created By,Assigned To,Category\n";
+            
+            pendingTickets.forEach(ticket => {
+                const row = [
+                    formatDate(ticket.date),
+                    ticket.ticketNumber,
+                    `"${ticket.issue.replace(/"/g, '""')}"`,
+                    `"${ticket.description.replace(/"/g, '""')}"`,
+                    ticket.priority,
+                    ticket.status,
+                    ticket.createdTech,
+                    ticket.assignedTech,
+                    ticket.category
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+            
+            downloadCSV(csvContent, `pending-tickets-${new Date().toISOString().slice(0, 10)}.csv`);
+        }
+        
+        // Export issues to CSV
+        function exportIssuesToCSV() {
+            const pendingIssues = issues.filter(issue => issue.status !== 'Resolved');
+            
+            if (pendingIssues.length === 0) {
+                alert('No pending issues to export.');
+                return;
+            }
+            
+            let csvContent = "Reported Date,Ticket Number,Issue,Description,Priority,Status,Reported By,Assigned By,Category\n";
+            
+            pendingIssues.forEach(issue => {
+                const row = [
+                    formatDate(issue.date),
+                    issue.ticketNumber,
+                    `"${issue.issue.replace(/"/g, '""')}"`,
+                    `"${issue.description.replace(/"/g, '""')}"`,
+                    issue.priority,
+                    issue.status,
+                    issue.reportedBy,
+                    issue.assignedBy,
+                    issue.category
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+            
+            downloadCSV(csvContent, `pending-issues-${new Date().toISOString().slice(0, 10)}.csv`);
+        }
+        
+        // Export implementations to CSV
+        function exportImplToCSV() {
+            const pendingImpl = implementations.filter(impl => impl.status !== 'Completed');
+            
+            if (pendingImpl.length === 0) {
+                alert('No pending implementations to export.');
+                return;
+            }
+            
+            let csvContent = "Request Date,Request #,Title,Description,Priority,Status,Requested By,Assigned To,Category\n";
+            
+            pendingImpl.forEach(impl => {
+                const row = [
+                    formatDate(impl.date),
+                    impl.number,
+                    `"${impl.title.replace(/"/g, '""')}"`,
+                    `"${impl.description.replace(/"/g, '""')}"`,
+                    impl.priority,
+                    impl.status,
+                    impl.requestedBy,
+                    impl.assignedTo,
+                    impl.category
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+            
+            downloadCSV(csvContent, `pending-implementations-${new Date().toISOString().slice(0, 10)}.csv`);
+        }
+        
+        // Download CSV helper
+        function downloadCSV(csvContent, filename) {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Format date for display
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+    </script>
+</body>
+</html>

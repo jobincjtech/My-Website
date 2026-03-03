@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PageMaster | HTML & Task Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8B5CF6;
+            --primary-dark: #7C3AED;
+            --secondary: #EC4899;
+            --accent: #06B6D4;
+            --dark-bg: #0F172A;
+            --dark-card: #1E293B;
+            --dark-card-hover: #334155;
+            --dark-text: #F1F5F9;
+            --dark-text-secondary: #94A3B8;
+            --gray: #64748B;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --gradient: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238B5CF6' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .login-form {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            z-index: 1;
+            position: relative;
+            transform: translateY(0);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .login-form:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header i {
+            font-size: 48px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .login-header h2 {
+            color: var(--dark-text);
+            font-weight: 600;
+            font-size: 28px;
+        }
+
+        .login-header p {
+            color: var(--dark-text-secondary);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-text);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 15px;
+            border: 2px solid #334155;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+            background: #1E293B;
+            color: var(--dark-text);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            background: #0F172A;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(108, 99, 255, 0.4);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #DC2626);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #D97706);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        /* Main Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .header {
+            background: var(--dark-card);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+
+        .logo i {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--dark-text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .logout-btn:hover {
+            color: var(--danger);
+        }
+
+        .main-content {
+            padding: 30px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            margin-bottom: 30px;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 32px;
+            font-weight: 600;
+        }
+
+        .page-title i {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: var(--dark-card);
+            border: none;
+            border-radius: var(--border-radius);
+            color: var(--dark-text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab:hover:not(.active) {
+            background: var(--dark-card-hover);
+            color: var(--dark-text);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #334155;
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            transition: var(--transition);
+            background: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+        }
+
+        .pages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .page-card {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .page-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .page-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            background: var(--dark-card-hover);
+        }
+
+        .page-card-header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin: 0;
+            color: var(--dark-text);
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--dark-text-secondary);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .page-action-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(15deg);
+        }
+
+        .page-card-body {
+            padding: 0 20px 20px;
+        }
+
+        .page-description {
+            color: var(--dark-text-secondary);
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .page-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--dark-text-secondary);
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .page-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .page-link:hover {
+            color: var(--accent);
+        }
+
+        /* Notes Section */
+        .notes-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 968px) {
+            .notes-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .note-input-card {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .note-input-card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .note-list-card {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .note-list-card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .note-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #334155;
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            transition: var(--transition);
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            margin-bottom: 15px;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .note-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .notes-list {
+            list-style: none;
+        }
+
+        .note-item {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+
+        .note-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        .note-content {
+            color: var(--dark-text);
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .note-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--dark-text-secondary);
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* Tasks Section */
+        .tasks-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 968px) {
+            .tasks-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .task-input-card {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .task-input-card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .task-list-card {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .task-list-card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .task-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #334155;
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            transition: var(--transition);
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            margin-bottom: 15px;
+        }
+
+        .task-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .tasks-list {
+            list-style: none;
+        }
+
+        .task-item {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            transition: var(--transition);
+            border-left: 4px solid var(--warning);
+        }
+
+        .task-item.completed {
+            border-left-color: var(--success);
+            opacity: 0.7;
+        }
+
+        .task-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        .task-content {
+            color: var(--dark-text);
+            margin-bottom: 10px;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .task-checkbox {
+            margin-top: 3px;
+        }
+
+        .task-text {
+            flex: 1;
+        }
+
+        .task-text.completed {
+            text-decoration: line-through;
+            color: var(--dark-text-secondary);
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--dark-text-secondary);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--dark-text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #334155;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--dark-text);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--dark-card);
+            border-radius: var(--border-radius);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 520px;
+            padding: 30px;
+            position: relative;
+            transform: scale(0.9);
+            opacity: 0;
+            animation: modalAppear 0.3s forwards;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes modalAppear {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--dark-text-secondary);
+            transition: var(--transition);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--danger);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .pages-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Animation for cards on load */
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-card, .note-item, .task-item {
+            animation: cardAppear 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .page-card:nth-child(1) { animation-delay: 0.1s; }
+        .page-card:nth-child(2) { animation-delay: 0.2s; }
+        .page-card:nth-child(3) { animation-delay: 0.3s; }
+        .page-card:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-form">
+            <div class="login-header">
+                <i class="fas fa-cubes"></i>
+                <h2>PageMaster</h2>
+                <p>Manage your HTML pages, notes, and tasks</p>
+            </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" class="form-control" placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" placeholder="Enter your password">
+            </div>
+            <button class="btn btn-block" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-cubes"></i>
+                    <span>PageMaster</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">A</div>
+                    <span>Admin User</span>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <h1 class="page-title">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </h1>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="pages">HTML Pages</button>
+                <button class="tab" data-tab="notes">Quick Notes</button>
+                <button class="tab" data-tab="tasks">Today's Tasks</button>
+            </div>
+
+            <!-- HTML Pages Tab -->
+            <div class="tab-content active" id="pages-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-file-code"></i> Your HTML Pages
+                        </h2>
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="Search pages...">
+                            </div>
+                            <button class="btn" id="addPageBtn">
+                                <i class="fas fa-plus"></i> Add Page
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pages-grid" id="pagesGrid">
+                        <!-- Pages will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Tab -->
+            <div class="tab-content" id="notes-tab">
+                <div class="notes-container">
+                    <div class="note-input-card">
+                        <h2 class="card-title">
+                            <i class="fas fa-sticky-note"></i> Add New Note
+                        </h2>
+                        <textarea class="note-input" id="noteInput" placeholder="Type your note here..."></textarea>
+                        <button class="btn btn-block" id="addNoteBtn">
+                            <i class="fas fa-plus"></i> Add Note
+                        </button>
+                    </div>
+                    <div class="note-list-card">
+                        <h2 class="card-title">
+                            <i class="fas fa-list"></i> Your Notes
+                        </h2>
+                        <ul class="notes-list" id="notesList">
+                            <!-- Notes will be dynamically added here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks Tab -->
+            <div class="tab-content" id="tasks-tab">
+                <div class="tasks-container">
+                    <div class="task-input-card">
+                        <h2 class="card-title">
+                            <i class="fas fa-tasks"></i> Add New Task
+                        </h2>
+                        <input type="text" class="task-input" id="taskInput" placeholder="What needs to be done today?">
+                        <button class="btn btn-block" id="addTaskBtn">
+                            <i class="fas fa-plus"></i> Add Task
+                        </button>
+                    </div>
+                    <div class="task-list-card">
+                        <h2 class="card-title">
+                            <i class="fas fa-list-check"></i> Today's Tasks
+                        </h2>
+                        <ul class="tasks-list" id="tasksList">
+                            <!-- Tasks will be dynamically added here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Page Modal -->
+    <div class="modal" id="pageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">
+                    <i class="fas fa-plus-circle"></i> Add New Page
+                </h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <form id="pageForm">
+                <div class="form-group">
+                    <label for="pageName">Page Name</label>
+                    <input type="text" id="pageName" class="form-control" placeholder="Enter page name" required>
+                </div>
+                <div class="form-group">
+                    <label for="pageUrl">Page URL</label>
+                    <input type="text" id="pageUrl" class="form-control" placeholder="Enter page URL or file path" required>
+                </div>
+                <div class="form-group">
+                    <label for="pageDescription">Description</label>
+                    <textarea id="pageDescription" class="form-control" rows="3" placeholder="Enter page description"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-danger" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-success" id="savePageBtn">
+                        <i class="fas fa-save"></i> Save Page
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for demonstration
+        let pages = [
+            {
+                id: 1,
+                name: "Home Page",
+                url: "index.html",
+                description: "Main landing page for the website with hero section and featured content",
+                created: "2023-05-15"
+            },
+            {
+                id: 2,
+                name: "About Us",
+                url: "about.html",
+                description: "Information about our company, mission, vision, and team members",
+                created: "2023-05-20"
+            },
+            {
+                id: 3,
+                name: "Services",
+                url: "services.html",
+                description: "Detailed overview of services we offer to our clients with pricing",
+                created: "2023-06-01"
+            },
+            {
+                id: 4,
+                name: "Contact",
+                url: "contact.html",
+                description: "Contact form, company information, and interactive map location",
+                created: "2023-06-10"
+            }
+        ];
+
+        let notes = [];
+        let tasks = [];
+
+        // DOM Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboard = document.getElementById('dashboard');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const pagesGrid = document.getElementById('pagesGrid');
+        const notesList = document.getElementById('notesList');
+        const tasksList = document.getElementById('tasksList');
+        const addPageBtn = document.getElementById('addPageBtn');
+        const addNoteBtn = document.getElementById('addNoteBtn');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        const noteInput = document.getElementById('noteInput');
+        const taskInput = document.getElementById('taskInput');
+        const pageModal = document.getElementById('pageModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const pageForm = document.getElementById('pageForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const pageNameInput = document.getElementById('pageName');
+        const pageUrlInput = document.getElementById('pageUrl');
+        const pageDescriptionInput = document.getElementById('pageDescription');
+        const searchInput = document.getElementById('searchInput');
+        const savePageBtn = document.getElementById('savePageBtn');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Current editing item
+        let currentEditPageId = null;
+        let currentTab = 'pages';
+
+        // Check if user is logged in (for demo purposes)
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn === 'true') {
+                loginScreen.style.display = 'none';
+                dashboard.style.display = 'block';
+                renderPages();
+                renderNotes();
+                renderTasks();
+            }
+        }
+
+        // Login functionality
+        loginBtn.addEventListener('click', function() {
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            
+            // Simple authentication for demo (in real app, this would be server-side)
+            if (username === 'admin' && password === 'password') {
+                localStorage.setItem('isLoggedIn', 'true');
+                loginScreen.style.display = 'none';
+                dashboard.style.display = 'block';
+                renderPages();
+                renderNotes();
+                renderTasks();
+            } else {
+                showNotification('Invalid credentials. Try admin/password for demo.', 'error');
+            }
+        });
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', function() {
+            localStorage.setItem('isLoggedIn', 'false');
+            dashboard.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            usernameInput.value = '';
+            passwordInput.value = '';
+        });
+
+        // Tab functionality
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Update active tab content
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+                
+                currentTab = tabId;
+            });
+        });
+
+        // Render pages to the grid
+        function renderPages(filteredPages = null) {
+            const pagesToRender = filteredPages || pages;
+            
+            if (pagesToRender.length === 0) {
+                pagesGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>No pages found</h3>
+                        <p>Add your first HTML page to get started</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            pagesGrid.innerHTML = pagesToRender.map(page => `
+                <div class="page-card" data-id="${page.id}">
+                    <div class="page-card-header">
+                        <h3 class="page-title">${page.name}</h3>
+                        <div class="page-actions">
+                            <button class="page-action-btn edit-page" title="Edit Page">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="page-action-btn delete-page" title="Delete Page">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="page-card-body">
+                        <p class="page-description">${page.description}</p>
+                        <div class="page-meta">
+                            <span>Created: ${page.created}</span>
+                            <a href="${page.url}" target="_blank" class="page-link">
+                                View Page <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Add event listeners to action buttons
+            document.querySelectorAll('.edit-page').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const pageId = parseInt(this.closest('.page-card').getAttribute('data-id'));
+                    editPage(pageId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-page').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const pageId = parseInt(this.closest('.page-card').getAttribute('data-id'));
+                    deletePage(pageId);
+                });
+            });
+        }
+
+        // Render notes to the list
+        function renderNotes() {
+            if (notes.length === 0) {
+                notesList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-sticky-note"></i>
+                        <h3>No notes yet</h3>
+                        <p>Add your first note to get started</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            notesList.innerHTML = notes.map((note, index) => `
+                <li class="note-item" data-index="${index}">
+                    <div class="note-content">${note.content}</div>
+                    <div class="note-meta">
+                        <span>${note.timestamp}</span>
+                    </div>
+                    <div class="note-actions">
+                        <button class="btn btn-sm btn-danger delete-note">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </li>
+            `).join('');
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-note').forEach((btn, index) => {
+                btn.addEventListener('click', function() {
+                    deleteNote(index);
+                });
+            });
+        }
+
+        // Render tasks to the list
+        function renderTasks() {
+            if (tasks.length === 0) {
+                tasksList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-tasks"></i>
+                        <h3>No tasks yet</h3>
+                        <p>Add your first task to get started</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            tasksList.innerHTML = tasks.map((task, index) => `
+                <li class="task-item ${task.completed ? 'completed' : ''}" data-index="${index}">
+                    <div class="task-content">
+                        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
+                        <div class="task-text ${task.completed ? 'completed' : ''}">${task.content}</div>
+                    </div>
+                    <div class="task-meta">
+                        <span>${task.timestamp}</span>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn btn-sm btn-danger delete-task">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </li>
+            `).join('');
+            
+            // Add event listeners to checkboxes
+            document.querySelectorAll('.task-checkbox').forEach((checkbox, index) => {
+                checkbox.addEventListener('change', function() {
+                    toggleTaskCompletion(index);
+                });
+            });
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-task').forEach((btn, index) => {
+                btn.addEventListener('click', function() {
+                    deleteTask(index);
+                });
+            });
+        }
+
+        // Open modal to add new page
+        addPageBtn.addEventListener('click', function() {
+            currentEditPageId = null;
+            modalTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Add New Page';
+            pageNameInput.value = '';
+            pageUrlInput.value = '';
+            pageDescriptionInput.value = '';
+            pageModal.style.display = 'flex';
+        });
+
+        // Close modal
+        closeModal.addEventListener('click', closeModalFunc);
+        cancelBtn.addEventListener('click', closeModalFunc);
+
+        function closeModalFunc() {
+            pageModal.style.display = 'none';
+        }
+
+        // Edit page
+        function editPage(id) {
+            const page = pages.find(p => p.id === id);
+            if (page) {
+                currentEditPageId = id;
+                modalTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Page';
+                pageNameInput.value = page.name;
+                pageUrlInput.value = page.url;
+                pageDescriptionInput.value = page.description;
+                pageModal.style.display = 'flex';
+            }
+        }
+
+        // Delete page
+        function deletePage(id) {
+            if (confirm('Are you sure you want to delete this page?')) {
+                pages = pages.filter(p => p.id !== id);
+                renderPages();
+                showNotification('Page deleted successfully!', 'success');
+            }
+        }
+
+        // Add note
+        addNoteBtn.addEventListener('click', function() {
+            const content = noteInput.value.trim();
+            if (content) {
+                const now = new Date();
+                const timestamp = now.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit' 
+                }) + ' ' + now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                
+                notes.unshift({
+                    content: content,
+                    timestamp: timestamp
+                });
+                
+                noteInput.value = '';
+                renderNotes();
+                showNotification('Note added successfully!', 'success');
+            }
+        });
+
+        // Delete note
+        function deleteNote(index) {
+            if (confirm('Are you sure you want to delete this note?')) {
+                notes.splice(index, 1);
+                renderNotes();
+                showNotification('Note deleted successfully!', 'success');
+            }
+        }
+
+        // Add task
+        addTaskBtn.addEventListener('click', function() {
+            const content = taskInput.value.trim();
+            if (content) {
+                const now = new Date();
+                const timestamp = now.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit' 
+                }) + ' ' + now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                
+                tasks.unshift({
+                    content: content,
+                    timestamp: timestamp,
+                    completed: false
+                });
+                
+                taskInput.value = '';
+                renderTasks();
+                showNotification('Task added successfully!', 'success');
+            }
+        });
+
+        // Toggle task completion
+        function toggleTaskCompletion(index) {
+            tasks[index].completed = !tasks[index].completed;
+            renderTasks();
+            
+            const status = tasks[index].completed ? 'completed' : 'marked as pending';
+            showNotification(`Task ${status}!`, 'success');
+        }
+
+        // Delete task
+        function deleteTask(index) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                tasks.splice(index, 1);
+                renderTasks();
+                showNotification('Task deleted successfully!', 'success');
+            }
+        }
+
+        // Save page (add or edit)
+        pageForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const pageData = {
+                name: pageNameInput.value,
+                url: pageUrlInput.value,
+                description: pageDescriptionInput.value,
+                created: new Date().toISOString().split('T')[0]
+            };
+            
+            if (currentEditPageId) {
+                // Update existing page
+                const index = pages.findIndex(p => p.id === currentEditPageId);
+                if (index !== -1) {
+                    pages[index] = { ...pages[index], ...pageData };
+                    showNotification('Page updated successfully!', 'success');
+                }
+            } else {
+                // Add new page
+                const newId = pages.length > 0 ? Math.max(...pages.map(p => p.id)) + 1 : 1;
+                pageData.id = newId;
+                pages.push(pageData);
+                showNotification('Page added successfully!', 'success');
+            }
+            
+            renderPages();
+            closeModalFunc();
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            if (searchTerm) {
+                const filteredPages = pages.filter(page => 
+                    page.name.toLowerCase().includes(searchTerm) || 
+                    page.description.toLowerCase().includes(searchTerm)
+                );
+                renderPages(filteredPages);
+            } else {
+                renderPages();
+            }
+        });
+
+        // Show notification
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add styles for notification
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--success)' : 'var(--danger)'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: var(--border-radius);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                z-index: 1001;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                max-width: 300px;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize the app
+        checkAuth();
+    </script>
+</body>
+</html>
