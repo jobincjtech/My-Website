@@ -3,2070 +3,2504 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AHM IT Operations Dashboard</title>
+    <title>Secure Credentials Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #0a4d8c;
-            --secondary: #ce1126;
-            --accent: #ffc928;
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --dark: #1b263b;
             --light: #f8f9fa;
-            --dark: #1a2b3c;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --gray: #6c757d;
-            --light-blue: #e8f4fc;
-            --shadow: 0 4px 12px rgba(10, 77, 140, 0.08);
-            --gradient-primary: linear-gradient(135deg, #0a4d8c 0%, #1c6bb0 100%);
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --danger: #ef233c;
+            --gray: #adb5bd;
         }
-
+        
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
         }
-
+        
         body {
-            background: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: var(--dark);
-            line-height: 1.5;
             min-height: 100vh;
-            padding: 15px;
         }
-
-        .container {
-            max-width: 1800px;
-            margin: 0 auto;
-        }
-
-        /* Header Styles */
-        .dashboard-header {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 20px 25px;
+        
+        /* Login Container */
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 5% auto;
+            padding: 2.5rem;
+            background: white;
             border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-container h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            background: var(--primary);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .input-group {
             position: relative;
-            overflow: hidden;
+            margin-bottom: 1.2rem;
+            text-align: left;
         }
-
-        .dashboard-header::before {
-            content: "";
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+        }
+        
+        .input-group .toggle-password {
             position: absolute;
-            top: -30%;
-            right: -30%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            right: 12px;
+            top: 40px;
+            cursor: pointer;
+            color: var(--gray);
         }
-
-        .header-top {
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .login-btn:hover {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+        
+        .error-message {
+            color: var(--danger);
+            margin-top: 1rem;
+            display: none;
+            font-size: 0.9rem;
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo {
-            background: white;
-            color: var(--primary);
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-title h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .header-title p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            font-weight: 400;
-        }
-
-        .date-time {
-            text-align: right;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 12px 18px;
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
-            min-width: 250px;
-        }
-
-        .date-time div {
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin-bottom: 4px;
-        }
-
-        .date-time span {
-            font-weight: 400;
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-
-        /* Admin Controls */
-        .admin-controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            justify-content: center;
-        }
-
-        .admin-btn {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-
-        .admin-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-        }
-
-        /* Stats Cards */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            border: none;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-icon {
-            background: linear-gradient(135deg, var(--light-blue) 0%, #d9eaf9 100%);
-            color: var(--primary);
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-right: 15px;
-            box-shadow: 0 4px 10px rgba(10, 77, 140, 0.1);
-        }
-
-        .stat-info h3 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--dark);
-            line-height: 1;
-            margin-bottom: 5px;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .stat-info p {
-            color: var(--gray);
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .stat-card:nth-child(2) .stat-icon {
-            background: linear-gradient(135deg, #fee 0%, #ffdddd 100%);
-            color: var(--secondary);
-        }
-
-        .stat-card:nth-child(3) .stat-icon {
-            background: linear-gradient(135deg, #fff8e1 0%, #ffeaa7 100%);
-            color: var(--accent);
-        }
-
-        .stat-card:nth-child(4) .stat-icon {
-            background: linear-gradient(135deg, #e8f8ef 0%, #abecd6 100%);
-            color: var(--success);
-        }
-
-        /* Main Content */
-        .content-container {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            margin-bottom: 25px;
-        }
-
-        .search-section {
-            padding: 20px;
-            background: linear-gradient(to right, #f8fafc, #ffffff);
-            border-bottom: 1px solid rgba(225, 232, 240, 0.8);
-        }
-
-        .search-box {
-            display: flex;
-            gap: 12px;
-            max-width: 100%;
-            margin-bottom: 15px;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 14px 18px;
-            border: 1px solid #e1e8f0;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            transition: all 0.3s;
-            background: #f8fafc;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(10, 77, 140, 0.1);
-        }
-
-        .search-btn {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-            box-shadow: 0 4px 10px rgba(10, 77, 140, 0.2);
-        }
-
-        .search-btn:hover {
-            background: linear-gradient(135deg, #083a6d 0%, #155a96 100%);
-            transform: translateY(-2px);
-        }
-
-        /* Tabs */
-        .tabs-section {
-            display: flex;
-            background: #f8fafc;
-            border-bottom: 1px solid rgba(225, 232, 240, 0.8);
-            padding: 0 20px;
-            position: relative;
-        }
-
-        .tab {
-            padding: 15px 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--gray);
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-            font-size: 0.9rem;
-        }
-
-        .tab:hover {
-            color: var(--primary);
-            background: rgba(10, 77, 140, 0.05);
-        }
-
-        .tab.active {
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-            background: white;
-        }
-
-        .tab-badge {
-            background: var(--primary);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            box-shadow: 0 2px 6px rgba(10, 77, 140, 0.2);
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-        }
-
-        .action-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            font-size: 13px;
-            opacity: 0.8;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            opacity: 1;
-        }
-
-        .edit-btn {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-        }
-
-        .delete-btn {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-        }
-
-        .add-item-btn {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 6px 15px rgba(10, 77, 140, 0.3);
-            transition: all 0.3s;
-            z-index: 100;
-            opacity: 0;
-            transform: scale(0);
-        }
-
-        .add-item-btn.show {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .add-item-btn:hover {
-            transform: scale(1.1) rotate(90deg);
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: white;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            transform: translateY(30px);
-            transition: transform 0.3s;
-        }
-
-        .modal-overlay.active .modal {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 20px 25px;
-            border-radius: 15px 15px 0 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .modal-header h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            position: relative;
-            z-index: 1;
-        }
-
-        .modal-body {
-            padding: 25px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--dark);
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #e1e8f0;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-            background: #f8fafc;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(10, 77, 140, 0.1);
-        }
-
-        .modal-footer {
-            padding: 20px 25px;
-            border-top: 1px solid #e1e8f0;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 120px;
-            justify-content: center;
-        }
-
-        .btn-primary {
-            background: var(--gradient-primary);
-            color: white;
-            box-shadow: 0 4px 10px rgba(10, 77, 140, 0.2);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #083a6d 0%, #155a96 100%);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: #f8f9fa;
-            color: var(--dark);
-            border: 1px solid #e1e8f0;
-        }
-
-        .btn-secondary:hover {
-            background: #e9ecef;
-            transform: translateY(-2px);
-        }
-
-        /* Table Styles */
-        .table-container {
-            overflow-x: auto;
-            border-radius: 10px;
-            margin: 15px;
-            border: 1px solid rgba(225, 232, 240, 0.8);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            min-width: 1000px;
-        }
-
-        table th {
-            background: linear-gradient(to bottom, #f8fafc, #eef5fc);
-            color: var(--primary);
-            font-weight: 700;
-            text-align: left;
-            padding: 15px 12px;
-            border-bottom: 2px solid #e1e8f0;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
+            z-index: 100;
         }
-
-        table td {
-            padding: 12px;
-            border-bottom: 1px solid rgba(240, 244, 249, 0.8);
-            transition: all 0.2s;
-            font-size: 0.85rem;
+        
+        .header h2 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
         }
-
-        table tr {
-            transition: all 0.2s;
+        
+        .header h2 i {
+            font-size: 1.8rem;
         }
-
-        table tr:hover {
-            background: rgba(248, 250, 252, 0.8);
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
         }
-
-        /* IP Address Styling */
-        .ip-address {
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-            color: var(--primary);
-            background: #e8f4fc;
-            padding: 8px 12px;
-            border-radius: 6px;
-            display: inline-block;
-            border-left: 3px solid var(--primary);
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            user-select: all;
-            font-size: 0.85rem;
         }
-
-        .ip-address:hover {
-            background: #d9eaf9;
-            transform: translateY(-2px);
+        
+        .user-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
         }
-
-        .copy-btn {
-            background: var(--gradient-primary);
+        
+        .logout-btn {
+            background: var(--danger);
             color: white;
             border: none;
-            border-radius: 6px;
             padding: 8px 15px;
+            border-radius: 6px;
             cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-flex;
+            font-weight: 500;
+            display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.8rem;
-            box-shadow: 0 3px 8px rgba(10, 77, 140, 0.2);
+            gap: 0.5rem;
+            transition: all 0.3s;
         }
-
-        .copy-btn:hover {
-            background: linear-gradient(135deg, #083a6d 0%, #155a96 100%);
+        
+        .logout-btn:hover {
+            background: #d90429;
             transform: translateY(-2px);
         }
-
-        .copy-btn i {
-            font-size: 0.9rem;
-        }
-
-        /* Zone Badge */
-        .zone-badge {
-            background: #eef5fc;
-            color: var(--primary);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.75rem;
-            display: inline-block;
-            box-shadow: 0 2px 5px rgba(10, 77, 140, 0.1);
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background: var(--success);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.3);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transform: translateX(100%) scale(0.9);
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
-        .toast.show {
-            transform: translateX(0) scale(1);
-            opacity: 1;
-        }
-
-        .toast.error {
-            background: var(--danger);
-            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
-        }
-
-        /* Footer */
-        .dashboard-footer {
-            text-align: center;
-            padding: 25px;
-            color: var(--gray);
-            font-size: 0.85rem;
+        
+        /* User dropdown menu */
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
             background: white;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            margin-top: 25px;
-        }
-
-        .footer-stats {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .footer-stat {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 0.9rem;
-        }
-
-        .footer-stat i {
-            color: var(--primary);
-            font-size: 1rem;
-        }
-
-        /* Tab Content */
-        .tab-content {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            padding: 0.5rem;
+            z-index: 1000;
             display: none;
+            margin-top: 10px;
         }
-
-        .tab-content.active {
+        
+        .user-menu.active {
             display: block;
             animation: fadeIn 0.3s ease;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        
+        .user-menu-item {
+            padding: 0.8rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
         }
-
+        
+        .user-menu-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .user-menu-item i {
+            width: 20px;
+            color: var(--primary);
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+        }
+        
+        /* Modal for changing access key */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-30px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .modal-header h3 {
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: all 0.2s;
+        }
+        
+        .close-modal:hover {
+            color: var(--danger);
+        }
+        
+        .form-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+        }
+        
+        .modal-btn {
+            padding: 12px 20px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .modal-btn:hover {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+        
+        .key-status {
+            margin-top: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .key-status.success {
+            background: #d1e7dd;
+            color: #0f5132;
+            display: block;
+        }
+        
+        .key-status.error {
+            background: #f8d7da;
+            color: #842029;
+            display: block;
+        }
+        
+        /* Tabs - MODIFIED SECTION */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            overflow-x: visible;
+        }
+        
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            white-space: nowrap;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        
+        .tab i {
+            font-size: 1.1rem;
+        }
+        
+        .tab:hover {
+            background: #f8f9fa;
+            border-color: var(--accent);
+            color: var(--primary);
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        
+        th {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        th:first-child {
+            border-top-left-radius: 8px;
+        }
+        
+        th:last-child {
+            border-top-right-radius: 8px;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #f1f3f5;
+        }
+        
+        /* Password Field */
+        .password-field {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .password-mask {
+            letter-spacing: 2px;
+            user-select: none;
+        }
+        
+        .password-value {
+            display: none;
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .password-field.revealed .password-mask {
+            display: none;
+        }
+        
+        .password-field.revealed .password-value {
+            display: inline;
+        }
+        
+        .copy-password {
+            margin-left: 0.5rem;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .copy-password:hover {
+            color: var(--primary);
+        }
+        
+        .copy-tooltip {
+            position: absolute;
+            background: var(--dark);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        
+        .copy-tooltip.show {
+            opacity: 1;
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
+            .login-container {
+                margin: 10% auto;
+                padding: 1.5rem;
+                width: 90%;
             }
             
-            .header-top {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
+            .header {
+                padding: 1rem;
             }
             
-            .date-time {
-                align-self: stretch;
-                text-align: center;
-                min-width: auto;
+            .header h2 {
+                font-size: 1.2rem;
             }
             
-            .stats-container {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .search-box {
-                flex-direction: column;
-            }
-            
-            .search-btn {
-                padding: 14px;
-                justify-content: center;
-            }
-            
-            .tabs-section {
-                overflow-x: auto;
-                padding: 0 10px;
+            .main-content {
+                padding: 1rem;
             }
             
             .tab {
-                padding: 12px 15px;
-                font-size: 0.85rem;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .table-container {
-                margin: 10px;
-            }
-            
-            .add-item-btn {
-                bottom: 20px;
-                right: 20px;
-                width: 45px;
-                height: 45px;
-            }
-            
-            .modal {
-                width: 95%;
-                margin: 10px;
-            }
-            
-            .footer-stats {
-                gap: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .stats-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .tab {
-                padding: 10px 12px;
-                font-size: 0.8rem;
-            }
-            
-            .header-title h1 {
-                font-size: 1.4rem;
-            }
-            
-            .date-time {
-                padding: 10px 12px;
-            }
-            
-            .date-time div {
+                padding: 0.6rem 1rem;
                 font-size: 0.9rem;
             }
             
-            .date-time span {
-                font-size: 0.8rem;
+            th, td {
+                padding: 0.8rem;
             }
+            
+            .user-menu {
+                width: 180px;
+                right: -10px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header Section -->
-        <header class="dashboard-header">
-            <div class="header-top">
-                <div class="logo-section">
-                    <div class="logo">
-                        <i class="fas fa-network-wired"></i>
+    <!-- Login Section -->
+<div id="login-section" class="login-container">
+    <div class="logo">
+        <i class="fas fa-lock"></i>
+    </div>
+    <h2>Jobin Credentials Portal</h2>
+    <div class="input-group">
+        <label for="access-key">Access Key</label>
+        <input type="password" id="access-key" placeholder="Enter your access key" required>
+        <i class="fas fa-eye toggle-password" id="toggle-password"></i>
+    </div>
+    <button class="login-btn" id="login-btn">
+        <i class="fas fa-key"></i> Authenticate
+    </button>
+    <div id="error-message" class="error-message">
+        <i class="fas fa-exclamation-circle"></i> Invalid access key
+    </div>
+    
+    <div style="margin-top: 20px; font-size: 0.9rem; color: #666; text-align: center;">
+        <p><i class="fas fa-shield-alt"></i> Secure Access System</p>
+        <p style="font-size: 0.8rem; margin-top: 5px;">Contact administrator if you've forgotten your access key</p>
+    </div>
+</div>
+    
+    <!-- Dashboard Section -->
+    <div id="dashboard" class="dashboard">
+        <div class="header">
+            <h2>
+                <i class="fas fa-key"></i> Credentials Management System
+            </h2>
+            <div class="user-info">
+                <div class="user-avatar" id="user-menu-toggle">J</div>
+                <div class="user-menu" id="user-menu">
+                    <div class="user-menu-item" id="change-key-option">
+                        <i class="fas fa-key"></i>
+                        <span>Change Access Key</span>
                     </div>
-                    <div class="header-title">
-                        <h1>AHM IT Operations Dashboard</h1>
-                        <p>Network Management System • JOBIN CJ</p>
+                    <div class="user-menu-item">
+                        <i class="fas fa-user"></i>
+                        <span>Profile Settings</span>
+                    </div>
+                    <div class="user-menu-item">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Help & Support</span>
                     </div>
                 </div>
-                <div class="date-time">
-                    <div id="current-date">Loading...</div>
-                    <span id="current-time"></span>
-                </div>
-            </div>
-            <div class="admin-controls">
-                <button class="admin-btn" id="adminToggle">
-                    <i class="fas fa-user-shield"></i>
-                    <span>Admin Mode: <span id="adminStatus">OFF</span></span>
+                <button class="logout-btn" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
-                <button class="admin-btn" id="exportBtn">
-                    <i class="fas fa-download"></i>
-                    Export Data
-                </button>
-                <button class="admin-btn" id="resetDataBtn" title="Reset to Original Data">
-                    <i class="fas fa-redo"></i>
-                    Reset Data
-                </button>
-            </div>
-        </header>
-
-        <!-- Stats Cards -->
-        <div class="stats-container">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-server"></i>
-                </div>
-                <div class="stat-info">
-                    <h3 id="total-devices">139</h3>
-                    <p>Total Network Devices</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-wifi"></i>
-                </div>
-                <div class="stat-info">
-                    <h3 id="online-devices">132</h3>
-                    <p>Online Devices</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-print"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>73</h3>
-                    <p>Network Printers</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-desktop"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>25</h3>
-                    <p>Display Systems</p>
-                </div>
+                <div style="margin-top: 15px; text-align: center;">
+    <a href="#" id="forgot-key-link" style="color: var(--primary); text-decoration: none; font-size: 0.9rem;">
+        <i class="fas fa-question-circle"></i> Forgot Access Key?
+    </a>
+</div>
             </div>
         </div>
-
-        <!-- Main Content -->
-        <div class="content-container">
-            <!-- Search Section -->
-            <div class="search-section">
-                <div class="search-box">
-                    <input type="text" id="searchInput" class="search-input" 
-                           placeholder="Search by IP, device, location, department...">
-                    <button id="searchButton" class="search-btn">
-                        <i class="fas fa-search"></i> Search
-                    </button>
-                </div>
-                <div style="margin-top: 10px; font-size: 0.85rem; color: #6c757d;">
-                    <span id="resultCount">Displaying all network devices across all zones</span>
-                </div>
-            </div>
-
+        
+        <div class="main-content">
             <!-- Tabs -->
-            <div class="tabs-section">
-                <div class="tab active" data-tab="token">
-                    <i class="fas fa-desktop"></i> Token Displays
-                    <span class="tab-badge" id="token-count">11</span>
+            <div class="tabs">
+                <div class="tab active" data-tab="nas">
+                    <i class="fas fa-server"></i> NAS
                 </div>
-                <div class="tab" data-tab="ward">
-                    <i class="fas fa-procedures"></i> Ward Displays
-                    <span class="tab-badge" id="ward-count">14</span>
+                <div class="tab" data-tab="moksha">
+                    <i class="fas fa-database"></i> Moksha
                 </div>
-                <div class="tab" data-tab="printer">
-                    <i class="fas fa-print"></i> Printers
-                    <span class="tab-badge" id="printer-count">73</span>
+                <div class="tab" data-tab="cctv">
+                    <i class="fas fa-video"></i> CCTV
                 </div>
-                <div class="tab" data-tab="dr">
-                    <i class="fas fa-user-md"></i> Doctor Clinics
-                    <span class="tab-badge" id="dr-count">41</span>
+                <div class="tab" data-tab="smarttv">
+                    <i class="fas fa-tv"></i> Smart TV
                 </div>
-                <div class="tab" data-tab="all">
-                    <i class="fas fa-list"></i> All Devices
-                    <span class="tab-badge" id="all-count">139</span>
+                <div class="tab" data-tab="biometric">
+                    <i class="fas fa-fingerprint"></i> BioMetric
                 </div>
-            </div>
-
-            <!-- Token Display Tab -->
-            <div class="tab-content active" id="token-tab">
-                <div class="table-container">
-                    <table id="token-table">
-                        <thead>
-                            <tr>
-                                <th>Zone</th>
-                                <th>Device</th>
-                                <th>IP Address</th>
-                                <th>Location</th>
-                                <th>Copy IP</th>
-                                <th style="width: 90px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="token-tbody">
-                            <!-- Data will be populated -->
-                        </tbody>
-                    </table>
+                <div class="tab" data-tab="eligibility">
+                    <i class="fas fa-check-circle"></i> Eligibility
                 </div>
-            </div>
-
-            <!-- Ward Display Tab -->
-            <div class="tab-content" id="ward-tab">
-                <div class="table-container">
-                    <table id="ward-table">
-                        <thead>
-                            <tr>
-                                <th>SL No</th>
-                                <th>Device</th>
-                                <th>IP Address</th>
-                                <th>Rooms</th>
-                                <th>Floor</th>
-                                <th>Location</th>
-                                <th>Copy IP</th>
-                                <th style="width: 90px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ward-tbody">
-                            <!-- Data will be populated -->
-                        </tbody>
-                    </table>
+                <div class="tab" data-tab="meddiff">
+                    <i class="fas fa-medkit"></i> Meddiff
+                </div>
+                <div class="tab" data-tab="omnivista">
+                    <i class="fas fa-eye"></i> OmniVista
+                </div>
+                <div class="tab" data-tab="oxe">
+                    <i class="fas fa-phone"></i> OXE Call
+                </div>
+                <div class="tab" data-tab="pa">
+                    <i class="fas fa-bullhorn"></i> PA System
+                </div>
+                <div class="tab" data-tab="silverpeak">
+                    <i class="fas fa-network-wired"></i> SilverPeak
+                </div>
+                <div class="tab" data-tab="solventum">
+                    <i class="fas fa-network-wired"></i> solventum
+                </div>
+                <div class="tab" data-tab="Cloudflare">
+                    <i class="fas fa-network-wired"></i> Cloudflare
+                </div>
+                <div class="tab" data-tab="Godaddy">
+                    <i class="fas fa-network-wired"></i> Godaddy
+                </div>
+                <div class="tab" data-tab="Github">
+                    <i class="fas fa-network-wired"></i> Github
+                </div>
+                <div class="tab" data-tab="IP TV">
+                    <i class="fas fa-network-wired"></i> IP TV
+                </div>
+                <div class="tab" data-tab="jobin">
+                    <i class="fas fa-user-circle"></i> JOBIN
                 </div>
             </div>
-
-            <!-- Printer Tab -->
-            <div class="tab-content" id="printer-tab">
+            
+            <!-- NAS Tab Content -->
+            <div id="nas" class="tab-content active">
                 <div class="table-container">
-                    <table id="printer-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Host Name</th>
-                                <th>IP Address</th>
-                                <th>Printer S/N</th>
-                                <th>Department</th>
-                                <th>Facility</th>
-                                <th>Copy IP</th>
-                                <th style="width: 90px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="printer-tbody">
-                            <!-- Data will be populated -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Doctor Clinics Tab -->
-            <div class="tab-content" id="dr-tab">
-                <div class="table-container">
-                    <table id="dr-table">
+                    <table>
                         <thead>
                             <tr>
                                 <th>SL No</th>
-                                <th>Clinic</th>
-                                <th>IP Address</th>
-                                <th>Zone</th>
-                                <th>Host Name</th>
-                                <th>Copy IP</th>
-                                <th style="width: 90px;">Actions</th>
+                                <th>Name</th>
+                                <th>URL</th>
+                                <th>Username</th>
+                                <th>Password</th>
                             </tr>
                         </thead>
-                        <tbody id="dr-tbody">
-                            <!-- Data will be populated -->
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>common</td>
+                                <td>\\172.19.8.120/121</td>
+                                <td>common</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Aster@2000</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Front Office</td>
+                                <td>\\172.19.8.120/121</td>
+                                <td>Foinfo</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Asterfrontoffice@2020</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>RAD</td>
+                                <td>\\172.19.8.120/121</td>
+                                <td>AHMRad</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Asterradio@2020</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>MRD</td>
+                                <td>\\172.19.8.120/121</td>
+                                <td>MRD</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Asterrecords@2020</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>IT</td>
+                                <td>\\172.19.8.120/121</td>
+                                <td>IT</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Aster@123zxc</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>Insurance</td>
+                                <td>\\172.19.8.120/121</td>
+                                <td>insurance</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Asterins@2020</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>Sick Leave</td>
+                                <td>\\172.19.10.111</td>
+                                <td>common</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">common</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Bio</td>
+                                <td>\\172.19.8.43</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">galaxy24</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Old Attachment</td>
+                                <td>\\172.19.8.42\patientdata\1\uhid</td>
+                                <td>HISPAT</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Jop1qg5</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Moksha Tab Content -->
+            <div id="moksha" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL No</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Hostname</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Moksha Local Cache server - AHM</td>
+                                <td>172.19.8.20</td>
+                                <td>moksha.ven@asterdmhealthcare.com</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Kabali@9818</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>uae-ahm-curpacs</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Moksha Local Cache server - AHQ</td>
+                                <td>172.19.58.110</td>
+                                <td>moksha</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Kabali@9813</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>ahqs-d-moksha</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Moksha Local Cache server - AHSJ</td>
+                                <td>172.19.170.110</td>
+                                <td>moksha</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Kabali@9813</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>ahsj-d-moksha</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Moksha Local Cache server - Cedar</td>
+                                <td>172.19.113.50</td>
+                                <td>moksha</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Kabali@9813</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>acd-d-moksha</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>RIS Server</td>
+                                <td>172.19.241.46 (Local IP)<br>20.174.16.16 (Public IP)</td>
+                                <td>RISuae.alif.onl(Domain)</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">-</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>PACS Server</td>
+                                <td>172.19.241.47(Local IP)<br>20.174.17.52(Public IP)</td>
+                                <td>-</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">-</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>WVD</td>
+                                <td>-</td>
+                                <td>moksha.pacs@asterhospital.com</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Kabali@9817</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>ESXi IP</td>
+                                <td>172.19.8.44</td>
+                                <td>cobra</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">aster@123</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Temp Cache server AHM</td>
+                                <td>172.19.8.122</td>
+                                <td>moksha</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Kabali@9814</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>AHM Athena</td>
+                                <td>http://172.19.8.20:9999/mdathena/</td>
+                                <td>user</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">user</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td>AHQ Athena</td>
+                                <td>http://172.19.58.110:9999/mdathena/</td>
+                                <td>user</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">user</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td>ACD Athena</td>
+                                <td>http://172.19.113.50:9999/mdathena/</td>
+                                <td>user</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">user</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td>Moksha Clinic</td>
+                                <td>https://pacs.asterclinics.com/risng/ui/html/3.7.1.php</td>
+                                <td>142342</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Welcome@123</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>14</td>
+                                <td>ACD Athena</td>
+                                <td>http://172.19.113.50:9999/mdathena/</td>
+                                <td>user</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">user</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>15</td>
+                                <td>AHSJ Athena</td>
+                                <td>http://172.19.170.110:9999/mdathena/</td>
+                                <td>user</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">user</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>16</td>
+                                <td>Meddiff Blob</td>
+                                <td>Key:DefaultEndpointsProtocol=https;AccountName=ahosppacs;
+								AccountKey=MH4wTt3jZ1NGnc8NeyMYg46Deue310fmRYelFpJSeY/p6JlY8
+								QnhspOXJW9uaLlEXS0e9G8XM9oDRebqmJgYpw==;EndpointSuffix=core.
+								windows.net</td>
+                                <td>-</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">-</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- CCTV Tab Content -->
+            <div id="cctv" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>AHM NVR1</td>
+                                <td>http://172.19.25.243/doc/index.html#/portal/login</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Aster@AHM@NVR@95</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>AHM NVR2</td>
+                                <td>http://172.19.25.244/doc/index.html#/portal/login</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Aster@AHM@NVR@95</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>AHM NVR3</td>
+                                <td>http://172.19.25.240/doc/index.html#/portal/login</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Aster@AHM@NVR@95</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>AHM NVR4</td>
+                                <td>http://172.19.25.242/doc/index.html#/portal/login</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Aster@AHM@NVR@95</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>AHM NVR5</td>
+                                <td>http://172.19.25.245/doc/index.html#/portal/login</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Aster@AHM@NVR@95</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>AHM NVR6</td>
+                                <td>http://172.19.25.241/doc/index.html#/portal/login</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Aster@AHM@NVR@95</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>Sonapur NVR1</td>
+                                <td>http://172.19.128.223/doc/index.html#/portal/login</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Decibels123</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>Sonapur</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Sonapur NVR2</td>
+                                <td>http://172.19.128.225/doc/index.html#/portal/login</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Decibels123</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>Sonapur</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Sonapur NVR3</td>
+                                <td>-</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Decibels123</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>Sonapur</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>Cedar Admin</td>
+                                <td>http://172.19.113.100/doc/index.html#/portal/login</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Clinic@23</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>Cedar</td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td>CedarHospital</td>
+                                <td>http://172.19.112.150/doc/index.html#/portal/login</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">2020@Aster</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>Cedar</td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td>ADSU</td>
+                                <td>http://172.19.1.143/doc/index.html#/portal/login</td>
+                                <td>-</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">-</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>ADSU</td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td>HikConnect</td>
+                                <td>https://www.hik-connect.com/views/login/</td>
+                                <td>971507491977</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Johannafeby@123</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>14</td>
+                                <td>IT Cam</td>
+                                <td>http://172.19.49.236/</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Panama@0987</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>15</td>
+                                <td>JAVRIS</td>
+                                <td>https://cloud.jarvis.live/</td>
+                                <td>971507491977</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Johannafeby@123</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>16</td>
+                                <td>Cedar New UNV</td>
+                                <td>http://172.19.113.75/?_=187466397807</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">admin@123</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                                <td>17</td>
+                                <td>AHM NVR1-6 - IT</td>
+                                <td>25.243,244,240,242,245,241</td>
+                                <td>IT</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Aster@NVR@098</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                                <td>18</td>
+                                <td>Admin Office Sharjah</td>
+                                <td>http://172.19.161.10/</td>
+                                <td>aster</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Expo@2020</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                                <td>19</td>
+                                <td>AHM NVR1-6 - JAVRIS</td>
+                                <td>25.243,244,240,242,245,241</td>
+                                <td>JAVRIS</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Aster@NVR@890</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Smart TV Gmail Tab Content -->
+            <div id="smarttv" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>AHM Gmail for TV</td>
+                                <td>-</td>
+                                <td>itahmtv@gmail.com</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Jobin@123</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>AHQ Gmail for TV</td>
+                                <td>-</td>
+                                <td>ahqtv2000@gmail.com</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Aster@123.</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHQ</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Samsung Account for TV</td>
+                                <td>-</td>
+                                <td>ahqtv2000@gmail.com</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Expo@2020</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM, AHQ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- BioMetric Tab Content -->
+            <div id="biometric" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>BioMetric ezpz</td>
+                                <td>https://app.ezpz.ae/</td>
+                                <td>superadmin@asterhospital.com</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Test@1234</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM and AHQ</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>BioMetric ezpz</td>
+                                <td>https://app.ezpz.ae/</td>
+                                <td>jobin.joseph@asterhospital.com</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Johannafeby@123</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM and AHQ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Eligibility Check Tab Content -->
+            <div id="eligibility" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Eligibility Check</td>
+                                <td>https://rcm.mantys.in/dashboard/v2/eligibility/dashboard</td>
+                                <td>jobin@aster.org</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">jobin</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Eligibility Check All</td>
+                                <td>https://rcm.mantys.in/dashboard/v2/eligibility/dashboard</td>
+                                <td>jobin@mantys.io</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">jobin</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Meddiff Tab Content -->
+            <div id="meddiff" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Sadmin</td>
+                                <td>https://172.19.241.5/login</td>
+                                <td>sadmin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">admin</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- OmniVista Tab Content -->
+            <div id="omnivista" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>OmniVista</td>
+                                <td>https://asterhospitaluae.ov.ovcirrus.com/login.html</td>
+                                <td>jobin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Johannafeby@1</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- OXE Call Mgr Tab Content -->
+            <div id="oxe" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>OXE AHM</td>
+                                <td>https://172.19.17.10/#/login</td>
+                                <td>mtcl</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">RbbnRbbn123123!!</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>OXE AHQ</td>
+                                <td>https://172.19.56.5/#/home/configuration</td>
+                                <td>mtcl</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">RbbnRbbn123123!!</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHQ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- PA System Tab Content -->
+            <div id="pa" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>AHM</td>
+                                <td>http://172.19.17.25/cgi-bin/luci</td>
+                                <td>egi</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">1234</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>ADSU</td>
+                                <td>http://172.19.1.250/cgi-bin/luci</td>
+                                <td>egi</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">1234</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>ADSU</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>AHSJ</td>
+                                <td>http://172.19.168.15/cgi-bin/luci</td>
+                                <td>egi</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">1234</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHSJ</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Sonapur</td>
+                                <td>http://172.19.132.10/cgi-bin/luci</td>
+                                <td>egi</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">1234</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>Sonapur</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Cedar</td>
+                                <td>http://172.19.110.5/cgi-bin/luci</td>
+                                <td>egi</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">1234</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>Cedar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+			
+			<!-- JOBIN Tab Content -->
+<div id="jobin" class="tab-content">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>SL No</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>ITR</td>
+                    <td>ARXPJ5028M</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Johanna@3</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>SBI</td>
+                    <td>FEBYBPL</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">FEBY12@1991</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>HDFC credit card</td>
+                    <td>JOBINBPL</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">johannafeby@1</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                    </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Federal Trasaction</td>
+                    <td>JOBINBPL</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Joha$Joby@197</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Federal Login</td>
+                    <td>JOBINBPL</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Joha$Joby@1977</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>FAB</td>
+                    <td>JOBINCUJAE</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Johanna@19</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>DIB Dubai</td>
+                    <td>JOBINCUJAE</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Joby$Joha@1977</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>ENBD</td>
+                    <td>febygmail</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Johanna@1903</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>federal NRI FEBY</td>
+                    <td>P2207082791</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Johannafeby@1</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>sbi credit card</td>
+                    <td>JOBINBPL</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">johannafeby@1990</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td>Feby PF</td>
+                    <td>uan-101342537848</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">amlwEm$#*789</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td>Jobin PF</td>
+                    <td>uan-101514155965</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">amlwEm$#*789</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>13</td>
+                    <td>Gmail</td>
+                    <td>jobin.cj.vmd@gmail.com</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Johannafeby@12</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>14</td>
+                    <td>Yahoo</td>
+                    <td>joby781@yahoo.in</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Johannafeby@1</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>15</td>
+                    <td>johanna gmail</td>
+                    <td>johannajobin1@gmail.com</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Jobikuttan@1</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>16</td>
+                    <td>Apple</td>
+                    <td>johannajobin1@gmail.com</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Johannafeby@3</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>17</td>
+                    <td>One drive</td>
+                    <td>7828751718</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">johannafeby@1990</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>18</td>
+                    <td>FB</td>
+                    <td>917828751718</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">johannafeby@1</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>19</td>
+                    <td>Mehazooz</td>
+                    <td>jobincj</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">johannafeby@1</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>20</td>
+                    <td>EVG</td>
+                    <td>1220201706</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">johannafeby@1</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>21</td>
+                    <td>INC</td>
+                    <td>febygeorge607@gmail.com</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Jobikuttan@1</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>22</td>
+                    <td>knc</td>
+                    <td>febygeorge607@gmail.com</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">7828751718@f</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>23</td>
+                    <td>Parivahan login details</td>
+                    <td>joby781@yahoo.in</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Johannafeby@3</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>24</td>
+                    <td>NVSP.in (voter id)</td>
+                    <td>7828751718</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Johannafeby@1</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>25</td>
+                    <td>Tata Sjky</td>
+                    <td>1124401041</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">********</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                    </tr>
+                <tr>
+                    <td>26</td>
+                    <td>NORKA</td>
+                    <td>joby781@yahoo.in/7828751718</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Johannafeby@0987</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>27</td>
+                    <td>RTA</td>
+                    <td>jobincj1</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Johannafeby@1977</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                        </tr>
+                                       <tr>
+                    <td>28</td>
+                    <td>itsupport</td>
+                    <td>itsupport.ahm@asterhospital.com</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Update@2020</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                        </tr>
+                <tr>
+                    <td>29</td>
+                    <td>NORKA Feby</td>
+                    <td>febygeorge607@gmail.com</td>
+                    <td class="password-field">
+                        <span class="password-mask">••••••••</span>
+                        <span class="password-value">Johanna@1903</span>
+                        <i class="fas fa-copy copy-password"></i>
+                        <span class="copy-tooltip">Copied!</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+     
+<!-- Solventum Tab Content -->
+            <div id="solventum" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Fluency Solventum</td>
+                                <td>https://mum.fluency.solventum.ae/</td>
+                                <td>JOBIN.JOSEPH</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Josephandmary@1</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- All Devices Tab -->
-            <div class="tab-content" id="all-tab">
+            <!-- Cloudflare Tab Content -->
+            <div id="Cloudflare" class="tab-content">
                 <div class="table-container">
-                    <table id="all-table">
+                    <table>
                         <thead>
                             <tr>
-                                <th>Category</th>
-                                <th>Device</th>
-                                <th>IP Address</th>
-                                <th>Location/Department</th>
-                                <th>Zone/Floor</th>
-                                <th>Copy IP</th>
-                                <th style="width: 90px;">Actions</th>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
                             </tr>
                         </thead>
-                        <tbody id="all-tbody">
-                            <!-- Data will be populated -->
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Domain Cloudflare</td>
+                                <td>https://dash.cloudflare.com/login 136561602, 663415727, 212472737, 533430732, 268666020, 353329376, 692872995, 063256643</td>
+                                <td>joby781@yahoo.in</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Ter@as@jos546</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>Domain</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <!-- Godaddy Tab Content -->
+            <div id="Godaddy" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Domain Godaddy</td>
+                                <td>https://www.godaddy.com/ jobincj.com renewal march 7 2027</td>
+                                <td>jobin.cj.vmd@gmail.com</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Ter@as@jos546</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>Domain</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Github Tab Content -->
+            <div id="Github" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Domain Git Hub</td>
+                                <td>https://github.com/jobincjtech  fd839-dc196,da97b-9e4f4, cb86c-531c7, 4be52-9726b, 72186-470ac, e9a8f-3b9b9,50981-1489e,97ee3-c805c, 34d6d-4b116, 00684-ab175, cb091-6deee, c470c-37b58, bee1c-bb357, 0c179-d43c5, e2de4-ce34c, b6916-b1d3d</td>
+                                <td>jobin.cj.vmd@gmail.com</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">Ter@as@jos546</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>Domain Host</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- IP TV Tab Content -->
+            <div id="IP TV" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>VU IP TV Player</td>
+                                <td>http://mystb.online/</td>
+                                <td>Jobindigitly22</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">99559955</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SilverPeak Tab Content -->
+            <div id="silverpeak" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>URL/IP</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>SilverPeak</td>
+                                <td>https://20.203.28.64/9.3.5.40043/webclient/html/login.html</td>
+                                <td>admin</td>
+                                <td class="password-field">
+                                    <span class="password-mask">••••••••</span>
+                                    <span class="password-value">A$ter@203O</span>
+                                    <i class="fas fa-copy copy-password"></i>
+                                    <span class="copy-tooltip">Copied!</span>
+                                </td>
+                                <td>AHM</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             </div>
         </div>
+    </div>
+            
+         
 
-        <!-- Footer -->
-        <footer class="dashboard-footer">
-            <div class="footer-stats">
-                <div class="footer-stat">
-                    <i class="fas fa-server"></i>
-                    <span>Total Devices: <strong id="footer-total">139</strong></span>
-                </div>
-                <div class="footer-stat">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Online: <strong id="footer-online">132</strong></span>
-                </div>
-                <div class="footer-stat">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span>Attention Needed: <strong>7</strong></span>
-                </div>
-                <div class="footer-stat">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Zones: <strong>12</strong></span>
-                </div>
-            </div>
-            <p>UAE IT Operations Dashboard • Last Updated: <span id="last-updated"></span> • For authorized IT personnel only</p>
-            <p style="margin-top: 15px; font-size: 0.8rem; color: #95a5a6;">
-                Network Monitoring System v3.0 • Data persists in browser storage • © 2024 UAE IT Department
-            </p>
-        </footer>
-
-        <!-- Add Item Button -->
-        <button class="add-item-btn" id="addItemBtn">
-            <i class="fas fa-plus"></i>
-        </button>
+            
+        </div>
     </div>
 
-    <!-- Modal for Add/Edit -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
+    <!-- Change Key Modal -->
+    <div class="modal" id="change-key-modal">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Add New Device</h2>
+                <h3><i class="fas fa-key"></i> Change Access Key</h3>
+                <button class="close-modal" id="close-modal">&times;</button>
             </div>
-            <div class="modal-body">
-                <form id="deviceForm">
-                    <div class="form-group">
-                        <label for="deviceType">Device Type *</label>
-                        <select id="deviceType" class="form-control" required>
-                            <option value="">Select Device Type</option>
-                            <option value="token">Token Display</option>
-                            <option value="ward">Ward Display</option>
-                            <option value="printer">Printer</option>
-                            <option value="dr">Doctor Clinic</option>
-                        </select>
-                    </div>
-                    
-                    <div id="dynamicFields">
-                        <!-- Fields will be populated based on device type -->
-                    </div>
-                    
-                    <input type="hidden" id="editIndex" value="">
-                    <input type="hidden" id="editType" value="">
-                </form>
+            <div class="form-group">
+                <label for="current-key">Current Key</label>
+                <input type="password" id="current-key" placeholder="Enter current key">
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="cancelBtn">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-                <button type="button" class="btn btn-primary" id="saveBtn">
-                    <i class="fas fa-save"></i> Save Device
-                </button>
+            <div class="form-group">
+                <label for="new-key">New Key</label>
+                <input type="password" id="new-key" placeholder="Enter new key">
             </div>
+            <div class="form-group">
+                <label for="confirm-key">Confirm New Key</label>
+                <input type="password" id="confirm-key" placeholder="Confirm new key">
+            </div>
+            <div id="key-status" class="key-status"></div>
+            <button class="modal-btn" id="update-key-btn">Update Key</button>
         </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <i class="fas fa-check-circle"></i>
-        <span id="toastMessage">Operation completed successfully!</span>
     </div>
 
     <script>
-        // Your original data - ALL DATA INCLUDED
-        const originalTokenData = [
-            { zone: "Zone 5", device: "Mini PC", ip: "172.19.24.77", location: "Counter 7", url: "View Display" },
-            { zone: "Zone 3", device: "Mini PC", ip: "172.19.24.231", location: "Ortho OPD", url: "View Display" },
-            { zone: "Zone 4", device: "Mini PC", ip: "172.19.13.116", location: "Cardiology OPD", url: "View Display" },
-            { zone: "Zone 2", device: "Mini PC", ip: "172.19.24.233", location: "Gynaec OPD", url: "View Display" },
-            { zone: "Zone 1", device: "Mini PC", ip: "172.19.24.126", location: "Pediatric Old", url: "View Display" },
-            { zone: "Zone 9", device: "Mini PC", ip: "172.19.13.248", location: "Pharmacy counter", url: "View Display" },
-            { zone: "Zone 5", device: "Mini PC", ip: "172.19.13.186", location: "Main Reception", url: "View Display" },
-            { zone: "Zone 1", device: "Mini PC", ip: "172.19.24.17", location: "Pediatric New", url: "View Display" },
-            { zone: "Zone 4", device: "Mini PC", ip: "172.19.24.118", location: "Cadiology Dr sachin", url: "View Display" },
-            { zone: "Zone 18", device: "Mini PC", ip: "172.19.13.108", location: "Radiology", url: "View Display" },
-            { zone: "Zone 15", device: "Mini PC", ip: "172.19.13.106", location: "Sample collection", url: "View Display" }
-        ];
-
-        const originalWardData = [
-            { sl: "1", device: "Mini PC", ip: "172.19.13.241", rooms: "501 to 510 (510a/510b)", floor: "5th Floor", location: "E Wing", url: "View Display" },
-            { sl: "2", device: "Mini PC", ip: "172.19.13.242", rooms: "415 to 427 (420a/b,427a/b)", floor: "4th Floor", location: "D Wing", url: "View Display" },
-            { sl: "3", device: "Mini PC", ip: "172.19.13.243", rooms: "401 to 414 (412a/412b)", floor: "4th Floor", location: "C Wing", url: "View Display" },
-            { sl: "4", device: "Mini PC", ip: "172.19.13.244", rooms: "314 to 324 (324a/324b)", floor: "3rd Floor", location: "B Wing", url: "View Display" },
-            { sl: "5", device: "Mini PC", ip: "172.19.13.245", rooms: "room 301 to 313", floor: "3rd Floor", location: "A Wing", url: "View Display" },
-            { sl: "6", device: "Mini PC", ip: "172.19.13.246", rooms: "2201 to 2005", floor: "ICU", location: "ICU", url: "View Display" },
-            { sl: "7", device: "Mini PC", ip: "172.19.13.247", rooms: "2001 to 2006", floor: "LDR Room", location: "LDR Room", url: "View Display" },
-            { sl: "8", device: "Mini PC", ip: "172.19.13.249", rooms: "C001 to C005", floor: "CICU", location: "CICU", url: "View Display" },
-            { sl: "9", device: "Mini PC", ip: "172.19.24.36", rooms: "C001 to C005", floor: "ER Dashboard", location: "ER Dashboard", url: "View Display" },
-            { sl: "9", device: "Mini PC", ip: "172.19.13.100", rooms: "C001 to C005", floor: "ER Display", location: "ER Display", url: "View Display" },
-            { sl: "10", device: "Mini PC", ip: "172.19.13.105", rooms: "C001 to C005", floor: "HR Bday", location: "HR Bday", url: "View Display" },
-            { sl: "11", device: "Mini PC", ip: "172.19.13.102", rooms: "C001 to C005", floor: "OT Display", location: "OT Display", url: "View Display" },
-            { sl: "12", device: "Mini PC", ip: "172.19.1.244", rooms: "Media player", floor: "ADSC Display", location: "ADSC Display", url: "Media Player" },
-            { sl: "13", device: "Mini PC", ip: "172.19.1.245", rooms: "Media Player", floor: "ADSC Display", location: "adsc Display", url: "Media Player" },
-            { sl: "14", device: "Mini PC", ip: "172.19.13.36", rooms: "Blood request", floor: "Lab Reception", location: "Lab Reception", url: "http://172.19.8.85:6323/?fid=9" }
-        ];
-
-        const originalPrinterData = [
-            { cn: "1", host: "AH-AHM-OT", ip: "172.19.25.162", model: "HP LJ MGD MFP E42540F", dept: "OT", facility: "AHM" },
-            { cn: "2", host: "AH-AHM-GYNEC-NS", ip: "172.19.25.163", model: "HP LJ MGD MFP E42540F", dept: "Gynec NS", facility: "AHM" },
-            { cn: "3", host: "AH-AHM-NICU", ip: "172.19.24.42", model: "HP LJ MGD MFP E42540F", dept: "NICU", facility: "AHM" },
-            { cn: "4", host: "AH-AHM-RADIOLOGY-RECEPTION", ip: "172.19.25.164", model: "HP LJ MGD MFP E42540F", dept: "Radiology Reception", facility: "AHM" },
-            { cn: "5", host: "AH-AHM-INSURANCE-MAIN-RECEPTION", ip: "172.19.25.199", model: "HP LJ MGD MFP E42540F", dept: "Insurance Paedia", facility: "AHM" },
-            { cn: "6", host: "AH-AHM-MAIN-STORE", ip: "172.19.25.166", model: "HP LJ MGD MFP E42540F", dept: "MAIN STORE", facility: "AHM" },
-            { cn: "7", host: "AH-AHM-BIOMED", ip: "Flood", model: "HP LJ MGD MFP E42540F", dept: "BIOMED", facility: "AHM" },
-            { cn: "8", host: "AH-AHM-PEDIATRIC-RECEPTION", ip: "172.19.25.167", model: "HP LJ MGD MFP E42540F", dept: "Pediatric Rec", facility: "AHM" },
-            { cn: "9", host: "AH-AHM-ICU", ip: "172.19.25.168", model: "HP LJ MGD MFP E42540F", dept: "ICU", facility: "AHM" },
-            { cn: "10", host: "AH-AHM-2ND-DSU", ip: "172.19.25.169", model: "HP LJ MGD MFP E42540F", dept: "2ND DSU", facility: "AHM" },
-            { cn: "11", host: "AH-AHM-LABOUR", ip: "172.19.25.170", model: "HP LJ MGD MFP E42540F", dept: "Labour NS", facility: "AHM" },
-            { cn: "12", host: "AH-AHM-QUALITY", ip: "172.19.24.47", model: "HP LJ MGD MFP E42540F", dept: "Quality", facility: "AHM" },
-            { cn: "13", host: "AH-AHM-CHEMISTRY-1", ip: "172.19.25.171", model: "HP LJ MGD MFP E42540F", dept: "Chemistry 1", facility: "AHM" },
-            { cn: "14", host: "AH-AHM-CHEMISTRY-2", ip: "172.19.25.172", model: "HP LJ MGD MFP E42540F", dept: "Chemistry 2", facility: "AHM" },
-            { cn: "15", host: "AH-AHM-PSC-LAB", ip: "172.19.25.173", model: "HP LJ MGD MFP E42540F", dept: "PSC Lab", facility: "AHM" },
-            { cn: "16", host: "AH-AHM-DR-SCORE", ip: "172.19.25.174", model: "HP LJ MGD MFP E42540F", dept: "DR Score", facility: "AHM" },
-            { cn: "17", host: "AH-AHM-DR-SUJITH", ip: "172.19.25.175", model: "HP LJ MGD MFP E42540F", dept: "DR Sujith", facility: "AHM" },
-            { cn: "18", host: "AH-AHM-PEDIATRIC-DR", ip: "172.19.25.176", model: "HP LJ MGD MFP E42540F", dept: "Pediatric DR", facility: "AHM" },
-            { cn: "19", host: "AH-AHM-PEDIATRIC", ip: "172.19.25.177", model: "HP LJ MGD MFP E42540F", dept: "Pediatric", facility: "AHM" },
-            { cn: "20", host: "AH-AHM-OPT", ip: "172.19.25.178", model: "HP LJ MGD MFP E42540F", dept: "OPT", facility: "AHM" },
-            { cn: "21", host: "AH-AHM-ENT", ip: "172.19.25.179", model: "HP LJ MGD MFP E42540F", dept: "ENT", facility: "AHM" },
-            { cn: "22", host: "AH-AHM-CARDIO-ICU", ip: "172.19.25.180", model: "HP LJ MGD MFP E42540F", dept: "Cardio ICU", facility: "AHM" },
-            { cn: "23", host: "AH-AHM-CATH-LAB", ip: "172.19.25.181", model: "HP LJ MGD MFP E42540F", dept: "Cath Lab", facility: "AHM" },
-            { cn: "24", host: "AH-AHM-FAMILY-MEDICINE", ip: "172.19.25.182", model: "HP LJ MGD MFP E42540F", dept: "Family Medicine", facility: "AHM" },
-            { cn: "25", host: "AH-AHM-CCU", ip: "172.19.25.183", model: "HP LJ MGD MFP E42540F", dept: "CCU", facility: "AHM" },
-            { cn: "26", host: "AH-AHM-MICROBIOLOGY", ip: "172.19.25.184", model: "HP LJ MGD MFP E42540F", dept: "Microbiology", facility: "AHM" },
-            { cn: "27", host: "AH-AHM-MICROBIOLOGY-REC", ip: "172.19.25.185", model: "HP LJ MGD MFP E42540F", dept: "Microbiology Rec", facility: "AHM" },
-            { cn: "28", host: "AH-AHM-DENTAL", ip: "172.19.25.186", model: "HP LJ MGD MFP E42540F", dept: "Dental", facility: "AHM" },
-            { cn: "29", host: "AH-AHM-PSYCHIATRY", ip: "172.19.25.187", model: "HP LJ MGD MFP E42540F", dept: "Psychiatry", facility: "AHM" },
-            { cn: "30", host: "AH-AHM-DERMA", ip: "172.19.25.188", model: "HP LJ MGD MFP E42540F", dept: "Derma", facility: "AHM" },
-            { cn: "31", host: "AH-AHM-ORTHO-OPD", ip: "172.19.25.189", model: "HP LJ MGD MFP E42540F", dept: "Ortho OPD", facility: "AHM" },
-            { cn: "32", host: "AH-AHM-ORTHO-IP", ip: "172.19.25.190", model: "HP LJ MGD MFP E42540F", dept: "Ortho IP", facility: "AHM" },
-            { cn: "33", host: "AH-AHM-COMMUNITY-MEDICINE", ip: "172.19.25.191", model: "HP LJ MGD MFP E42540F", dept: "Community Medicine", facility: "AHM" },
-            { cn: "34", host: "AH-AHM-ENDOCRINOLOGY", ip: "172.19.25.192", model: "HP LJ MGD MFP E42540F", dept: "Endocrinology", facility: "AHM" },
-            { cn: "35", host: "AH-AHM-GASTRO", ip: "172.19.25.193", model: "HP LJ MGD MFP E42540F", dept: "Gastro", facility: "AHM" },
-            { cn: "36", host: "AH-AHM-HEALTH-CARE", ip: "172.19.25.194", model: "HP LJ MGD MFP E42540F", dept: "Health Care", facility: "AHM" },
-            { cn: "37", host: "AH-AHM-DIETETICS", ip: "172.19.25.195", model: "HP LJ MGD MFP E42540F", dept: "Dietetics", facility: "AHM" },
-            { cn: "38", host: "AH-AHM-DIETETICS-REC", ip: "172.19.25.196", model: "HP LJ MGD MFP E42540F", dept: "Dietetics Rec", facility: "AHM" },
-            { cn: "39", host: "AH-AHM-ULTRASOUND", ip: "172.19.25.197", model: "HP LJ MGD MFP E42540F", dept: "Ultrasound", facility: "AHM" },
-            { cn: "40", host: "AH-AHM-ULTRASOUND-REC", ip: "172.19.25.198", model: "HP LJ MGD MFP E42540F", dept: "Ultrasound Rec", facility: "AHM" },
-            { cn: "41", host: "AH-AHM-2ND-DSU-2", ip: "172.19.24.43", model: "HP LJ MGD MFP E42540F", dept: "2ND DSU 2", facility: "AHM" },
-            { cn: "42", host: "AH-AHM-PHARMACY", ip: "172.19.25.200", model: "HP LJ MGD MFP E42540F", dept: "Pharmacy", facility: "AHM" },
-            { cn: "43", host: "AH-AHM-NEUROLOGY", ip: "172.19.24.44", model: "HP LJ MGD MFP E42540F", dept: "Neurology", facility: "AHM" },
-            { cn: "44", host: "AH-AHM-3RD-DSU", ip: "172.19.24.45", model: "HP LJ MGD MFP E42540F", dept: "3RD DSU", facility: "AHM" },
-            { cn: "45", host: "AH-AHM-HAEMATOLOGY", ip: "172.19.24.46", model: "HP LJ MGD MFP E42540F", dept: "Haematology", facility: "AHM" },
-            { cn: "46", host: "ADSE Reception", ip: "172.19.1.141", model: "HP LJ MGD MFP E42540F", dept: "ADSE Reception", facility: "ADSE" },
-            { cn: "47", host: "ADSE Doctor", ip: "172.19.1.142", model: "HP LJ MGD MFP E42540F", dept: "ADSE Doctor", facility: "ADSE" },
-            { cn: "48", host: "ADSE Billing", ip: "172.19.1.143", model: "HP LJ MGD MFP E42540F", dept: "ADSE Billing", facility: "ADSE" },
-            { cn: "49", host: "ADSE Pharmacy", ip: "172.19.1.144", model: "HP LJ MGD MFP E42540F", dept: "ADSE Pharmacy", facility: "ADSE" },
-            { cn: "50", host: "ADSE Pharmacy", ip: "172.19.1.145", model: "HP LJ MGD MFP E42540F", dept: "ADSE Pharmacy", facility: "ADSE" },
-            { cn: "51", host: "ADSE Store", ip: "172.19.1.146", model: "HP LJ MGD MFP E42540F", dept: "ADSE Store", facility: "ADSE" },
-            { cn: "52", host: "ADSE Insurance", ip: "172.19.1.147", model: "HP LJ MGD MFP E42540F", dept: "ADSE Insurance", facility: "ADSE" },
-            { cn: "53", host: "ADSE Insurance", ip: "172.19.1.148", model: "HP LJ MGD MFP E42540F", dept: "ADSE Insurance", facility: "ADSE" },
-            { cn: "54", host: "ADSE Radiology", ip: "172.19.1.149", model: "HP LJ MGD MFP E42540F", dept: "ADSE Radiology", facility: "ADSE" },
-            { cn: "55", host: "ADSE Radiology", ip: "172.19.1.150", model: "HP LJ MGD MFP E42540F", dept: "ADSE Radiology", facility: "ADSE" },
-            { cn: "56", host: "ADSE Radiology", ip: "172.19.1.151", model: "HP LJ MGD MFP E42540F", dept: "ADSE Radiology", facility: "ADSE" },
-            { cn: "57", host: "ADSE Cash", ip: "172.19.1.152", model: "HP LJ MGD MFP E42540F", dept: "ADSE Cash", facility: "ADSE" },
-            { cn: "58", host: "ADSE Sample", ip: "172.19.1.153", model: "HP LJ MGD MFP E42540F", dept: "ADSE Sample", facility: "ADSE" },
-            { cn: "59", host: "ADSE Lab", ip: "172.19.1.154", model: "HP LJ MGD MFP E42540F", dept: "ADSE Lab", facility: "ADSE" },
-            { cn: "60", host: "ADSE Lab", ip: "172.19.1.155", model: "HP LJ MGD MFP E42540F", dept: "ADSE Lab", facility: "ADSE" },
-            { cn: "61", host: "ADSE Lab", ip: "172.19.1.156", model: "HP LJ MGD MFP E42540F", dept: "ADSE Lab", facility: "ADSE" },
-            { cn: "62", host: "ADSE OPD", ip: "172.19.1.157", model: "HP LJ MGD MFP E42540F", dept: "ADSE OPD", facility: "ADSE" },
-            { cn: "63", host: "ADSE Medical", ip: "172.19.1.158", model: "HP LJ MGD MFP E42540F", dept: "ADSE Medical", facility: "ADSE" },
-            { cn: "64", host: "ADSE Medical", ip: "172.19.1.159", model: "HP LJ MGD MFP E42540F", dept: "ADSE Medical", facility: "ADSE" },
-            { cn: "65", host: "ADSE Medical", ip: "172.19.1.160", model: "HP LJ MGD MFP E42540F", dept: "ADSE Medical", facility: "ADSE" },
-            { cn: "66", host: "ADSC Reception", ip: "172.19.1.162", model: "HP LJ MGD MFP E42540F", dept: "ADSC Reception", facility: "ADSC" },
-            { cn: "67", host: "ADSC Doctor", ip: "172.19.1.163", model: "HP LJ MGD MFP E42540F", dept: "ADSC Doctor", facility: "ADSC" },
-            { cn: "68", host: "ADSC Doctor", ip: "172.19.1.164", model: "HP LJ MGD MFP E42540F", dept: "ADSC Doctor", facility: "ADSC" },
-            { cn: "69", host: "ADSC Doctor", ip: "172.19.1.165", model: "HP LJ MGD MFP E42540F", dept: "ADSC Doctor", facility: "ADSC" },
-            { cn: "70", host: "ADSC Doctor", ip: "172.19.1.166", model: "HP LJ MGD MFP E42540F", dept: "ADSC Doctor", facility: "ADSC" },
-            { cn: "71", host: "ADSC Doctor", ip: "172.19.1.167", model: "HP LJ MGD MFP E42540F", dept: "ADSC Doctor", facility: "ADSC" },
-            { cn: "72", host: "ADSC Pharmacy", ip: "172.19.1.168", model: "HP LJ MGD MFP E42540F", dept: "ADSC Pharmacy", facility: "ADSC" },
-            { cn: "73", host: "ADSC-Colour", ip: "172.19.1.161", model: "HP CLJ MGD MFP E47528F", dept: "ADSC", facility: "ADSC" }
-        ];
-
-        const originalDrData = [
-            { sl: "1", ip: "172.19.25.1", clinic: "Clinic 1", zone: "4", host: "AHM-D-CLINIC2" },
-            { sl: "2", ip: "172.19.25.2", clinic: "Clinic 2", zone: "4", host: "AHM-D-DRNAVEED" },
-            { sl: "3", ip: "172.19.25.3", clinic: "Clinic 3", zone: "5", host: "AHM-D-CLINIC03" },
-            { sl: "4", ip: "172.19.25.4", clinic: "Clinic 4", zone: "5", host: "AHM-D-CLINIC-4" },
-            { sl: "5", ip: "172.19.25.5", clinic: "Clinic 5", zone: "5", host: "AHM-D-CLINIC5" },
-            { sl: "6", ip: "172.19.25.6", clinic: "Clinic 6", zone: "5", host: "AHM-D-CLINIC06" },
-            { sl: "7", ip: "172.19.25.7", clinic: "Clinic 7", zone: "3", host: "AHM-D-CLINIC07" },
-            { sl: "8", ip: "172.19.25.8", clinic: "Clinic 8", zone: "3", host: "AHM-D-CLINIC08" },
-            { sl: "9", ip: "172.19.25.9", clinic: "Clinic 9", zone: "3", host: "AHM-D-CLINI9" },
-            { sl: "10", ip: "172.19.25.10", clinic: "Clinic10", zone: "3", host: "AHM-D-CLINIC10N" },
-            { sl: "11", ip: "172.19.25.11", clinic: "Clinic11", zone: "3", host: "AHM-D-CLINIC11" },
-            { sl: "12", ip: "172.19.25.12", clinic: "Clinic12", zone: "3", host: "AHM-D-CLINIC12" },
-            { sl: "12", ip: "172.19.24.79", clinic: "Clinic12A", zone: "3", host: "AHM-D-INS10" },
-            { sl: "13", ip: "172.19.25.13", clinic: "Clinic 13", zone: "5", host: "AHM-D-CLINIC014" },
-            { sl: "14", ip: "172.19.25.14", clinic: "Clinic 14", zone: "5", host: "AHM-D-CLINIC014" },
-            { sl: "15", ip: "172.19.25.15", clinic: "Clinic 15", zone: "5", host: "AHM-D-CLINIC15" },
-            { sl: "16", ip: "172.19.25.16", clinic: "Clinic 16", zone: "5", host: "AHM-D-CLINIC-16" },
-            { sl: "17", ip: "172.19.25.17", clinic: "Clinic 17", zone: "5", host: "AHM-D-CLINIC017" },
-            { sl: "18", ip: "172.19.25.18", clinic: "Clinic 18", zone: "5", host: "AHM-D-CLINIC018" },
-            { sl: "19", ip: "172.19.25.19", clinic: "Clinic 19", zone: "5", host: "AHM-D-CLINIC29" },
-            { sl: "20", ip: "172.19.25.20", clinic: "Clinic 20", zone: "5", host: "AHM-D-CLINIC020" },
-            { sl: "21", ip: "172.19.25.21", clinic: "Clinic 21", zone: "2", host: "AHM-D-CLINIC21" },
-            { sl: "22", ip: "172.19.25.22", clinic: "Clinic 22", zone: "2", host: "AHM-D-CLINIC-22" },
-            { sl: "23", ip: "172.19.25.23", clinic: "Clinic 23", zone: "2", host: "AHM-D-CLINIC23" },
-            { sl: "24", ip: "172.19.25.24", clinic: "Clinic 24", zone: "2", host: "AHM-D-CLINIC24" },
-            { sl: "25", ip: "172.19.25.25", clinic: "Clinic 25", zone: "1", host: "AHM-D-CLINIC-25" },
-            { sl: "26", ip: "172.19.25.26", clinic: "Clinic 26", zone: "1", host: "AHM-D-CLINIC26" },
-            { sl: "27", ip: "172.19.25.27", clinic: "Clinic 27", zone: "1", host: "AHM-D-CLINIC27" },
-            { sl: "28", ip: "172.19.25.28", clinic: "Clinic 28", zone: "1", host: "AHM-D-CLINIC028" },
-            { sl: "29", ip: "172.19.25.29", clinic: "Clinic 29", zone: "5", host: "AHM-D-CLINIC-29" },
-            { sl: "30", ip: "172.19.25.30", clinic: "Clinic 30", zone: "5", host: "AHM-D-CLINIC-30" },
-            { sl: "31", ip: "172.19.25.31", clinic: "Clinic 31", zone: "5", host: "AHM-D-CLINIC31" },
-            { sl: "32", ip: "172.19.25.32", clinic: "Clinic 32", zone: "22", host: "AHM-D-CLINIC32" },
-            { sl: "33", ip: "172.19.25.33", clinic: "Clinic 33", zone: "22", host: "AHM-D-DRSACHIN" },
-            { sl: "34", ip: "172.19.25.34", clinic: "Clinic 34", zone: "22", host: "Clinic 34" },
-            { sl: "35", ip: "172.19.25.35", clinic: "Clinic 35", zone: "22", host: "Clinic 35" },
-            { sl: "36", ip: "172.19.10.46", clinic: "DR launch OT", zone: "ot", host: "ot" },
-            { sl: "37", ip: "172.19.1.175", clinic: "ADSC Clinic 01", zone: "ADSC", host: "ADSC" },
-            { sl: "38", ip: "172.19.1.187", clinic: "ADSC Clinic 02", zone: "ADSC", host: "ADSC" },
-            { sl: "39", ip: "172.19.1.185", clinic: "ADSC Clinic 03", zone: "ADSC", host: "ADSC" },
-            { sl: "40", ip: "172.19.1.101", clinic: "ADSC Clinic 04", zone: "ADSC", host: "ADSC" },
-            { sl: "41", ip: "172.19.13.237", clinic: "ER Self Reg", zone: "ER", host: "ER" }
-        ];
-
-        // LocalStorage key
-        const STORAGE_KEY = 'ahm_network_data';
-
-        // Global data storage - Load from localStorage or use original data
-        let networkData = loadDataFromStorage();
-
-        let adminMode = false;
-
-        // Load data from localStorage
-        function loadDataFromStorage() {
-            const savedData = localStorage.getItem(STORAGE_KEY);
-            if (savedData) {
-                try {
-                    return JSON.parse(savedData);
-                } catch (e) {
-                    console.error('Error parsing saved data:', e);
-                    return getDefaultData();
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const loginSection = document.getElementById('login-section');
+            const dashboard = document.getElementById('dashboard');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const errorMessage = document.getElementById('error-message');
+            const togglePassword = document.getElementById('toggle-password');
+            const keyInput = document.getElementById('access-key');
+            const userMenuToggle = document.getElementById('user-menu-toggle');
+            const userMenu = document.getElementById('user-menu');
+            const changeKeyOption = document.getElementById('change-key-option');
+            const changeKeyModal = document.getElementById('change-key-modal');
+            const closeModal = document.getElementById('close-modal');
+            const updateKeyBtn = document.getElementById('update-key-btn');
+            const currentKeyInput = document.getElementById('current-key');
+            const newKeyInput = document.getElementById('new-key');
+            const confirmKeyInput = document.getElementById('confirm-key');
+            const keyStatus = document.getElementById('key-status');
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            // Secure key storage using SHA-256 hash
+            let STORED_KEY_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // SHA-256 of "admin"
+            
+            // Save key to localStorage if available
+            function saveKeyToStorage(keyHash) {
+                if (typeof(Storage) !== "undefined") {
+                    localStorage.setItem('accessKeyHash', keyHash);
                 }
             }
-            return getDefaultData();
-        }
-
-        // Get default/original data
-        function getDefaultData() {
-            return {
-                token: [...originalTokenData],
-                ward: [...originalWardData],
-                printer: [...originalPrinterData],
-                dr: [...originalDrData]
-            };
-        }
-
-        // Save data to localStorage
-        function saveDataToStorage() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(networkData));
-                return true;
-            } catch (e) {
-                console.error('Error saving data:', e);
-                showToast('Error saving data to storage', 'error');
-                return false;
+            
+            // Load key from localStorage if available
+            function loadKeyFromStorage() {
+                if (typeof(Storage) !== "undefined") {
+                    const storedHash = localStorage.getItem('accessKeyHash');
+                    if (storedHash) {
+                        STORED_KEY_HASH = storedHash;
+                    }
+                }
             }
-        }
-
-        // Reset to original data
-        function resetToOriginalData() {
-            if (confirm('Are you sure you want to reset all data to original? This will delete all your added/modified devices.')) {
-                networkData = getDefaultData();
-                saveDataToStorage();
-                populateAllTables();
-                updateStats();
-                showToast('Data reset to original successfully', 'success');
+            
+            // Load key from storage on page load
+            loadKeyFromStorage();
+            
+            // Function to hash a string using SHA-256
+            async function sha256(message) {
+                const msgBuffer = new TextEncoder().encode(message);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
             }
-        }
-
-        // Initialize the dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            populateAllTables();
-            setupEventListeners();
-            updateStats();
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
             
-            // Show message if data is loaded from storage
-            const savedData = localStorage.getItem(STORAGE_KEY);
-            if (savedData) {
-                console.log('Data loaded from localStorage');
-            }
-        });
-
-        function populateAllTables() {
-            populateTokenTable();
-            populateWardTable();
-            populatePrinterTable();
-            populateDrTable();
-            populateAllTable();
-            setupCopyButtons();
-        }
-
-        function populateTokenTable() {
-            const tbody = document.getElementById('token-tbody');
-            tbody.innerHTML = networkData.token.map((item, index) => `
-                <tr data-index="${index}" data-type="token">
-                    <td><span class="zone-badge">${item.zone}</span></td>
-                    <td><strong>${item.device}</strong></td>
-                    <td><span class="ip-address" data-ip="${item.ip}">${item.ip}</span></td>
-                    <td>${item.location}</td>
-                    <td><button class="copy-btn" data-ip="${item.ip}"><i class="fas fa-copy"></i></button></td>
-                    <td class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editItem('token', ${index})" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('token', ${index})" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function populateWardTable() {
-            const tbody = document.getElementById('ward-tbody');
-            tbody.innerHTML = networkData.ward.map((item, index) => `
-                <tr data-index="${index}" data-type="ward">
-                    <td><strong>${item.sl}</strong></td>
-                    <td>${item.device}</td>
-                    <td><span class="ip-address" data-ip="${item.ip}">${item.ip}</span></td>
-                    <td>${item.rooms}</td>
-                    <td><span class="zone-badge">${item.floor}</span></td>
-                    <td>${item.location}</td>
-                    <td><button class="copy-btn" data-ip="${item.ip}"><i class="fas fa-copy"></i></button></td>
-                    <td class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editItem('ward', ${index})" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('ward', ${index})" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function populatePrinterTable() {
-            const tbody = document.getElementById('printer-tbody');
-            tbody.innerHTML = networkData.printer.map((item, index) => `
-                <tr data-index="${index}" data-type="printer">
-                    <td><strong>${item.cn}</strong></td>
-                    <td><strong>${item.host}</strong></td>
-                    <td><span class="ip-address" data-ip="${item.ip}">${item.ip}</span></td>
-                    <td><span style="font-family: monospace; font-size: 0.8rem;">${item.model}</span></td>
-                    <td>${item.dept}</td>
-                    <td><span class="zone-badge">${item.facility}</span></td>
-                    <td><button class="copy-btn" data-ip="${item.ip}"><i class="fas fa-copy"></i></button></td>
-                    <td class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editItem('printer', ${index})" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('printer', ${index})" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function populateDrTable() {
-            const tbody = document.getElementById('dr-tbody');
-            tbody.innerHTML = networkData.dr.map((item, index) => {
-                const zoneText = item.zone === "ADSC" || item.zone === "ER" || item.zone === "ot" ? item.zone : `Zone ${item.zone}`;
-                return `
-                <tr data-index="${index}" data-type="dr">
-                    <td><strong>${item.sl}</strong></td>
-                    <td><strong>${item.clinic}</strong></td>
-                    <td><span class="ip-address" data-ip="${item.ip}">${item.ip}</span></td>
-                    <td><span class="zone-badge">${zoneText}</span></td>
-                    <td><code style="font-size: 0.8rem;">${item.host}</code></td>
-                    <td><button class="copy-btn" data-ip="${item.ip}"><i class="fas fa-copy"></i></button></td>
-                    <td class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editItem('dr', ${index})" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('dr', ${index})" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `}).join('');
-        }
-
-        function populateAllTable() {
-            const tbody = document.getElementById('all-tbody');
-            let allRows = [];
-
-            // Combine all data
-            networkData.token.forEach((item, index) => {
-                allRows.push({
-                    type: 'token',
-                    index,
-                    category: 'Token Display',
-                    device: item.device,
-                    ip: item.ip,
-                    location: item.location,
-                    zone: item.zone
-                });
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function() {
+                const type = keyInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                keyInput.setAttribute('type', type);
+                this.classList.toggle('fa-eye-slash');
+                this.classList.toggle('fa-eye');
             });
-
-            networkData.ward.forEach((item, index) => {
-                allRows.push({
-                    type: 'ward',
-                    index,
-                    category: 'Ward Display',
-                    device: item.device,
-                    ip: item.ip,
-                    location: item.location,
-                    zone: item.floor
-                });
-            });
-
-            networkData.printer.forEach((item, index) => {
-                allRows.push({
-                    type: 'printer',
-                    index,
-                    category: 'Printer',
-                    device: item.host,
-                    ip: item.ip,
-                    location: item.dept,
-                    zone: item.facility
-                });
-            });
-
-            networkData.dr.forEach((item, index) => {
-                const zoneText = item.zone === "ADSC" || item.zone === "ER" || item.zone === "ot" ? item.zone : `Zone ${item.zone}`;
-                allRows.push({
-                    type: 'dr',
-                    index,
-                    category: 'Doctor Clinic',
-                    device: item.host,
-                    ip: item.ip,
-                    location: item.clinic,
-                    zone: zoneText
-                });
-            });
-
-            tbody.innerHTML = allRows.map(row => `
-                <tr data-index="${row.index}" data-type="${row.type}">
-                    <td><span class="zone-badge">${row.category}</span></td>
-                    <td><strong>${row.device}</strong></td>
-                    <td><span class="ip-address" data-ip="${row.ip}">${row.ip}</span></td>
-                    <td>${row.location}</td>
-                    <td><span class="zone-badge">${row.zone}</span></td>
-                    <td><button class="copy-btn" data-ip="${row.ip}"><i class="fas fa-copy"></i></button></td>
-                    <td class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editItem('${row.type}', ${row.index})" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('${row.type}', ${row.index})" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function setupEventListeners() {
-            // Admin toggle
-            document.getElementById('adminToggle').addEventListener('click', toggleAdminMode);
             
-            // Add item button
-            document.getElementById('addItemBtn').addEventListener('click', showAddModal);
+            // Toggle user menu
+            userMenuToggle.addEventListener('click', function(e) {
+                userMenu.classList.toggle('active');
+                e.stopPropagation();
+            });
             
-            // Modal buttons
-            document.getElementById('cancelBtn').addEventListener('click', hideModal);
-            document.getElementById('saveBtn').addEventListener('click', saveDevice);
+            // Close user menu when clicking elsewhere
+            document.addEventListener('click', function() {
+                userMenu.classList.remove('active');
+            });
             
-            // Device type change
-            document.getElementById('deviceType').addEventListener('change', updateDynamicFields);
+            // Prevent user menu from closing when clicking inside it
+            userMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            // Open change key modal
+            changeKeyOption.addEventListener('click', function() {
+                changeKeyModal.classList.add('active');
+                userMenu.classList.remove('active');
+            });
+            
+            // Close modal
+            closeModal.addEventListener('click', function() {
+                changeKeyModal.classList.remove('active');
+                // Clear form
+                currentKeyInput.value = '';
+                newKeyInput.value = '';
+                confirmKeyInput.value = '';
+                keyStatus.style.display = 'none';
+            });
             
             // Tab switching
-            document.querySelectorAll('.tab').forEach(tab => {
+            tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    const targetTab = tab.dataset.tab;
-                    switchTab(targetTab);
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
                 });
             });
             
-            // Search functionality
-            document.getElementById('searchButton').addEventListener('click', performSearch);
-            document.getElementById('searchInput').addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') performSearch();
-            });
-            
-            // Export button
-            document.getElementById('exportBtn').addEventListener('click', exportData);
-            
-            // Reset data button
-            document.getElementById('resetDataBtn').addEventListener('click', resetToOriginalData);
-        }
-
-        function toggleAdminMode() {
-            adminMode = !adminMode;
-            const adminStatus = document.getElementById('adminStatus');
-            const addBtn = document.getElementById('addItemBtn');
-            
-            if (adminMode) {
-                adminStatus.textContent = 'ON';
-                adminStatus.style.color = '#2ecc71';
-                addBtn.classList.add('show');
-                showToast('Admin mode enabled', 'success');
-            } else {
-                adminStatus.textContent = 'OFF';
-                adminStatus.style.color = 'white';
-                addBtn.classList.remove('show');
-                showToast('Admin mode disabled', 'success');
-            }
-        }
-
-        function showAddModal() {
-            if (!adminMode) {
-                showToast('Please enable Admin mode first', 'error');
-                return;
-            }
-            
-            document.getElementById('modalTitle').textContent = 'Add New Device';
-            document.getElementById('deviceType').value = '';
-            document.getElementById('editIndex').value = '';
-            document.getElementById('editType').value = '';
-            document.getElementById('dynamicFields').innerHTML = '';
-            document.getElementById('modalOverlay').classList.add('active');
-        }
-
-        function hideModal() {
-            document.getElementById('modalOverlay').classList.remove('active');
-        }
-
-        function updateDynamicFields() {
-            const type = document.getElementById('deviceType').value;
-            const dynamicFields = document.getElementById('dynamicFields');
-            
-            let fieldsHTML = '';
-            
-            switch(type) {
-                case 'token':
-                    fieldsHTML = `
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="zone">Zone *</label>
-                                <input type="text" id="zone" class="form-control" placeholder="e.g., Zone 1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="device">Device Name *</label>
-                                <input type="text" id="device" class="form-control" placeholder="e.g., Mini PC" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="ip">IP Address *</label>
-                            <input type="text" id="ip" class="form-control" placeholder="e.g., 172.19.24.77" required pattern="^(\\d{1,3}\\.){3}\\d{1,3}$">
-                        </div>
-                        <div class="form-group">
-                            <label for="location">Location *</label>
-                            <input type="text" id="location" class="form-control" placeholder="e.g., Counter 7" required>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'ward':
-                    fieldsHTML = `
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="sl">SL No *</label>
-                                <input type="text" id="sl" class="form-control" placeholder="e.g., 1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="device">Device *</label>
-                                <input type="text" id="device" class="form-control" placeholder="e.g., Mini PC" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="ip">IP Address *</label>
-                            <input type="text" id="ip" class="form-control" placeholder="e.g., 172.19.13.241" required>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="rooms">Rooms</label>
-                                <input type="text" id="rooms" class="form-control" placeholder="e.g., 501 to 510">
-                            </div>
-                            <div class="form-group">
-                                <label for="floor">Floor *</label>
-                                <input type="text" id="floor" class="form-control" placeholder="e.g., 5th Floor" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="location">Location *</label>
-                            <input type="text" id="location" class="form-control" placeholder="e.g., E Wing" required>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'printer':
-                    fieldsHTML = `
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="cn"># *</label>
-                                <input type="text" id="cn" class="form-control" placeholder="e.g., 1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="host">Host Name *</label>
-                                <input type="text" id="host" class="form-control" placeholder="e.g., AH-AHM-OT" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="ip">IP Address *</label>
-                            <input type="text" id="ip" class="form-control" placeholder="e.g., 172.19.25.162" required>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="model">Printer Model *</label>
-                                <input type="text" id="model" class="form-control" placeholder="e.g., HP LJ MGD MFP E42540F" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="dept">Department *</label>
-                                <input type="text" id="dept" class="form-control" placeholder="e.g., OT" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="facility">Facility *</label>
-                            <input type="text" id="facility" class="form-control" placeholder="e.g., AHM" required>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'dr':
-                    fieldsHTML = `
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="sl">SL No *</label>
-                                <input type="text" id="sl" class="form-control" placeholder="e.g., 1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="clinic">Clinic *</label>
-                                <input type="text" id="clinic" class="form-control" placeholder="e.g., Clinic 1" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="ip">IP Address *</label>
-                            <input type="text" id="ip" class="form-control" placeholder="e.g., 172.19.25.1" required>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="zone">Zone *</label>
-                                <input type="text" id="zone" class="form-control" placeholder="e.g., 4" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="host">Host Name *</label>
-                                <input type="text" id="host" class="form-control" placeholder="e.g., AHM-D-CLINIC2" required>
-                            </div>
-                        </div>
-                    `;
-                    break;
-            }
-            
-            dynamicFields.innerHTML = fieldsHTML;
-        }
-
-        function editItem(type, index) {
-            if (!adminMode) {
-                showToast('Please enable Admin mode to edit', 'error');
-                return;
-            }
-            
-            const item = networkData[type][index];
-            document.getElementById('modalTitle').textContent = 'Edit Device';
-            document.getElementById('deviceType').value = type;
-            document.getElementById('editIndex').value = index;
-            document.getElementById('editType').value = type;
-            
-            updateDynamicFields();
-            
-            // Wait for fields to render, then populate with data
-            setTimeout(() => {
-                switch(type) {
-                    case 'token':
-                        document.getElementById('zone').value = item.zone || '';
-                        document.getElementById('device').value = item.device || '';
-                        document.getElementById('ip').value = item.ip || '';
-                        document.getElementById('location').value = item.location || '';
-                        break;
-                    case 'ward':
-                        document.getElementById('sl').value = item.sl || '';
-                        document.getElementById('device').value = item.device || '';
-                        document.getElementById('ip').value = item.ip || '';
-                        document.getElementById('rooms').value = item.rooms || '';
-                        document.getElementById('floor').value = item.floor || '';
-                        document.getElementById('location').value = item.location || '';
-                        break;
-                    case 'printer':
-                        document.getElementById('cn').value = item.cn || '';
-                        document.getElementById('host').value = item.host || '';
-                        document.getElementById('ip').value = item.ip || '';
-                        document.getElementById('model').value = item.model || '';
-                        document.getElementById('dept').value = item.dept || '';
-                        document.getElementById('facility').value = item.facility || '';
-                        break;
-                    case 'dr':
-                        document.getElementById('sl').value = item.sl || '';
-                        document.getElementById('ip').value = item.ip || '';
-                        document.getElementById('clinic').value = item.clinic || '';
-                        document.getElementById('zone').value = item.zone || '';
-                        document.getElementById('host').value = item.host || '';
-                        break;
+            // Password reveal functionality
+            document.addEventListener('click', function(e) {
+                // Handle password field click (reveal/hide)
+                if (e.target.classList.contains('password-field') || 
+                    e.target.classList.contains('password-mask') || 
+                    e.target.classList.contains('password-value') ||
+                    (e.target.closest('.password-field') && !e.target.classList.contains('copy-password'))) {
+                    const field = e.target.classList.contains('password-field') ? 
+                        e.target : e.target.closest('.password-field');
+                    field.classList.toggle('revealed');
                 }
-            }, 10);
-            
-            document.getElementById('modalOverlay').classList.add('active');
-        }
-
-        function deleteItem(type, index) {
-            if (!adminMode) {
-                showToast('Please enable Admin mode to delete', 'error');
-                return;
-            }
-            
-            if (confirm('Are you sure you want to delete this device?')) {
-                networkData[type].splice(index, 1);
-                saveDataToStorage(); // Save changes
-                populateAllTables();
-                updateStats();
-                showToast('Device deleted successfully', 'success');
-            }
-        }
-
-        function saveDevice() {
-            if (!adminMode) {
-                showToast('Admin mode required to save', 'error');
-                return;
-            }
-            
-            const type = document.getElementById('deviceType').value;
-            const editIndex = document.getElementById('editIndex').value;
-            const isEdit = editIndex !== '';
-            
-            if (!type) {
-                showToast('Please select device type', 'error');
-                return;
-            }
-            
-            let newItem = {};
-            let isValid = true;
-            
-            // Validate and collect data based on type
-            switch(type) {
-                case 'token':
-                    newItem = {
-                        zone: document.getElementById('zone').value,
-                        device: document.getElementById('device').value,
-                        ip: document.getElementById('ip').value,
-                        location: document.getElementById('location').value,
-                        url: 'View Display'
-                    };
-                    isValid = validateFields(['zone', 'device', 'ip', 'location']);
-                    break;
-                    
-                case 'ward':
-                    newItem = {
-                        sl: document.getElementById('sl').value,
-                        device: document.getElementById('device').value,
-                        ip: document.getElementById('ip').value,
-                        rooms: document.getElementById('rooms').value,
-                        floor: document.getElementById('floor').value,
-                        location: document.getElementById('location').value,
-                        url: 'View Display'
-                    };
-                    isValid = validateFields(['sl', 'device', 'ip', 'floor', 'location']);
-                    break;
-                    
-                case 'printer':
-                    newItem = {
-                        cn: document.getElementById('cn').value,
-                        host: document.getElementById('host').value,
-                        ip: document.getElementById('ip').value,
-                        model: document.getElementById('model').value,
-                        dept: document.getElementById('dept').value,
-                        facility: document.getElementById('facility').value
-                    };
-                    isValid = validateFields(['cn', 'host', 'ip', 'model', 'dept', 'facility']);
-                    break;
-                    
-                case 'dr':
-                    newItem = {
-                        sl: document.getElementById('sl').value,
-                        ip: document.getElementById('ip').value,
-                        clinic: document.getElementById('clinic').value,
-                        zone: document.getElementById('zone').value,
-                        host: document.getElementById('host').value
-                    };
-                    isValid = validateFields(['sl', 'ip', 'clinic', 'zone', 'host']);
-                    break;
-            }
-            
-            if (!isValid) {
-                showToast('Please fill all required fields', 'error');
-                return;
-            }
-            
-            // Save data
-            if (isEdit) {
-                networkData[type][editIndex] = newItem;
-                showToast('Device updated successfully', 'success');
-            } else {
-                networkData[type].push(newItem);
-                showToast('Device added successfully', 'success');
-            }
-            
-            // Save to localStorage
-            saveDataToStorage();
-            
-            // Update UI
-            populateAllTables();
-            updateStats();
-            hideModal();
-        }
-
-        function validateFields(fieldIds) {
-            return fieldIds.every(id => {
-                const field = document.getElementById(id);
-                return field && field.value.trim() !== '';
-            });
-        }
-
-        function updateStats() {
-            const totalDevices = Object.values(networkData).reduce((sum, arr) => sum + arr.length, 0);
-            const offlineDevices = networkData.printer.filter(p => p.ip.toLowerCase() === 'flood').length;
-            
-            document.getElementById('total-devices').textContent = totalDevices;
-            document.getElementById('online-devices').textContent = totalDevices - offlineDevices;
-            document.getElementById('footer-total').textContent = totalDevices;
-            document.getElementById('footer-online').textContent = totalDevices - offlineDevices;
-            
-            // Update tab badges
-            document.getElementById('token-count').textContent = networkData.token.length;
-            document.getElementById('ward-count').textContent = networkData.ward.length;
-            document.getElementById('printer-count').textContent = networkData.printer.length;
-            document.getElementById('dr-count').textContent = networkData.dr.length;
-            document.getElementById('all-count').textContent = totalDevices;
-        }
-
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-            
-            document.getElementById('searchInput').value = '';
-            resetSearch();
-        }
-
-        function setupCopyButtons() {
-            document.querySelectorAll('.copy-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
+                
+                // Prevent password reveal when clicking copy icon
+                if (e.target.classList.contains('copy-password')) {
                     e.stopPropagation();
-                    const ip = this.getAttribute('data-ip');
-                    copyToClipboard(ip);
-                });
-            });
-            
-            document.querySelectorAll('.ip-address').forEach(ipEl => {
-                ipEl.addEventListener('click', function() {
-                    const ip = this.getAttribute('data-ip') || this.textContent;
-                    copyToClipboard(ip);
-                });
-            });
-        }
-
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('IP address copied to clipboard', 'success');
-            });
-        }
-
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            
-            toastMessage.textContent = message;
-            toast.className = 'toast';
-            toast.classList.add(type);
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        function updateDateTime() {
-            const now = new Date();
-            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-            
-            document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', dateOptions);
-            document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', timeOptions);
-            
-            const timeStr = now.toLocaleTimeString('en-US', timeOptions);
-            const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            document.getElementById('last-updated').textContent = `${dateStr} at ${timeStr}`;
-        }
-
-        function performSearch() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            
-            if (!searchTerm) {
-                resetSearch();
-                return;
-            }
-            
-            const activeTab = document.querySelector('.tab.active').dataset.tab;
-            
-            switch(activeTab) {
-                case 'token':
-                    searchInTable('token-tbody', searchTerm);
-                    break;
-                case 'ward':
-                    searchInTable('ward-tbody', searchTerm);
-                    break;
-                case 'printer':
-                    searchInTable('printer-tbody', searchTerm);
-                    break;
-                case 'dr':
-                    searchInTable('dr-tbody', searchTerm);
-                    break;
-                case 'all':
-                    searchInTable('all-tbody', searchTerm);
-                    break;
-            }
-        }
-
-        function searchInTable(tbodyId, searchTerm) {
-            const tbody = document.getElementById(tbodyId);
-            const rows = tbody.getElementsByTagName('tr');
-            let visibleCount = 0;
-            
-            for (let row of rows) {
-                const rowText = row.textContent.toLowerCase();
-                if (rowText.includes(searchTerm)) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
                 }
-            }
+            });
             
-            const resultElement = document.getElementById('resultCount');
-            
-            if (visibleCount === 0) {
-                resultElement.textContent = `No devices found matching "${searchTerm}"`;
-            } else {
-                resultElement.textContent = `Found ${visibleCount} ${visibleCount === 1 ? 'device' : 'devices'} matching "${searchTerm}"`;
-            }
-        }
-
-        function resetSearch() {
-            const activeTab = document.querySelector('.tab.active').dataset.tab;
-            const counts = {
-                token: networkData.token.length,
-                ward: networkData.ward.length,
-                printer: networkData.printer.length,
-                dr: networkData.dr.length,
-                all: Object.values(networkData).reduce((sum, arr) => sum + arr.length, 0)
-            };
-            
-            const tabNames = {
-                token: 'Token Display Systems',
-                ward: 'Ward Display Systems',
-                printer: 'Network Printers',
-                dr: 'Doctor Clinics',
-                all: 'All Network Devices'
-            };
-            
-            document.getElementById('resultCount').textContent = 
-                `Displaying all ${counts[activeTab]} ${tabNames[activeTab].toLowerCase()}`;
-            
-            const tbodies = ['token-tbody', 'ward-tbody', 'printer-tbody', 'dr-tbody', 'all-tbody'];
-            tbodies.forEach(tbodyId => {
-                const tbody = document.getElementById(tbodyId);
-                if (tbody) {
-                    const rows = tbody.getElementsByTagName('tr');
-                    for (let row of rows) {
-                        row.style.display = '';
+            // Copy functionality
+            document.addEventListener('click', function(e) {
+                // Copy password functionality
+                if (e.target.classList.contains('copy-password')) {
+                    const passwordField = e.target.closest('.password-field');
+                    const isRevealed = passwordField.classList.contains('revealed');
+                    const passwordValue = passwordField.querySelector('.password-value').textContent;
+                    
+                    // Only copy if password is revealed
+                    if (isRevealed) {
+                        navigator.clipboard.writeText(passwordValue).then(() => {
+                            const tooltip = passwordField.querySelector('.copy-tooltip');
+                            tooltip.classList.add('show');
+                            setTimeout(() => tooltip.classList.remove('show'), 2000);
+                        });
+                    } else {
+                        // Show a different tooltip if password isn't revealed
+                        const tooltip = passwordField.querySelector('.copy-tooltip');
+                        tooltip.textContent = 'Click to reveal first';
+                        tooltip.classList.add('show');
+                        setTimeout(() => {
+                            tooltip.classList.remove('show');
+                            tooltip.textContent = 'Copied!';
+                        }, 2000);
                     }
                 }
             });
-        }
-
-        function exportData() {
-            const dataStr = JSON.stringify(networkData, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = `network-data-${new Date().toISOString().split('T')[0]}.json`;
             
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
+            // Login button click
+            loginBtn.addEventListener('click', async () => {
+                const key = keyInput.value;
+                
+                if (key) {
+                    // Hash the input and compare with stored hash
+                    const inputHash = await sha256(key);
+                    
+                    if (inputHash === STORED_KEY_HASH) {
+                        // Successful login
+                        loginSection.style.display = 'none';
+                        dashboard.style.display = 'block';
+                        errorMessage.style.display = 'none';
+                        
+                        // Add pulse animation to login button for visual feedback
+                        loginBtn.classList.add('pulse');
+                        setTimeout(() => loginBtn.classList.remove('pulse'), 1500);
+                    } else {
+                        // Failed login
+                        errorMessage.style.display = 'block';
+                        keyInput.focus();
+                        
+                        // Add shake animation to login container
+                        loginSection.style.animation = 'none';
+                        void loginSection.offsetWidth; // Trigger reflow
+                        loginSection.style.animation = 'shake 0.5s';
+                    }
+                } else {
+                    errorMessage.style.display = 'block';
+                    keyInput.focus();
+                }
+            });
             
-            showToast('Data exported successfully', 'success');
-        }
+            // Update key button click
+            updateKeyBtn.addEventListener('click', async () => {
+                const currentKey = currentKeyInput.value;
+                const newKey = newKeyInput.value;
+                const confirmKey = confirmKeyInput.value;
+                
+                // Validate inputs
+                if (!currentKey || !newKey || !confirmKey) {
+                    keyStatus.textContent = 'Please fill in all fields';
+                    keyStatus.className = 'key-status error';
+                    return;
+                }
+                
+                if (newKey !== confirmKey) {
+                    keyStatus.textContent = 'New keys do not match';
+                    keyStatus.className = 'key-status error';
+                    return;
+                }
+                
+                if (newKey.length < 6) {
+                    keyStatus.textContent = 'New key must be at least 6 characters';
+                    keyStatus.className = 'key-status error';
+                    return;
+                }
+                
+                // Verify current key
+                const currentKeyHash = await sha256(currentKey);
+                if (currentKeyHash !== STORED_KEY_HASH) {
+                    keyStatus.textContent = 'Current key is incorrect';
+                    keyStatus.className = 'key-status error';
+                    return;
+                }
+                
+                // Update the key
+                const newKeyHash = await sha256(newKey);
+                STORED_KEY_HASH = newKeyHash;
+                saveKeyToStorage(newKeyHash);
+                
+                // Show success message
+                keyStatus.textContent = 'Access key updated successfully!';
+                keyStatus.className = 'key-status success';
+                
+                // Clear the form
+                currentKeyInput.value = '';
+                newKeyInput.value = '';
+                confirmKeyInput.value = '';
+                
+                // Hide message after 3 seconds and close modal
+                setTimeout(() => {
+                    keyStatus.style.display = 'none';
+                    changeKeyModal.classList.remove('active');
+                }, 3000);
+            });
+            
+            // Logout button click
+            logoutBtn.addEventListener('click', () => {
+                loginSection.style.display = 'block';
+                dashboard.style.display = 'none';
+                keyInput.value = '';
+                keyInput.setAttribute('type', 'password');
+                togglePassword.classList.remove('fa-eye-slash');
+                togglePassword.classList.add('fa-eye');
+                
+                // Reset any revealed passwords
+                document.querySelectorAll('.password-field').forEach(field => {
+                    field.classList.remove('revealed');
+                });
+            });
+            
+            // Allow pressing Enter to login
+            keyInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loginBtn.click();
+                }
+            });
+        });
     </script>
 </body>
 </html>
