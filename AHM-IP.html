@@ -1,2072 +1,1646 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AHM IT Operations Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #0a4d8c;
-            --secondary: #ce1126;
-            --accent: #ffc928;
-            --light: #f8f9fa;
-            --dark: #1a2b3c;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --gray: #6c757d;
-            --light-blue: #e8f4fc;
-            --shadow: 0 4px 12px rgba(10, 77, 140, 0.08);
-            --gradient-primary: linear-gradient(135deg, #0a4d8c 0%, #1c6bb0 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        body {
-            background: #f5f7fa;
-            color: var(--dark);
-            line-height: 1.5;
-            min-height: 100vh;
-            padding: 15px;
-        }
-
-        .container {
-            max-width: 1800px;
-            margin: 0 auto;
-        }
-
-        /* Header Styles */
-        .dashboard-header {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 20px 25px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .dashboard-header::before {
-            content: "";
-            position: absolute;
-            top: -30%;
-            right: -30%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo {
-            background: white;
-            color: var(--primary);
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-title h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .header-title p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            font-weight: 400;
-        }
-
-        .date-time {
-            text-align: right;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 12px 18px;
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
-            min-width: 250px;
-        }
-
-        .date-time div {
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin-bottom: 4px;
-        }
-
-        .date-time span {
-            font-weight: 400;
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-
-        /* Admin Controls */
-        .admin-controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            justify-content: center;
-        }
-
-        .admin-btn {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-
-        .admin-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-        }
-
-        /* Stats Cards */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            border: none;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-icon {
-            background: linear-gradient(135deg, var(--light-blue) 0%, #d9eaf9 100%);
-            color: var(--primary);
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-right: 15px;
-            box-shadow: 0 4px 10px rgba(10, 77, 140, 0.1);
-        }
-
-        .stat-info h3 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--dark);
-            line-height: 1;
-            margin-bottom: 5px;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .stat-info p {
-            color: var(--gray);
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .stat-card:nth-child(2) .stat-icon {
-            background: linear-gradient(135deg, #fee 0%, #ffdddd 100%);
-            color: var(--secondary);
-        }
-
-        .stat-card:nth-child(3) .stat-icon {
-            background: linear-gradient(135deg, #fff8e1 0%, #ffeaa7 100%);
-            color: var(--accent);
-        }
-
-        .stat-card:nth-child(4) .stat-icon {
-            background: linear-gradient(135deg, #e8f8ef 0%, #abecd6 100%);
-            color: var(--success);
-        }
-
-        /* Main Content */
-        .content-container {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            margin-bottom: 25px;
-        }
-
-        .search-section {
-            padding: 20px;
-            background: linear-gradient(to right, #f8fafc, #ffffff);
-            border-bottom: 1px solid rgba(225, 232, 240, 0.8);
-        }
-
-        .search-box {
-            display: flex;
-            gap: 12px;
-            max-width: 100%;
-            margin-bottom: 15px;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 14px 18px;
-            border: 1px solid #e1e8f0;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            transition: all 0.3s;
-            background: #f8fafc;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(10, 77, 140, 0.1);
-        }
-
-        .search-btn {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-            box-shadow: 0 4px 10px rgba(10, 77, 140, 0.2);
-        }
-
-        .search-btn:hover {
-            background: linear-gradient(135deg, #083a6d 0%, #155a96 100%);
-            transform: translateY(-2px);
-        }
-
-        /* Tabs */
-        .tabs-section {
-            display: flex;
-            background: #f8fafc;
-            border-bottom: 1px solid rgba(225, 232, 240, 0.8);
-            padding: 0 20px;
-            position: relative;
-        }
-
-        .tab {
-            padding: 15px 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--gray);
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-            font-size: 0.9rem;
-        }
-
-        .tab:hover {
-            color: var(--primary);
-            background: rgba(10, 77, 140, 0.05);
-        }
-
-        .tab.active {
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-            background: white;
-        }
-
-        .tab-badge {
-            background: var(--primary);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            box-shadow: 0 2px 6px rgba(10, 77, 140, 0.2);
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-        }
-
-        .action-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            font-size: 13px;
-            opacity: 0.8;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            opacity: 1;
-        }
-
-        .edit-btn {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-        }
-
-        .delete-btn {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-        }
-
-        .add-item-btn {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 6px 15px rgba(10, 77, 140, 0.3);
-            transition: all 0.3s;
-            z-index: 100;
-            opacity: 0;
-            transform: scale(0);
-        }
-
-        .add-item-btn.show {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .add-item-btn:hover {
-            transform: scale(1.1) rotate(90deg);
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: white;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            transform: translateY(30px);
-            transition: transform 0.3s;
-        }
-
-        .modal-overlay.active .modal {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 20px 25px;
-            border-radius: 15px 15px 0 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .modal-header h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            position: relative;
-            z-index: 1;
-        }
-
-        .modal-body {
-            padding: 25px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--dark);
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #e1e8f0;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-            background: #f8fafc;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(10, 77, 140, 0.1);
-        }
-
-        .modal-footer {
-            padding: 20px 25px;
-            border-top: 1px solid #e1e8f0;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 120px;
-            justify-content: center;
-        }
-
-        .btn-primary {
-            background: var(--gradient-primary);
-            color: white;
-            box-shadow: 0 4px 10px rgba(10, 77, 140, 0.2);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #083a6d 0%, #155a96 100%);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: #f8f9fa;
-            color: var(--dark);
-            border: 1px solid #e1e8f0;
-        }
-
-        .btn-secondary:hover {
-            background: #e9ecef;
-            transform: translateY(-2px);
-        }
-
-        /* Table Styles */
-        .table-container {
-            overflow-x: auto;
-            border-radius: 10px;
-            margin: 15px;
-            border: 1px solid rgba(225, 232, 240, 0.8);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            min-width: 1000px;
-        }
-
-        table th {
-            background: linear-gradient(to bottom, #f8fafc, #eef5fc);
-            color: var(--primary);
-            font-weight: 700;
-            text-align: left;
-            padding: 15px 12px;
-            border-bottom: 2px solid #e1e8f0;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: sticky;
-            top: 0;
-        }
-
-        table td {
-            padding: 12px;
-            border-bottom: 1px solid rgba(240, 244, 249, 0.8);
-            transition: all 0.2s;
-            font-size: 0.85rem;
-        }
-
-        table tr {
-            transition: all 0.2s;
-        }
-
-        table tr:hover {
-            background: rgba(248, 250, 252, 0.8);
-        }
-
-        /* IP Address Styling */
-        .ip-address {
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-            color: var(--primary);
-            background: #e8f4fc;
-            padding: 8px 12px;
-            border-radius: 6px;
-            display: inline-block;
-            border-left: 3px solid var(--primary);
-            cursor: pointer;
-            transition: all 0.3s;
-            user-select: all;
-            font-size: 0.85rem;
-        }
-
-        .ip-address:hover {
-            background: #d9eaf9;
-            transform: translateY(-2px);
-        }
-
-        .copy-btn {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 8px 15px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.8rem;
-            box-shadow: 0 3px 8px rgba(10, 77, 140, 0.2);
-        }
-
-        .copy-btn:hover {
-            background: linear-gradient(135deg, #083a6d 0%, #155a96 100%);
-            transform: translateY(-2px);
-        }
-
-        .copy-btn i {
-            font-size: 0.9rem;
-        }
-
-        /* Zone Badge */
-        .zone-badge {
-            background: #eef5fc;
-            color: var(--primary);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.75rem;
-            display: inline-block;
-            box-shadow: 0 2px 5px rgba(10, 77, 140, 0.1);
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background: var(--success);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.3);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transform: translateX(100%) scale(0.9);
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
-        .toast.show {
-            transform: translateX(0) scale(1);
-            opacity: 1;
-        }
-
-        .toast.error {
-            background: var(--danger);
-            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
-        }
-
-        /* Footer */
-        .dashboard-footer {
-            text-align: center;
-            padding: 25px;
-            color: var(--gray);
-            font-size: 0.85rem;
-            background: white;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            margin-top: 25px;
-        }
-
-        .footer-stats {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .footer-stat {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 0.9rem;
-        }
-
-        .footer-stat i {
-            color: var(--primary);
-            font-size: 1rem;
-        }
-
-        /* Tab Content */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            
-            .header-top {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .date-time {
-                align-self: stretch;
-                text-align: center;
-                min-width: auto;
-            }
-            
-            .stats-container {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .search-box {
-                flex-direction: column;
-            }
-            
-            .search-btn {
-                padding: 14px;
-                justify-content: center;
-            }
-            
-            .tabs-section {
-                overflow-x: auto;
-                padding: 0 10px;
-            }
-            
-            .tab {
-                padding: 12px 15px;
-                font-size: 0.85rem;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .table-container {
-                margin: 10px;
-            }
-            
-            .add-item-btn {
-                bottom: 20px;
-                right: 20px;
-                width: 45px;
-                height: 45px;
-            }
-            
-            .modal {
-                width: 95%;
-                margin: 10px;
-            }
-            
-            .footer-stats {
-                gap: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .stats-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .tab {
-                padding: 10px 12px;
-                font-size: 0.8rem;
-            }
-            
-            .header-title h1 {
-                font-size: 1.4rem;
-            }
-            
-            .date-time {
-                padding: 10px 12px;
-            }
-            
-            .date-time div {
-                font-size: 0.9rem;
-            }
-            
-            .date-time span {
-                font-size: 0.8rem;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHM · Network Operations Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg: #0f1923;
+  --bg2: #162030;
+  --bg3: #1c2a3a;
+  --surface: rgba(22,32,48,0.92);
+  --surface2: rgba(28,42,58,0.75);
+  --border: rgba(100,180,255,0.15);
+  --border2: rgba(100,180,255,0.3);
+  --cyan: #5bc8f5;
+  --cyan2: #3ab0e0;
+  --cyan-glow: rgba(91,200,245,0.15);
+  --cyan-glow2: rgba(91,200,245,0.08);
+  --teal: #3dffd0;
+  --amber: #ffd166;
+  --red: #ff6b6b;
+  --green: #51e898;
+  --text: #f0f4ff;
+  --text2: #bdd0e8;
+  --text3: #7a9bbf;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Barlow', sans-serif;
+  --display: 'Barlow Condensed', sans-serif;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-weight: 600;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── GRID BACKGROUND ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(91,200,245,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91,200,245,0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,80,180,0.1), transparent);
+  pointer-events: none;
+}
+
+.app { position: relative; z-index: 1; padding: 20px; max-width: 1900px; margin: 0 auto; }
+
+/* ── SCANLINE OVERLAY ── */
+.scanline {
+  position: fixed; inset: 0; z-index: 9999;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.008) 3px, rgba(0,0,0,0.008) 4px);
+  pointer-events: none;
+  animation: scanMove 12s linear infinite;
+}
+@keyframes scanMove { from{background-position:0 0} to{background-position:0 40px} }
+
+/* ── HEADER ── */
+.header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 30px;
+  padding: 20px 28px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--teal), transparent);
+  animation: borderFlow 4s linear infinite;
+}
+@keyframes borderFlow {
+  0%{background-position:-200% 0} 100%{background-position:200% 0}
+}
+
+.logo-wrap {
+  display: flex; align-items: center; gap: 16px;
+}
+.logo-icon {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(0,255,204,0.1));
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: var(--cyan);
+  position: relative;
+  box-shadow: 0 0 20px rgba(0,212,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.logo-icon::after {
+  content: '';
+  position: absolute; inset: -1px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, var(--cyan), transparent);
+  opacity: 0.2;
+  z-index: -1;
+}
+.logo-text h1 {
+  font-family: var(--display);
+  font-size: 1.25rem; font-weight: 800;
+  color: var(--text);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.logo-text p {
+  font-size: 0.78rem; color: var(--text3);
+  letter-spacing: 0.5px;
+  font-family: var(--sans);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.header-center {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.status-bar {
+  display: flex; gap: 20px; align-items: center;
+}
+.status-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px;
+  background: rgba(0,230,118,0.08);
+  border: 1px solid rgba(0,230,118,0.2);
+  border-radius: 20px;
+  font-size: 0.78rem; color: var(--green);
+  font-family: var(--sans);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+.pulse-dot {
+  width: 7px; height: 7px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:0.5;transform:scale(0.7)}
+}
+.header-controls {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.ctrl-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 9px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text2);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+.ctrl-btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,212,255,0.12), transparent);
+  opacity: 0;
+  transition: opacity 0.22s;
+}
+.ctrl-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: rgba(0,212,255,0.1);
+  box-shadow: 0 0 20px rgba(0,212,255,0.25), 0 4px 12px rgba(0,0,0,0.3);
+  transform: translateY(-2px) scale(1.04);
+}
+.ctrl-btn:hover::after { opacity: 1; }
+.ctrl-btn:hover i { transform: scale(1.2) rotate(-5deg); filter: drop-shadow(0 0 6px var(--cyan)); }
+.ctrl-btn i { transition: all 0.22s; display: inline-block; }
+.ctrl-btn:active { transform: translateY(0) scale(0.98); }
+.ctrl-btn.active {
+  background: rgba(0,212,255,0.12);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 15px rgba(0,212,255,0.15);
+}
+.ctrl-btn.save-btn {
+  background: rgba(0,255,204,0.08);
+  border-color: rgba(0,255,204,0.3);
+  color: var(--teal);
+}
+.ctrl-btn.save-btn:hover {
+  background: rgba(0,255,204,0.18);
+  border-color: var(--teal);
+  color: var(--teal);
+  box-shadow: 0 0 24px rgba(0,255,204,0.3), 0 4px 14px rgba(0,0,0,0.3);
+  transform: translateY(-2px) scale(1.04);
+}
+.clock-wrap {
+  text-align: right;
+}
+.clock-time {
+  font-family: var(--mono);
+  font-size: 1.5rem; font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 3px;
+  text-shadow: 0 0 20px rgba(91,200,245,0.4);
+  line-height: 1;
+}
+.clock-date {
+  font-size: 0.7rem; color: var(--text3);
+  letter-spacing: 1px;
+  font-family: var(--sans);
+  margin-top: 4px;
+}
+
+/* ── STAT CARDS ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  cursor: default;
+  animation: cardIn 0.6s ease both;
+}
+.stat-card:nth-child(1){animation-delay:0.05s}
+.stat-card:nth-child(2){animation-delay:0.1s}
+.stat-card:nth-child(3){animation-delay:0.15s}
+.stat-card:nth-child(4){animation-delay:0.2s}
+@keyframes cardIn {
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.stat-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 30px rgba(0,212,255,0.1);
+}
+.stat-card:hover .stat-icon-wrap {
+  transform: scale(1.15) rotate(-8deg);
+  filter: brightness(1.4);
+}
+.stat-icon-wrap {
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.stat-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.stat-card:nth-child(1)::before { background: linear-gradient(90deg, var(--cyan), var(--teal)); }
+.stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--green), var(--teal)); }
+.stat-card:nth-child(3)::before { background: linear-gradient(90deg, var(--amber), #ff8c00); }
+.stat-card:nth-child(4)::before { background: linear-gradient(90deg, #9c27b0, var(--cyan)); }
+
+.stat-card-inner { display: flex; align-items: flex-start; justify-content: space-between; }
+.stat-icon-wrap {
+  width: 46px; height: 46px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.stat-card:nth-child(1) .stat-icon-wrap { background: rgba(0,212,255,0.1); color: var(--cyan); }
+.stat-card:nth-child(2) .stat-icon-wrap { background: rgba(0,230,118,0.1); color: var(--green); }
+.stat-card:nth-child(3) .stat-icon-wrap { background: rgba(255,184,0,0.1); color: var(--amber); }
+.stat-card:nth-child(4) .stat-icon-wrap { background: rgba(156,39,176,0.1); color: #ce93d8; }
+
+.stat-num {
+  font-family: var(--mono);
+  font-size: 2.4rem; font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+  background: linear-gradient(135deg, var(--text), var(--text2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  counter-reset: none;
+}
+.stat-label { font-size: 0.82rem; color: var(--text2); letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700; margin-top: 2px; }
+.stat-sub { font-size: 0.75rem; color: var(--text3); margin-top: 8px; font-family: var(--sans); font-weight: 600; }
+.stat-sub span { color: var(--green); }
+
+/* Sparkline bar */
+.stat-bar {
+  height: 3px; background: var(--border); border-radius: 2px; margin-top: 12px; overflow: hidden;
+}
+.stat-bar-fill {
+  height: 100%; border-radius: 2px;
+  animation: barFill 1.5s ease both;
+  animation-delay: 0.5s;
+}
+@keyframes barFill { from{width:0} }
+.stat-card:nth-child(1) .stat-bar-fill { background: linear-gradient(90deg,var(--cyan),var(--teal)); width:95%; }
+.stat-card:nth-child(2) .stat-bar-fill { background: linear-gradient(90deg,var(--green),var(--teal)); width:99%; }
+.stat-card:nth-child(3) .stat-bar-fill { background: linear-gradient(90deg,var(--amber),#ff8c00); width:52%; }
+.stat-card:nth-child(4) .stat-bar-fill { background: linear-gradient(90deg,#9c27b0,var(--cyan)); width:18%; }
+
+/* ── MAIN PANEL ── */
+.main-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  animation: cardIn 0.6s ease 0.25s both;
+}
+
+/* ── TOOLBAR ── */
+.toolbar {
+  display: flex; gap: 12px; align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,0.2);
+  flex-wrap: wrap;
+}
+.search-wrap {
+  flex: 1; min-width: 220px;
+  position: relative;
+}
+.search-wrap i {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--text3); font-size: 13px;
+  transition: color 0.2s;
+}
+.search-input {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.25s;
+  letter-spacing: 0.3px;
+}
+.search-input::placeholder { color: var(--text3); }
+.search-input:focus {
+  outline: none;
+  border-color: var(--cyan);
+  background: rgba(0,212,255,0.04);
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.08);
+}
+.search-input:focus + i, .search-wrap:focus-within i { color: var(--cyan); }
+.result-count {
+  font-family: var(--sans);
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--text3);
+  padding: 10px 16px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.result-count span { color: var(--cyan); }
+
+/* ── UNSAVED HINT ── */
+.unsaved-hint {
+  display: none; align-items: center; gap: 10px;
+  padding: 10px 18px;
+  background: rgba(255,184,0,0.07);
+  border-bottom: 1px solid rgba(255,184,0,0.2);
+  font-size: 0.78rem; color: var(--amber);
+  font-family: var(--mono);
+}
+.unsaved-hint.show { display: flex; }
+.unsaved-hint strong { cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── TABS ── */
+.tabs-bar {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,0.15);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs-bar::-webkit-scrollbar { display: none; }
+.tab-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 22px;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: none; background: none;
+  position: relative;
+}
+.tab-btn:hover {
+  color: var(--cyan);
+  background: rgba(0,212,255,0.07);
+  transform: translateY(-1px);
+}
+.tab-btn:hover i {
+  transform: scale(1.3) rotate(-8deg);
+  filter: drop-shadow(0 0 5px var(--cyan));
+  color: var(--cyan);
+}
+.tab-btn i { transition: all 0.22s; display: inline-block; }
+.tab-btn.active {
+  color: var(--cyan);
+  border-bottom: 2px solid var(--cyan);
+  background: rgba(0,212,255,0.06);
+  text-shadow: 0 0 12px rgba(0,212,255,0.3);
+}
+.tab-chip {
+  padding: 2px 8px;
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 10px;
+  font-size: 0.68rem;
+  color: var(--cyan);
+  font-family: var(--mono);
+  transition: all 0.2s;
+}
+.tab-btn.active .tab-chip {
+  background: var(--cyan);
+  color: var(--bg);
+  box-shadow: 0 0 8px rgba(0,212,255,0.4);
+}
+
+/* ── TAB CONTENT ── */
+.tab-pane { display: none; }
+.tab-pane.active { display: block; animation: fadeSlide 0.3s ease; }
+@keyframes fadeSlide { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── TABLE ── */
+.table-wrap {
+  overflow-x: auto;
+  max-height: 580px;
+  overflow-y: auto;
+}
+.table-wrap::-webkit-scrollbar { width: 6px; height: 6px; }
+.table-wrap::-webkit-scrollbar-track { background: transparent; }
+.table-wrap::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+thead th {
+  padding: 12px 16px;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  background: rgba(0,0,0,0.3);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 5;
+  text-align: left;
+  white-space: nowrap;
+}
+tbody tr {
+  border-bottom: 1px solid rgba(0,212,255,0.05);
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  animation: rowIn 0.4s ease both;
+}
+tbody tr:nth-child(odd) { background: rgba(255,255,255,0.01); }
+tbody tr:hover {
+  background: rgba(0,212,255,0.07);
+  border-bottom-color: rgba(0,212,255,0.2);
+  box-shadow: inset 3px 0 0 var(--cyan);
+  transform: translateX(2px);
+}
+@keyframes rowIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+td {
+  padding: 11px 16px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text2);
+  vertical-align: middle;
+}
+
+/* IP cell */
+.ip-tag {
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--cyan);
+  background: rgba(91,200,245,0.06);
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(91,200,245,0.15);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  display: inline-block;
+  letter-spacing: 0.5px;
+}
+.ip-tag:hover {
+  background: rgba(0,212,255,0.18);
+  border-color: var(--cyan);
+  box-shadow: 0 0 18px rgba(0,212,255,0.35), 0 0 6px rgba(0,212,255,0.2);
+  transform: translateY(-2px) scale(1.05);
+  color: #fff;
+  text-shadow: 0 0 8px var(--cyan);
+}
+.ip-tag.flood { color: var(--red); border-color: rgba(255,69,96,0.2); background: rgba(255,69,96,0.06); cursor: default; }
+
+/* Zone tag */
+.zone-tag {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  white-space: nowrap;
+}
+.zone-tag.zone-blue { background: rgba(0,212,255,0.08); color: var(--cyan); border: 1px solid rgba(0,212,255,0.2); }
+.zone-tag.zone-green { background: rgba(0,230,118,0.08); color: var(--green); border: 1px solid rgba(0,230,118,0.2); }
+.zone-tag.zone-amber { background: rgba(255,184,0,0.08); color: var(--amber); border: 1px solid rgba(255,184,0,0.2); }
+.zone-tag.zone-purple { background: rgba(156,39,176,0.08); color: #ce93d8; border: 1px solid rgba(156,39,176,0.2); }
+.zone-tag.zone-teal { background: rgba(0,255,204,0.08); color: var(--teal); border: 1px solid rgba(0,255,204,0.2); }
+
+/* Category tag */
+.cat-tag {
+  font-size: 0.72rem; font-family: var(--sans);
+  font-weight: 800;
+  padding: 3px 10px; border-radius: 4px;
+  letter-spacing: 0.5px; white-space: nowrap;
+}
+.cat-tag.token  { background: rgba(0,212,255,0.1); color: var(--cyan); }
+.cat-tag.ward   { background: rgba(0,255,204,0.1); color: var(--teal); }
+.cat-tag.printer{ background: rgba(255,184,0,0.1); color: var(--amber); }
+.cat-tag.dr     { background: rgba(156,39,176,0.1); color: #ce93d8; }
+
+.acts { display: flex; gap: 5px; }
+.act-btn {
+  width: 30px; height: 30px;
+  border-radius: 7px; border: none;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+.act-btn i { transition: all 0.2s; display: inline-block; }
+.act-btn.edit { background: rgba(0,212,255,0.1); color: var(--cyan); border: 1px solid rgba(0,212,255,0.15); }
+.act-btn.edit:hover {
+  background: rgba(0,212,255,0.25);
+  box-shadow: 0 0 16px rgba(0,212,255,0.4);
+  transform: translateY(-2px) scale(1.15);
+  border-color: var(--cyan);
+}
+.act-btn.edit:hover i { transform: rotate(-15deg) scale(1.1); }
+.act-btn.del  { background: rgba(255,69,96,0.1);  color: var(--red);  border: 1px solid rgba(255,69,96,0.15); }
+.act-btn.del:hover  {
+  background: rgba(255,69,96,0.25);
+  box-shadow: 0 0 16px rgba(255,69,96,0.4);
+  transform: translateY(-2px) scale(1.15);
+  border-color: var(--red);
+}
+.act-btn.del:hover i { transform: scale(1.2); }
+
+/* Copy button */
+.copy-btn {
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.15);
+  color: var(--cyan);
+  padding: 5px 12px;
+  border-radius: 7px;
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.copy-btn i { transition: all 0.2s; display: inline-block; }
+.copy-btn:hover {
+  background: rgba(0,212,255,0.2);
+  box-shadow: 0 0 16px rgba(0,212,255,0.3);
+  transform: translateY(-2px) scale(1.05);
+  border-color: var(--cyan);
+  color: #fff;
+}
+.copy-btn:hover i { transform: scale(1.2) rotate(-10deg); }
+.copy-btn.copied { color: var(--green); border-color: rgba(0,230,118,0.3); background: rgba(0,230,118,0.08); }
+
+/* Device name */
+.dev-name { color: var(--text); font-weight: 800; font-size: 0.88rem; }
+.host-mono { font-family: var(--mono); font-size: 0.78rem; color: var(--text2); font-weight: 600; }
+
+/* ── MODAL ── */
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden;
+  transition: all 0.3s;
+}
+.modal-bg.open { opacity: 1; visibility: visible; }
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 18px;
+  width: 90%; max-width: 560px;
+  max-height: 90vh; overflow-y: auto;
+  transform: translateY(30px) scale(0.97);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 40px rgba(0,212,255,0.08);
+}
+.modal-bg.open .modal { transform: translateY(0) scale(1); }
+.modal::-webkit-scrollbar { width: 5px; }
+.modal::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+.modal-head {
+  padding: 22px 26px 18px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.modal-head::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--teal));
+}
+.modal-head h2 {
+  font-family: var(--display);
+  font-size: 1.1rem; font-weight: 800;
+  color: var(--text);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.modal-head p { font-size: 0.78rem; color: var(--text3); margin-top: 4px; }
+
+.modal-body { padding: 22px 26px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid.full { grid-template-columns: 1fr; }
+.fgroup { margin-bottom: 14px; }
+.fgroup label {
+  display: block; margin-bottom: 6px;
+  font-family: var(--sans); font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--text2); text-transform: uppercase; letter-spacing: 1px;
+}
+.fgroup input, .fgroup select {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.83rem;
+  transition: all 0.25s;
+}
+.fgroup input:focus, .fgroup select:focus {
+  outline: none;
+  border-color: var(--cyan);
+  background: rgba(0,212,255,0.04);
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.08);
+}
+.fgroup select option { background: var(--bg2); }
+
+.modal-foot {
+  padding: 16px 26px;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 10px;
+}
+.mbtn {
+  padding: 10px 22px;
+  border-radius: 9px; border: none;
+  font-family: var(--sans); font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer; transition: all 0.25s;
+  text-transform: uppercase; letter-spacing: 1px;
+  display: flex; align-items: center; gap: 7px;
+}
+.mbtn.cancel { background: rgba(255,255,255,0.05); color: var(--text3); border: 1px solid var(--border); }
+.mbtn.cancel:hover { color: var(--text); border-color: var(--text3); }
+.mbtn.confirm {
+  background: linear-gradient(135deg, var(--cyan), var(--teal));
+  color: var(--bg);
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(0,212,255,0.3);
+}
+.mbtn.confirm:hover {
+  box-shadow: 0 8px 28px rgba(0,212,255,0.5);
+  transform: translateY(-2px) scale(1.04);
+  filter: brightness(1.15);
+}
+
+/* ── FAB ── */
+.fab {
+  position: fixed; bottom: 28px; right: 28px;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--teal));
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: var(--bg);
+  box-shadow: 0 6px 20px rgba(0,212,255,0.35), 0 0 40px rgba(0,212,255,0.15);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  z-index: 100;
+  opacity: 0; transform: scale(0) rotate(-90deg);
+}
+.fab.show { opacity: 1; transform: scale(1) rotate(0deg); }
+.fab:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 8px 28px rgba(0,212,255,0.5), 0 0 60px rgba(0,212,255,0.2); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+  padding: 12px 22px;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  font-family: var(--mono); font-size: 0.78rem;
+  color: var(--text);
+  display: flex; align-items: center; gap: 10px;
+  z-index: 9000;
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  white-space: nowrap;
+  max-width: 90vw;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success .t-icon { color: var(--green); }
+.toast.error .t-icon { color: var(--red); }
+.toast.info .t-icon { color: var(--cyan); }
+
+/* ── FOOTER ── */
+.footer {
+  margin-top: 20px;
+  padding: 18px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+  backdrop-filter: blur(20px);
+}
+.footer-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+.fstat {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--sans); font-size: 0.76rem; font-weight: 700; color: var(--text3);
+}
+.fstat-val { color: var(--cyan); font-weight: 700; }
+.footer-copy { font-size: 0.7rem; color: var(--text3); font-family: var(--mono); }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+}
+.empty-state i { font-size: 3rem; color: var(--text3); margin-bottom: 14px; display: block; }
+.empty-state p { color: var(--text3); font-family: var(--mono); font-size: 0.85rem; }
+
+/* ── LOADING SHIMMER ── */
+@keyframes shimmer {
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px) {
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+  .header { grid-template-columns: auto 1fr; }
+  .clock-wrap { display: none; }
+}
+@media(max-width:768px) {
+  .header { grid-template-columns: 1fr; gap: 14px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .header-controls { justify-content: flex-start; }
+  .form-grid { grid-template-columns: 1fr; }
+}
+@media(max-width:480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .app { padding: 12px; }
+}
+
+/* Number counter animation */
+.count-num { display: inline-block; }
+
+/* ── HIDE ACTIONS BY DEFAULT ── */
+.acts { display: none; }
+.actions-col { display: none; }
+
+/* ── AUTHOR NAME ── */
+.author-name {
+  color: var(--cyan);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+/* ── LOGO TITLE SIZING ── */
+.logo-text h1 {
+  font-family: var(--display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+.logo-text p {
+  font-size: 0.78rem;
+  color: var(--text3);
+  font-family: var(--sans);
+  font-weight: 500;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.logo-text p i { color: var(--cyan); }
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header Section -->
-        <header class="dashboard-header">
-            <div class="header-top">
-                <div class="logo-section">
-                    <div class="logo">
-                        <i class="fas fa-network-wired"></i>
-                    </div>
-                    <div class="header-title">
-                        <h1>AHM IT Operations Dashboard</h1>
-                        <p>Network Management System • JOBIN CJ</p>
-                    </div>
-                </div>
-                <div class="date-time">
-                    <div id="current-date">Loading...</div>
-                    <span id="current-time"></span>
-                </div>
-            </div>
-            <div class="admin-controls">
-                <button class="admin-btn" id="adminToggle">
-                    <i class="fas fa-user-shield"></i>
-                    <span>Admin Mode: <span id="adminStatus">OFF</span></span>
-                </button>
-                <button class="admin-btn" id="exportBtn">
-                    <i class="fas fa-download"></i>
-                    Export Data
-                </button>
-                <button class="admin-btn" id="resetDataBtn" title="Reset to Original Data">
-                    <i class="fas fa-redo"></i>
-                    Reset Data
-                </button>
-            </div>
-        </header>
+<div class="scanline"></div>
+<div class="app">
 
-        <!-- Stats Cards -->
-        <div class="stats-container">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-server"></i>
-                </div>
-                <div class="stat-info">
-                    <h3 id="total-devices">139</h3>
-                    <p>Total Network Devices</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-wifi"></i>
-                </div>
-                <div class="stat-info">
-                    <h3 id="online-devices">132</h3>
-                    <p>Online Devices</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-print"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>73</h3>
-                    <p>Network Printers</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-desktop"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>25</h3>
-                    <p>Display Systems</p>
-                </div>
-            </div>
+  <!-- ── HEADER ── -->
+  <header class="header">
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <i class="fas fa-hospital-symbol"></i>
+      </div>
+      <div class="logo-text">
+        <h1>AHM IT Operations Dashboard</h1>
+        <p><i class="fas fa-network-wired"></i> &nbsp;Network Management System &nbsp;•&nbsp; <span class="author-name">JOBIN CJ</span></p>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="status-bar">
+        <div class="status-pill">
+          <div class="pulse-dot"></div>
+          SYSTEM ONLINE
         </div>
-
-        <!-- Main Content -->
-        <div class="content-container">
-            <!-- Search Section -->
-            <div class="search-section">
-                <div class="search-box">
-                    <input type="text" id="searchInput" class="search-input" 
-                           placeholder="Search by IP, device, location, department...">
-                    <button id="searchButton" class="search-btn">
-                        <i class="fas fa-search"></i> Search
-                    </button>
-                </div>
-                <div style="margin-top: 10px; font-size: 0.85rem; color: #6c757d;">
-                    <span id="resultCount">Displaying all network devices across all zones</span>
-                </div>
-            </div>
-
-            <!-- Tabs -->
-            <div class="tabs-section">
-                <div class="tab active" data-tab="token">
-                    <i class="fas fa-desktop"></i> Token Displays
-                    <span class="tab-badge" id="token-count">11</span>
-                </div>
-                <div class="tab" data-tab="ward">
-                    <i class="fas fa-procedures"></i> Ward Displays
-                    <span class="tab-badge" id="ward-count">14</span>
-                </div>
-                <div class="tab" data-tab="printer">
-                    <i class="fas fa-print"></i> Printers
-                    <span class="tab-badge" id="printer-count">73</span>
-                </div>
-                <div class="tab" data-tab="dr">
-                    <i class="fas fa-user-md"></i> Doctor Clinics
-                    <span class="tab-badge" id="dr-count">41</span>
-                </div>
-                <div class="tab" data-tab="all">
-                    <i class="fas fa-list"></i> All Devices
-                    <span class="tab-badge" id="all-count">139</span>
-                </div>
-            </div>
-
-            <!-- Token Display Tab -->
-            <div class="tab-content active" id="token-tab">
-                <div class="table-container">
-                    <table id="token-table">
-                        <thead>
-                            <tr>
-                                <th>Zone</th>
-                                <th>Device</th>
-                                <th>IP Address</th>
-                                <th>Location</th>
-                                <th>Copy IP</th>
-                                <th style="width: 90px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="token-tbody">
-                            <!-- Data will be populated -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Ward Display Tab -->
-            <div class="tab-content" id="ward-tab">
-                <div class="table-container">
-                    <table id="ward-table">
-                        <thead>
-                            <tr>
-                                <th>SL No</th>
-                                <th>Device</th>
-                                <th>IP Address</th>
-                                <th>Rooms</th>
-                                <th>Floor</th>
-                                <th>Location</th>
-                                <th>Copy IP</th>
-                                <th style="width: 90px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ward-tbody">
-                            <!-- Data will be populated -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Printer Tab -->
-            <div class="tab-content" id="printer-tab">
-                <div class="table-container">
-                    <table id="printer-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Host Name</th>
-                                <th>IP Address</th>
-                                <th>Printer S/N</th>
-                                <th>Department</th>
-                                <th>Facility</th>
-                                <th>Copy IP</th>
-                                <th style="width: 90px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="printer-tbody">
-                            <!-- Data will be populated -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Doctor Clinics Tab -->
-            <div class="tab-content" id="dr-tab">
-                <div class="table-container">
-                    <table id="dr-table">
-                        <thead>
-                            <tr>
-                                <th>SL No</th>
-                                <th>Clinic</th>
-                                <th>IP Address</th>
-                                <th>Zone</th>
-                                <th>Host Name</th>
-                                <th>Copy IP</th>
-                                <th style="width: 90px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dr-tbody">
-                            <!-- Data will be populated -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- All Devices Tab -->
-            <div class="tab-content" id="all-tab">
-                <div class="table-container">
-                    <table id="all-table">
-                        <thead>
-                            <tr>
-                                <th>Category</th>
-                                <th>Device</th>
-                                <th>IP Address</th>
-                                <th>Location/Department</th>
-                                <th>Zone/Floor</th>
-                                <th>Copy IP</th>
-                                <th style="width: 90px;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="all-tbody">
-                            <!-- Data will be populated -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="status-pill" style="background:rgba(91,200,245,0.06);border-color:rgba(91,200,245,0.2);color:var(--cyan)">
+          <i class="fas fa-shield-alt" style="font-size:10px"></i>
+          SECURE
         </div>
-
-        <!-- Footer -->
-        <footer class="dashboard-footer">
-            <div class="footer-stats">
-                <div class="footer-stat">
-                    <i class="fas fa-server"></i>
-                    <span>Total Devices: <strong id="footer-total">139</strong></span>
-                </div>
-                <div class="footer-stat">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Online: <strong id="footer-online">132</strong></span>
-                </div>
-                <div class="footer-stat">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span>Attention Needed: <strong>7</strong></span>
-                </div>
-                <div class="footer-stat">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Zones: <strong>12</strong></span>
-                </div>
-            </div>
-            <p>UAE IT Operations Dashboard • Last Updated: <span id="last-updated"></span> • For authorized IT personnel only</p>
-            <p style="margin-top: 15px; font-size: 0.8rem; color: #95a5a6;">
-                Network Monitoring System v3.0 • Data persists in browser storage • © 2024 UAE IT Department
-            </p>
-        </footer>
-
-        <!-- Add Item Button -->
-        <button class="add-item-btn" id="addItemBtn">
-            <i class="fas fa-plus"></i>
+        <div class="status-pill" style="background:rgba(61,255,208,0.06);border-color:rgba(61,255,208,0.2);color:var(--teal)">
+          <i class="fas fa-heartbeat" style="font-size:10px"></i>
+          ALL SYSTEMS GO
+        </div>
+      </div>
+      <div class="header-controls">
+        <button class="ctrl-btn" id="adminToggle">
+          <i class="fas fa-lock" id="adminIcon"></i>
+          ADMIN: <span id="adminStatus">OFF</span>
         </button>
+        <button class="ctrl-btn save-btn" id="exportBtn">
+          <i class="fas fa-file-download"></i>
+          SAVE HTML
+        </button>
+        <button class="ctrl-btn" id="resetBtn">
+          <i class="fas fa-redo-alt"></i>
+          RESET
+        </button>
+      </div>
     </div>
 
-    <!-- Modal for Add/Edit -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 id="modalTitle">Add New Device</h2>
-            </div>
-            <div class="modal-body">
-                <form id="deviceForm">
-                    <div class="form-group">
-                        <label for="deviceType">Device Type *</label>
-                        <select id="deviceType" class="form-control" required>
-                            <option value="">Select Device Type</option>
-                            <option value="token">Token Display</option>
-                            <option value="ward">Ward Display</option>
-                            <option value="printer">Printer</option>
-                            <option value="dr">Doctor Clinic</option>
-                        </select>
-                    </div>
-                    
-                    <div id="dynamicFields">
-                        <!-- Fields will be populated based on device type -->
-                    </div>
-                    
-                    <input type="hidden" id="editIndex" value="">
-                    <input type="hidden" id="editType" value="">
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="cancelBtn">
-                    <i class="fas fa-times"></i> Cancel
-                </button>
-                <button type="button" class="btn btn-primary" id="saveBtn">
-                    <i class="fas fa-save"></i> Save Device
-                </button>
-            </div>
+    <div class="clock-wrap">
+      <div class="clock-time" id="clkTime">00:00:00</div>
+      <div class="clock-date" id="clkDate">—</div>
+    </div>
+  </header>
+
+  <!-- ── STAT CARDS ── -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card-inner">
+        <div>
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">Total Devices</div>
+          <div class="stat-sub">Across all zones &amp; facilities</div>
         </div>
+        <div class="stat-icon-wrap"><i class="fas fa-server"></i></div>
+      </div>
+      <div class="stat-bar"><div class="stat-bar-fill"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-inner">
+        <div>
+          <div class="stat-num" id="stat-online">0</div>
+          <div class="stat-label">Online Devices</div>
+          <div class="stat-sub">Status: <span>OPERATIONAL</span></div>
+        </div>
+        <div class="stat-icon-wrap"><i class="fas fa-wifi"></i></div>
+      </div>
+      <div class="stat-bar"><div class="stat-bar-fill"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-inner">
+        <div>
+          <div class="stat-num" id="stat-printers">0</div>
+          <div class="stat-label">Network Printers</div>
+          <div class="stat-sub">Across AHM · ADSE · ADSC</div>
+        </div>
+        <div class="stat-icon-wrap"><i class="fas fa-print"></i></div>
+      </div>
+      <div class="stat-bar"><div class="stat-bar-fill"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-inner">
+        <div>
+          <div class="stat-num" id="stat-offline">0</div>
+          <div class="stat-label">Needs Attention</div>
+          <div class="stat-sub">Review flagged devices</div>
+        </div>
+        <div class="stat-icon-wrap"><i class="fas fa-exclamation-triangle"></i></div>
+      </div>
+      <div class="stat-bar"><div class="stat-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ── MAIN PANEL ── -->
+  <div class="main-panel">
+    <div class="toolbar">
+      <div class="search-wrap">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search IP · device · location · department...">
+      </div>
+      <div class="result-count" id="resultCount">ALL <span id="rcNum">139</span> DEVICES</div>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <i class="fas fa-check-circle"></i>
-        <span id="toastMessage">Operation completed successfully!</span>
+    <div class="unsaved-hint" id="saveHint">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>UNSAVED CHANGES — click <strong id="saveLink">SAVE HTML</strong> to permanently embed your data into a new file.</span>
     </div>
 
-    <script>
-        // Your original data - ALL DATA INCLUDED
-        const originalTokenData = [
-            { zone: "Zone 5", device: "Mini PC", ip: "172.19.24.77", location: "Counter 7", url: "View Display" },
-            { zone: "Zone 3", device: "Mini PC", ip: "172.19.24.231", location: "Ortho OPD", url: "View Display" },
-            { zone: "Zone 4", device: "Mini PC", ip: "172.19.13.116", location: "Cardiology OPD", url: "View Display" },
-            { zone: "Zone 2", device: "Mini PC", ip: "172.19.24.233", location: "Gynaec OPD", url: "View Display" },
-            { zone: "Zone 1", device: "Mini PC", ip: "172.19.24.126", location: "Pediatric Old", url: "View Display" },
-            { zone: "Zone 9", device: "Mini PC", ip: "172.19.13.248", location: "Pharmacy counter", url: "View Display" },
-            { zone: "Zone 5", device: "Mini PC", ip: "172.19.13.186", location: "Main Reception", url: "View Display" },
-            { zone: "Zone 1", device: "Mini PC", ip: "172.19.24.17", location: "Pediatric New", url: "View Display" },
-            { zone: "Zone 4", device: "Mini PC", ip: "172.19.24.118", location: "Cadiology Dr sachin", url: "View Display" },
-            { zone: "Zone 18", device: "Mini PC", ip: "172.19.13.108", location: "Radiology", url: "View Display" },
-            { zone: "Zone 15", device: "Mini PC", ip: "172.19.13.106", location: "Sample collection", url: "View Display" }
-        ];
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-tab="token">
+        <i class="fas fa-desktop"></i> TOKEN DISPLAYS <span class="tab-chip" id="tc-token">11</span>
+      </button>
+      <button class="tab-btn" data-tab="ward">
+        <i class="fas fa-procedures"></i> WARD DISPLAYS <span class="tab-chip" id="tc-ward">14</span>
+      </button>
+      <button class="tab-btn" data-tab="printer">
+        <i class="fas fa-print"></i> PRINTERS <span class="tab-chip" id="tc-printer">73</span>
+      </button>
+      <button class="tab-btn" data-tab="dr">
+        <i class="fas fa-user-md"></i> DOCTOR CLINICS <span class="tab-chip" id="tc-dr">41</span>
+      </button>
+      <button class="tab-btn" data-tab="all">
+        <i class="fas fa-list-ul"></i> ALL DEVICES <span class="tab-chip" id="tc-all">139</span>
+      </button>
+    </div>
 
-        const originalWardData = [
-            { sl: "1", device: "Mini PC", ip: "172.19.13.241", rooms: "501 to 510 (510a/510b)", floor: "5th Floor", location: "E Wing", url: "View Display" },
-            { sl: "2", device: "Mini PC", ip: "172.19.13.242", rooms: "415 to 427 (420a/b,427a/b)", floor: "4th Floor", location: "D Wing", url: "View Display" },
-            { sl: "3", device: "Mini PC", ip: "172.19.13.243", rooms: "401 to 414 (412a/412b)", floor: "4th Floor", location: "C Wing", url: "View Display" },
-            { sl: "4", device: "Mini PC", ip: "172.19.13.244", rooms: "314 to 324 (324a/324b)", floor: "3rd Floor", location: "B Wing", url: "View Display" },
-            { sl: "5", device: "Mini PC", ip: "172.19.13.245", rooms: "room 301 to 313", floor: "3rd Floor", location: "A Wing", url: "View Display" },
-            { sl: "6", device: "Mini PC", ip: "172.19.13.246", rooms: "2201 to 2005", floor: "ICU", location: "ICU", url: "View Display" },
-            { sl: "7", device: "Mini PC", ip: "172.19.13.247", rooms: "2001 to 2006", floor: "LDR Room", location: "LDR Room", url: "View Display" },
-            { sl: "8", device: "Mini PC", ip: "172.19.13.249", rooms: "C001 to C005", floor: "CICU", location: "CICU", url: "View Display" },
-            { sl: "9", device: "Mini PC", ip: "172.19.24.36", rooms: "C001 to C005", floor: "ER Dashboard", location: "ER Dashboard", url: "View Display" },
-            { sl: "9", device: "Mini PC", ip: "172.19.13.100", rooms: "C001 to C005", floor: "ER Display", location: "ER Display", url: "View Display" },
-            { sl: "10", device: "Mini PC", ip: "172.19.13.105", rooms: "C001 to C005", floor: "HR Bday", location: "HR Bday", url: "View Display" },
-            { sl: "11", device: "Mini PC", ip: "172.19.13.102", rooms: "C001 to C005", floor: "OT Display", location: "OT Display", url: "View Display" },
-            { sl: "12", device: "Mini PC", ip: "172.19.1.244", rooms: "Media player", floor: "ADSC Display", location: "ADSC Display", url: "Media Player" },
-            { sl: "13", device: "Mini PC", ip: "172.19.1.245", rooms: "Media Player", floor: "ADSC Display", location: "adsc Display", url: "Media Player" },
-            { sl: "14", device: "Mini PC", ip: "172.19.13.36", rooms: "Blood request", floor: "Lab Reception", location: "Lab Reception", url: "http://172.19.8.85:6323/?fid=9" }
-        ];
+    <!-- Token Tab -->
+    <div class="tab-pane active" id="tab-token">
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>Zone</th><th>Device</th><th>IP Address</th><th>Location</th><th>Copy IP</th><th class="actions-col">Actions</th>
+        </tr></thead><tbody id="tb-token"></tbody></table>
+      </div>
+    </div>
 
-        const originalPrinterData = [
-            { cn: "1", host: "AH-AHM-OT", ip: "172.19.25.162", model: "HP LJ MGD MFP E42540F", dept: "OT", facility: "AHM" },
-            { cn: "2", host: "AH-AHM-GYNEC-NS", ip: "172.19.25.163", model: "HP LJ MGD MFP E42540F", dept: "Gynec NS", facility: "AHM" },
-            { cn: "3", host: "AH-AHM-NICU", ip: "172.19.24.42", model: "HP LJ MGD MFP E42540F", dept: "NICU", facility: "AHM" },
-            { cn: "4", host: "AH-AHM-RADIOLOGY-RECEPTION", ip: "172.19.25.164", model: "HP LJ MGD MFP E42540F", dept: "Radiology Reception", facility: "AHM" },
-            { cn: "5", host: "AH-AHM-INSURANCE-MAIN-RECEPTION", ip: "172.19.25.199", model: "HP LJ MGD MFP E42540F", dept: "Insurance Paedia", facility: "AHM" },
-            { cn: "6", host: "AH-AHM-MAIN-STORE", ip: "172.19.25.166", model: "HP LJ MGD MFP E42540F", dept: "MAIN STORE", facility: "AHM" },
-            { cn: "7", host: "AH-AHM-BIOMED", ip: "Flood", model: "HP LJ MGD MFP E42540F", dept: "BIOMED", facility: "AHM" },
-            { cn: "8", host: "AH-AHM-PEDIATRIC-RECEPTION", ip: "172.19.25.167", model: "HP LJ MGD MFP E42540F", dept: "Pediatric Rec", facility: "AHM" },
-            { cn: "9", host: "AH-AHM-ICU", ip: "172.19.25.168", model: "HP LJ MGD MFP E42540F", dept: "ICU", facility: "AHM" },
-            { cn: "10", host: "AH-AHM-2ND-DSU", ip: "172.19.25.169", model: "HP LJ MGD MFP E42540F", dept: "2ND DSU", facility: "AHM" },
-            { cn: "11", host: "AH-AHM-LABOUR", ip: "172.19.25.170", model: "HP LJ MGD MFP E42540F", dept: "Labour NS", facility: "AHM" },
-            { cn: "12", host: "AH-AHM-QUALITY", ip: "172.19.24.47", model: "HP LJ MGD MFP E42540F", dept: "Quality", facility: "AHM" },
-            { cn: "13", host: "AH-AHM-CHEMISTRY-1", ip: "172.19.25.171", model: "HP LJ MGD MFP E42540F", dept: "Chemistry 1", facility: "AHM" },
-            { cn: "14", host: "AH-AHM-CHEMISTRY-2", ip: "172.19.25.172", model: "HP LJ MGD MFP E42540F", dept: "Chemistry 2", facility: "AHM" },
-            { cn: "15", host: "AH-AHM-PSC-LAB", ip: "172.19.25.173", model: "HP LJ MGD MFP E42540F", dept: "PSC Lab", facility: "AHM" },
-            { cn: "16", host: "AH-AHM-DR-SCORE", ip: "172.19.25.174", model: "HP LJ MGD MFP E42540F", dept: "DR Score", facility: "AHM" },
-            { cn: "17", host: "AH-AHM-DR-SUJITH", ip: "172.19.25.175", model: "HP LJ MGD MFP E42540F", dept: "DR Sujith", facility: "AHM" },
-            { cn: "18", host: "AH-AHM-PEDIATRIC-DR", ip: "172.19.25.176", model: "HP LJ MGD MFP E42540F", dept: "Pediatric DR", facility: "AHM" },
-            { cn: "19", host: "AH-AHM-PEDIATRIC", ip: "172.19.25.177", model: "HP LJ MGD MFP E42540F", dept: "Pediatric", facility: "AHM" },
-            { cn: "20", host: "AH-AHM-OPT", ip: "172.19.25.178", model: "HP LJ MGD MFP E42540F", dept: "OPT", facility: "AHM" },
-            { cn: "21", host: "AH-AHM-ENT", ip: "172.19.25.179", model: "HP LJ MGD MFP E42540F", dept: "ENT", facility: "AHM" },
-            { cn: "22", host: "AH-AHM-CARDIO-ICU", ip: "172.19.25.180", model: "HP LJ MGD MFP E42540F", dept: "Cardio ICU", facility: "AHM" },
-            { cn: "23", host: "AH-AHM-CATH-LAB", ip: "172.19.25.181", model: "HP LJ MGD MFP E42540F", dept: "Cath Lab", facility: "AHM" },
-            { cn: "24", host: "AH-AHM-FAMILY-MEDICINE", ip: "172.19.25.182", model: "HP LJ MGD MFP E42540F", dept: "Family Medicine", facility: "AHM" },
-            { cn: "25", host: "AH-AHM-CCU", ip: "172.19.25.183", model: "HP LJ MGD MFP E42540F", dept: "CCU", facility: "AHM" },
-            { cn: "26", host: "AH-AHM-MICROBIOLOGY", ip: "172.19.25.184", model: "HP LJ MGD MFP E42540F", dept: "Microbiology", facility: "AHM" },
-            { cn: "27", host: "AH-AHM-MICROBIOLOGY-REC", ip: "172.19.25.185", model: "HP LJ MGD MFP E42540F", dept: "Microbiology Rec", facility: "AHM" },
-            { cn: "28", host: "AH-AHM-DENTAL", ip: "172.19.25.186", model: "HP LJ MGD MFP E42540F", dept: "Dental", facility: "AHM" },
-            { cn: "29", host: "AH-AHM-PSYCHIATRY", ip: "172.19.25.187", model: "HP LJ MGD MFP E42540F", dept: "Psychiatry", facility: "AHM" },
-            { cn: "30", host: "AH-AHM-DERMA", ip: "172.19.25.188", model: "HP LJ MGD MFP E42540F", dept: "Derma", facility: "AHM" },
-            { cn: "31", host: "AH-AHM-ORTHO-OPD", ip: "172.19.25.189", model: "HP LJ MGD MFP E42540F", dept: "Ortho OPD", facility: "AHM" },
-            { cn: "32", host: "AH-AHM-ORTHO-IP", ip: "172.19.25.190", model: "HP LJ MGD MFP E42540F", dept: "Ortho IP", facility: "AHM" },
-            { cn: "33", host: "AH-AHM-COMMUNITY-MEDICINE", ip: "172.19.25.191", model: "HP LJ MGD MFP E42540F", dept: "Community Medicine", facility: "AHM" },
-            { cn: "34", host: "AH-AHM-ENDOCRINOLOGY", ip: "172.19.25.192", model: "HP LJ MGD MFP E42540F", dept: "Endocrinology", facility: "AHM" },
-            { cn: "35", host: "AH-AHM-GASTRO", ip: "172.19.25.193", model: "HP LJ MGD MFP E42540F", dept: "Gastro", facility: "AHM" },
-            { cn: "36", host: "AH-AHM-HEALTH-CARE", ip: "172.19.25.194", model: "HP LJ MGD MFP E42540F", dept: "Health Care", facility: "AHM" },
-            { cn: "37", host: "AH-AHM-DIETETICS", ip: "172.19.25.195", model: "HP LJ MGD MFP E42540F", dept: "Dietetics", facility: "AHM" },
-            { cn: "38", host: "AH-AHM-DIETETICS-REC", ip: "172.19.25.196", model: "HP LJ MGD MFP E42540F", dept: "Dietetics Rec", facility: "AHM" },
-            { cn: "39", host: "AH-AHM-ULTRASOUND", ip: "172.19.25.197", model: "HP LJ MGD MFP E42540F", dept: "Ultrasound", facility: "AHM" },
-            { cn: "40", host: "AH-AHM-ULTRASOUND-REC", ip: "172.19.25.198", model: "HP LJ MGD MFP E42540F", dept: "Ultrasound Rec", facility: "AHM" },
-            { cn: "41", host: "AH-AHM-2ND-DSU-2", ip: "172.19.24.43", model: "HP LJ MGD MFP E42540F", dept: "2ND DSU 2", facility: "AHM" },
-            { cn: "42", host: "AH-AHM-PHARMACY", ip: "172.19.25.200", model: "HP LJ MGD MFP E42540F", dept: "Pharmacy", facility: "AHM" },
-            { cn: "43", host: "AH-AHM-NEUROLOGY", ip: "172.19.24.44", model: "HP LJ MGD MFP E42540F", dept: "Neurology", facility: "AHM" },
-            { cn: "44", host: "AH-AHM-3RD-DSU", ip: "172.19.24.45", model: "HP LJ MGD MFP E42540F", dept: "3RD DSU", facility: "AHM" },
-            { cn: "45", host: "AH-AHM-HAEMATOLOGY", ip: "172.19.24.46", model: "HP LJ MGD MFP E42540F", dept: "Haematology", facility: "AHM" },
-            { cn: "46", host: "ADSE Reception", ip: "172.19.1.141", model: "HP LJ MGD MFP E42540F", dept: "ADSE Reception", facility: "ADSE" },
-            { cn: "47", host: "ADSE Doctor", ip: "172.19.1.142", model: "HP LJ MGD MFP E42540F", dept: "ADSE Doctor", facility: "ADSE" },
-            { cn: "48", host: "ADSE Billing", ip: "172.19.1.143", model: "HP LJ MGD MFP E42540F", dept: "ADSE Billing", facility: "ADSE" },
-            { cn: "49", host: "ADSE Pharmacy", ip: "172.19.1.144", model: "HP LJ MGD MFP E42540F", dept: "ADSE Pharmacy", facility: "ADSE" },
-            { cn: "50", host: "ADSE Pharmacy", ip: "172.19.1.145", model: "HP LJ MGD MFP E42540F", dept: "ADSE Pharmacy", facility: "ADSE" },
-            { cn: "51", host: "ADSE Store", ip: "172.19.1.146", model: "HP LJ MGD MFP E42540F", dept: "ADSE Store", facility: "ADSE" },
-            { cn: "52", host: "ADSE Insurance", ip: "172.19.1.147", model: "HP LJ MGD MFP E42540F", dept: "ADSE Insurance", facility: "ADSE" },
-            { cn: "53", host: "ADSE Insurance", ip: "172.19.1.148", model: "HP LJ MGD MFP E42540F", dept: "ADSE Insurance", facility: "ADSE" },
-            { cn: "54", host: "ADSE Radiology", ip: "172.19.1.149", model: "HP LJ MGD MFP E42540F", dept: "ADSE Radiology", facility: "ADSE" },
-            { cn: "55", host: "ADSE Radiology", ip: "172.19.1.150", model: "HP LJ MGD MFP E42540F", dept: "ADSE Radiology", facility: "ADSE" },
-            { cn: "56", host: "ADSE Radiology", ip: "172.19.1.151", model: "HP LJ MGD MFP E42540F", dept: "ADSE Radiology", facility: "ADSE" },
-            { cn: "57", host: "ADSE Cash", ip: "172.19.1.152", model: "HP LJ MGD MFP E42540F", dept: "ADSE Cash", facility: "ADSE" },
-            { cn: "58", host: "ADSE Sample", ip: "172.19.1.153", model: "HP LJ MGD MFP E42540F", dept: "ADSE Sample", facility: "ADSE" },
-            { cn: "59", host: "ADSE Lab", ip: "172.19.1.154", model: "HP LJ MGD MFP E42540F", dept: "ADSE Lab", facility: "ADSE" },
-            { cn: "60", host: "ADSE Lab", ip: "172.19.1.155", model: "HP LJ MGD MFP E42540F", dept: "ADSE Lab", facility: "ADSE" },
-            { cn: "61", host: "ADSE Lab", ip: "172.19.1.156", model: "HP LJ MGD MFP E42540F", dept: "ADSE Lab", facility: "ADSE" },
-            { cn: "62", host: "ADSE OPD", ip: "172.19.1.157", model: "HP LJ MGD MFP E42540F", dept: "ADSE OPD", facility: "ADSE" },
-            { cn: "63", host: "ADSE Medical", ip: "172.19.1.158", model: "HP LJ MGD MFP E42540F", dept: "ADSE Medical", facility: "ADSE" },
-            { cn: "64", host: "ADSE Medical", ip: "172.19.1.159", model: "HP LJ MGD MFP E42540F", dept: "ADSE Medical", facility: "ADSE" },
-            { cn: "65", host: "ADSE Medical", ip: "172.19.1.160", model: "HP LJ MGD MFP E42540F", dept: "ADSE Medical", facility: "ADSE" },
-            { cn: "66", host: "ADSC Reception", ip: "172.19.1.162", model: "HP LJ MGD MFP E42540F", dept: "ADSC Reception", facility: "ADSC" },
-            { cn: "67", host: "ADSC Doctor", ip: "172.19.1.163", model: "HP LJ MGD MFP E42540F", dept: "ADSC Doctor", facility: "ADSC" },
-            { cn: "68", host: "ADSC Doctor", ip: "172.19.1.164", model: "HP LJ MGD MFP E42540F", dept: "ADSC Doctor", facility: "ADSC" },
-            { cn: "69", host: "ADSC Doctor", ip: "172.19.1.165", model: "HP LJ MGD MFP E42540F", dept: "ADSC Doctor", facility: "ADSC" },
-            { cn: "70", host: "ADSC Doctor", ip: "172.19.1.166", model: "HP LJ MGD MFP E42540F", dept: "ADSC Doctor", facility: "ADSC" },
-            { cn: "71", host: "ADSC Doctor", ip: "172.19.1.167", model: "HP LJ MGD MFP E42540F", dept: "ADSC Doctor", facility: "ADSC" },
-            { cn: "72", host: "ADSC Pharmacy", ip: "172.19.1.168", model: "HP LJ MGD MFP E42540F", dept: "ADSC Pharmacy", facility: "ADSC" },
-            { cn: "73", host: "ADSC-Colour", ip: "172.19.1.161", model: "HP CLJ MGD MFP E47528F", dept: "ADSC", facility: "ADSC" }
-        ];
+    <!-- Ward Tab -->
+    <div class="tab-pane" id="tab-ward">
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>SL</th><th>Device</th><th>IP Address</th><th>Rooms</th><th>Floor/Area</th><th>Location</th><th>Copy IP</th><th class="actions-col">Actions</th>
+        </tr></thead><tbody id="tb-ward"></tbody></table>
+      </div>
+    </div>
 
-        const originalDrData = [
-            { sl: "1", ip: "172.19.25.1", clinic: "Clinic 1", zone: "4", host: "AHM-D-CLINIC2" },
-            { sl: "2", ip: "172.19.25.2", clinic: "Clinic 2", zone: "4", host: "AHM-D-DRNAVEED" },
-            { sl: "3", ip: "172.19.25.3", clinic: "Clinic 3", zone: "5", host: "AHM-D-CLINIC03" },
-            { sl: "4", ip: "172.19.25.4", clinic: "Clinic 4", zone: "5", host: "AHM-D-CLINIC-4" },
-            { sl: "5", ip: "172.19.25.5", clinic: "Clinic 5", zone: "5", host: "AHM-D-CLINIC5" },
-            { sl: "6", ip: "172.19.25.6", clinic: "Clinic 6", zone: "5", host: "AHM-D-CLINIC06" },
-            { sl: "7", ip: "172.19.25.7", clinic: "Clinic 7", zone: "3", host: "AHM-D-CLINIC07" },
-            { sl: "8", ip: "172.19.25.8", clinic: "Clinic 8", zone: "3", host: "AHM-D-CLINIC08" },
-            { sl: "9", ip: "172.19.25.9", clinic: "Clinic 9", zone: "3", host: "AHM-D-CLINI9" },
-            { sl: "10", ip: "172.19.25.10", clinic: "Clinic10", zone: "3", host: "AHM-D-CLINIC10N" },
-            { sl: "11", ip: "172.19.25.11", clinic: "Clinic11", zone: "3", host: "AHM-D-CLINIC11" },
-            { sl: "12", ip: "172.19.25.12", clinic: "Clinic12", zone: "3", host: "AHM-D-CLINIC12" },
-            { sl: "12", ip: "172.19.24.79", clinic: "Clinic12A", zone: "3", host: "AHM-D-INS10" },
-            { sl: "13", ip: "172.19.25.13", clinic: "Clinic 13", zone: "5", host: "AHM-D-CLINIC014" },
-            { sl: "14", ip: "172.19.25.14", clinic: "Clinic 14", zone: "5", host: "AHM-D-CLINIC014" },
-            { sl: "15", ip: "172.19.25.15", clinic: "Clinic 15", zone: "5", host: "AHM-D-CLINIC15" },
-            { sl: "16", ip: "172.19.25.16", clinic: "Clinic 16", zone: "5", host: "AHM-D-CLINIC-16" },
-            { sl: "17", ip: "172.19.25.17", clinic: "Clinic 17", zone: "5", host: "AHM-D-CLINIC017" },
-            { sl: "18", ip: "172.19.25.18", clinic: "Clinic 18", zone: "5", host: "AHM-D-CLINIC018" },
-            { sl: "19", ip: "172.19.25.19", clinic: "Clinic 19", zone: "5", host: "AHM-D-CLINIC29" },
-            { sl: "20", ip: "172.19.25.20", clinic: "Clinic 20", zone: "5", host: "AHM-D-CLINIC020" },
-            { sl: "21", ip: "172.19.25.21", clinic: "Clinic 21", zone: "2", host: "AHM-D-CLINIC21" },
-            { sl: "22", ip: "172.19.25.22", clinic: "Clinic 22", zone: "2", host: "AHM-D-CLINIC-22" },
-            { sl: "23", ip: "172.19.25.23", clinic: "Clinic 23", zone: "2", host: "AHM-D-CLINIC23" },
-            { sl: "24", ip: "172.19.25.24", clinic: "Clinic 24", zone: "2", host: "AHM-D-CLINIC24" },
-            { sl: "25", ip: "172.19.25.25", clinic: "Clinic 25", zone: "1", host: "AHM-D-CLINIC-25" },
-            { sl: "26", ip: "172.19.25.26", clinic: "Clinic 26", zone: "1", host: "AHM-D-CLINIC26" },
-            { sl: "27", ip: "172.19.25.27", clinic: "Clinic 27", zone: "1", host: "AHM-D-CLINIC27" },
-            { sl: "28", ip: "172.19.25.28", clinic: "Clinic 28", zone: "1", host: "AHM-D-CLINIC028" },
-            { sl: "29", ip: "172.19.25.29", clinic: "Clinic 29", zone: "5", host: "AHM-D-CLINIC-29" },
-            { sl: "30", ip: "172.19.25.30", clinic: "Clinic 30", zone: "5", host: "AHM-D-CLINIC-30" },
-            { sl: "31", ip: "172.19.25.31", clinic: "Clinic 31", zone: "5", host: "AHM-D-CLINIC31" },
-            { sl: "32", ip: "172.19.25.32", clinic: "Clinic 32", zone: "22", host: "AHM-D-CLINIC32" },
-            { sl: "33", ip: "172.19.25.33", clinic: "Clinic 33", zone: "22", host: "AHM-D-DRSACHIN" },
-            { sl: "34", ip: "172.19.25.34", clinic: "Clinic 34", zone: "22", host: "Clinic 34" },
-            { sl: "35", ip: "172.19.25.35", clinic: "Clinic 35", zone: "22", host: "Clinic 35" },
-            { sl: "36", ip: "172.19.10.46", clinic: "DR launch OT", zone: "ot", host: "ot" },
-            { sl: "37", ip: "172.19.1.175", clinic: "ADSC Clinic 01", zone: "ADSC", host: "ADSC" },
-            { sl: "38", ip: "172.19.1.187", clinic: "ADSC Clinic 02", zone: "ADSC", host: "ADSC" },
-            { sl: "39", ip: "172.19.1.185", clinic: "ADSC Clinic 03", zone: "ADSC", host: "ADSC" },
-            { sl: "40", ip: "172.19.1.101", clinic: "ADSC Clinic 04", zone: "ADSC", host: "ADSC" },
-            { sl: "41", ip: "172.19.13.237", clinic: "ER Self Reg", zone: "ER", host: "ER" }
-        ];
+    <!-- Printer Tab -->
+    <div class="tab-pane" id="tab-printer">
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>#</th><th>Host</th><th>IP Address</th><th>Model</th><th>Department</th><th>Facility</th><th>Copy IP</th><th class="actions-col">Actions</th>
+        </tr></thead><tbody id="tb-printer"></tbody></table>
+      </div>
+    </div>
 
-        // LocalStorage key
-        const STORAGE_KEY = 'ahm_network_data';
+    <!-- DR Tab -->
+    <div class="tab-pane" id="tab-dr">
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>SL</th><th>Clinic</th><th>IP Address</th><th>Zone</th><th>Host Name</th><th>Copy IP</th><th class="actions-col">Actions</th>
+        </tr></thead><tbody id="tb-dr"></tbody></table>
+      </div>
+    </div>
 
-        // Global data storage - Load from localStorage or use original data
-        let networkData = loadDataFromStorage();
+    <!-- All Tab -->
+    <div class="tab-pane" id="tab-all">
+      <div class="table-wrap">
+        <table><thead><tr>
+          <th>Category</th><th>Device</th><th>IP Address</th><th>Location / Dept</th><th>Zone / Floor</th><th>Copy IP</th><th class="actions-col">Actions</th>
+        </tr></thead><tbody id="tb-all"></tbody></table>
+      </div>
+    </div>
+  </div>
 
-        let adminMode = false;
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="footer-stats">
+      <div class="fstat"><i class="fas fa-server" style="color:var(--cyan);font-size:11px"></i> Total: <span class="fstat-val" id="ft-total">139</span></div>
+      <div class="fstat"><i class="fas fa-circle" style="color:var(--green);font-size:8px"></i> Online: <span class="fstat-val" id="ft-online">138</span></div>
+      <div class="fstat"><i class="fas fa-print" style="color:var(--amber);font-size:11px"></i> Printers: <span class="fstat-val">73</span></div>
+      <div class="fstat"><i class="fas fa-map-marker-alt" style="color:var(--text3);font-size:11px"></i> Zones: <span class="fstat-val">12+</span></div>
+    </div>
+    <div class="footer-copy">AHM IT OPS DASHBOARD v4.0 · USE "SAVE HTML" TO PERSIST CHANGES</div>
+  </footer>
 
-        // Load data from localStorage
-        function loadDataFromStorage() {
-            const savedData = localStorage.getItem(STORAGE_KEY);
-            if (savedData) {
-                try {
-                    return JSON.parse(savedData);
-                } catch (e) {
-                    console.error('Error parsing saved data:', e);
-                    return getDefaultData();
-                }
-            }
-            return getDefaultData();
-        }
+  <!-- FAB -->
+  <button class="fab" id="fab"><i class="fas fa-plus"></i></button>
+</div>
 
-        // Get default/original data
-        function getDefaultData() {
-            return {
-                token: [...originalTokenData],
-                ward: [...originalWardData],
-                printer: [...originalPrinterData],
-                dr: [...originalDrData]
-            };
-        }
+<!-- PASSWORD MODAL -->
+<div class="modal-bg" id="pwModalBg">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-head">
+      <h2><i class="fas fa-lock" style="color:var(--cyan);margin-right:10px"></i>Admin Access</h2>
+      <p id="pwModalSub">Enter your admin password to continue</p>
+    </div>
+    <div class="modal-body">
+      <div class="fgroup">
+        <label><i class="fas fa-key" style="margin-right:6px;color:var(--amber)"></i>Password</label>
+        <div style="position:relative">
+          <input type="password" id="pwInput" placeholder="Enter admin password..." style="padding-right:44px">
+          <button onclick="togglePwVis()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px" id="pwEyeBtn"><i class="fas fa-eye"></i></button>
+        </div>
+      </div>
+      <div id="pwError" style="color:var(--red);font-size:0.78rem;font-family:var(--sans);margin-top:-6px;display:none">
+        <i class="fas fa-exclamation-circle"></i> Incorrect password. Please try again.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="mbtn cancel" id="pwCancel"><i class="fas fa-times"></i> Cancel</button>
+      <button class="mbtn confirm" id="pwConfirm"><i class="fas fa-unlock"></i> Unlock</button>
+    </div>
+  </div>
+</div>
 
-        // Save data to localStorage
-        function saveDataToStorage() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(networkData));
-                return true;
-            } catch (e) {
-                console.error('Error saving data:', e);
-                showToast('Error saving data to storage', 'error');
-                return false;
-            }
-        }
+<!-- ── MODAL ── -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">ADD DEVICE</h2>
+      <p id="modalSub">Fill in the device details below</p>
+    </div>
+    <div class="modal-body">
+      <div class="fgroup">
+        <label>Device Type</label>
+        <select id="devType">
+          <option value="">-- Select Type --</option>
+          <option value="token">Token Display</option>
+          <option value="ward">Ward Display</option>
+          <option value="printer">Printer</option>
+          <option value="dr">Doctor Clinic</option>
+        </select>
+      </div>
+      <div id="dynFields"></div>
+      <input type="hidden" id="editIdx">
+      <input type="hidden" id="editType">
+    </div>
+    <div class="modal-foot">
+      <button class="mbtn cancel" id="modalCancel"><i class="fas fa-times"></i> Cancel</button>
+      <button class="mbtn confirm" id="modalSave"><i class="fas fa-check"></i> Save Device</button>
+    </div>
+  </div>
+</div>
 
-        // Reset to original data
-        function resetToOriginalData() {
-            if (confirm('Are you sure you want to reset all data to original? This will delete all your added/modified devices.')) {
-                networkData = getDefaultData();
-                saveDataToStorage();
-                populateAllTables();
-                updateStats();
-                showToast('Data reset to original successfully', 'success');
-            }
-        }
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="t-icon fas fa-check-circle"></i>
+  <span id="toastMsg">Done</span>
+</div>
 
-        // Initialize the dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            populateAllTables();
-            setupEventListeners();
-            updateStats();
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-            
-            // Show message if data is loaded from storage
-            const savedData = localStorage.getItem(STORAGE_KEY);
-            if (savedData) {
-                console.log('Data loaded from localStorage');
-            }
-        });
+<script>
+// ================================================================
+// DATA — replaced on "Save HTML" download
+// ================================================================
+const originalTokenData = [
+    { zone:"Zone 5", device:"Mini PC", ip:"172.19.24.77", location:"Counter 7", url:"View Display" },
+    { zone:"Zone 3", device:"Mini PC", ip:"172.19.24.231", location:"Ortho OPD", url:"View Display" },
+    { zone:"Zone 4", device:"Mini PC", ip:"172.19.13.116", location:"Cardiology OPD", url:"View Display" },
+    { zone:"Zone 2", device:"Mini PC", ip:"172.19.24.233", location:"Gynaec OPD", url:"View Display" },
+    { zone:"Zone 1", device:"Mini PC", ip:"172.19.24.126", location:"Pediatric Old", url:"View Display" },
+    { zone:"Zone 9", device:"Mini PC", ip:"172.19.13.248", location:"Pharmacy counter", url:"View Display" },
+    { zone:"Zone 5", device:"Mini PC", ip:"172.19.13.186", location:"Main Reception", url:"View Display" },
+    { zone:"Zone 1", device:"Mini PC", ip:"172.19.24.17", location:"Pediatric New", url:"View Display" },
+    { zone:"Zone 4", device:"Mini PC", ip:"172.19.24.118", location:"Cadiology Dr sachin", url:"View Display" },
+    { zone:"Zone 18", device:"Mini PC", ip:"172.19.13.108", location:"Radiology", url:"View Display" },
+    { zone:"Zone 15", device:"Mini PC", ip:"172.19.13.106", location:"Sample collection", url:"View Display" }
+];
+const originalWardData = [
+    { sl:"1", device:"Mini PC", ip:"172.19.13.241", rooms:"501 to 510 (510a/510b)", floor:"5th Floor", location:"E Wing" },
+    { sl:"2", device:"Mini PC", ip:"172.19.13.242", rooms:"415 to 427 (420a/b,427a/b)", floor:"4th Floor", location:"D Wing" },
+    { sl:"3", device:"Mini PC", ip:"172.19.13.243", rooms:"401 to 414 (412a/412b)", floor:"4th Floor", location:"C Wing" },
+    { sl:"4", device:"Mini PC", ip:"172.19.13.244", rooms:"314 to 324 (324a/324b)", floor:"3rd Floor", location:"B Wing" },
+    { sl:"5", device:"Mini PC", ip:"172.19.13.245", rooms:"room 301 to 313", floor:"3rd Floor", location:"A Wing" },
+    { sl:"6", device:"Mini PC", ip:"172.19.13.246", rooms:"2201 to 2005", floor:"ICU", location:"ICU" },
+    { sl:"7", device:"Mini PC", ip:"172.19.13.247", rooms:"2001 to 2006", floor:"LDR Room", location:"LDR Room" },
+    { sl:"8", device:"Mini PC", ip:"172.19.13.249", rooms:"C001 to C005", floor:"CICU", location:"CICU" },
+    { sl:"9", device:"Mini PC", ip:"172.19.24.36", rooms:"C001 to C005", floor:"ER Dashboard", location:"ER Dashboard" },
+    { sl:"9", device:"Mini PC", ip:"172.19.13.100", rooms:"C001 to C005", floor:"ER Display", location:"ER Display" },
+    { sl:"10", device:"Mini PC", ip:"172.19.13.105", rooms:"C001 to C005", floor:"HR Bday", location:"HR Bday" },
+    { sl:"11", device:"Mini PC", ip:"172.19.13.102", rooms:"C001 to C005", floor:"OT Display", location:"OT Display" },
+    { sl:"12", device:"Mini PC", ip:"172.19.1.244", rooms:"Media player", floor:"ADSC Display", location:"ADSC Display" },
+    { sl:"13", device:"Mini PC", ip:"172.19.1.245", rooms:"Media Player", floor:"ADSC Display", location:"adsc Display" },
+    { sl:"14", device:"Mini PC", ip:"172.19.13.36", rooms:"Blood request", floor:"Lab Reception", location:"Lab Reception" }
+];
+const originalPrinterData = [
+    { cn:"1", host:"AH-AHM-OT", ip:"172.19.25.162", model:"HP LJ MGD MFP E42540F", dept:"OT", facility:"AHM" },
+    { cn:"2", host:"AH-AHM-GYNEC-NS", ip:"172.19.25.163", model:"HP LJ MGD MFP E42540F", dept:"Gynec NS", facility:"AHM" },
+    { cn:"3", host:"AH-AHM-NICU", ip:"172.19.24.42", model:"HP LJ MGD MFP E42540F", dept:"NICU", facility:"AHM" },
+    { cn:"4", host:"AH-AHM-RADIOLOGY-RECEPTION", ip:"172.19.25.164", model:"HP LJ MGD MFP E42540F", dept:"Radiology Reception", facility:"AHM" },
+    { cn:"5", host:"AH-AHM-INSURANCE-MAIN-RECEPTION", ip:"172.19.25.199", model:"HP LJ MGD MFP E42540F", dept:"Insurance Paedia", facility:"AHM" },
+    { cn:"6", host:"AH-AHM-MAIN-STORE", ip:"172.19.25.166", model:"HP LJ MGD MFP E42540F", dept:"MAIN STORE", facility:"AHM" },
+    { cn:"7", host:"AH-AHM-BIOMED", ip:"Flood", model:"HP LJ MGD MFP E42540F", dept:"BIOMED", facility:"AHM" },
+    { cn:"8", host:"AH-AHM-PEDIATRIC-RECEPTION", ip:"172.19.25.167", model:"HP LJ MGD MFP E42540F", dept:"Pediatric Rec", facility:"AHM" },
+    { cn:"9", host:"AH-AHM-ICU", ip:"172.19.25.168", model:"HP LJ MGD MFP E42540F", dept:"ICU", facility:"AHM" },
+    { cn:"10", host:"AH-AHM-2ND-DSU", ip:"172.19.25.169", model:"HP LJ MGD MFP E42540F", dept:"2ND DSU", facility:"AHM" },
+    { cn:"11", host:"AH-AHM-LABOUR", ip:"172.19.25.170", model:"HP LJ MGD MFP E42540F", dept:"Labour NS", facility:"AHM" },
+    { cn:"12", host:"AH-AHM-QUALITY", ip:"172.19.24.47", model:"HP LJ MGD MFP E42540F", dept:"Quality", facility:"AHM" },
+    { cn:"13", host:"AH-AHM-CHEMISTRY-1", ip:"172.19.25.171", model:"HP LJ MGD MFP E42540F", dept:"Chemistry 1", facility:"AHM" },
+    { cn:"14", host:"AH-AHM-CHEMISTRY-2", ip:"172.19.25.172", model:"HP LJ MGD MFP E42540F", dept:"Chemistry 2", facility:"AHM" },
+    { cn:"15", host:"AH-AHM-PSC-LAB", ip:"172.19.25.173", model:"HP LJ MGD MFP E42540F", dept:"PSC Lab", facility:"AHM" },
+    { cn:"16", host:"AH-AHM-DR-SCORE", ip:"172.19.25.174", model:"HP LJ MGD MFP E42540F", dept:"DR Score", facility:"AHM" },
+    { cn:"17", host:"AH-AHM-DR-SUJITH", ip:"172.19.25.175", model:"HP LJ MGD MFP E42540F", dept:"DR Sujith", facility:"AHM" },
+    { cn:"18", host:"AH-AHM-PEDIATRIC-DR", ip:"172.19.25.176", model:"HP LJ MGD MFP E42540F", dept:"Pediatric DR", facility:"AHM" },
+    { cn:"19", host:"AH-AHM-PEDIATRIC", ip:"172.19.25.177", model:"HP LJ MGD MFP E42540F", dept:"Pediatric", facility:"AHM" },
+    { cn:"20", host:"AH-AHM-OPT", ip:"172.19.25.178", model:"HP LJ MGD MFP E42540F", dept:"OPT", facility:"AHM" },
+    { cn:"21", host:"AH-AHM-ENT", ip:"172.19.25.179", model:"HP LJ MGD MFP E42540F", dept:"ENT", facility:"AHM" },
+    { cn:"22", host:"AH-AHM-CARDIO-ICU", ip:"172.19.25.180", model:"HP LJ MGD MFP E42540F", dept:"Cardio ICU", facility:"AHM" },
+    { cn:"23", host:"AH-AHM-CATH-LAB", ip:"172.19.25.181", model:"HP LJ MGD MFP E42540F", dept:"Cath Lab", facility:"AHM" },
+    { cn:"24", host:"AH-AHM-FAMILY-MEDICINE", ip:"172.19.25.182", model:"HP LJ MGD MFP E42540F", dept:"Family Medicine", facility:"AHM" },
+    { cn:"25", host:"AH-AHM-CCU", ip:"172.19.25.183", model:"HP LJ MGD MFP E42540F", dept:"CCU", facility:"AHM" },
+    { cn:"26", host:"AH-AHM-MICROBIOLOGY", ip:"172.19.25.184", model:"HP LJ MGD MFP E42540F", dept:"Microbiology", facility:"AHM" },
+    { cn:"27", host:"AH-AHM-MICROBIOLOGY-REC", ip:"172.19.25.185", model:"HP LJ MGD MFP E42540F", dept:"Microbiology Rec", facility:"AHM" },
+    { cn:"28", host:"AH-AHM-DENTAL", ip:"172.19.25.186", model:"HP LJ MGD MFP E42540F", dept:"Dental", facility:"AHM" },
+    { cn:"29", host:"AH-AHM-PSYCHIATRY", ip:"172.19.25.187", model:"HP LJ MGD MFP E42540F", dept:"Psychiatry", facility:"AHM" },
+    { cn:"30", host:"AH-AHM-DERMA", ip:"172.19.25.188", model:"HP LJ MGD MFP E42540F", dept:"Derma", facility:"AHM" },
+    { cn:"31", host:"AH-AHM-ORTHO-OPD", ip:"172.19.25.189", model:"HP LJ MGD MFP E42540F", dept:"Ortho OPD", facility:"AHM" },
+    { cn:"32", host:"AH-AHM-ORTHO-IP", ip:"172.19.25.190", model:"HP LJ MGD MFP E42540F", dept:"Ortho IP", facility:"AHM" },
+    { cn:"33", host:"AH-AHM-COMMUNITY-MEDICINE", ip:"172.19.25.191", model:"HP LJ MGD MFP E42540F", dept:"Community Medicine", facility:"AHM" },
+    { cn:"34", host:"AH-AHM-ENDOCRINOLOGY", ip:"172.19.25.192", model:"HP LJ MGD MFP E42540F", dept:"Endocrinology", facility:"AHM" },
+    { cn:"35", host:"AH-AHM-GASTRO", ip:"172.19.25.193", model:"HP LJ MGD MFP E42540F", dept:"Gastro", facility:"AHM" },
+    { cn:"36", host:"AH-AHM-HEALTH-CARE", ip:"172.19.25.194", model:"HP LJ MGD MFP E42540F", dept:"Health Care", facility:"AHM" },
+    { cn:"37", host:"AH-AHM-DIETETICS", ip:"172.19.25.195", model:"HP LJ MGD MFP E42540F", dept:"Dietetics", facility:"AHM" },
+    { cn:"38", host:"AH-AHM-DIETETICS-REC", ip:"172.19.25.196", model:"HP LJ MGD MFP E42540F", dept:"Dietetics Rec", facility:"AHM" },
+    { cn:"39", host:"AH-AHM-ULTRASOUND", ip:"172.19.25.197", model:"HP LJ MGD MFP E42540F", dept:"Ultrasound", facility:"AHM" },
+    { cn:"40", host:"AH-AHM-ULTRASOUND-REC", ip:"172.19.25.198", model:"HP LJ MGD MFP E42540F", dept:"Ultrasound Rec", facility:"AHM" },
+    { cn:"41", host:"AH-AHM-2ND-DSU-2", ip:"172.19.24.43", model:"HP LJ MGD MFP E42540F", dept:"2ND DSU 2", facility:"AHM" },
+    { cn:"42", host:"AH-AHM-PHARMACY", ip:"172.19.25.200", model:"HP LJ MGD MFP E42540F", dept:"Pharmacy", facility:"AHM" },
+    { cn:"43", host:"AH-AHM-NEUROLOGY", ip:"172.19.24.44", model:"HP LJ MGD MFP E42540F", dept:"Neurology", facility:"AHM" },
+    { cn:"44", host:"AH-AHM-3RD-DSU", ip:"172.19.24.45", model:"HP LJ MGD MFP E42540F", dept:"3RD DSU", facility:"AHM" },
+    { cn:"45", host:"AH-AHM-HAEMATOLOGY", ip:"172.19.24.46", model:"HP LJ MGD MFP E42540F", dept:"Haematology", facility:"AHM" },
+    { cn:"46", host:"ADSE Reception", ip:"172.19.1.141", model:"HP LJ MGD MFP E42540F", dept:"ADSE Reception", facility:"ADSE" },
+    { cn:"47", host:"ADSE Doctor", ip:"172.19.1.142", model:"HP LJ MGD MFP E42540F", dept:"ADSE Doctor", facility:"ADSE" },
+    { cn:"48", host:"ADSE Billing", ip:"172.19.1.143", model:"HP LJ MGD MFP E42540F", dept:"ADSE Billing", facility:"ADSE" },
+    { cn:"49", host:"ADSE Pharmacy", ip:"172.19.1.144", model:"HP LJ MGD MFP E42540F", dept:"ADSE Pharmacy", facility:"ADSE" },
+    { cn:"50", host:"ADSE Pharmacy", ip:"172.19.1.145", model:"HP LJ MGD MFP E42540F", dept:"ADSE Pharmacy", facility:"ADSE" },
+    { cn:"51", host:"ADSE Store", ip:"172.19.1.146", model:"HP LJ MGD MFP E42540F", dept:"ADSE Store", facility:"ADSE" },
+    { cn:"52", host:"ADSE Insurance", ip:"172.19.1.147", model:"HP LJ MGD MFP E42540F", dept:"ADSE Insurance", facility:"ADSE" },
+    { cn:"53", host:"ADSE Insurance", ip:"172.19.1.148", model:"HP LJ MGD MFP E42540F", dept:"ADSE Insurance", facility:"ADSE" },
+    { cn:"54", host:"ADSE Radiology", ip:"172.19.1.149", model:"HP LJ MGD MFP E42540F", dept:"ADSE Radiology", facility:"ADSE" },
+    { cn:"55", host:"ADSE Radiology", ip:"172.19.1.150", model:"HP LJ MGD MFP E42540F", dept:"ADSE Radiology", facility:"ADSE" },
+    { cn:"56", host:"ADSE Radiology", ip:"172.19.1.151", model:"HP LJ MGD MFP E42540F", dept:"ADSE Radiology", facility:"ADSE" },
+    { cn:"57", host:"ADSE Cash", ip:"172.19.1.152", model:"HP LJ MGD MFP E42540F", dept:"ADSE Cash", facility:"ADSE" },
+    { cn:"58", host:"ADSE Sample", ip:"172.19.1.153", model:"HP LJ MGD MFP E42540F", dept:"ADSE Sample", facility:"ADSE" },
+    { cn:"59", host:"ADSE Lab", ip:"172.19.1.154", model:"HP LJ MGD MFP E42540F", dept:"ADSE Lab", facility:"ADSE" },
+    { cn:"60", host:"ADSE Lab", ip:"172.19.1.155", model:"HP LJ MGD MFP E42540F", dept:"ADSE Lab", facility:"ADSE" },
+    { cn:"61", host:"ADSE Lab", ip:"172.19.1.156", model:"HP LJ MGD MFP E42540F", dept:"ADSE Lab", facility:"ADSE" },
+    { cn:"62", host:"ADSE OPD", ip:"172.19.1.157", model:"HP LJ MGD MFP E42540F", dept:"ADSE OPD", facility:"ADSE" },
+    { cn:"63", host:"ADSE Medical", ip:"172.19.1.158", model:"HP LJ MGD MFP E42540F", dept:"ADSE Medical", facility:"ADSE" },
+    { cn:"64", host:"ADSE Medical", ip:"172.19.1.159", model:"HP LJ MGD MFP E42540F", dept:"ADSE Medical", facility:"ADSE" },
+    { cn:"65", host:"ADSE Medical", ip:"172.19.1.160", model:"HP LJ MGD MFP E42540F", dept:"ADSE Medical", facility:"ADSE" },
+    { cn:"66", host:"ADSC Reception", ip:"172.19.1.162", model:"HP LJ MGD MFP E42540F", dept:"ADSC Reception", facility:"ADSC" },
+    { cn:"67", host:"ADSC Doctor", ip:"172.19.1.163", model:"HP LJ MGD MFP E42540F", dept:"ADSC Doctor", facility:"ADSC" },
+    { cn:"68", host:"ADSC Doctor", ip:"172.19.1.164", model:"HP LJ MGD MFP E42540F", dept:"ADSC Doctor", facility:"ADSC" },
+    { cn:"69", host:"ADSC Doctor", ip:"172.19.1.165", model:"HP LJ MGD MFP E42540F", dept:"ADSC Doctor", facility:"ADSC" },
+    { cn:"70", host:"ADSC Doctor", ip:"172.19.1.166", model:"HP LJ MGD MFP E42540F", dept:"ADSC Doctor", facility:"ADSC" },
+    { cn:"71", host:"ADSC Doctor", ip:"172.19.1.167", model:"HP LJ MGD MFP E42540F", dept:"ADSC Doctor", facility:"ADSC" },
+    { cn:"72", host:"ADSC Pharmacy", ip:"172.19.1.168", model:"HP LJ MGD MFP E42540F", dept:"ADSC Pharmacy", facility:"ADSC" },
+    { cn:"73", host:"ADSC-Colour", ip:"172.19.1.161", model:"HP CLJ MGD MFP E47528F", dept:"ADSC", facility:"ADSC" }
+];
+const originalDrData = [
+    { sl:"1", ip:"172.19.25.1", clinic:"Clinic 1", zone:"4", host:"AHM-D-CLINIC2" },
+    { sl:"2", ip:"172.19.25.2", clinic:"Clinic 2", zone:"4", host:"AHM-D-DRNAVEED" },
+    { sl:"3", ip:"172.19.25.3", clinic:"Clinic 3", zone:"5", host:"AHM-D-CLINIC03" },
+    { sl:"4", ip:"172.19.25.4", clinic:"Clinic 4", zone:"5", host:"AHM-D-CLINIC-4" },
+    { sl:"5", ip:"172.19.25.5", clinic:"Clinic 5", zone:"5", host:"AHM-D-CLINIC5" },
+    { sl:"6", ip:"172.19.25.6", clinic:"Clinic 6", zone:"5", host:"AHM-D-CLINIC06" },
+    { sl:"7", ip:"172.19.25.7", clinic:"Clinic 7", zone:"3", host:"AHM-D-CLINIC07" },
+    { sl:"8", ip:"172.19.25.8", clinic:"Clinic 8", zone:"3", host:"AHM-D-CLINIC08" },
+    { sl:"9", ip:"172.19.25.9", clinic:"Clinic 9", zone:"3", host:"AHM-D-CLINI9" },
+    { sl:"10", ip:"172.19.25.10", clinic:"Clinic10", zone:"3", host:"AHM-D-CLINIC10N" },
+    { sl:"11", ip:"172.19.25.11", clinic:"Clinic11", zone:"3", host:"AHM-D-CLINIC11" },
+    { sl:"12", ip:"172.19.25.12", clinic:"Clinic12", zone:"3", host:"AHM-D-CLINIC12" },
+    { sl:"12", ip:"172.19.24.79", clinic:"Clinic12A", zone:"3", host:"AHM-D-INS10" },
+    { sl:"13", ip:"172.19.25.13", clinic:"Clinic 13", zone:"5", host:"AHM-D-CLINIC014" },
+    { sl:"14", ip:"172.19.25.14", clinic:"Clinic 14", zone:"5", host:"AHM-D-CLINIC014" },
+    { sl:"15", ip:"172.19.25.15", clinic:"Clinic 15", zone:"5", host:"AHM-D-CLINIC15" },
+    { sl:"16", ip:"172.19.25.16", clinic:"Clinic 16", zone:"5", host:"AHM-D-CLINIC-16" },
+    { sl:"17", ip:"172.19.25.17", clinic:"Clinic 17", zone:"5", host:"AHM-D-CLINIC017" },
+    { sl:"18", ip:"172.19.25.18", clinic:"Clinic 18", zone:"5", host:"AHM-D-CLINIC018" },
+    { sl:"19", ip:"172.19.25.19", clinic:"Clinic 19", zone:"5", host:"AHM-D-CLINIC29" },
+    { sl:"20", ip:"172.19.25.20", clinic:"Clinic 20", zone:"5", host:"AHM-D-CLINIC020" },
+    { sl:"21", ip:"172.19.25.21", clinic:"Clinic 21", zone:"2", host:"AHM-D-CLINIC21" },
+    { sl:"22", ip:"172.19.25.22", clinic:"Clinic 22", zone:"2", host:"AHM-D-CLINIC-22" },
+    { sl:"23", ip:"172.19.25.23", clinic:"Clinic 23", zone:"2", host:"AHM-D-CLINIC23" },
+    { sl:"24", ip:"172.19.25.24", clinic:"Clinic 24", zone:"2", host:"AHM-D-CLINIC24" },
+    { sl:"25", ip:"172.19.25.25", clinic:"Clinic 25", zone:"1", host:"AHM-D-CLINIC-25" },
+    { sl:"26", ip:"172.19.25.26", clinic:"Clinic 26", zone:"1", host:"AHM-D-CLINIC26" },
+    { sl:"27", ip:"172.19.25.27", clinic:"Clinic 27", zone:"1", host:"AHM-D-CLINIC27" },
+    { sl:"28", ip:"172.19.25.28", clinic:"Clinic 28", zone:"1", host:"AHM-D-CLINIC028" },
+    { sl:"29", ip:"172.19.25.29", clinic:"Clinic 29", zone:"5", host:"AHM-D-CLINIC-29" },
+    { sl:"30", ip:"172.19.25.30", clinic:"Clinic 30", zone:"5", host:"AHM-D-CLINIC-30" },
+    { sl:"31", ip:"172.19.25.31", clinic:"Clinic 31", zone:"5", host:"AHM-D-CLINIC31" },
+    { sl:"32", ip:"172.19.25.32", clinic:"Clinic 32", zone:"22", host:"AHM-D-CLINIC32" },
+    { sl:"33", ip:"172.19.25.33", clinic:"Clinic 33", zone:"22", host:"AHM-D-DRSACHIN" },
+    { sl:"34", ip:"172.19.25.34", clinic:"Clinic 34", zone:"22", host:"Clinic 34" },
+    { sl:"35", ip:"172.19.25.35", clinic:"Clinic 35", zone:"22", host:"Clinic 35" },
+    { sl:"36", ip:"172.19.10.46", clinic:"DR launch OT", zone:"ot", host:"ot" },
+    { sl:"37", ip:"172.19.1.175", clinic:"ADSC Clinic 01", zone:"ADSC", host:"ADSC" },
+    { sl:"38", ip:"172.19.1.187", clinic:"ADSC Clinic 02", zone:"ADSC", host:"ADSC" },
+    { sl:"39", ip:"172.19.1.185", clinic:"ADSC Clinic 03", zone:"ADSC", host:"ADSC" },
+    { sl:"40", ip:"172.19.1.101", clinic:"ADSC Clinic 04", zone:"ADSC", host:"ADSC" },
+    { sl:"41", ip:"172.19.13.237", clinic:"ER Self Reg", zone:"ER", host:"ER" }
+];
+// ================================================================
 
-        function populateAllTables() {
-            populateTokenTable();
-            populateWardTable();
-            populatePrinterTable();
-            populateDrTable();
-            populateAllTable();
-            setupCopyButtons();
-        }
+const STORE = 'ahm_noc_v4';
+let data = (() => { try { const s=localStorage.getItem(STORE); return s?JSON.parse(s):def(); } catch{return def();} })();
+let isAdmin = false;
 
-        function populateTokenTable() {
-            const tbody = document.getElementById('token-tbody');
-            tbody.innerHTML = networkData.token.map((item, index) => `
-                <tr data-index="${index}" data-type="token">
-                    <td><span class="zone-badge">${item.zone}</span></td>
-                    <td><strong>${item.device}</strong></td>
-                    <td><span class="ip-address" data-ip="${item.ip}">${item.ip}</span></td>
-                    <td>${item.location}</td>
-                    <td><button class="copy-btn" data-ip="${item.ip}"><i class="fas fa-copy"></i></button></td>
-                    <td class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editItem('token', ${index})" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('token', ${index})" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+function def() {
+  return { token:[...originalTokenData], ward:[...originalWardData], printer:[...originalPrinterData], dr:[...originalDrData] };
+}
+function persist() {
+  localStorage.setItem(STORE, JSON.stringify(data));
+  document.getElementById('saveHint').classList.add('show');
+}
 
-        function populateWardTable() {
-            const tbody = document.getElementById('ward-tbody');
-            tbody.innerHTML = networkData.ward.map((item, index) => `
-                <tr data-index="${index}" data-type="ward">
-                    <td><strong>${item.sl}</strong></td>
-                    <td>${item.device}</td>
-                    <td><span class="ip-address" data-ip="${item.ip}">${item.ip}</span></td>
-                    <td>${item.rooms}</td>
-                    <td><span class="zone-badge">${item.floor}</span></td>
-                    <td>${item.location}</td>
-                    <td><button class="copy-btn" data-ip="${item.ip}"><i class="fas fa-copy"></i></button></td>
-                    <td class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editItem('ward', ${index})" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('ward', ${index})" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+// ── CLOCK
+function tick() {
+  const n = new Date();
+  document.getElementById('clkTime').textContent = n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  document.getElementById('clkDate').textContent = n.toLocaleDateString('en-US',{weekday:'short',day:'numeric',month:'short',year:'numeric'}).toUpperCase();
+  document.getElementById('ft-total').closest('.footer')&&(document.getElementById('last-updated')&&(document.getElementById('last-updated').textContent=n.toLocaleString()));
+}
+setInterval(tick, 1000); tick();
 
-        function populatePrinterTable() {
-            const tbody = document.getElementById('printer-tbody');
-            tbody.innerHTML = networkData.printer.map((item, index) => `
-                <tr data-index="${index}" data-type="printer">
-                    <td><strong>${item.cn}</strong></td>
-                    <td><strong>${item.host}</strong></td>
-                    <td><span class="ip-address" data-ip="${item.ip}">${item.ip}</span></td>
-                    <td><span style="font-family: monospace; font-size: 0.8rem;">${item.model}</span></td>
-                    <td>${item.dept}</td>
-                    <td><span class="zone-badge">${item.facility}</span></td>
-                    <td><button class="copy-btn" data-ip="${item.ip}"><i class="fas fa-copy"></i></button></td>
-                    <td class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editItem('printer', ${index})" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('printer', ${index})" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+// ── COUNTER ANIMATION
+function animateCount(el, target) {
+  let cur = 0, step = Math.ceil(target/40);
+  const t = setInterval(() => {
+    cur = Math.min(cur+step, target);
+    el.textContent = cur;
+    if(cur>=target) clearInterval(t);
+  }, 30);
+}
 
-        function populateDrTable() {
-            const tbody = document.getElementById('dr-tbody');
-            tbody.innerHTML = networkData.dr.map((item, index) => {
-                const zoneText = item.zone === "ADSC" || item.zone === "ER" || item.zone === "ot" ? item.zone : `Zone ${item.zone}`;
-                return `
-                <tr data-index="${index}" data-type="dr">
-                    <td><strong>${item.sl}</strong></td>
-                    <td><strong>${item.clinic}</strong></td>
-                    <td><span class="ip-address" data-ip="${item.ip}">${item.ip}</span></td>
-                    <td><span class="zone-badge">${zoneText}</span></td>
-                    <td><code style="font-size: 0.8rem;">${item.host}</code></td>
-                    <td><button class="copy-btn" data-ip="${item.ip}"><i class="fas fa-copy"></i></button></td>
-                    <td class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editItem('dr', ${index})" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('dr', ${index})" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `}).join('');
-        }
+// ── STATS
+function updateStats() {
+  const total = Object.values(data).reduce((s,a)=>s+a.length,0);
+  const offline = data.printer.filter(p=>p.ip.toLowerCase()==='flood').length;
+  animateCount(document.getElementById('stat-total'), total);
+  animateCount(document.getElementById('stat-online'), total-offline);
+  animateCount(document.getElementById('stat-printers'), data.printer.length);
+  animateCount(document.getElementById('stat-offline'), offline);
+  document.getElementById('ft-total').textContent = total;
+  document.getElementById('ft-online').textContent = total-offline;
+  document.getElementById('tc-token').textContent = data.token.length;
+  document.getElementById('tc-ward').textContent = data.ward.length;
+  document.getElementById('tc-printer').textContent = data.printer.length;
+  document.getElementById('tc-dr').textContent = data.dr.length;
+  document.getElementById('tc-all').textContent = total;
+  document.getElementById('rcNum').textContent = total;
+}
 
-        function populateAllTable() {
-            const tbody = document.getElementById('all-tbody');
-            let allRows = [];
+// ── ZONE COLOR
+function zoneClass(z) {
+  if(['ADSC','adsc'].includes(z)) return 'zone-teal';
+  if(['ER','er'].includes(z)) return 'zone-amber';
+  if(['ot','OT'].includes(z)) return 'zone-purple';
+  const n = parseInt(z);
+  if(n<=3) return 'zone-blue';
+  if(n<=6) return 'zone-green';
+  if(n<=10) return 'zone-amber';
+  return 'zone-purple';
+}
+function zoneLabel(z) {
+  return ['ADSC','ER','ot'].includes(z) ? z.toUpperCase() : `ZONE ${z}`;
+}
+function facilityClass(f) {
+  if(f==='AHM') return 'zone-blue';
+  if(f==='ADSE') return 'zone-green';
+  return 'zone-teal';
+}
 
-            // Combine all data
-            networkData.token.forEach((item, index) => {
-                allRows.push({
-                    type: 'token',
-                    index,
-                    category: 'Token Display',
-                    device: item.device,
-                    ip: item.ip,
-                    location: item.location,
-                    zone: item.zone
-                });
-            });
+// ── IP TAG
+function ipTag(ip) {
+  const flood = ip.toLowerCase()==='flood';
+  return `<span class="ip-tag${flood?' flood':''}" ${!flood?`onclick="copyIP('${ip}')" title="Click to copy"`:'title="Offline / Flood"'}>${ip}</span>`;
+}
+function copyBtn(ip) {
+  return `<button class="copy-btn" onclick="copyIP('${ip}',this)"><i class="fas fa-copy"></i></button>`;
+}
+function actBtns(type, i) {
+  return `<div class="acts">
+    <button class="act-btn edit" onclick="openEdit('${type}',${i})" title="Edit"><i class="fas fa-pen"></i></button>
+    <button class="act-btn del" onclick="delItem('${type}',${i})" title="Delete"><i class="fas fa-trash-alt"></i></button>
+  </div>`;
+}
 
-            networkData.ward.forEach((item, index) => {
-                allRows.push({
-                    type: 'ward',
-                    index,
-                    category: 'Ward Display',
-                    device: item.device,
-                    ip: item.ip,
-                    location: item.location,
-                    zone: item.floor
-                });
-            });
+// ── RENDER TABLES
+function renderAll() {
+  renderToken(); renderWard(); renderPrinter(); renderDr(); renderAllTab();
+  updateStats();
+}
 
-            networkData.printer.forEach((item, index) => {
-                allRows.push({
-                    type: 'printer',
-                    index,
-                    category: 'Printer',
-                    device: item.host,
-                    ip: item.ip,
-                    location: item.dept,
-                    zone: item.facility
-                });
-            });
+function renderToken() {
+  document.getElementById('tb-token').innerHTML = data.token.map((d,i)=>`<tr>
+    <td><span class="zone-tag ${zoneClass(d.zone.replace('Zone ',''))}">${d.zone.toUpperCase()}</span></td>
+    <td class="dev-name">${d.device}</td>
+    <td>${ipTag(d.ip)}</td>
+    <td style="color:var(--text)">${d.location}</td>
+    <td>${copyBtn(d.ip)}</td>
+    <td>${actBtns('token',i)}</td>
+  </tr>`).join('') || empty();
+}
+function renderWard() {
+  document.getElementById('tb-ward').innerHTML = data.ward.map((d,i)=>`<tr>
+    <td style="font-family:var(--mono);color:var(--cyan)">${d.sl}</td>
+    <td class="dev-name">${d.device}</td>
+    <td>${ipTag(d.ip)}</td>
+    <td style="color:var(--text2);font-size:0.78rem">${d.rooms}</td>
+    <td><span class="zone-tag zone-blue">${d.floor.toUpperCase()}</span></td>
+    <td style="color:var(--text)">${d.location}</td>
+    <td>${copyBtn(d.ip)}</td>
+    <td>${actBtns('ward',i)}</td>
+  </tr>`).join('') || empty();
+}
+function renderPrinter() {
+  document.getElementById('tb-printer').innerHTML = data.printer.map((d,i)=>`<tr>
+    <td style="font-family:var(--mono);color:var(--text3)">${d.cn}</td>
+    <td class="host-mono">${d.host}</td>
+    <td>${ipTag(d.ip)}</td>
+    <td style="font-size:0.75rem;color:var(--text3);font-family:var(--mono)">${d.model}</td>
+    <td style="color:var(--text)">${d.dept}</td>
+    <td><span class="zone-tag ${facilityClass(d.facility)}">${d.facility}</span></td>
+    <td>${copyBtn(d.ip)}</td>
+    <td>${actBtns('printer',i)}</td>
+  </tr>`).join('') || empty();
+}
+function renderDr() {
+  document.getElementById('tb-dr').innerHTML = data.dr.map((d,i)=>`<tr>
+    <td style="font-family:var(--mono);color:var(--cyan)">${d.sl}</td>
+    <td class="dev-name">${d.clinic}</td>
+    <td>${ipTag(d.ip)}</td>
+    <td><span class="zone-tag ${zoneClass(d.zone)}">${zoneLabel(d.zone)}</span></td>
+    <td class="host-mono">${d.host}</td>
+    <td>${copyBtn(d.ip)}</td>
+    <td>${actBtns('dr',i)}</td>
+  </tr>`).join('') || empty();
+}
+function renderAllTab() {
+  let rows = [];
+  data.token.forEach((d,i)   => rows.push({t:'token',  i, cat:'TOKEN',   dev:d.device, ip:d.ip, loc:d.location, z:d.zone}));
+  data.ward.forEach((d,i)    => rows.push({t:'ward',   i, cat:'WARD',    dev:d.device, ip:d.ip, loc:d.location, z:d.floor}));
+  data.printer.forEach((d,i) => rows.push({t:'printer',i, cat:'PRINTER', dev:d.host,   ip:d.ip, loc:d.dept,     z:d.facility}));
+  data.dr.forEach((d,i)      => rows.push({t:'dr',     i, cat:'CLINIC',  dev:d.clinic, ip:d.ip, loc:d.host,     z:['ADSC','ER','ot'].includes(d.zone)?d.zone.toUpperCase():'Zone '+d.zone}));
+  document.getElementById('tb-all').innerHTML = rows.map(r=>`<tr>
+    <td><span class="cat-tag ${r.t}">${r.cat}</span></td>
+    <td class="dev-name">${r.dev}</td>
+    <td>${ipTag(r.ip)}</td>
+    <td style="color:var(--text2)">${r.loc}</td>
+    <td><span class="zone-tag zone-blue" style="font-size:0.65rem">${r.z}</span></td>
+    <td>${copyBtn(r.ip)}</td>
+    <td>${actBtns(r.t,r.i)}</td>
+  </tr>`).join('') || empty();
+}
+function empty() {
+  return `<tr><td colspan="10"><div class="empty-state"><i class="fas fa-satellite-dish"></i><p>NO DEVICES FOUND</p></div></td></tr>`;
+}
 
-            networkData.dr.forEach((item, index) => {
-                const zoneText = item.zone === "ADSC" || item.zone === "ER" || item.zone === "ot" ? item.zone : `Zone ${item.zone}`;
-                allRows.push({
-                    type: 'dr',
-                    index,
-                    category: 'Doctor Clinic',
-                    device: item.host,
-                    ip: item.ip,
-                    location: item.clinic,
-                    zone: zoneText
-                });
-            });
+// ── TABS
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    document.getElementById('searchInput').value='';
+    resetSearch();
+  });
+});
 
-            tbody.innerHTML = allRows.map(row => `
-                <tr data-index="${row.index}" data-type="${row.type}">
-                    <td><span class="zone-badge">${row.category}</span></td>
-                    <td><strong>${row.device}</strong></td>
-                    <td><span class="ip-address" data-ip="${row.ip}">${row.ip}</span></td>
-                    <td>${row.location}</td>
-                    <td><span class="zone-badge">${row.zone}</span></td>
-                    <td><button class="copy-btn" data-ip="${row.ip}"><i class="fas fa-copy"></i></button></td>
-                    <td class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editItem('${row.type}', ${row.index})" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('${row.type}', ${row.index})" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+// ── SEARCH (live)
+document.getElementById('searchInput').addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  if(!q){resetSearch();return;}
+  const active = document.querySelector('.tab-btn.active').dataset.tab;
+  const tbId = {token:'tb-token',ward:'tb-ward',printer:'tb-printer',dr:'tb-dr',all:'tb-all'}[active];
+  const rows = document.getElementById(tbId).querySelectorAll('tr');
+  let n=0;
+  rows.forEach(r=>{
+    if(!r.querySelector('.empty-state')) {
+      const show = r.textContent.toLowerCase().includes(q);
+      r.style.display = show?'':'none';
+      if(show)n++;
+    }
+  });
+  document.getElementById('resultCount').innerHTML = `FOUND <span>${n}</span> MATCH${n===1?'':'ES'}`;
+});
+function resetSearch() {
+  const active=document.querySelector('.tab-btn.active').dataset.tab;
+  const counts={token:data.token.length,ward:data.ward.length,printer:data.printer.length,dr:data.dr.length,all:Object.values(data).reduce((s,a)=>s+a.length,0)};
+  document.getElementById('resultCount').innerHTML = `ALL <span id="rcNum">${counts[active]}</span> DEVICES`;
+  document.querySelectorAll('tbody tr').forEach(r=>r.style.display='');
+}
 
-        function setupEventListeners() {
-            // Admin toggle
-            document.getElementById('adminToggle').addEventListener('click', toggleAdminMode);
-            
-            // Add item button
-            document.getElementById('addItemBtn').addEventListener('click', showAddModal);
-            
-            // Modal buttons
-            document.getElementById('cancelBtn').addEventListener('click', hideModal);
-            document.getElementById('saveBtn').addEventListener('click', saveDevice);
-            
-            // Device type change
-            document.getElementById('deviceType').addEventListener('change', updateDynamicFields);
-            
-            // Tab switching
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const targetTab = tab.dataset.tab;
-                    switchTab(targetTab);
-                });
-            });
-            
-            // Search functionality
-            document.getElementById('searchButton').addEventListener('click', performSearch);
-            document.getElementById('searchInput').addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') performSearch();
-            });
-            
-            // Export button
-            document.getElementById('exportBtn').addEventListener('click', exportData);
-            
-            // Reset data button
-            document.getElementById('resetDataBtn').addEventListener('click', resetToOriginalData);
-        }
+// ── COPY
+function copyIP(ip, btn) {
+  navigator.clipboard.writeText(ip).then(()=>{
+    toast('IP COPIED: '+ip, 'success');
+    if(btn){btn.classList.add('copied');setTimeout(()=>btn.classList.remove('copied'),1500);}
+  });
+}
 
-        function toggleAdminMode() {
-            adminMode = !adminMode;
-            const adminStatus = document.getElementById('adminStatus');
-            const addBtn = document.getElementById('addItemBtn');
-            
-            if (adminMode) {
-                adminStatus.textContent = 'ON';
-                adminStatus.style.color = '#2ecc71';
-                addBtn.classList.add('show');
-                showToast('Admin mode enabled', 'success');
-            } else {
-                adminStatus.textContent = 'OFF';
-                adminStatus.style.color = 'white';
-                addBtn.classList.remove('show');
-                showToast('Admin mode disabled', 'success');
-            }
-        }
+// ── ADMIN PASSWORD
+const ADMIN_PASSWORD = 'Jobin';
+function togglePwVis() {
+  const inp = document.getElementById('pwInput');
+  const btn = document.getElementById('pwEyeBtn').querySelector('i');
+  if(inp.type==='password'){inp.type='text';btn.className='fas fa-eye-slash';}
+  else{inp.type='password';btn.className='fas fa-eye';}
+}
+document.getElementById('pwCancel').addEventListener('click',()=>{
+  document.getElementById('pwModalBg').classList.remove('open');
+  document.getElementById('pwInput').value='';
+  document.getElementById('pwError').style.display='none';
+});
+document.getElementById('pwConfirm').addEventListener('click',()=>{
+  const val = document.getElementById('pwInput').value;
+  if(val === ADMIN_PASSWORD) {
+    isAdmin = true;
+    document.getElementById('adminStatus').textContent='ON';
+    document.getElementById('adminToggle').classList.add('active');
+    document.getElementById('adminIcon').className='fas fa-lock-open';
+    document.getElementById('fab').classList.add('show');
+    document.getElementById('pwModalBg').classList.remove('open');
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwError').style.display='none';
+    setActionsVisible(true);
+    toast('ADMIN MODE ACTIVE — WELCOME, JOBIN CJ', 'success');
+  } else {
+    document.getElementById('pwError').style.display='block';
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+  }
+});
+document.getElementById('pwInput').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('pwConfirm').click(); });
 
-        function showAddModal() {
-            if (!adminMode) {
-                showToast('Please enable Admin mode first', 'error');
-                return;
-            }
-            
-            document.getElementById('modalTitle').textContent = 'Add New Device';
-            document.getElementById('deviceType').value = '';
-            document.getElementById('editIndex').value = '';
-            document.getElementById('editType').value = '';
-            document.getElementById('dynamicFields').innerHTML = '';
-            document.getElementById('modalOverlay').classList.add('active');
-        }
+function setActionsVisible(visible) {
+  document.querySelectorAll('.acts').forEach(el=>el.style.display=visible?'flex':'none');
+  document.querySelectorAll('th.actions-col').forEach(el=>el.style.display=visible?'':'none');
+}
 
-        function hideModal() {
-            document.getElementById('modalOverlay').classList.remove('active');
-        }
+// ── ADMIN
+document.getElementById('adminToggle').addEventListener('click', ()=>{
+  if(!isAdmin) {
+    document.getElementById('pwModalBg').classList.add('open');
+    setTimeout(()=>document.getElementById('pwInput').focus(),300);
+  } else {
+    isAdmin=false;
+    document.getElementById('adminStatus').textContent='OFF';
+    document.getElementById('adminToggle').classList.remove('active');
+    document.getElementById('adminIcon').className='fas fa-lock';
+    document.getElementById('fab').classList.remove('show');
+    setActionsVisible(false);
+    toast('ADMIN MODE OFF', 'info');
+  }
+});
 
-        function updateDynamicFields() {
-            const type = document.getElementById('deviceType').value;
-            const dynamicFields = document.getElementById('dynamicFields');
-            
-            let fieldsHTML = '';
-            
-            switch(type) {
-                case 'token':
-                    fieldsHTML = `
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="zone">Zone *</label>
-                                <input type="text" id="zone" class="form-control" placeholder="e.g., Zone 1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="device">Device Name *</label>
-                                <input type="text" id="device" class="form-control" placeholder="e.g., Mini PC" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="ip">IP Address *</label>
-                            <input type="text" id="ip" class="form-control" placeholder="e.g., 172.19.24.77" required pattern="^(\\d{1,3}\\.){3}\\d{1,3}$">
-                        </div>
-                        <div class="form-group">
-                            <label for="location">Location *</label>
-                            <input type="text" id="location" class="form-control" placeholder="e.g., Counter 7" required>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'ward':
-                    fieldsHTML = `
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="sl">SL No *</label>
-                                <input type="text" id="sl" class="form-control" placeholder="e.g., 1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="device">Device *</label>
-                                <input type="text" id="device" class="form-control" placeholder="e.g., Mini PC" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="ip">IP Address *</label>
-                            <input type="text" id="ip" class="form-control" placeholder="e.g., 172.19.13.241" required>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="rooms">Rooms</label>
-                                <input type="text" id="rooms" class="form-control" placeholder="e.g., 501 to 510">
-                            </div>
-                            <div class="form-group">
-                                <label for="floor">Floor *</label>
-                                <input type="text" id="floor" class="form-control" placeholder="e.g., 5th Floor" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="location">Location *</label>
-                            <input type="text" id="location" class="form-control" placeholder="e.g., E Wing" required>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'printer':
-                    fieldsHTML = `
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="cn"># *</label>
-                                <input type="text" id="cn" class="form-control" placeholder="e.g., 1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="host">Host Name *</label>
-                                <input type="text" id="host" class="form-control" placeholder="e.g., AH-AHM-OT" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="ip">IP Address *</label>
-                            <input type="text" id="ip" class="form-control" placeholder="e.g., 172.19.25.162" required>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="model">Printer Model *</label>
-                                <input type="text" id="model" class="form-control" placeholder="e.g., HP LJ MGD MFP E42540F" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="dept">Department *</label>
-                                <input type="text" id="dept" class="form-control" placeholder="e.g., OT" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="facility">Facility *</label>
-                            <input type="text" id="facility" class="form-control" placeholder="e.g., AHM" required>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'dr':
-                    fieldsHTML = `
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="sl">SL No *</label>
-                                <input type="text" id="sl" class="form-control" placeholder="e.g., 1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="clinic">Clinic *</label>
-                                <input type="text" id="clinic" class="form-control" placeholder="e.g., Clinic 1" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="ip">IP Address *</label>
-                            <input type="text" id="ip" class="form-control" placeholder="e.g., 172.19.25.1" required>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="zone">Zone *</label>
-                                <input type="text" id="zone" class="form-control" placeholder="e.g., 4" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="host">Host Name *</label>
-                                <input type="text" id="host" class="form-control" placeholder="e.g., AHM-D-CLINIC2" required>
-                            </div>
-                        </div>
-                    `;
-                    break;
-            }
-            
-            dynamicFields.innerHTML = fieldsHTML;
-        }
+// ── FAB
+document.getElementById('fab').addEventListener('click', ()=>openModal());
 
-        function editItem(type, index) {
-            if (!adminMode) {
-                showToast('Please enable Admin mode to edit', 'error');
-                return;
-            }
-            
-            const item = networkData[type][index];
-            document.getElementById('modalTitle').textContent = 'Edit Device';
-            document.getElementById('deviceType').value = type;
-            document.getElementById('editIndex').value = index;
-            document.getElementById('editType').value = type;
-            
-            updateDynamicFields();
-            
-            // Wait for fields to render, then populate with data
-            setTimeout(() => {
-                switch(type) {
-                    case 'token':
-                        document.getElementById('zone').value = item.zone || '';
-                        document.getElementById('device').value = item.device || '';
-                        document.getElementById('ip').value = item.ip || '';
-                        document.getElementById('location').value = item.location || '';
-                        break;
-                    case 'ward':
-                        document.getElementById('sl').value = item.sl || '';
-                        document.getElementById('device').value = item.device || '';
-                        document.getElementById('ip').value = item.ip || '';
-                        document.getElementById('rooms').value = item.rooms || '';
-                        document.getElementById('floor').value = item.floor || '';
-                        document.getElementById('location').value = item.location || '';
-                        break;
-                    case 'printer':
-                        document.getElementById('cn').value = item.cn || '';
-                        document.getElementById('host').value = item.host || '';
-                        document.getElementById('ip').value = item.ip || '';
-                        document.getElementById('model').value = item.model || '';
-                        document.getElementById('dept').value = item.dept || '';
-                        document.getElementById('facility').value = item.facility || '';
-                        break;
-                    case 'dr':
-                        document.getElementById('sl').value = item.sl || '';
-                        document.getElementById('ip').value = item.ip || '';
-                        document.getElementById('clinic').value = item.clinic || '';
-                        document.getElementById('zone').value = item.zone || '';
-                        document.getElementById('host').value = item.host || '';
-                        break;
-                }
-            }, 10);
-            
-            document.getElementById('modalOverlay').classList.add('active');
-        }
+// ── MODAL
+function openModal(type='', idx='') {
+  if(!isAdmin){toast('ENABLE ADMIN MODE FIRST','error');return;}
+  document.getElementById('modalTitle').textContent = idx!==''?'EDIT DEVICE':'ADD DEVICE';
+  document.getElementById('devType').value = type;
+  document.getElementById('editIdx').value = idx;
+  document.getElementById('editType').value = type;
+  buildFields(type);
+  if(idx!=='') setTimeout(()=>fillFields(type,parseInt(idx)),20);
+  document.getElementById('modalBg').classList.add('open');
+}
+function openEdit(type,i){openModal(type,i);}
+document.getElementById('modalCancel').addEventListener('click',()=>document.getElementById('modalBg').classList.remove('open'));
+document.getElementById('modalBg').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');});
+document.getElementById('devType').addEventListener('change',function(){buildFields(this.value);document.getElementById('editIdx').value='';});
 
-        function deleteItem(type, index) {
-            if (!adminMode) {
-                showToast('Please enable Admin mode to delete', 'error');
-                return;
-            }
-            
-            if (confirm('Are you sure you want to delete this device?')) {
-                networkData[type].splice(index, 1);
-                saveDataToStorage(); // Save changes
-                populateAllTables();
-                updateStats();
-                showToast('Device deleted successfully', 'success');
-            }
-        }
+function inp(id,label,ph='') {
+  return `<div class="fgroup"><label>${label}</label><input id="${id}" placeholder="${ph||label}"></div>`;
+}
+function buildFields(type) {
+  const f=document.getElementById('dynFields');
+  if(type==='token')
+    f.innerHTML=`<div class="form-grid">${inp('f_zone','Zone','e.g. Zone 5')}${inp('f_device','Device','e.g. Mini PC')}</div>${inp('f_ip','IP Address','172.19.x.x')}${inp('f_location','Location','e.g. Counter 7')}`;
+  else if(type==='ward')
+    f.innerHTML=`<div class="form-grid">${inp('f_sl','SL No')}${inp('f_device','Device','e.g. Mini PC')}</div>${inp('f_ip','IP Address','172.19.x.x')}<div class="form-grid">${inp('f_rooms','Rooms','e.g. 501 to 510')}${inp('f_floor','Floor / Area','e.g. 5th Floor')}</div>${inp('f_location','Location','e.g. E Wing')}`;
+  else if(type==='printer')
+    f.innerHTML=`<div class="form-grid">${inp('f_cn','Entry #')}${inp('f_host','Host Name','AH-AHM-...')}</div>${inp('f_ip','IP Address','172.19.x.x')}<div class="form-grid">${inp('f_model','Printer Model')}${inp('f_dept','Department')}</div>${inp('f_facility','Facility','AHM / ADSE / ADSC')}`;
+  else if(type==='dr')
+    f.innerHTML=`<div class="form-grid">${inp('f_sl','SL No')}${inp('f_clinic','Clinic Name','e.g. Clinic 1')}</div>${inp('f_ip','IP Address','172.19.x.x')}<div class="form-grid">${inp('f_zone','Zone','e.g. 4')}${inp('f_host','Host Name','AHM-D-...')}</div>`;
+  else f.innerHTML='';
+}
+function fillFields(type,i) {
+  const d=data[type][i];
+  const s=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
+  if(type==='token'){s('f_zone',d.zone);s('f_device',d.device);s('f_ip',d.ip);s('f_location',d.location);}
+  else if(type==='ward'){s('f_sl',d.sl);s('f_device',d.device);s('f_ip',d.ip);s('f_rooms',d.rooms);s('f_floor',d.floor);s('f_location',d.location);}
+  else if(type==='printer'){s('f_cn',d.cn);s('f_host',d.host);s('f_ip',d.ip);s('f_model',d.model);s('f_dept',d.dept);s('f_facility',d.facility);}
+  else if(type==='dr'){s('f_sl',d.sl);s('f_clinic',d.clinic);s('f_ip',d.ip);s('f_zone',d.zone);s('f_host',d.host);}
+}
 
-        function saveDevice() {
-            if (!adminMode) {
-                showToast('Admin mode required to save', 'error');
-                return;
-            }
-            
-            const type = document.getElementById('deviceType').value;
-            const editIndex = document.getElementById('editIndex').value;
-            const isEdit = editIndex !== '';
-            
-            if (!type) {
-                showToast('Please select device type', 'error');
-                return;
-            }
-            
-            let newItem = {};
-            let isValid = true;
-            
-            // Validate and collect data based on type
-            switch(type) {
-                case 'token':
-                    newItem = {
-                        zone: document.getElementById('zone').value,
-                        device: document.getElementById('device').value,
-                        ip: document.getElementById('ip').value,
-                        location: document.getElementById('location').value,
-                        url: 'View Display'
-                    };
-                    isValid = validateFields(['zone', 'device', 'ip', 'location']);
-                    break;
-                    
-                case 'ward':
-                    newItem = {
-                        sl: document.getElementById('sl').value,
-                        device: document.getElementById('device').value,
-                        ip: document.getElementById('ip').value,
-                        rooms: document.getElementById('rooms').value,
-                        floor: document.getElementById('floor').value,
-                        location: document.getElementById('location').value,
-                        url: 'View Display'
-                    };
-                    isValid = validateFields(['sl', 'device', 'ip', 'floor', 'location']);
-                    break;
-                    
-                case 'printer':
-                    newItem = {
-                        cn: document.getElementById('cn').value,
-                        host: document.getElementById('host').value,
-                        ip: document.getElementById('ip').value,
-                        model: document.getElementById('model').value,
-                        dept: document.getElementById('dept').value,
-                        facility: document.getElementById('facility').value
-                    };
-                    isValid = validateFields(['cn', 'host', 'ip', 'model', 'dept', 'facility']);
-                    break;
-                    
-                case 'dr':
-                    newItem = {
-                        sl: document.getElementById('sl').value,
-                        ip: document.getElementById('ip').value,
-                        clinic: document.getElementById('clinic').value,
-                        zone: document.getElementById('zone').value,
-                        host: document.getElementById('host').value
-                    };
-                    isValid = validateFields(['sl', 'ip', 'clinic', 'zone', 'host']);
-                    break;
-            }
-            
-            if (!isValid) {
-                showToast('Please fill all required fields', 'error');
-                return;
-            }
-            
-            // Save data
-            if (isEdit) {
-                networkData[type][editIndex] = newItem;
-                showToast('Device updated successfully', 'success');
-            } else {
-                networkData[type].push(newItem);
-                showToast('Device added successfully', 'success');
-            }
-            
-            // Save to localStorage
-            saveDataToStorage();
-            
-            // Update UI
-            populateAllTables();
-            updateStats();
-            hideModal();
-        }
+document.getElementById('modalSave').addEventListener('click',()=>{
+  if(!isAdmin){toast('ADMIN MODE REQUIRED','error');return;}
+  const type=document.getElementById('devType').value;
+  const idx=document.getElementById('editIdx').value;
+  if(!type){toast('SELECT DEVICE TYPE','error');return;}
+  const g=id=>{const e=document.getElementById(id);return e?e.value.trim():'';};
+  const req=ids=>ids.every(id=>g(id)!=='');
+  let item={};
+  if(type==='token'){
+    if(!req(['f_zone','f_device','f_ip','f_location'])){toast('FILL REQUIRED FIELDS','error');return;}
+    item={zone:g('f_zone'),device:g('f_device'),ip:g('f_ip'),location:g('f_location'),url:'View Display'};
+  } else if(type==='ward'){
+    if(!req(['f_sl','f_device','f_ip','f_floor','f_location'])){toast('FILL REQUIRED FIELDS','error');return;}
+    item={sl:g('f_sl'),device:g('f_device'),ip:g('f_ip'),rooms:g('f_rooms'),floor:g('f_floor'),location:g('f_location')};
+  } else if(type==='printer'){
+    if(!req(['f_cn','f_host','f_ip','f_model','f_dept','f_facility'])){toast('FILL REQUIRED FIELDS','error');return;}
+    item={cn:g('f_cn'),host:g('f_host'),ip:g('f_ip'),model:g('f_model'),dept:g('f_dept'),facility:g('f_facility')};
+  } else if(type==='dr'){
+    if(!req(['f_sl','f_clinic','f_ip','f_zone','f_host'])){toast('FILL REQUIRED FIELDS','error');return;}
+    item={sl:g('f_sl'),ip:g('f_ip'),clinic:g('f_clinic'),zone:g('f_zone'),host:g('f_host')};
+  }
+  if(idx!==''){data[type][parseInt(idx)]=item;toast('DEVICE UPDATED','success');}
+  else{data[type].push(item);toast('DEVICE ADDED','success');}
+  persist(); renderAll();
+  document.getElementById('modalBg').classList.remove('open');
+});
 
-        function validateFields(fieldIds) {
-            return fieldIds.every(id => {
-                const field = document.getElementById(id);
-                return field && field.value.trim() !== '';
-            });
-        }
+// ── DELETE
+function delItem(type,i) {
+  if(!isAdmin){toast('ADMIN MODE REQUIRED','error');return;}
+  if(confirm('Delete this device from the registry?')) {
+    data[type].splice(i,1);
+    persist(); renderAll();
+    toast('DEVICE REMOVED','info');
+  }
+}
 
-        function updateStats() {
-            const totalDevices = Object.values(networkData).reduce((sum, arr) => sum + arr.length, 0);
-            const offlineDevices = networkData.printer.filter(p => p.ip.toLowerCase() === 'flood').length;
-            
-            document.getElementById('total-devices').textContent = totalDevices;
-            document.getElementById('online-devices').textContent = totalDevices - offlineDevices;
-            document.getElementById('footer-total').textContent = totalDevices;
-            document.getElementById('footer-online').textContent = totalDevices - offlineDevices;
-            
-            // Update tab badges
-            document.getElementById('token-count').textContent = networkData.token.length;
-            document.getElementById('ward-count').textContent = networkData.ward.length;
-            document.getElementById('printer-count').textContent = networkData.printer.length;
-            document.getElementById('dr-count').textContent = networkData.dr.length;
-            document.getElementById('all-count').textContent = totalDevices;
-        }
+// ── EXPORT
+function exportData() {
+  const tJ=JSON.stringify(data.token,null,4);
+  const wJ=JSON.stringify(data.ward,null,4);
+  const pJ=JSON.stringify(data.printer,null,4);
+  const dJ=JSON.stringify(data.dr,null,4);
+  let html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  const rep=(h,v,j)=>h.replace(new RegExp('(const '+v+' = )\\[[\\s\\S]*?\\];'),'$1'+j+';');
+  html=rep(html,'originalTokenData',tJ);
+  html=rep(html,'originalWardData',wJ);
+  html=rep(html,'originalPrinterData',pJ);
+  html=rep(html,'originalDrData',dJ);
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='AHM-NOC-'+new Date().toISOString().slice(0,10)+'.html'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+  document.getElementById('saveHint').classList.remove('show');
+  toast('HTML FILE SAVED — REPLACE YOUR OLD FILE','success');
+}
+document.getElementById('exportBtn').addEventListener('click',exportData);
+document.getElementById('saveLink').addEventListener('click',exportData);
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-            
-            document.getElementById('searchInput').value = '';
-            resetSearch();
-        }
+// ── RESET
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(confirm('Reset all data to factory defaults?\nAll your edits will be lost.')) {
+    data=def(); localStorage.removeItem(STORE);
+    renderAll(); document.getElementById('saveHint').classList.remove('show');
+    toast('DATA RESET TO DEFAULTS','info');
+  }
+});
 
-        function setupCopyButtons() {
-            document.querySelectorAll('.copy-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const ip = this.getAttribute('data-ip');
-                    copyToClipboard(ip);
-                });
-            });
-            
-            document.querySelectorAll('.ip-address').forEach(ipEl => {
-                ipEl.addEventListener('click', function() {
-                    const ip = this.getAttribute('data-ip') || this.textContent;
-                    copyToClipboard(ip);
-                });
-            });
-        }
+// ── TOAST
+let toastTimer;
+function toast(msg, type='success') {
+  const t=document.getElementById('toast');
+  t.querySelector('.t-icon').className='t-icon fas fa-'+(type==='success'?'check-circle':type==='error'?'times-circle':'info-circle');
+  document.getElementById('toastMsg').textContent=msg;
+  t.className='toast '+type+' show';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
+}
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('IP address copied to clipboard', 'success');
-            });
-        }
-
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            
-            toastMessage.textContent = message;
-            toast.className = 'toast';
-            toast.classList.add(type);
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        function updateDateTime() {
-            const now = new Date();
-            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-            
-            document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', dateOptions);
-            document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', timeOptions);
-            
-            const timeStr = now.toLocaleTimeString('en-US', timeOptions);
-            const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            document.getElementById('last-updated').textContent = `${dateStr} at ${timeStr}`;
-        }
-
-        function performSearch() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            
-            if (!searchTerm) {
-                resetSearch();
-                return;
-            }
-            
-            const activeTab = document.querySelector('.tab.active').dataset.tab;
-            
-            switch(activeTab) {
-                case 'token':
-                    searchInTable('token-tbody', searchTerm);
-                    break;
-                case 'ward':
-                    searchInTable('ward-tbody', searchTerm);
-                    break;
-                case 'printer':
-                    searchInTable('printer-tbody', searchTerm);
-                    break;
-                case 'dr':
-                    searchInTable('dr-tbody', searchTerm);
-                    break;
-                case 'all':
-                    searchInTable('all-tbody', searchTerm);
-                    break;
-            }
-        }
-
-        function searchInTable(tbodyId, searchTerm) {
-            const tbody = document.getElementById(tbodyId);
-            const rows = tbody.getElementsByTagName('tr');
-            let visibleCount = 0;
-            
-            for (let row of rows) {
-                const rowText = row.textContent.toLowerCase();
-                if (rowText.includes(searchTerm)) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-            
-            const resultElement = document.getElementById('resultCount');
-            
-            if (visibleCount === 0) {
-                resultElement.textContent = `No devices found matching "${searchTerm}"`;
-            } else {
-                resultElement.textContent = `Found ${visibleCount} ${visibleCount === 1 ? 'device' : 'devices'} matching "${searchTerm}"`;
-            }
-        }
-
-        function resetSearch() {
-            const activeTab = document.querySelector('.tab.active').dataset.tab;
-            const counts = {
-                token: networkData.token.length,
-                ward: networkData.ward.length,
-                printer: networkData.printer.length,
-                dr: networkData.dr.length,
-                all: Object.values(networkData).reduce((sum, arr) => sum + arr.length, 0)
-            };
-            
-            const tabNames = {
-                token: 'Token Display Systems',
-                ward: 'Ward Display Systems',
-                printer: 'Network Printers',
-                dr: 'Doctor Clinics',
-                all: 'All Network Devices'
-            };
-            
-            document.getElementById('resultCount').textContent = 
-                `Displaying all ${counts[activeTab]} ${tabNames[activeTab].toLowerCase()}`;
-            
-            const tbodies = ['token-tbody', 'ward-tbody', 'printer-tbody', 'dr-tbody', 'all-tbody'];
-            tbodies.forEach(tbodyId => {
-                const tbody = document.getElementById(tbodyId);
-                if (tbody) {
-                    const rows = tbody.getElementsByTagName('tr');
-                    for (let row of rows) {
-                        row.style.display = '';
-                    }
-                }
-            });
-        }
-
-        function exportData() {
-            const dataStr = JSON.stringify(networkData, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = `network-data-${new Date().toISOString().split('T')[0]}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            
-            showToast('Data exported successfully', 'success');
-        }
-    </script>
+// ── INIT
+renderAll();
+setActionsVisible(false);
+</script>
 </body>
 </html>
