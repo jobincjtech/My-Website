@@ -1,1880 +1,1336 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aster Hospital - IT Server Interfaces Dashboard</title>
-    <style>
-        :root {
-            --primary-color: #005f87;
-            --primary-dark: #003d5a;
-            --secondary-color: #e6f2f8;
-            --accent-color: #ff6b35;
-            --text-color: #333;
-            --light-gray: #f5f5f5;
-            --hover-gray: #e9e9e9;
-            --border-color: #ddd;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            color: var(--text-color);
-            line-height: 1.6;
-            background-color: #f9f9f9;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            padding: 15px 0;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        header::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #ff6b35, #ffa040);
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .logo img {
-            height: 40px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-        }
-        
-        h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        
-        .last-updated {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        .quick-links {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .quick-link {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border: none;
-            cursor: pointer;
-        }
-        
-        .quick-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
-        }
-        
-        .quick-link i {
-            font-size: 16px;
-        }
-        
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-        
-        .panel {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            transition: var(--transition);
-        }
-        
-        .panel:hover {
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        
-        .panel-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            padding: 15px 20px;
-            font-weight: 500;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .panel-header h2 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .search-container {
-            position: relative;
-            display: flex;
-            gap: 10px;
-        }
-        
-        .search-box {
-            padding: 8px 15px 8px 35px;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.3);
-            background-color: rgba(255,255,255,0.15);
-            color: white;
-            width: 200px;
-            transition: var(--transition);
-            font-size: 14px;
-        }
-        
-        .search-box:focus {
-            outline: none;
-            background-color: rgba(255,255,255,0.25);
-            width: 220px;
-        }
-        
-        .search-box::placeholder {
-            color: rgba(255,255,255,0.7);
-        }
-        
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(255,255,255,0.8);
-            font-size: 14px;
-        }
-        
-        .table-container {
-            max-height: 600px;
-            overflow-y: auto;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        
-        th {
-            background-color: var(--secondary-color);
-            text-align: left;
-            padding: 14px 15px;
-            font-weight: 600;
-            border-bottom: 2px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        
-        td {
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: top;
-            transition: background-color 0.2s ease;
-        }
-        
-        tr:not(.no-hover):hover td {
-            background-color: var(--hover-gray);
-            cursor: pointer;
-        }
-        
-        tr:not(.no-hover):hover .ip-address {
-            color: var(--primary-dark);
-        }
-        
-        tr:not(.no-hover):hover .path {
-            color: #444;
-        }
-        
-        .ip-address {
-            font-family: 'Courier New', Courier, monospace;
-            color: var(--primary-color);
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-        
-        .path {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 13px;
-            color: #666;
-            word-break: break-all;
-            transition: color 0.2s ease;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
-            background-color: #e9ecef;
-            color: #495057;
-        }
-        
-        .badge-primary {
-            background-color: var(--secondary-color);
-            color: var(--primary-color);
-        }
-        
-        .badge-warning {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-        
-        .badge-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        
-        .no-results {
-            padding: 30px;
-            text-align: center;
-            color: #666;
-            font-style: italic;
-            display: none;
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px 0;
-            color: #666;
-            font-size: 13px;
-            border-top: 1px solid var(--border-color);
-        }
-        
-        /* Action buttons */
-        .action-btn {
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .edit-btn {
-            background-color: #ffc107;
-            color: #212529;
-        }
-        
-        .edit-btn:hover {
-            background-color: #e0a800;
-        }
-        
-        .delete-btn {
-            background-color: #dc3545;
-            color: white;
-        }
-        
-        .delete-btn:hover {
-            background-color: #c82333;
-        }
-        
-        .add-btn {
-            background-color: #28a745;
-            color: white;
-            padding: 8px 15px;
-            font-size: 14px;
-        }
-        
-        .add-btn:hover {
-            background-color: #218838;
-        }
-        
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
-            background-color: white;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            animation: modalFadeIn 0.3s;
-        }
-        
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .modal-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            padding: 15px 20px;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-header h3 {
-            margin: 0;
-            font-size: 18px;
-        }
-        
-        .close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 0;
-            line-height: 1;
-        }
-        
-        .modal-body {
-            padding: 20px;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-        
-        .modal-footer {
-            padding: 15px 20px;
-            background-color: var(--light-gray);
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-        
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-        
-        .highlighted {
-            background-color: #e7f4ff !important;
-            outline: 2px solid #b8daff;
-        }
-        
-        .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-        
-        .status-active {
-            background-color: #28a745;
-        }
-        
-        .status-warning {
-            background-color: #ffc107;
-        }
-        
-        .status-danger {
-            background-color: #dc3545;
-        }
-        
-        @media (max-width: 1200px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .quick-links {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .quick-link {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .search-box {
-                width: 100%;
-            }
-            
-            .search-box:focus {
-                width: 100%;
-            }
-            
-            table {
-                display: block;
-                overflow-x: auto;
-            }
-            
-            .search-container {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .add-btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aster Hospital — IT Operations Portal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════ */
+:root {
+  /* dark palette */
+  --ink:        #050a14;
+  --ink2:       #0a1525;
+  --ink3:       #0f1e35;
+  --ink4:       #162540;
+  --glass:      rgba(255,255,255,0.04);
+  --glass2:     rgba(255,255,255,0.07);
+  --border:     rgba(255,255,255,0.08);
+  --border2:    rgba(255,255,255,0.14);
+
+  /* text */
+  --t1: #f0f6ff;
+  --t2: #b8cfe8;
+  --t3: #6a8aaa;
+
+  /* accents */
+  --cyan:    #00d4ff;
+  --cyan2:   #0099cc;
+  --emerald: #00e5a0;
+  --ember:   #ff6b35;
+  --gold:    #f5c842;
+  --violet:  #9b7fff;
+
+  /* glow */
+  --glow-cyan:    0 0 30px rgba(0,212,255,0.35), 0 0 60px rgba(0,212,255,0.15);
+  --glow-emerald: 0 0 30px rgba(0,229,160,0.35);
+
+  --font: 'Outfit', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --r: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--ink);
+  color: var(--t1);
+  line-height: 1.6;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════
+   CANVAS STARFIELD (behind everything)
+═══════════════════════════════════════════ */
+#starfield {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════
+   LOGIN — DRAMATIC IMMERSIVE REDESIGN
+═══════════════════════════════════════════ */
+#login-screen {
+  position: fixed; inset: 0; z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  background: #020813;
+}
+
+/* deep space nebula bg */
+.nebula {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 100% 80% at 15% 50%,  rgba(0,100,255,0.18)  0%, transparent 50%),
+    radial-gradient(ellipse 70%  70% at 85% 20%,  rgba(0,220,160,0.14)  0%, transparent 45%),
+    radial-gradient(ellipse 60%  50% at 60% 90%,  rgba(120,60,255,0.16) 0%, transparent 45%),
+    radial-gradient(ellipse 50%  60% at 40% 10%,  rgba(0,180,255,0.10)  0%, transparent 40%),
+    radial-gradient(ellipse 80%  40% at 90% 70%,  rgba(255,80,120,0.08) 0%, transparent 45%);
+  animation: nebulaShift 20s ease-in-out infinite alternate;
+}
+@keyframes nebulaShift {
+  0%   { transform: scale(1)    rotate(0deg); opacity: .85; }
+  50%  { transform: scale(1.06) rotate(1.5deg); opacity: 1; }
+  100% { transform: scale(1.03) rotate(-1deg); opacity: .9; }
+}
+
+/* animated grid */
+.login-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.06) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridScroll 30s linear infinite;
+}
+@keyframes gridScroll { from { background-position: 0 0; } to { background-position: 50px 50px; } }
+
+/* vignette */
+.login-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 30%, rgba(2,8,19,0.85) 100%);
+}
+
+/* scan lines */
+.scanline {
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,212,255,0.012) 3px, rgba(0,212,255,0.012) 4px
+  );
+  animation: scanMove 8s linear infinite;
+}
+@keyframes scanMove { from{background-position:0 0} to{background-position:0 40px} }
+
+/* ── FLOATING ORBS ── */
+.orb {
+  position: absolute; border-radius: 50%; pointer-events: none; filter: blur(80px);
+  animation: orbFloat ease-in-out infinite alternate;
+}
+.orb-1 { width:500px; height:500px; top:-150px; left:-150px;
+  background:radial-gradient(circle, rgba(0,120,255,0.25), transparent 65%);
+  animation-duration:14s; }
+.orb-2 { width:400px; height:400px; bottom:-100px; right:-100px;
+  background:radial-gradient(circle, rgba(0,220,160,0.2), transparent 65%);
+  animation-duration:18s; animation-delay:3s; }
+.orb-3 { width:300px; height:300px; top:40%; left:60%;
+  background:radial-gradient(circle, rgba(140,80,255,0.18), transparent 65%);
+  animation-duration:12s; animation-delay:6s; }
+.orb-4 { width:250px; height:250px; top:10%; right:20%;
+  background:radial-gradient(circle, rgba(0,212,255,0.15), transparent 65%);
+  animation-duration:16s; animation-delay:2s; }
+@keyframes orbFloat {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(30px,20px) scale(1.08); }
+}
+
+/* ── PARTICLES ── */
+.particle {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  animation: partFloat linear infinite;
+}
+@keyframes partFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: .6; }
+  100% { transform: translateY(-110vh) translateX(var(--dx)); opacity: 0; }
+}
+
+/* ── ENERGY RINGS ── */
+.ring {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  border: 1px solid transparent;
+  animation: ringExpand linear infinite;
+  left: 50%; top: 50%; transform: translate(-50%,-50%);
+}
+.ring-1 { width:200px;  height:200px;  border-color:rgba(0,212,255,0.15);  animation-duration:6s; }
+.ring-2 { width:350px;  height:350px;  border-color:rgba(0,229,160,0.10);  animation-duration:6s; animation-delay:2s; }
+.ring-3 { width:500px;  height:500px;  border-color:rgba(155,127,255,0.08); animation-duration:6s; animation-delay:4s; }
+@keyframes ringExpand {
+  0%   { transform: translate(-50%,-50%) scale(.6); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translate(-50%,-50%) scale(1.4); opacity: 0; }
+}
+
+/* ── LOGIN WRAPPER (two-column) ── */
+.login-wrap {
+  position: relative; z-index: 10;
+  display: flex; align-items: stretch;
+  width: 880px; max-width: 96vw;
+  border-radius: 28px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,212,255,0.12), 0 60px 120px rgba(0,0,0,0.8);
+  animation: wrapRise .9s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes wrapRise {
+  from { opacity:0; transform:translateY(50px) scale(.96); }
+  to   { opacity:1; transform:none; }
+}
+
+/* ── LEFT PANEL ── */
+.login-left-panel {
+  flex: 1; padding: 52px 44px;
+  background: linear-gradient(160deg, rgba(0,40,100,0.7) 0%, rgba(0,15,40,0.9) 60%, rgba(5,0,30,0.95) 100%);
+  border-right: 1px solid rgba(0,212,255,0.12);
+  display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; overflow: hidden;
+}
+.login-left-panel::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 30% 40%, rgba(0,150,255,0.2), transparent 60%);
+  pointer-events: none;
+}
+
+/* animated hex on left panel */
+.panel-hex {
+  position: absolute; inset: 0; pointer-events: none; opacity: .12;
+}
+.panel-hex svg { width: 100%; height: 100%; }
+
+.lp-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 0; }
+.lp-logo img { height: 34px; filter: brightness(0) invert(1); }
+.lp-logo-sep { width:1px; height:30px; background:linear-gradient(180deg,transparent,rgba(0,212,255,.5),transparent); }
+.lp-logo-txt { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:rgba(180,210,255,.6); line-height:1.5; }
+
+.lp-main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 32px 0; }
+.lp-eyebrow {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px;
+  color: var(--cyan); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.lp-eyebrow::before { content:''; width:24px; height:1px; background:var(--cyan); display:block; }
+.lp-headline {
+  font-size: 38px; font-weight: 900; line-height: 1.05;
+  color: var(--t1); margin-bottom: 20px; letter-spacing: -1px;
+}
+.lp-headline em {
+  font-style: normal;
+  background: linear-gradient(90deg, var(--cyan), var(--emerald));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.lp-desc { font-size: 14px; color: var(--t3); line-height: 1.7; margin-bottom: 36px; max-width: 280px; }
+
+/* stat chips */
+.lp-chips { display: flex; flex-direction: column; gap: 10px; }
+.lp-chip {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: rgba(0,212,255,0.06);
+  border: 1px solid rgba(0,212,255,0.12);
+  border-radius: 12px;
+  transition: all .3s; cursor: default;
+}
+.lp-chip:hover {
+  background: rgba(0,212,255,0.14);
+  border-color: rgba(0,212,255,0.35);
+  transform: translateX(5px);
+  box-shadow: 0 0 20px rgba(0,212,255,0.15);
+}
+.lp-chip-icon {
+  width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.lci-1 { background:rgba(0,212,255,0.15); color:var(--cyan); }
+.lci-2 { background:rgba(0,229,160,0.15); color:var(--emerald); }
+.lci-3 { background:rgba(155,127,255,0.15); color:var(--violet); }
+.lp-chip-txt strong { display:block; font-size:13px; font-weight:700; color:var(--t1); }
+.lp-chip-txt span   { font-size:11px; color:var(--t3); }
+
+.lp-foot { font-size:11px; color:rgba(100,140,180,.5); }
+
+/* ── RIGHT PANEL (form) ── */
+.login-right-panel {
+  width: 380px; flex-shrink: 0; padding: 52px 44px;
+  background: rgba(6,14,28,0.95);
+  backdrop-filter: blur(40px) saturate(1.8);
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; overflow: hidden;
+}
+/* top accent line */
+.login-right-panel::before {
+  content: '';
+  position: absolute; top: 0; left: 15%; right: 15%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--emerald), transparent);
+  animation: accentPulse 3s ease-in-out infinite;
+}
+@keyframes accentPulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+/* inner glow */
+.login-right-panel::after {
+  content: '';
+  position: absolute; top: -100px; right: -100px;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,212,255,0.08), transparent 65%);
+  pointer-events: none;
+}
+
+.rp-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.2);
+  color: var(--emerald); padding: 5px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 28px; align-self: flex-start;
+}
+.rp-badge::before {
+  content:''; width:6px; height:6px; border-radius:50%; background:var(--emerald);
+  box-shadow:0 0 8px var(--emerald); animation:livepulse 2s infinite;
+}
+
+.rp-title {
+  font-size: 26px; font-weight: 800; color: var(--t1);
+  line-height: 1.2; margin-bottom: 6px; letter-spacing: -.3px;
+}
+.rp-sub { font-size: 13px; color: var(--t3); margin-bottom: 36px; line-height: 1.6; }
+
+/* field */
+.l-field { margin-bottom: 10px; }
+.l-field label {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--t3); margin-bottom: 10px;
+  transition: color .2s;
+}
+.l-field label i { font-size: 10px; color: var(--cyan); }
+
+.l-pw-wrap { position: relative; }
+.l-pw-wrap input {
+  width: 100%;
+  background: rgba(0,0,0,0.4);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 15px 52px 15px 20px;
+  font-family: var(--mono); font-size: 17px;
+  color: var(--t1); letter-spacing: 4px;
+  outline: none; transition: all .3s;
+}
+.l-pw-wrap input::placeholder { color: rgba(255,255,255,0.13); letter-spacing: 1px; font-size: 13px; font-family: var(--font); }
+.l-pw-wrap input:hover {
+  border-color: rgba(0,212,255,0.25);
+  background: rgba(0,212,255,0.03);
+}
+.l-pw-wrap input:focus {
+  border-color: var(--cyan);
+  background: rgba(0,212,255,0.07);
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.12), 0 0 30px rgba(0,212,255,0.2);
+}
+
+/* eye toggle */
+.l-pw-toggle {
+  position: absolute; right: 0; top: 0; bottom: 0;
+  width: 52px; display: flex; align-items: center; justify-content: center;
+  background: none; border: none; border-left: 1px solid rgba(255,255,255,0.06);
+  color: var(--t3); font-size: 14px; cursor: pointer;
+  border-radius: 0 12px 12px 0;
+  transition: all .2s;
+}
+.l-pw-toggle:hover { color: var(--cyan); background: rgba(0,212,255,0.08); border-left-color: rgba(0,212,255,0.2); }
+
+/* strength bar */
+.pw-strength { display: flex; gap: 4px; margin-top: 8px; height: 3px; }
+.pw-seg { flex: 1; border-radius: 3px; background: rgba(255,255,255,0.07); transition: background .3s; }
+.pw-seg.lit-c { background: var(--cyan); }
+.pw-seg.lit-e { background: var(--emerald); }
+.pw-seg.lit-g { background: var(--gold); }
+
+.l-hint {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--t3); margin: 12px 0 24px; opacity: .75;
+}
+.l-hint i { color: var(--cyan); font-size: 10px; }
+
+.l-error {
+  display: none;
+  background: rgba(255,50,60,0.1);
+  border: 1px solid rgba(255,80,80,0.3);
+  border-left: 3px solid #ff5060;
+  border-radius: 10px; padding: 11px 15px;
+  font-size: 13px; color: #ff8888;
+  margin-bottom: 18px;
+  animation: errShake .4s;
+}
+@keyframes errShake {
+  0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)}
+}
+
+/* submit */
+.l-submit {
+  width: 100%; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #0077bb, var(--cyan), #00bbaa);
+  background-size: 200% 200%; background-position: 0% 50%;
+  border: none; border-radius: 12px;
+  padding: 16px; cursor: pointer;
+  font-family: var(--font); font-size: 15px; font-weight: 800;
+  color: #fff; letter-spacing: 1px; text-transform: uppercase;
+  transition: background-position .4s, transform .2s, box-shadow .3s;
+  box-shadow: 0 4px 28px rgba(0,212,255,0.35), 0 0 0 1px rgba(0,212,255,0.15);
+}
+.l-submit::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+}
+/* shimmer sweep */
+.l-submit::after {
+  content: '';
+  position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: none; transform: skewX(-15deg);
+}
+.l-submit:hover {
+  background-position: 100% 50%;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 40px rgba(0,212,255,0.55), 0 0 0 1px rgba(0,212,255,0.3), inset 0 0 20px rgba(255,255,255,0.05);
+}
+.l-submit:hover::after { left: 150%; transition: left .5s ease; }
+.l-submit:active { transform: translateY(0) scale(.99); }
+
+/* divider */
+.l-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 20px 0 0; font-size: 11px; color: var(--t3);
+}
+.l-divider::before,.l-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border2), transparent);
+}
+
+.rp-footer {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 28px; font-size: 11px; color: rgba(90,120,160,.5);
+}
+.rp-footer i { font-size: 10px; color: rgba(0,212,255,.4); }
+
+/* ═══════════════════════════════════════════
+   APP SHELL
+═══════════════════════════════════════════ */
+#app { display: none; position: relative; z-index: 1; min-height: 100vh; }
+
+/* TOP BAR */
+.topbar {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(5,10,20,0.88);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+}
+.topbar::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.3), rgba(0,229,160,0.2), transparent);
+}
+.tb-inner {
+  max-width: 1640px; margin: 0 auto;
+  height: 62px; display: flex; align-items: center; justify-content: space-between;
+}
+.tb-l { display: flex; align-items: center; gap: 14px; }
+.tb-logo { height: 28px; filter: brightness(0) invert(1); }
+.tb-sep { width: 1px; height: 24px; background: var(--border2); }
+.tb-title { font-size: 15px; font-weight: 700; color: var(--t1); letter-spacing: .3px; }
+.tb-r { display: flex; align-items: center; gap: 18px; }
+.tb-date { font-family: var(--mono); font-size: 11px; color: var(--t3); }
+.live-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.2);
+  color: var(--emerald); padding: 4px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+}
+.live-badge::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--emerald); box-shadow: var(--glow-emerald);
+  animation: livepulse 1.8s ease-in-out infinite;
+}
+@keyframes livepulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.signout-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 16px;
+  background: var(--glass); border: 1px solid var(--border2);
+  color: var(--t2); border-radius: 8px; cursor: pointer;
+  font-family: var(--font); font-size: 13px; font-weight: 600;
+  transition: all .2s;
+}
+.signout-btn:hover { background: rgba(255,107,53,0.12); border-color: rgba(255,107,53,0.35); color: var(--ember); }
+
+/* QUICK BAR */
+.qbar {
+  background: rgba(10,21,37,0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 28px;
+}
+.qbar-inner {
+  max-width: 1640px; margin: 0 auto;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.ql-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--t3); margin-right: 4px;
+}
+.ql-grp { display: flex; align-items: center; gap: 3px; }
+.ql-lnk {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 13px;
+  background: var(--glass); border: 1px solid var(--border2);
+  color: var(--t2); text-decoration: none;
+  border-radius: 8px; font-size: 12px; font-weight: 500;
+  transition: all .2s; white-space: nowrap;
+}
+.ql-lnk i { font-size: 11px; color: var(--cyan); }
+.ql-lnk:hover { background: rgba(0,212,255,0.1); border-color: rgba(0,212,255,0.35); color: var(--cyan); }
+.ql-edit-btn {
+  background: none; border: none; color: var(--border2);
+  cursor: pointer; padding: 5px 7px; border-radius: 6px; font-size: 10px;
+  transition: all .15s;
+}
+.ql-edit-btn:hover { color: var(--cyan); background: rgba(0,212,255,0.1); }
+.ql-add-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 13px; background: none;
+  border: 1px dashed rgba(0,212,255,0.25);
+  color: var(--t3); border-radius: 8px;
+  font-size: 12px; cursor: pointer; transition: all .2s;
+}
+.ql-add-btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,212,255,0.06); }
+
+/* MAIN */
+.main { max-width: 1640px; margin: 0 auto; padding: 28px 28px 60px; }
+
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+.stat {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px 22px;
+  position: relative; overflow: hidden;
+  transition: border-color .2s, transform .2s;
+}
+.stat::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--grad);
+  opacity: 0; transition: opacity .3s;
+}
+.stat:hover { border-color: var(--border2); transform: translateY(-2px); }
+.stat:hover::before { opacity: 1; }
+
+.stat-1::before { --grad: linear-gradient(90deg,var(--cyan),var(--emerald)); }
+.stat-2::before { --grad: linear-gradient(90deg,var(--emerald),var(--violet)); }
+.stat-3::before { --grad: linear-gradient(90deg,var(--emerald),var(--cyan)); }
+.stat-4::before { --grad: linear-gradient(90deg,var(--gold),var(--ember)); }
+
+.s-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; margin-bottom: 14px;
+}
+.si-1 { background: rgba(0,212,255,0.12); color: var(--cyan); }
+.si-2 { background: rgba(0,229,160,0.12); color: var(--emerald); }
+.si-3 { background: rgba(0,229,160,0.12); color: var(--emerald); }
+.si-4 { background: rgba(245,200,66,0.12); color: var(--gold); }
+
+.s-val {
+  font-size: 38px; font-weight: 900; line-height: 1;
+  background: var(--vgrad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+.sv-1 { --vgrad: linear-gradient(135deg,var(--cyan),var(--emerald)); }
+.sv-2 { --vgrad: linear-gradient(135deg,var(--emerald),var(--cyan)); }
+.sv-3 { --vgrad: linear-gradient(135deg,#00ff88,#00e5a0); }
+.sv-4 { --vgrad: linear-gradient(135deg,var(--gold),var(--ember)); }
+
+.s-lbl { font-size: 12px; font-weight: 600; color: var(--t2); }
+.s-sub { font-size: 11px; color: var(--t3); margin-top: 2px; }
+
+/* PANELS */
+.panels { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+.panel {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: border-color .2s;
+}
+.panel:hover { border-color: rgba(0,212,255,0.18); }
+
+.ph {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  background: rgba(0,0,0,0.25);
+}
+.ph-t {
+  font-size: 14px; font-weight: 700; color: var(--t1);
+  display: flex; align-items: center; gap: 9px;
+}
+.ph-t i { color: var(--cyan); font-size: 13px; }
+.ph-badge {
+  background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.2);
+  color: var(--cyan); font-family: var(--mono); font-size: 11px; font-weight: 700;
+  padding: 2px 9px; border-radius: 20px;
+}
+.ph-ctrl { display: flex; align-items: center; gap: 8px; }
+.sw { position: relative; }
+.sw input {
+  padding: 8px 12px 8px 32px;
+  background: rgba(0,0,0,0.3); border: 1px solid var(--border2);
+  border-radius: 8px; font-family: var(--font); font-size: 13px;
+  color: var(--t1); outline: none; width: 178px; transition: all .2s;
+}
+.sw input:focus { border-color: rgba(0,212,255,0.4); background: rgba(0,212,255,0.06); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); width: 200px; }
+.sw input::placeholder { color: var(--t3); }
+.sw i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--t3); font-size: 11px; pointer-events: none; }
+
+.add-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, var(--cyan2), var(--cyan));
+  color: var(--ink); border: none; border-radius: 8px;
+  font-family: var(--font); font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all .2s; white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(0,212,255,0.3);
+}
+.add-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(0,212,255,0.45); }
+
+/* TABLE */
+.tscroll { flex: 1; overflow-y: auto; max-height: 560px; }
+.tscroll::-webkit-scrollbar { width: 4px; }
+.tscroll::-webkit-scrollbar-track { background: transparent; }
+.tscroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  background: rgba(0,0,0,0.4);
+  padding: 10px 14px; text-align: left;
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1px; color: var(--t3);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 5; white-space: nowrap;
+}
+tbody td {
+  padding: 11px 14px; border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--t2); vertical-align: middle; transition: background .12s;
+}
+tbody tr:hover td { background: rgba(0,212,255,0.04); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr.hl td { background: rgba(0,212,255,0.07); outline: 1px solid rgba(0,212,255,0.2); }
+
+.ip { font-family: var(--mono); font-size: 11px; color: var(--cyan); font-weight: 500; }
+.pth { font-family: var(--mono); font-size: 11px; color: var(--t3); word-break: break-all; line-height: 1.65; }
+.svc { color: var(--t1); font-weight: 500; }
+
+/* Status pills */
+.sp { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: .3px; }
+.sp-dot { width: 5px; height: 5px; border-radius: 50%; }
+.sp-a { background: rgba(0,229,160,0.1); color: #00e5a0; border: 1px solid rgba(0,229,160,0.2); }
+.sp-a .sp-dot { background: var(--emerald); box-shadow: 0 0 5px var(--emerald); animation: livepulse 2s infinite; }
+.sp-t { background: rgba(245,200,66,0.1); color: var(--gold); border: 1px solid rgba(245,200,66,0.2); }
+.sp-t .sp-dot { background: var(--gold); }
+.sp-i { background: rgba(255,107,53,0.1); color: var(--ember); border: 1px solid rgba(255,107,53,0.2); }
+.sp-i .sp-dot { background: var(--ember); }
+
+/* Row action buttons */
+.ra { display: flex; gap: 5px; }
+.be {
+  display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px;
+  border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;
+  background: rgba(245,200,66,0.08); color: var(--gold);
+  border: 1px solid rgba(245,200,66,0.2); transition: all .15s;
+}
+.be:hover { background: rgba(245,200,66,0.16); border-color: var(--gold); }
+.bd {
+  display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px;
+  border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;
+  background: rgba(255,107,53,0.08); color: var(--ember);
+  border: 1px solid rgba(255,107,53,0.2); transition: all .15s;
+}
+.bd:hover { background: rgba(255,107,53,0.16); border-color: var(--ember); }
+
+.no-res { padding: 32px; text-align: center; color: var(--t3); font-style: italic; display: none; }
+
+/* ═══════════════════════════════════════════
+   MODALS
+═══════════════════════════════════════════ */
+.modal {
+  display: none; position: fixed; inset: 0; z-index: 800;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(6px);
+  justify-content: center; align-items: center;
+}
+.modal.open { display: flex; }
+
+.mbox {
+  background: var(--ink3);
+  border: 1px solid rgba(0,212,255,0.18);
+  border-radius: 18px; width: 90%; max-width: 520px;
+  max-height: 92vh; overflow-y: auto;
+  box-shadow: 0 0 0 1px rgba(0,212,255,0.06), 0 32px 80px rgba(0,0,0,0.7);
+  animation: mIn .28s cubic-bezier(.22,1,.36,1);
+  position: relative;
+}
+.mbox::before {
+  content: '';
+  position: absolute; top: 0; left: 15%; right: 15%; height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(0,212,255,0.5),transparent);
+}
+@keyframes mIn { from{opacity:0;transform:translateY(-16px) scale(.97)} to{opacity:1;transform:none} }
+.mbox.sm { max-width: 380px; }
+
+.mhead {
+  padding: 18px 22px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(0,0,0,0.2);
+  border-radius: 18px 18px 0 0;
+}
+.mhead h3 { font-size: 16px; font-weight: 700; color: var(--t1); }
+.mclose { background: none; border: none; color: var(--t3); font-size: 22px; cursor: pointer; line-height:1; padding: 2px 6px; border-radius: 6px; transition: all .15s; }
+.mclose:hover { color: var(--ember); }
+.mbody { padding: 22px; }
+.fg { margin-bottom: 16px; }
+.fg label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--t3); margin-bottom: 8px; }
+.fc {
+  width: 100%; padding: 10px 13px;
+  background: rgba(0,0,0,0.3); border: 1px solid var(--border2);
+  border-radius: 8px; font-family: var(--font); font-size: 13px;
+  color: var(--t1); outline: none; transition: all .2s;
+}
+.fc:focus { border-color: rgba(0,212,255,0.4); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); background: rgba(0,212,255,0.04); }
+.fc.mono { font-family: var(--mono); font-size: 12px; }
+.fc option { background: var(--ink3); }
+.mfoot {
+  padding: 14px 22px; border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 10px;
+  background: rgba(0,0,0,0.15); border-radius: 0 0 18px 18px;
+}
+.btn { padding: 9px 20px; border-radius: 8px; font-family: var(--font); font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all .2s; }
+.btn-p { background: linear-gradient(135deg,var(--cyan2),var(--cyan)); color: var(--ink); box-shadow: 0 2px 12px rgba(0,212,255,0.3); }
+.btn-p:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(0,212,255,0.45); }
+.btn-g { background: var(--glass); color: var(--t2); border: 1px solid var(--border2); }
+.btn-g:hover { background: var(--glass2); color: var(--t1); }
+.btn-d { background: rgba(255,107,53,0.15); color: var(--ember); border: 1px solid rgba(255,107,53,0.3); }
+.btn-d:hover { background: rgba(255,107,53,0.25); }
+
+/* FOOTER */
+.footer {
+  border-top: 1px solid var(--border); padding: 18px 28px;
+  text-align: center; font-size: 12px; color: var(--t3);
+  background: rgba(5,10,20,0.6);
+}
+
+@media(max-width:1080px){.panels{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:780px){.login-left-panel{display:none}.login-wrap{width:96vw}.login-right-panel{width:100%;padding:44px 32px}}
+@media(max-width:560px){.stats{grid-template-columns:1fr 1fr}.main{padding:14px}.topbar,.qbar{padding:0 14px}}
+</style>
 </head>
 <body>
-    <header>
-        <div class="container header-content">
-            <div class="logo">
-                <img src="https://www.asterhospital.com/wp-content/uploads/2020/04/aster-logo-white.png" alt="Aster Hospital Logo">
-                <h1>IT Server Interfaces Dashboard</h1>
+
+<!-- STARFIELD CANVAS -->
+<canvas id="starfield"></canvas>
+
+<!-- ════════════════════════════
+     LOGIN SCREEN
+════════════════════════════ -->
+<div id="login-screen">
+  <!-- layers -->
+  <div class="nebula"></div>
+  <div class="login-grid"></div>
+  <div class="login-vignette"></div>
+  <div class="scanline"></div>
+
+  <!-- orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+
+  <!-- energy rings -->
+  <div class="ring ring-1"></div>
+  <div class="ring ring-2"></div>
+  <div class="ring ring-3"></div>
+
+  <!-- main card -->
+  <div class="login-wrap">
+
+    <!-- LEFT PANEL -->
+    <div class="login-left-panel">
+      <div class="panel-hex">
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+          <defs>
+            <pattern id="hexL" x="0" y="0" width="56" height="97" patternUnits="userSpaceOnUse">
+              <polygon points="28,2 54,16 54,44 28,58 2,44 2,16" fill="none" stroke="rgba(0,212,255,1)" stroke-width="0.7"/>
+              <polygon points="28,59 54,73 54,101 28,115 2,101 2,73" fill="none" stroke="rgba(0,212,255,1)" stroke-width="0.7"/>
+              <polygon points="56,30 82,44 82,72 56,86 30,72 30,44" fill="none" stroke="rgba(0,212,255,1)" stroke-width="0.7"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#hexL)"/>
+        </svg>
+      </div>
+
+      <div class="lp-logo">
+        <img src="https://www.asterhospital.com/wp-content/uploads/2020/04/aster-logo-white.png" alt="Aster">
+        <div class="lp-logo-sep"></div>
+        <div class="lp-logo-txt">IT Operations<br>Portal</div>
+      </div>
+
+      <div class="lp-main">
+        <div class="lp-eyebrow">System Access</div>
+        <h1 class="lp-headline">Server &amp;<br><em>Interface</em><br>Control</h1>
+        <p class="lp-desc">Centralised IT infrastructure management for Aster Hospital UAE operations.</p>
+
+        <div class="lp-chips">
+          <div class="lp-chip">
+            <div class="lp-chip-icon lci-1"><i class="fas fa-server"></i></div>
+            <div class="lp-chip-txt">
+              <strong>28 Servers</strong>
+              <span>Physical &amp; virtual fleet</span>
             </div>
-            <div class="last-updated">
-                Last updated: <span id="current-date"></span>
+          </div>
+          <div class="lp-chip">
+            <div class="lp-chip-icon lci-2"><i class="fas fa-plug"></i></div>
+            <div class="lp-chip-txt">
+              <strong>28 Service Interfaces</strong>
+              <span>Active integration endpoints</span>
             </div>
+          </div>
+          <div class="lp-chip">
+            <div class="lp-chip-icon lci-3"><i class="fas fa-shield-alt"></i></div>
+            <div class="lp-chip-txt">
+              <strong>Secure &amp; Encrypted</strong>
+              <span>Restricted access only</span>
+            </div>
+          </div>
         </div>
-    </header>
-    
-    <!-- Add this to your quick-links div -->
-<div class="quick-links">
-    <div class="quick-link-container">
-        <a href="https://ahosp.me/adm/Login" target="_blank" class="quick-link">
-            <i class="fas fa-clipboard-check"></i> QMS
-        </a>
-        <button class="quick-link-edit-btn" data-link="qms">
-            <i class="fas fa-edit"></i>
-        </button>
+      </div>
+
+      <div class="lp-foot">Aster DM Healthcare · UAE</div>
     </div>
-    <div class="quick-link-container">
-        <a href="https://risuae.alif.onl/risng/ui/html/1.php" target="_blank" class="quick-link">
-            <i class="fas fa-x-ray"></i> Moksha
-        </a>
-        <button class="quick-link-edit-btn" data-link="moksha">
-            <i class="fas fa-edit"></i>
-        </button>
+
+    <!-- RIGHT PANEL (form) -->
+    <div class="login-right-panel">
+      <span class="rp-badge">Secure Portal</span>
+
+      <div class="rp-title">JoBiN PoRtAl</div>
+      <p class="rp-sub">Enter your password to authenticate and access the IT dashboard.</p>
+
+      <div class="l-field">
+        <label for="l-pw"><i class="fas fa-lock"></i> Access Password</label>
+        <div class="l-pw-wrap">
+          <input type="password" id="l-pw" placeholder="Enter access code…" autocomplete="current-password">
+          <button class="l-pw-toggle" id="pw-tog" tabindex="-1">
+            <i class="fas fa-eye" id="pw-eye"></i>
+          </button>
+        </div>
+        <div class="pw-strength" id="pw-strength">
+          <div class="pw-seg" id="ps1"></div>
+          <div class="pw-seg" id="ps2"></div>
+          <div class="pw-seg" id="ps3"></div>
+          <div class="pw-seg" id="ps4"></div>
+          <div class="pw-seg" id="ps5"></div>
+        </div>
+      </div>
+
+      <p class="l-hint"><i class="fas fa-satellite-dish"></i>SHA-256 encrypted · Authorised access only</p>
+
+      <div class="l-error" id="l-err">
+        <i class="fas fa-times-circle"></i>&nbsp; Incorrect password. Access denied.
+      </div>
+
+      <button class="l-submit" id="l-btn">
+        <i class="fas fa-unlock-alt"></i>&nbsp;&nbsp;Authenticate &amp; Enter
+      </button>
+
+      <div class="l-divider">Aster Hospital IT · UAE</div>
+
+      <div class="rp-footer">
+        <i class="fas fa-lock"></i> All sessions are monitored and logged
+      </div>
     </div>
-    <div class="quick-link-container">
-        <a href="https://hisuae.asterhospital.com/Login.aspx" target="_blank" class="quick-link">
-            <i class="fas fa-hospital-user"></i> HIS UAE
-        </a>
-        <button class="quick-link-edit-btn" data-link="hisuae">
-            <i class="fas fa-edit"></i>
-        </button>
-    </div>
-    <div class="quick-link-container">
-        <a href="https://client.wvd.microsoft.com/arm/webclient/index.html" target="_blank" class="quick-link">
-            <i class="fas fa-cloud"></i> WVD
-        </a>
-        <button class="quick-link-edit-btn" data-link="wvd">
-            <i class="fas fa-edit"></i>
-        </button>
-    </div>
-    <div class="quick-link-container">
-        <a href="file:///C:/Users/ASTER/OneDrive%20-%20Aster%20DM%20Healthcare/Desktop/CJ/CJ.html" target="_blank" class="quick-link">
-            <i class="fas fa-file-alt"></i> CJ
-        </a>
-        <button class="quick-link-edit-btn" data-link="cj">
-            <i class="fas fa-edit"></i>
-        </button>
-    </div>
-    <div class="quick-link-container">
-        <a href="https://ahosp.me/adm/Login" target="_blank" class="quick-link">
-            <i class="fas fa-file-alt"></i> AsterMate
-        </a>
-        <button class="quick-link-edit-btn" data-link="astermate">
-            <i class="fas fa-edit"></i>
-        </button>
-    </div>
-    <button class="add-btn" id="add-quick-link-btn">
-        <i class="fas fa-plus"></i> Add Quick Link
-    </button>
+
+  </div>
 </div>
 
-<!-- Add this modal at the bottom of your page (with other modals) -->
-<div class="modal" id="quick-link-modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="quick-link-modal-title">Edit Quick Link</h3>
-            <button class="close-btn" id="close-quick-link-modal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <form id="quick-link-form">
-                <input type="hidden" id="quick-link-id">
-                <div class="form-group">
-                    <label for="quick-link-name">Name</label>
-                    <input type="text" id="quick-link-name" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="quick-link-url">URL</label>
-                    <input type="text" id="quick-link-url" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="quick-link-icon">Icon</label>
-                    <select id="quick-link-icon" class="form-control" required>
-                        <option value="fa-clipboard-check">Clipboard (QMS)</option>
-                        <option value="fa-x-ray">X-Ray (Moksha)</option>
-                        <option value="fa-hospital-user">Hospital (HIS UAE)</option>
-                        <option value="fa-cloud">Cloud (WVD)</option>
-                        <option value="fa-file-alt">File (CJ/AsterMate)</option>
-                        <option value="fa-server">Server</option>
-                        <option value="fa-plug">Plug</option>
-                        <option value="fa-desktop">Desktop</option>
-                        <option value="fa-laptop">Laptop</option>
-                        <option value="fa-database">Database</option>
-                    </select>
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" id="cancel-quick-link-btn">Cancel</button>
-            <button class="btn btn-primary" id="save-quick-link-btn">Save</button>
-        </div>
+<!-- ════════════════════════════
+     APP
+════════════════════════════ -->
+<div id="app">
+
+  <header class="topbar">
+    <div class="tb-inner">
+      <div class="tb-l">
+        <img src="https://www.asterhospital.com/wp-content/uploads/2020/04/aster-logo-white.png" class="tb-logo" alt="Aster">
+        <div class="tb-sep"></div>
+        <span class="tb-title">IT Server Interfaces Dashboard</span>
+      </div>
+      <div class="tb-r">
+        <span class="live-badge">Live</span>
+        <span class="tb-date" id="tb-date"></span>
+        <button class="signout-btn" id="signout-btn">
+          <i class="fas fa-right-from-bracket"></i> Sign out
+        </button>
+      </div>
     </div>
+  </header>
+
+  <nav class="qbar">
+    <div class="qbar-inner" id="ql-bar"></div>
+  </nav>
+
+  <main class="main">
+    <div class="stats">
+      <div class="stat stat-1">
+        <div class="s-icon si-1"><i class="fas fa-server"></i></div>
+        <div class="s-val sv-1" id="st-s">0</div>
+        <div class="s-lbl">Total Servers</div>
+        <div class="s-sub">Physical &amp; virtual</div>
+      </div>
+      <div class="stat stat-2">
+        <div class="s-icon si-2"><i class="fas fa-plug"></i></div>
+        <div class="s-val sv-2" id="st-i">0</div>
+        <div class="s-lbl">Service Interfaces</div>
+        <div class="s-sub">Active endpoints</div>
+      </div>
+      <div class="stat stat-3">
+        <div class="s-icon si-3"><i class="fas fa-check-circle"></i></div>
+        <div class="s-val sv-3" id="st-a">0</div>
+        <div class="s-lbl">Active</div>
+        <div class="s-sub">Running now</div>
+      </div>
+      <div class="stat stat-4">
+        <div class="s-icon si-4"><i class="fas fa-flask"></i></div>
+        <div class="s-val sv-4" id="st-t">0</div>
+        <div class="s-lbl">In Testing</div>
+        <div class="s-sub">UAT / staging</div>
+      </div>
+    </div>
+
+    <div class="panels">
+      <!-- SERVERS -->
+      <div class="panel">
+        <div class="ph">
+          <div class="ph-t"><i class="fas fa-server"></i> Server Inventory <span class="ph-badge" id="srv-badge">0</span></div>
+          <div class="ph-ctrl">
+            <div class="sw"><i class="fas fa-search"></i><input type="text" id="srv-srch" placeholder="Search servers…"></div>
+            <button class="add-btn" id="srv-add"><i class="fas fa-plus"></i> Add Server</button>
+          </div>
+        </div>
+        <div class="tscroll">
+          <table><thead><tr><th>#</th><th>IP Address</th><th>Service Name</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="srv-tbody"></tbody></table>
+          <div class="no-res" id="srv-nores">No servers match your search.</div>
+        </div>
+      </div>
+
+      <!-- INTERFACES -->
+      <div class="panel">
+        <div class="ph">
+          <div class="ph-t"><i class="fas fa-plug"></i> Service Interfaces <span class="ph-badge" id="ifc-badge">0</span></div>
+          <div class="ph-ctrl">
+            <div class="sw"><i class="fas fa-search"></i><input type="text" id="ifc-srch" placeholder="Search interfaces…"></div>
+            <button class="add-btn" id="ifc-add"><i class="fas fa-plus"></i> Add Interface</button>
+          </div>
+        </div>
+        <div class="tscroll">
+          <table><thead><tr><th>#</th><th>IP Address</th><th>Service</th><th>Path / Endpoint</th><th>Actions</th></tr></thead>
+          <tbody id="ifc-tbody"></tbody></table>
+          <div class="no-res" id="ifc-nores">No interfaces match your search.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Aster Hospital IT Department &copy; <span id="yr"></span> &nbsp;·&nbsp; Contact IT Helpdesk for support
+  </footer>
 </div>
 
-<!-- Add this CSS to your style section -->
-<style>
-    .quick-link-container {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-    
-    .quick-link-edit-btn {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 5px 8px;
-        cursor: pointer;
-        transition: var(--transition);
-    }
-    
-    .quick-link-edit-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-</style>
+<!-- MODALS -->
+<div class="modal" id="ql-modal">
+  <div class="mbox">
+    <div class="mhead"><h3 id="ql-mt">Quick Link</h3><button class="mclose" data-m="ql-modal">&times;</button></div>
+    <div class="mbody">
+      <div class="fg"><label>Name</label><input class="fc" id="ql-mn" placeholder="Display label"></div>
+      <div class="fg"><label>URL</label><input class="fc" id="ql-mu" placeholder="https://..."></div>
+      <div class="fg"><label>Icon</label>
+        <select class="fc" id="ql-mi">
+          <option value="fa-clipboard-check">Clipboard</option><option value="fa-x-ray">X-Ray</option>
+          <option value="fa-hospital-user">Hospital User</option><option value="fa-cloud">Cloud</option>
+          <option value="fa-file-alt">File</option><option value="fa-star-of-life">Star of Life</option>
+          <option value="fa-server">Server</option><option value="fa-database">Database</option>
+          <option value="fa-desktop">Desktop</option><option value="fa-plug">Plug</option>
+          <option value="fa-link">Link</option>
+        </select>
+      </div>
+    </div>
+    <div class="mfoot"><button class="btn btn-g" data-m="ql-modal">Cancel</button><button class="btn btn-p" id="ql-save">Save</button></div>
+  </div>
+</div>
 
-<!-- Add this JavaScript to your script section -->
+<div class="modal" id="srv-modal">
+  <div class="mbox">
+    <div class="mhead"><h3 id="srv-mt">Server</h3><button class="mclose" data-m="srv-modal">&times;</button></div>
+    <div class="mbody">
+      <div class="fg"><label>Server IP</label><input class="fc mono" id="srv-mip" placeholder="172.19.x.x"></div>
+      <div class="fg"><label>Service Name</label><input class="fc" id="srv-mn" placeholder="Service description"></div>
+      <div class="fg"><label>Status</label>
+        <select class="fc" id="srv-ms"><option value="active">Active</option><option value="testing">Testing</option><option value="inactive">Inactive</option></select>
+      </div>
+    </div>
+    <div class="mfoot"><button class="btn btn-g" data-m="srv-modal">Cancel</button><button class="btn btn-p" id="srv-save">Save</button></div>
+  </div>
+</div>
+
+<div class="modal" id="ifc-modal">
+  <div class="mbox">
+    <div class="mhead"><h3 id="ifc-mt">Interface</h3><button class="mclose" data-m="ifc-modal">&times;</button></div>
+    <div class="mbody">
+      <div class="fg"><label>Server IP</label><input class="fc mono" id="ifc-mip" placeholder="172.19.x.x"></div>
+      <div class="fg"><label>Service Name</label><input class="fc" id="ifc-ms" placeholder="Service name"></div>
+      <div class="fg"><label>Path / Endpoint</label><textarea class="fc mono" id="ifc-mp" rows="4" placeholder="C:\path\to\service.exe"></textarea></div>
+    </div>
+    <div class="mfoot"><button class="btn btn-g" data-m="ifc-modal">Cancel</button><button class="btn btn-p" id="ifc-save">Save</button></div>
+  </div>
+</div>
+
+<div class="modal" id="conf-modal">
+  <div class="mbox sm">
+    <div class="mhead"><h3>Confirm Delete</h3><button class="mclose" data-m="conf-modal">&times;</button></div>
+    <div class="mbody"><p id="conf-msg" style="color:var(--t2);font-size:14px;line-height:1.6;"></p></div>
+    <div class="mfoot"><button class="btn btn-g" data-m="conf-modal">Cancel</button><button class="btn btn-d" id="conf-ok">Delete</button></div>
+  </div>
+</div>
+
 <script>
-    // Quick Link Modal functionality
-    const quickLinkModal = document.getElementById('quick-link-modal');
-    const openQuickLinkModal = (linkId = null) => {
-        if (linkId) {
-            // Editing existing link
-            const linkContainer = document.querySelector(`.quick-link-edit-btn[data-link="${linkId}"]`).parentNode;
-            const link = linkContainer.querySelector('.quick-link');
-            const icon = link.querySelector('i').className.replace('fas ', '');
-            
-            document.getElementById('quick-link-modal-title').textContent = 'Edit Quick Link';
-            document.getElementById('quick-link-id').value = linkId;
-            document.getElementById('quick-link-name').value = link.textContent.trim();
-            document.getElementById('quick-link-url').value = link.href;
-            document.getElementById('quick-link-icon').value = icon;
-        } else {
-            // Adding new link
-            document.getElementById('quick-link-modal-title').textContent = 'Add Quick Link';
-            document.getElementById('quick-link-form').reset();
-            document.getElementById('quick-link-id').value = '';
-        }
-        quickLinkModal.style.display = 'flex';
-    };
-    
-    // Close modal
-    document.getElementById('close-quick-link-modal').addEventListener('click', () => quickLinkModal.style.display = 'none');
-    document.getElementById('cancel-quick-link-btn').addEventListener('click', () => quickLinkModal.style.display = 'none');
-    
-    // Save quick link
-    document.getElementById('save-quick-link-btn').addEventListener('click', function() {
-        const id = document.getElementById('quick-link-id').value;
-        const name = document.getElementById('quick-link-name').value;
-        const url = document.getElementById('quick-link-url').value;
-        const icon = document.getElementById('quick-link-icon').value;
-        
-        if (id) {
-            // Update existing link
-            const linkContainer = document.querySelector(`.quick-link-edit-btn[data-link="${id}"]`).parentNode;
-            const link = linkContainer.querySelector('.quick-link');
-            const iconElement = link.querySelector('i');
-            
-            link.href = url;
-            link.innerHTML = `<i class="fas ${icon}"></i> ${name}`;
-        } else {
-            // Add new link
-            const newId = `quicklink-${Date.now()}`;
-            const quickLinksDiv = document.querySelector('.quick-links');
-            
-            const newLinkContainer = document.createElement('div');
-            newLinkContainer.className = 'quick-link-container';
-            
-            newLinkContainer.innerHTML = `
-                <a href="${url}" target="_blank" class="quick-link">
-                    <i class="fas ${icon}"></i> ${name}
-                </a>
-                <button class="quick-link-edit-btn" data-link="${newId}">
-                    <i class="fas fa-edit"></i>
-                </button>
-            `;
-            
-            // Insert before the "Add Quick Link" button
-            quickLinksDiv.insertBefore(newLinkContainer, document.getElementById('add-quick-link-btn'));
-            
-            // Add event listener to new edit button
-            newLinkContainer.querySelector('.quick-link-edit-btn').addEventListener('click', function() {
-                openQuickLinkModal(this.getAttribute('data-link'));
-            });
-        }
-        
-        quickLinkModal.style.display = 'none';
+/* ══════════════════════════════════════════════════
+   STARFIELD CANVAS
+══════════════════════════════════════════════════ */
+(function(){
+  const c = document.getElementById('starfield');
+  const ctx = c.getContext('2d');
+  let W, H, stars=[];
+  function resize(){ W=c.width=window.innerWidth; H=c.height=window.innerHeight; }
+  function initStars(){
+    stars=[];
+    for(let i=0;i<220;i++) stars.push({
+      x:Math.random()*W, y:Math.random()*H,
+      r:Math.random()*1.4+0.2,
+      a:Math.random(),
+      sp:Math.random()*0.003+0.001,
+      tw:Math.random()*Math.PI*2
     });
-    
-    // Add event listeners to existing edit buttons
-    document.querySelectorAll('.quick-link-edit-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            openQuickLinkModal(this.getAttribute('data-link'));
-        });
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.tw+=s.sp; s.a=0.3+Math.sin(s.tw)*0.5;
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(160,210,255,${s.a})`;
+      ctx.fill();
     });
-    
-    // Add new quick link button
-    document.getElementById('add-quick-link-btn').addEventListener('click', () => openQuickLinkModal());
+    requestAnimationFrame(draw);
+  }
+  resize(); initStars(); draw();
+  window.addEventListener('resize',()=>{ resize(); initStars(); });
+})();
+
+/* ══════════════════════════════════════════════════
+   PARTICLES
+══════════════════════════════════════════════════ */
+(function(){
+  const screen = document.getElementById('login-screen');
+  const colors=['rgba(0,212,255,0.8)','rgba(0,229,160,0.8)','rgba(155,127,255,0.8)','rgba(255,255,255,0.5)'];
+  for(let i=0;i<40;i++){
+    const p=document.createElement('div'); p.className='particle';
+    const sz = Math.random()*3+1;
+    p.style.cssText=`
+      left:${Math.random()*100}%;
+      bottom:${-5+Math.random()*15}%;
+      --dx:${(Math.random()-0.5)*300}px;
+      animation-duration:${5+Math.random()*10}s;
+      animation-delay:${Math.random()*8}s;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${sz}px; height:${sz}px;
+      box-shadow:0 0 ${sz*3}px currentColor;
+    `;
+    screen.appendChild(p);
+  }
+})();
+
+/* ══════════════════════════════════════════════════
+   PASSWORD STRENGTH VISUAL
+══════════════════════════════════════════════════ */
+document.getElementById('l-pw').addEventListener('input', function(){
+  const len = this.value.length;
+  const segs = [document.getElementById('ps1'),document.getElementById('ps2'),document.getElementById('ps3'),document.getElementById('ps4'),document.getElementById('ps5')];
+  segs.forEach((s,i)=>{
+    s.className='pw-seg';
+    if(i < Math.ceil(len/2)){
+      if(len<=4) s.classList.add('lit-g');
+      else if(len<=8) s.classList.add('lit-c');
+      else s.classList.add('lit-e');
+    }
+  });
+});
+
+/* ══════════════════════════════════════════════════
+   DATA
+══════════════════════════════════════════════════ */
+let servers = [
+  {id:1, ip:'172.19.8.48',             name:'Insurance 3M',                                       status:'active'},
+  {id:2, ip:'172.19.238.12',           name:'WVD (Windows Virtual Desktop)',                      status:'active'},
+  {id:3, ip:'172.19.238.13',           name:'Moksha to HIS Interface and Mindray',                status:'active'},
+  {id:4, ip:'172.19.238.14',           name:'WVD (Windows Virtual Desktop)',                      status:'active'},
+  {id:5, ip:'172.19.238.15',           name:'WVD (Windows Virtual Desktop)',                      status:'active'},
+  {id:6, ip:'172.19.241.4 & 238.13',   name:'Moksha Order Interface',                             status:'active'},
+  {id:7, ip:'172.19.241.5',            name:'Meddiff Server',                                     status:'active'},
+  {id:8, ip:'172.19.241.7',            name:'Meddiff UAT Server',                                 status:'testing'},
+  {id:9, ip:'172.19.241.14',           name:'Print Server',                                       status:'active'},
+  {id:10,ip:'172.19.241.24',           name:'Ortho Vision Server',                                status:'active'},
+  {id:11,ip:'172.19.241.30',           name:'Birthday & Patient Portal & Reporting Server',       status:'active'},
+  {id:12,ip:'172.19.241.36',           name:'Etriage, PDMS, API, BCMA Services',                 status:'active'},
+  {id:13,ip:'172.19.241.37',           name:'SMS & NABIDH Services',                              status:'active'},
+  {id:14,ip:'172.19.8.20',             name:'AHM MOKSHA Cache Server',                            status:'active'},
+  {id:15,ip:'172.19.58.110',           name:'AHQ MOKSHA Cache Server',                            status:'active'},
+  {id:16,ip:'172.19.170.110',          name:'AHSJ MOKSHA Cache Server',                           status:'active'},
+  {id:17,ip:'172.19.113.50',           name:'ACD MOKSHA Cache Server',                            status:'active'},
+  {id:18,ip:'172.19.241.46',           name:'RIS (Radiology Information System) Server',          status:'active'},
+  {id:19,ip:'172.19.241.47',           name:'PACS (Picture Archiving & Communication) Server',   status:'active'},
+  {id:20,ip:'172.19.8.32',             name:'LAB Interface Server',                               status:'active'},
+  {id:21,ip:'172.19.49.150',           name:'Call Manager Server',                                status:'active'},
+  {id:22,ip:'172.19.8.150',            name:'Mail Server',                                        status:'active'},
+  {id:23,ip:'172.19.25.252',           name:'IP Autobarcode Server',                              status:'active'},
+  {id:24,ip:'172.19.243.9',            name:'AsterMate1',                                         status:'active'},
+  {id:25,ip:'172.19.243.11',           name:'AsterMate2',                                         status:'active'},
+  {id:26,ip:'172.19.14.199',           name:'OT Video Recorder Server',                           status:'active'},
+  {id:27,ip:'172.19.14.200',           name:'OT Video Recorder VM',                               status:'active'},
+  {id:28,ip:'172.19.8.41',             name:'Old Token',                                          status:'active'},
+];
+
+let interfaces = [
+  {id:1, ip:'172.19.241.24',                svc:'AHM Sysmax2',            path:'E:\\Sysmax\\Sysmax AHM\\ASPLTCPserver.exe'},
+  {id:2, ip:'172.19.241.21',                svc:'AHM Sysmax1',            path:'C:\\Sysmex AHM\\ASPLTCPserver.exe'},
+  {id:3, ip:'172.19.241.24',                svc:'AHQ Sysmax XN 1000',     path:'E:\\Sysmax\\Sysmax AHQ XN 1000\\HL7Communicator.exe'},
+  {id:4, ip:'172.19.241.24',                svc:'AHQ Sysmax',             path:'E:\\Sysmax\\Sysmax AHQ\\HL7Communicator.exe'},
+  {id:5, ip:'172.19.241.24',                svc:'ACD Sysmax',             path:'E:\\Sysmax\\Sysmax Cedar\\HL7Communicator.exe'},
+  {id:6, ip:'172.19.8.32',                 svc:'GRBS (iSTAT)',            path:'D:\\POCT\\iSTATserver.exe'},
+  {id:7, ip:'172.19.8.32',                 svc:'ECG Server (MUSE)',       path:'D:\\8.85\\MUSE\\HL7Communicator.exe'},
+  {id:8, ip:'172.19.8.32',                 svc:'Beckman Coulter',         path:'D:\\8.85\\Coulter\\HL7Communicator.exe'},
+  {id:9, ip:'172.19.8.32',                 svc:'Vitals Monitoring',       path:'D:\\Test\\GEVs.exe\nD:\\Test\\Client'},
+  {id:10,ip:'172.19.8.32',                 svc:'POCT (Point of Care)',    path:'D:\\POCT\\iSTATServer.exe'},
+  {id:11,ip:'172.19.241.24',                svc:'Cobas Infinity 2',       path:'E:\\P\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\HL7Communicator.exe\n(old 8.32): C:\\P\\Code\\Infinity\\Debug\\HL7Communicator.exe'},
+  {id:12,ip:'172.19.8.32',                 svc:'iStat',                   path:'D:\\8.85\\iState\\iSTATServer.exe'},
+  {id:13,ip:'172.19.8.32',                 svc:'Ward Vitals',             path:'D:\\Test\\Client\\VsCommunicatorClient.exe'},
+  {id:14,ip:'172.19.8.32',                 svc:'Muse ECG',                path:'D:\\8.85\\MUSE\\VsCommunicatorClient.exe'},
+  {id:15,ip:'172.19.8.32',                 svc:'AHSJ OrthoVision',        path:'D:/8.85/SHJ-OrthoVision/Ortho Vision'},
+  {id:16,ip:'172.19.238.13',                svc:'Moksha to HIS',          path:'F:\\Padam\\TCPIP\\NEw\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug'},
+  {id:17,ip:'172.19.241.4 & 172.19.238.13',svc:'Moksha Order Interface',  path:'(241.4) E:\\MOKSHA\\ASPL TCPIP CLient.MOKSHA\n(238.13) C:\\Users\\KeyAzurSrv\\OneDrive\\Aster Hospital Oman\\ASPL TCPIP CLient\\bin\\Debug'},
+  {id:18,ip:'172.19.241.14',                svc:'Print Server',           path:'net stop PowerBIReportServer\nnet start PowerBIReportServer'},
+  {id:19,ip:'172.19.241.24',                svc:'Ortho Vision',           path:'E:\\Ortho\\HL7Communicator.exe'},
+  {id:20,ip:'172.19.241.30',                svc:'Birthday Automation',    path:'New: F:\\PatientPortal_1\\PatientPortal\\Content\\img\\WishAs\nWish folder: D:\\PatientPortal_1\\PatientPortal\\Content\\img\\WishAs\nBirthday folder: Z:\\\nRun: C:\\Users\\KeyAzurSrv\\source\\repos\\xCopy\\xCopy\\bin\\Debug\\net6.0-windows\\xCopy.exe'},
+  {id:21,ip:'172.19.241.37',                svc:'SMS & NABIDH Services',  path:'SMS: http://localhost:801/pcr/smsx?Auto=1\nNABIDH PROD: http://localhost:809/HIE/default?xCall=PROD\nNABIDH: http://localhost:980/HIE/default'},
+  {id:22,ip:'172.19.241.24',                svc:'Urised AHM',             path:'E:\\Urised AHM\\Mac'},
+  {id:23,ip:'172.19.241.24',                svc:'Urised AHQ',             path:'E:\\Ahq Urised\\aspl interface\\urised\\Mac'},
+  {id:24,ip:'172.19.241.24',                svc:'Radio Meter',            path:'E:\\RadioMeter\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\'},
+  {id:25,ip:'172.19.241.36',                svc:'PDMS',                   path:'C:\\PDMS\\VsCommunicatorClient'},
+  {id:26,ip:'172.19.241.30',                svc:'Patient Monitor Deepu',  path:'F:\\GE-Monitor\\GEVs'},
+  {id:27,ip:'172.19.238.13',                svc:'Mindray',                path:'F:\\Padam\\P\\ASPL TCPIP CLient - Copy'},
+  {id:28,ip:'172.19.8.32',                 svc:'GRBS',                   path:'D:\\8.85\\MUSE\\Client\\VsCommunicatorClient'},
+];
+
+let quickLinks = [
+  {id:'qms',      name:'QMS',      url:'https://ahosp.me/adm/Login',                                                       icon:'fa-clipboard-check'},
+  {id:'moksha',   name:'Moksha',   url:'https://risuae.alif.onl/risng/ui/html/1.php',                                      icon:'fa-x-ray'},
+  {id:'hisuae',   name:'HIS UAE',  url:'https://hisuae.asterhospital.com/Login.aspx',                                      icon:'fa-hospital-user'},
+  {id:'wvd',      name:'WVD',      url:'https://client.wvd.microsoft.com/arm/webclient/index.html',                        icon:'fa-cloud'},
+  {id:'cj',       name:'CJ',       url:'file:///C:/Users/ASTER/OneDrive%20-%20Aster%20DM%20Healthcare/Desktop/CJ/CJ.html', icon:'fa-file-alt'},
+  {id:'astermate',name:'AsterMate',url:'https://ahosp.me/adm/Login',                                                       icon:'fa-star-of-life'},
+];
+
+let nxS=200, nxI=200, nxQ=200;
+
+/* ── ESCAPE ─────────────────────────────────────── */
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+/* ── AUTH ───────────────────────────────────────── */
+const HASH='8a4ed630c5556ab78c847b7b3a5dd6761a372b22ddff9fb4d5d5696262162c8c';
+async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+
+async function doLogin(){
+  const pw=document.getElementById('l-pw').value;
+  const h=await sha256(pw);
+  const err=document.getElementById('l-err');
+  if(h===HASH){
+    err.style.display='none';
+    // transition out
+    const ls=document.getElementById('login-screen');
+    ls.style.transition='opacity .6s ease, transform .6s ease';
+    ls.style.opacity='0'; ls.style.transform='scale(1.04)';
+    setTimeout(()=>{
+      ls.style.display='none';
+      const app=document.getElementById('app');
+      app.style.display='block';
+      app.style.opacity='0';
+      app.style.transition='opacity .5s ease';
+      requestAnimationFrame(()=>{ app.style.opacity='1'; });
+      initApp();
+    },600);
+  } else {
+    err.style.display='block'; err.style.animation='none'; void err.offsetWidth; err.style.animation='errShake .4s';
+  }
+}
+document.getElementById('l-btn').addEventListener('click',doLogin);
+document.getElementById('l-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('pw-tog').addEventListener('click',()=>{
+  const i=document.getElementById('l-pw'),e=document.getElementById('pw-eye');
+  i.type=i.type==='password'?'text':'password'; e.className=i.type==='password'?'fas fa-eye':'fas fa-eye-slash';
+});
+
+/* ── MODAL HELPERS ──────────────────────────────── */
+const openM=id=>document.getElementById(id).classList.add('open');
+const closeM=id=>document.getElementById(id).classList.remove('open');
+document.querySelectorAll('[data-m]').forEach(el=>el.addEventListener('click',()=>closeM(el.dataset.m)));
+window.addEventListener('click',e=>document.querySelectorAll('.modal.open').forEach(m=>{if(e.target===m)m.classList.remove('open')}));
+
+/* ── STATUS PILL ────────────────────────────────── */
+function pill(s){
+  const m={active:['sp-a','Active'],testing:['sp-t','Testing'],inactive:['sp-i','Inactive']};
+  const[c,l]=m[s]||m.active;
+  return`<span class="sp ${c}"><span class="sp-dot"></span>${l}</span>`;
+}
+
+/* ── QUICK LINKS ────────────────────────────────── */
+function renderQL(){
+  const bar=document.getElementById('ql-bar'); bar.innerHTML='<span class="ql-label">Quick Access</span>';
+  quickLinks.forEach(q=>{
+    const g=document.createElement('div'); g.className='ql-grp';
+    g.innerHTML=`<a href="${esc(q.url)}" target="_blank" class="ql-lnk"><i class="fas ${q.icon}"></i>${esc(q.name)}</a><button class="ql-edit-btn" title="Edit"><i class="fas fa-pen"></i></button>`;
+    g.querySelector('.ql-edit-btn').addEventListener('click',()=>openQLEdit(q.id));
+    bar.appendChild(g);
+  });
+  const ab=document.createElement('button'); ab.className='ql-add-btn';
+  ab.innerHTML='<i class="fas fa-plus"></i> Add Link';
+  ab.addEventListener('click',openQLAdd); bar.appendChild(ab);
+}
+let qlEdit=null;
+function openQLAdd(){qlEdit=null;document.getElementById('ql-mt').textContent='Add Quick Link';document.getElementById('ql-mn').value='';document.getElementById('ql-mu').value='';document.getElementById('ql-mi').value='fa-link';openM('ql-modal')}
+function openQLEdit(id){qlEdit=id;const q=quickLinks.find(x=>x.id===id);document.getElementById('ql-mt').textContent='Edit Quick Link';document.getElementById('ql-mn').value=q.name;document.getElementById('ql-mu').value=q.url;document.getElementById('ql-mi').value=q.icon;openM('ql-modal')}
+document.getElementById('ql-save').addEventListener('click',()=>{
+  const name=document.getElementById('ql-mn').value.trim(),url=document.getElementById('ql-mu').value.trim(),icon=document.getElementById('ql-mi').value;
+  if(!name||!url)return;
+  if(qlEdit!==null){const q=quickLinks.find(x=>x.id===qlEdit);q.name=name;q.url=url;q.icon=icon}
+  else quickLinks.push({id:'ql'+(nxQ++),name,url,icon});
+  renderQL();closeM('ql-modal');
+});
+
+/* ── SERVERS ────────────────────────────────────── */
+function renderSrv(filter=''){
+  const tbody=document.getElementById('srv-tbody'); tbody.innerHTML='';
+  const q=filter.toLowerCase(); let shown=0;
+  servers.forEach((s,i)=>{
+    if(q&&!`${s.ip} ${s.name} ${s.status}`.toLowerCase().includes(q))return;
+    shown++;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="color:var(--t3);font-family:var(--mono);font-size:11px">${i+1}</td><td class="ip">${esc(s.ip)}</td><td class="svc">${esc(s.name)}</td><td>${pill(s.status)}</td><td><div class="ra"><button class="be"><i class="fas fa-pen"></i> Edit</button><button class="bd"><i class="fas fa-trash"></i></button></div></td>`;
+    tr.querySelector('.be').addEventListener('click',()=>openSrvEdit(s.id));
+    tr.querySelector('.bd').addEventListener('click',()=>confirmDel(`Delete server "${s.name}" (${s.ip})?`,()=>{servers=servers.filter(x=>x.id!==s.id);renderSrv(document.getElementById('srv-srch').value);updateStats()}));
+    tr.addEventListener('click',e=>{if(e.target.closest('button'))return;document.querySelectorAll('#srv-tbody tr').forEach(r=>r.classList.remove('hl'));tr.classList.add('hl')});
+    tbody.appendChild(tr);
+  });
+  document.getElementById('srv-nores').style.display=shown?'none':'block';
+  document.getElementById('srv-badge').textContent=servers.length;
+}
+let srvEdit=null;
+document.getElementById('srv-add').addEventListener('click',()=>{srvEdit=null;document.getElementById('srv-mt').textContent='Add Server';document.getElementById('srv-mip').value='';document.getElementById('srv-mn').value='';document.getElementById('srv-ms').value='active';openM('srv-modal')});
+function openSrvEdit(id){srvEdit=id;const s=servers.find(x=>x.id===id);document.getElementById('srv-mt').textContent='Edit Server';document.getElementById('srv-mip').value=s.ip;document.getElementById('srv-mn').value=s.name;document.getElementById('srv-ms').value=s.status;openM('srv-modal')}
+document.getElementById('srv-save').addEventListener('click',()=>{
+  const ip=document.getElementById('srv-mip').value.trim(),name=document.getElementById('srv-mn').value.trim(),status=document.getElementById('srv-ms').value;
+  if(!ip||!name)return;
+  if(srvEdit!==null){const s=servers.find(x=>x.id===srvEdit);s.ip=ip;s.name=name;s.status=status}
+  else servers.push({id:nxS++,ip,name,status});
+  renderSrv(document.getElementById('srv-srch').value);updateStats();closeM('srv-modal');
+});
+document.getElementById('srv-srch').addEventListener('input',function(){renderSrv(this.value)});
+
+/* ── INTERFACES ─────────────────────────────────── */
+function renderIfc(filter=''){
+  const tbody=document.getElementById('ifc-tbody'); tbody.innerHTML='';
+  const q=filter.toLowerCase(); let shown=0;
+  interfaces.forEach((f,i)=>{
+    if(q&&!`${f.ip} ${f.svc} ${f.path}`.toLowerCase().includes(q))return;
+    shown++;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="color:var(--t3);font-family:var(--mono);font-size:11px">${i+1}</td><td class="ip">${esc(f.ip)}</td><td class="svc">${esc(f.svc)}</td><td class="pth">${esc(f.path).replace(/\n/g,'<br>')}</td><td><div class="ra"><button class="be"><i class="fas fa-pen"></i> Edit</button><button class="bd"><i class="fas fa-trash"></i></button></div></td>`;
+    tr.querySelector('.be').addEventListener('click',()=>openIfcEdit(f.id));
+    tr.querySelector('.bd').addEventListener('click',()=>confirmDel(`Delete interface "${f.svc}"?`,()=>{interfaces=interfaces.filter(x=>x.id!==f.id);renderIfc(document.getElementById('ifc-srch').value);updateStats()}));
+    tr.addEventListener('click',e=>{if(e.target.closest('button'))return;document.querySelectorAll('#ifc-tbody tr').forEach(r=>r.classList.remove('hl'));tr.classList.add('hl')});
+    tbody.appendChild(tr);
+  });
+  document.getElementById('ifc-nores').style.display=shown?'none':'block';
+  document.getElementById('ifc-badge').textContent=interfaces.length;
+}
+let ifcEdit=null;
+document.getElementById('ifc-add').addEventListener('click',()=>{ifcEdit=null;document.getElementById('ifc-mt').textContent='Add Interface';document.getElementById('ifc-mip').value='';document.getElementById('ifc-ms').value='';document.getElementById('ifc-mp').value='';openM('ifc-modal')});
+function openIfcEdit(id){ifcEdit=id;const f=interfaces.find(x=>x.id===id);document.getElementById('ifc-mt').textContent='Edit Interface';document.getElementById('ifc-mip').value=f.ip;document.getElementById('ifc-ms').value=f.svc;document.getElementById('ifc-mp').value=f.path;openM('ifc-modal')}
+document.getElementById('ifc-save').addEventListener('click',()=>{
+  const ip=document.getElementById('ifc-mip').value.trim(),svc=document.getElementById('ifc-ms').value.trim(),path=document.getElementById('ifc-mp').value.trim();
+  if(!ip||!svc)return;
+  if(ifcEdit!==null){const f=interfaces.find(x=>x.id===ifcEdit);f.ip=ip;f.svc=svc;f.path=path}
+  else interfaces.push({id:nxI++,ip,svc,path});
+  renderIfc(document.getElementById('ifc-srch').value);updateStats();closeM('ifc-modal');
+});
+document.getElementById('ifc-srch').addEventListener('input',function(){renderIfc(this.value)});
+
+/* ── CONFIRM DELETE ─────────────────────────────── */
+function confirmDel(msg,cb){
+  document.getElementById('conf-msg').textContent=msg; openM('conf-modal');
+  document.getElementById('conf-ok').onclick=()=>{cb();closeM('conf-modal')};
+}
+
+/* ── STATS ──────────────────────────────────────── */
+function updateStats(){
+  document.getElementById('st-s').textContent=servers.length;
+  document.getElementById('st-i').textContent=interfaces.length;
+  document.getElementById('st-a').textContent=servers.filter(s=>s.status==='active').length;
+  document.getElementById('st-t').textContent=servers.filter(s=>s.status==='testing').length;
+}
+
+/* ── SIGN OUT ───────────────────────────────────── */
+document.getElementById('signout-btn').addEventListener('click',()=>{
+  const app=document.getElementById('app'); app.style.opacity='0';
+  setTimeout(()=>{
+    app.style.display='none'; app.style.opacity='1';
+    document.getElementById('l-pw').value='';
+    document.getElementById('l-err').style.display='none';
+    const ls=document.getElementById('login-screen');
+    ls.style.opacity='0'; ls.style.transform='scale(1.04)'; ls.style.display='flex';
+    requestAnimationFrame(()=>{ls.style.transition='opacity .5s,transform .5s';ls.style.opacity='1';ls.style.transform='scale(1)'});
+  },400);
+});
+
+/* ── INIT ───────────────────────────────────────── */
+function initApp(){
+  const now=new Date();
+  document.getElementById('tb-date').textContent=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('yr').textContent=now.getFullYear();
+  renderQL(); renderSrv(); renderIfc(); updateStats();
+}
 </script>
-        
-        <div class="dashboard">
-            <div class="panel">
-                <div class="panel-header">
-                    <h2><i class="fas fa-server"></i> Server Inventory (<span id="server-count">23</span> Servers)</h2>
-                    <div class="search-container">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="search-box" placeholder="Search servers..." id="server-search">
-                        <button class="add-btn" id="add-server-btn">
-                            <i class="fas fa-plus"></i> Add Server
-                        </button>
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table id="server-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Server IP</th>
-                                <th>Service Name</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td class="ip-address">172.19.8.48</td>
-                                <td>Insurance 3M</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td class="ip-address">172.19.238.12</td>
-                                <td>WVD (Windows Virtual Desktop)</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td class="ip-address">172.19.238.13</td>
-                                <td>Moksha to HIS Interface and Mindray</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td class="ip-address">172.19.238.14</td>
-                                <td>WVD (Windows Virtual Desktop)</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td class="ip-address">172.19.238.15</td>
-                                <td>WVD (Windows Virtual Desktop)</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td class="ip-address">172.19.241.4 & 238.13</td>
-                                <td>Moksha Order Interface</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td class="ip-address">172.19.241.5</td>
-                                <td>Meddiff Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td class="ip-address">172.19.241.7</td>
-                                <td>Meddiff UAT Server</td>
-                                <td><span class="status-indicator status-warning"></span> Testing</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>9</td>
-                                <td class="ip-address">172.19.241.14</td>
-                                <td>Print Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>10</td>
-                                <td class="ip-address">172.19.241.24</td>
-                                <td>Ortho Vision Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>11</td>
-                                <td class="ip-address">172.19.241.30</td>
-                                <td>Birthday & Patient Portal $ Reporting srvr</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>12</td>
-                                <td class="ip-address">172.19.241.36</td>
-                                <td>Etriage,PDMS, API, BCMA Services</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>13</td>
-                                <td class="ip-address">172.19.241.37</td>
-                                <td>SMS & NABIDH Services</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>14</td>
-                                <td class="ip-address">172.19.8.20</td>
-                                <td>AHM MOKSHA Cache Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>15</td>
-                                <td class="ip-address">172.19.58.110</td>
-                                <td>AHQ MOKSHA Cache Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>16</td>
-                                <td class="ip-address">172.19.170.110</td>
-                                <td>AHSJ MOKSHA Cache Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>17</td>
-                                <td class="ip-address">172.19.113.50</td>
-                                <td>ACD MOKSHA Cache Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>18</td>
-                                <td class="ip-address">172.19.241.46</td>
-                                <td>RIS (Radiology Information System) Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>19</td>
-                                <td class="ip-address">172.19.241.47</td>
-                                <td>PACS (Picture Archiving and Communication System) Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>20</td>
-                                <td class="ip-address">172.19.8.32</td>
-                                <td>LAB Interface Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>21</td>
-                                <td class="ip-address">172.19.49.150</td>
-                                <td>Call Manager Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>22</td>
-                                <td class="ip-address">172.19.8.150</td>
-                                <td>Mail Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>23</td>
-                                <td class="ip-address">172.19.25.252</td>
-                                <td>IP Autobarcode Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>24</td>
-                                <td class="ip-address">172.19.243.9</td>
-                                <td>AsterMate1</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>25</td>
-                                <td class="ip-address">172.19.243.11</td>
-                                <td>AsterMate2</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>26</td>
-                                <td class="ip-address">172.19.14.199</td>
-                                <td>OT Video recorder Server</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>27</td>
-                                <td class="ip-address">172.19.14.200</td>
-                                <td>OT Video recorder VM</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>28</td>
-                                <td class="ip-address">172.19.8.41</td>
-                                <td>Old Token</td>
-                                <td><span class="status-indicator status-active"></span> Active</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="no-results" id="server-no-results">
-                        No servers found matching your search criteria.
-                    </div>
-                </div>
-            </div>
-            
-            <div class="panel">
-                <div class="panel-header">
-                    <h2><i class="fas fa-plug"></i> Service Interfaces (<span id="interface-count">23</span> Interfaces)</h2>
-                    <div class="search-container">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="search-box" placeholder="Search interfaces..." id="interface-search">
-                        <button class="add-btn" id="add-interface-btn">
-                            <i class="fas fa-plus"></i> Add Interface
-                        </button>
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table id="interface-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Server IP</th>
-                                <th>Service</th>
-                                <th>Path/Endpoint</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td class="ip-address">172.19.241.24</td>
-                                <td>AHM Sysmax2</td>
-                                <td class="path">E:\Sysmax\Sysmax AHM\ASPLTCPserver.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td class="ip-address">172.19.241.21</td>
-                                <td>AHM Sysmax1</td>
-                                <td class="path">C:\Sysmex AHM\ASPLTCPserver.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td class="ip-address">172.19.241.24</td>
-                                <td>AHQ Sysmax XN 1000</td>
-                                <td class="path">E:\Sysmax\Sysmax AHQ XN 1000\HL7Communicator.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td class="ip-address">172.19.241.24</td>
-                                <td>AHQ Sysmax</td>
-                                <td class="path">E:\Sysmax\Sysmax AHQ\HL7Communicator.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td class="ip-address">172.19.241.24</td>
-                                <td>ACD Sysmax</td>
-                                <td class="path">E:\Sysmax\Sysmax Cedar\HL7Communicator.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td class="ip-address">172.19.8.32</td>
-                                <td>GRBS (iSTAT)</td>
-                                <td class="path">D:\POCT\iSTATserver.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td class="ip-address">172.19.8.32</td>
-                                <td>ECG Server (MUSE)</td>
-                                <td class="path">D:\8.85\MUSE\HL7Communicator.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td class="ip-address">172.19.8.32</td>
-                                <td>Beckman Coulter</td>
-                                <td class="path">D:\8.85\Coulter\HL7Communicator.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>9</td>
-                                <td class="ip-address">172.19.8.32</td>
-                                <td>Vitals Monitoring</td>
-                                <td class="path">D:\Test\GEVs.exe<br>D:\Test\Client</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>10</td>
-                                <td class="ip-address">172.19.8.32</td>
-                                <td>POCT (Point of Care Testing)</td>
-                                <td class="path">D:\POCT\iSTATServer.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>11</td>
-                                <td class="ip-address">172.19.241.24</td>
-                                <td>Cobas Infinity 2</td>
-                                <td class="path">
-                                E:\P\ASPL TCPIP COMMUNICATOR-Server\bin\Debug\HL7Communicator.exe
-
-                                C:\P\Code\Infinity\Debug\HL7Communicator.exe
-
-                                    <span class="badge badge-warning">(old 8.32)</span>
-                                </td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>12</td>
-                                <td class="ip-address">172.19.8.32</td>
-                                <td>iStat</td>
-                                <td class="path">D:\8.85\iState\iSTATServer.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>13</td>
-                                <td class="ip-address">172.19.8.32</td>
-                                <td>Ward Vitals</td>
-                                <td class="path">D:\Test\Client\VsCommunicatorClient.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>14</td>
-                                <td class="ip-address">172.19.8.32</td>
-                                <td>Muse ECG</td>
-                                <td class="path">D:\8.85\MUSE\VsCommunicatorClient.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>15</td>
-                                <td class="ip-address">172.19.8.32</td>
-                                <td>AHSJ OrthoVision</td>
-                                <td class="path">D:/8.85/SHJ-OrthoVision/Ortho Vision</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>16</td>
-                                <td class="ip-address">172.19.238.13</td>
-                                <td>Moksha to HIS</td>
-                                <td class="path">F:\Padam\TCPIP\NEw\ASPL TCPIP COMMUNICATOR-Server\bin\Debug</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>17</td>
-                                <td class="ip-address">172.19.241.4 & 172.19.238.13</td>
-                                <td>Moksha Order Interface</td>
-                                <td class="path">
-                                    (241.4) E:\MOKSHA\ASPL TCPIP CLient.MOKSHA<br>
-                                    (238.13) C:\Users\KeyAzurSrv\OneDrive\Aster Hospital Oman\ASPL TCPIP CLient\ASPL TCPIP CLient\bin\Debug
-                                </td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>18</td>
-                                <td class="ip-address">172.19.241.14</td>
-                                <td>Print Server</td>
-                                <td class="path">
-                                    net stop PowerBIReportServer<br>
-                                    net start PowerBIReportServer
-                                </td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>19</td>
-                                <td class="ip-address">172.19.241.24</td>
-                                <td>Ortho Vision</td>
-                                <td class="path">E:\Ortho\HL7Communicator.exe</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>20</td>
-                                <td class="ip-address">172.19.241.30</td>
-                                <td>Birthday Automation</td>
-                                <td class="path">
-                                    New F:\PatientPortal_1\PatientPortal\Content\img\WishAs<br>
-                                    Wish folder: D:\PatientPortal_1\PatientPortal\Content\img\WishAs<br>
-                                    Birthday folder: Z:\<br>
-                                    Executable: C:\Users\KeyAzurSrv\source\repos\xCopy\xCopy\bin\Debug\net6.0-windows<br>
-                                    Run: C:\Users\KeyAzurSrv\source\repos\xCopy\xCopy\bin\Debug\net6.0-windows\xCopy.exe
-                                </td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>21</td>
-                                <td class="ip-address">172.19.241.37</td>
-                                <td>SMS & NABIDH Services</td>
-                                <td class="path">
-                                    SMS: http://localhost:801/pcr/smsx?Auto=1<br>
-                                    NABIDH PROD: http://localhost:809/HIE/default?xCall=PROD<br>
-                                    NABIDH: http://localhost:980/HIE/default-
-                                </td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>22</td>
-                                <td class="ip-address">172.19.241.24</td>
-                                <td>Urised AHM</td>
-                                <td class="path">E:\Urised AHM\Mac</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>23</td>
-                                <td class="ip-address">172.19.241.24</td>
-                                <td>Urised AHQ</td>
-                                <td class="path">E:\Ahq Urised\aspl interface\urised\Mac</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>24</td>
-                                <td class="ip-address">172.19.241.24</td>
-                                <td>Radio Meter</td>
-                                <td class="path">E:\RadioMeter\ASPL TCPIP COMMUNICATOR-Server\bin\Debug\</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>25</td>
-                                <td class="ip-address">172.19.241.36</td>
-                                <td>PDMS</td>
-                                <td class="path">C:\PDMS\VsCommunicatorClient</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            </tr>
-                            <tr>
-                                <td>26</td>
-                                <td class="ip-address">172.19.241.30</td>
-                                <td>Patient Monitor Deepu</td>
-                                <td class="path">F:\GE-Monitor\GEVs</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            </tr>
-                            <tr>
-                                <td>27</td>
-                                <td class="ip-address">172.19.238.13</td>
-                                <td>Mindray</td>
-                                <td class="path">F:\Padam\P\ASPL TCPIP CLient - Copy</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>28</td>
-                                <td class="ip-address">172.19.8.32</td>
-                                <td>GRBS</td>
-                                <td class="path">D:\8.85\MUSE\Client\VsCommunicatorClient</td>
-                                <td>
-                                    <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="no-results" id="interface-no-results">
-                        No interfaces found matching your search criteria.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <footer>
-        <div class="container">
-            <p>Aster Hospital IT Department &copy; <span id="current-year"></span> | For support, contact IT Helpdesk</p>
-        </div>
-    </footer>
-    
-    <!-- Server Modal -->
-    <div class="modal" id="server-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="server-modal-title">Add New Server</h3>
-                <button class="close-btn" id="close-server-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="server-form">
-                    <input type="hidden" id="server-id">
-                    <div class="form-group">
-                        <label for="server-ip">Server IP</label>
-                        <input type="text" id="server-ip" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="server-name">Service Name</label>
-                        <input type="text" id="server-name" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="server-status">Status</label>
-                        <select id="server-status" class="form-control" required>
-                            <option value="active">Active</option>
-                            <option value="testing">Testing</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="maintenance">Maintenance</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancel-server-btn">Cancel</button>
-                <button class="btn btn-primary" id="save-server-btn">Save</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Interface Modal -->
-    <div class="modal" id="interface-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="interface-modal-title">Add New Interface</h3>
-                <button class="close-btn" id="close-interface-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="interface-form">
-                    <input type="hidden" id="interface-id">
-                    <div class="form-group">
-                        <label for="interface-ip">Server IP</label>
-                        <input type="text" id="interface-ip" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="interface-service">Service</label>
-                        <input type="text" id="interface-service" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="interface-path">Path/Endpoint</label>
-                        <textarea id="interface-path" class="form-control" rows="4" required></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancel-interface-btn">Cancel</button>
-                <button class="btn btn-primary" id="save-interface-btn">Save</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Confirmation Modal -->
-    <div class="modal" id="confirm-modal">
-        <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header">
-                <h3 id="confirm-modal-title">Confirm Deletion</h3>
-                <button class="close-btn" id="close-confirm-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p id="confirm-message">Are you sure you want to delete this item?</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancel-delete-btn">Cancel</button>
-                <button class="btn btn-danger" id="confirm-delete-btn">Delete</button>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // Set current date
-        const now = new Date();
-        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
-        
-        // Set current year
-        document.getElementById('current-year').textContent = now.getFullYear();
-        
-        // Update counts
-        document.getElementById('server-count').textContent = document.querySelectorAll('#server-table tbody tr').length;
-        document.getElementById('interface-count').textContent = document.querySelectorAll('#interface-table tbody tr').length;
-        
-        // Enhanced search functionality for servers
-        document.getElementById('server-search').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#server-table tbody tr');
-            let hasResults = false;
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                if (text.includes(searchTerm)) {
-                    row.style.display = '';
-                    hasResults = true;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-            
-            // Show/hide no results message
-            document.getElementById('server-no-results').style.display = hasResults ? 'none' : 'block';
-        });
-        
-        // Enhanced search functionality for interfaces
-        document.getElementById('interface-search').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#interface-table tbody tr');
-            let hasResults = false;
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                if (text.includes(searchTerm)) {
-                    row.style.display = '';
-                    hasResults = true;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-            
-            // Show/hide no results message
-            document.getElementById('interface-no-results').style.display = hasResults ? 'none' : 'block';
-        });
-        
-        // Add click effect to table rows
-        document.querySelectorAll('tbody tr').forEach(row => {
-            row.addEventListener('click', function(e) {
-                // Don't highlight if clicking on action buttons
-                if (e.target.tagName === 'BUTTON' || e.target.tagName === 'I') {
-                    return;
-                }
-                
-                // Remove any existing highlights
-                document.querySelectorAll('tbody tr').forEach(r => {
-                    r.classList.remove('highlighted');
-                });
-                
-                // Add highlight to clicked row
-                this.classList.add('highlighted');
-            });
-        });
-        
-        // Modal functionality
-        const serverModal = document.getElementById('server-modal');
-        const interfaceModal = document.getElementById('interface-modal');
-        const confirmModal = document.getElementById('confirm-modal');
-        
-        // Server modal controls
-        const addServerBtn = document.getElementById('add-server-btn');
-        const closeServerModal = document.getElementById('close-server-modal');
-        const cancelServerBtn = document.getElementById('cancel-server-btn');
-        const saveServerBtn = document.getElementById('save-server-btn');
-        
-        // Interface modal controls
-        const addInterfaceBtn = document.getElementById('add-interface-btn');
-        const closeInterfaceModal = document.getElementById('close-interface-modal');
-        const cancelInterfaceBtn = document.getElementById('cancel-interface-btn');
-        const saveInterfaceBtn = document.getElementById('save-interface-btn');
-        
-        // Confirmation modal controls
-        const closeConfirmModal = document.getElementById('close-confirm-modal');
-        const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
-        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
-        
-        // Open server modal for adding
-        addServerBtn.addEventListener('click', () => {
-            document.getElementById('server-modal-title').textContent = 'Add New Server';
-            document.getElementById('server-form').reset();
-            document.getElementById('server-id').value = '';
-            serverModal.style.display = 'flex';
-        });
-        
-        // Open interface modal for adding
-        addInterfaceBtn.addEventListener('click', () => {
-            document.getElementById('interface-modal-title').textContent = 'Add New Interface';
-            document.getElementById('interface-form').reset();
-            document.getElementById('interface-id').value = '';
-            interfaceModal.style.display = 'flex';
-        });
-        
-        // Close modals
-        const closeModals = () => {
-            serverModal.style.display = 'none';
-            interfaceModal.style.display = 'none';
-            confirmModal.style.display = 'none';
-        };
-        
-        closeServerModal.addEventListener('click', closeModals);
-        cancelServerBtn.addEventListener('click', closeModals);
-        closeInterfaceModal.addEventListener('click', closeModals);
-        cancelInterfaceBtn.addEventListener('click', closeModals);
-        closeConfirmModal.addEventListener('click', closeModals);
-        cancelDeleteBtn.addEventListener('click', closeModals);
-        
-        // Edit server button handlers
-        document.querySelectorAll('.edit-server-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const cells = row.querySelectorAll('td');
-                
-                document.getElementById('server-modal-title').textContent = 'Edit Server';
-                document.getElementById('server-id').value = cells[0].textContent;
-                document.getElementById('server-ip').value = cells[1].textContent;
-                document.getElementById('server-name').value = cells[2].textContent;
-                
-                // Set status based on the status indicator
-                const statusIndicator = cells[3].querySelector('.status-indicator');
-                let status = 'active';
-                if (statusIndicator.classList.contains('status-warning')) {
-                    status = 'testing';
-                } else if (statusIndicator.classList.contains('status-danger')) {
-                    status = 'inactive';
-                }
-                document.getElementById('server-status').value = status;
-                
-                serverModal.style.display = 'flex';
-            });
-        });
-        
-        // Edit interface button handlers
-        document.querySelectorAll('.edit-interface-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const cells = row.querySelectorAll('td');
-                
-                document.getElementById('interface-modal-title').textContent = 'Edit Interface';
-                document.getElementById('interface-id').value = cells[0].textContent;
-                document.getElementById('interface-ip').value = cells[1].textContent;
-                document.getElementById('interface-service').value = cells[2].textContent;
-                document.getElementById('interface-path').value = cells[3].textContent;
-                
-                interfaceModal.style.display = 'flex';
-            });
-        });
-        
-        // Save server
-        saveServerBtn.addEventListener('click', function() {
-            const id = document.getElementById('server-id').value;
-            const ip = document.getElementById('server-ip').value;
-            const name = document.getElementById('server-name').value;
-            const status = document.getElementById('server-status').value;
-            
-            let statusText = 'Active';
-            let statusClass = 'status-active';
-            
-            if (status === 'testing') {
-                statusText = 'Testing';
-                statusClass = 'status-warning';
-            } else if (status === 'inactive') {
-                statusText = 'Inactive';
-                statusClass = 'status-danger';
-            } else if (status === 'maintenance') {
-                statusText = 'Maintenance';
-                statusClass = 'status-warning';
-            }
-            
-            if (id) {
-                // Edit existing row
-                const rows = document.querySelectorAll('#server-table tbody tr');
-                for (let row of rows) {
-                    if (row.querySelector('td').textContent === id) {
-                        row.querySelectorAll('td')[1].textContent = ip;
-                        row.querySelectorAll('td')[2].textContent = name;
-                        
-                        const statusCell = row.querySelectorAll('td')[3];
-                        statusCell.innerHTML = `<span class="status-indicator ${statusClass}"></span> ${statusText}`;
-                        break;
-                    }
-                }
-            } else {
-                // Add new row
-                const tbody = document.querySelector('#server-table tbody');
-                const newRow = document.createElement('tr');
-                const newId = document.querySelectorAll('#server-table tbody tr').length + 1;
-                
-                newRow.innerHTML = `
-                    <td>${newId}</td>
-                    <td class="ip-address">${ip}</td>
-                    <td>${name}</td>
-                    <td><span class="status-indicator ${statusClass}"></span> ${statusText}</td>
-                    <td>
-                        <button class="action-btn edit-btn edit-server-btn"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="action-btn delete-btn delete-server-btn"><i class="fas fa-trash"></i> Delete</button>
-                    </td>
-                `;
-                
-                tbody.appendChild(newRow);
-                
-                // Add event listeners to new buttons
-                newRow.querySelector('.edit-server-btn').addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    const cells = row.querySelectorAll('td');
-                    
-                    document.getElementById('server-modal-title').textContent = 'Edit Server';
-                    document.getElementById('server-id').value = cells[0].textContent;
-                    document.getElementById('server-ip').value = cells[1].textContent;
-                    document.getElementById('server-name').value = cells[2].textContent;
-                    
-                    // Set status based on the status indicator
-                    const statusIndicator = cells[3].querySelector('.status-indicator');
-                    let status = 'active';
-                    if (statusIndicator.classList.contains('status-warning')) {
-                        status = 'testing';
-                    } else if (statusIndicator.classList.contains('status-danger')) {
-                        status = 'inactive';
-                    }
-                    document.getElementById('server-status').value = status;
-                    
-                    serverModal.style.display = 'flex';
-                });
-                
-                newRow.querySelector('.delete-server-btn').addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    document.getElementById('confirm-message').textContent = `Are you sure you want to delete server ${row.querySelectorAll('td')[1].textContent}?`;
-                    document.getElementById('confirm-modal-title').textContent = 'Delete Server';
-                    
-                    confirmModal.style.display = 'flex';
-                    
-                    confirmDeleteBtn.onclick = function() {
-                        row.remove();
-                        updateServerRowNumbers();
-                        updateServerCount();
-                        confirmModal.style.display = 'none';
-                    };
-                });
-                
-                updateServerCount();
-            }
-            
-            serverModal.style.display = 'none';
-        });
-        
-        // Save interface
-        saveInterfaceBtn.addEventListener('click', function() {
-            const id = document.getElementById('interface-id').value;
-            const ip = document.getElementById('interface-ip').value;
-            const service = document.getElementById('interface-service').value;
-            const path = document.getElementById('interface-path').value;
-            
-            if (id) {
-                // Edit existing row
-                const rows = document.querySelectorAll('#interface-table tbody tr');
-                for (let row of rows) {
-                    if (row.querySelector('td').textContent === id) {
-                        row.querySelectorAll('td')[1].textContent = ip;
-                        row.querySelectorAll('td')[2].textContent = service;
-                        row.querySelectorAll('td')[3].textContent = path;
-                        break;
-                    }
-                }
-            } else {
-                // Add new row
-                const tbody = document.querySelector('#interface-table tbody');
-                const newRow = document.createElement('tr');
-                const newId = document.querySelectorAll('#interface-table tbody tr').length + 1;
-                
-                newRow.innerHTML = `
-                    <td>${newId}</td>
-                    <td class="ip-address">${ip}</td>
-                    <td>${service}</td>
-                    <td class="path">${path}</td>
-                    <td>
-                        <button class="action-btn edit-btn edit-interface-btn"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="action-btn delete-btn delete-interface-btn"><i class="fas fa-trash"></i> Delete</button>
-                    </td>
-                `;
-                
-                tbody.appendChild(newRow);
-                
-                // Add event listeners to new buttons
-                newRow.querySelector('.edit-interface-btn').addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    const cells = row.querySelectorAll('td');
-                    
-                    document.getElementById('interface-modal-title').textContent = 'Edit Interface';
-                    document.getElementById('interface-id').value = cells[0].textContent;
-                    document.getElementById('interface-ip').value = cells[1].textContent;
-                    document.getElementById('interface-service').value = cells[2].textContent;
-                    document.getElementById('interface-path').value = cells[3].textContent;
-                    
-                    interfaceModal.style.display = 'flex';
-                });
-                
-                newRow.querySelector('.delete-interface-btn').addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    document.getElementById('confirm-message').textContent = `Are you sure you want to delete interface ${row.querySelectorAll('td')[2].textContent}?`;
-                    document.getElementById('confirm-modal-title').textContent = 'Delete Interface';
-                    
-                    confirmModal.style.display = 'flex';
-                    
-                    confirmDeleteBtn.onclick = function() {
-                        row.remove();
-                        updateInterfaceRowNumbers();
-                        updateInterfaceCount();
-                        confirmModal.style.display = 'none';
-                    };
-                });
-                
-                updateInterfaceCount();
-            }
-            
-            interfaceModal.style.display = 'none';
-        });
-        
-        // Delete server button handlers
-        document.querySelectorAll('.delete-server-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const row = this.closest('tr');
-                document.getElementById('confirm-message').textContent = `Are you sure you want to delete server ${row.querySelectorAll('td')[1].textContent}?`;
-                document.getElementById('confirm-modal-title').textContent = 'Delete Server';
-                
-                confirmModal.style.display = 'flex';
-                
-                confirmDeleteBtn.onclick = function() {
-                    row.remove();
-                    updateServerRowNumbers();
-                    updateServerCount();
-                    confirmModal.style.display = 'none';
-                };
-            });
-        });
-        
-        // Delete interface button handlers
-        document.querySelectorAll('.delete-interface-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const row = this.closest('tr');
-                document.getElementById('confirm-message').textContent = `Are you sure you want to delete interface ${row.querySelectorAll('td')[2].textContent}?`;
-                document.getElementById('confirm-modal-title').textContent = 'Delete Interface';
-                
-                confirmModal.style.display = 'flex';
-                
-                confirmDeleteBtn.onclick = function() {
-                    row.remove();
-                    updateInterfaceRowNumbers();
-                    updateInterfaceCount();
-                    confirmModal.style.display = 'none';
-                };
-            });
-        });
-        
-        // Update row numbers after deletion
-        function updateServerRowNumbers() {
-            const rows = document.querySelectorAll('#server-table tbody tr');
-            rows.forEach((row, index) => {
-                row.querySelector('td').textContent = index + 1;
-            });
-        }
-        
-        function updateInterfaceRowNumbers() {
-            const rows = document.querySelectorAll('#interface-table tbody tr');
-            rows.forEach((row, index) => {
-                row.querySelector('td').textContent = index + 1;
-            });
-        }
-        
-        // Update count displays
-        function updateServerCount() {
-            document.getElementById('server-count').textContent = document.querySelectorAll('#server-table tbody tr').length;
-        }
-        
-        function updateInterfaceCount() {
-            document.getElementById('interface-count').textContent = document.querySelectorAll('#interface-table tbody tr').length;
-        }
-    </script>
 </body>
 </html>
