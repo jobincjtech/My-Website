@@ -1,1225 +1,165 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IT Nexus — Ticket Management</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   DESIGN TOKENS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-:root{
-  --bg:#070b14;
-  --bg2:#0c1220;
-  --sur:#101827;
-  --sur2:#141f2e;
-  --sur3:#1a2840;
-  --border:rgba(255,255,255,0.06);
-  --bh:rgba(255,255,255,0.13);
-  --text:#dce8f5;
-  --muted:#56657f;
-  --dim:#2a3a52;
-  --a:#38bdf8;   /* sky */
-  --ag:rgba(56,189,248,0.18);
-  --a2:#f472b6;  /* pink */
-  --a2g:rgba(244,114,182,0.18);
-  --a3:#34d399;  /* emerald */
-  --warn:#fbbf24;
-  --danger:#f87171;
-  --r:14px;
-  --rs:9px;
-  --sh:0 4px 28px rgba(0,0,0,0.5);
-  --shl:0 10px 60px rgba(0,0,0,0.7);
-  --tr:all .22s cubic-bezier(.4,0,.2,1);
-  --font:'Syne',sans-serif;
-  --mono:'JetBrains Mono',monospace;
+{
+  "tickets": [
+    {
+      "id": "1770187046962",
+      "date": "2026-02-04",
+      "issue": "Implant Card Print Issue",
+      "description": "This case has been checked. The invoice number consists of 16 characters, but the system currently allows entry of only 15 characters. As a result, the team is unable to proceed with the card printing process.\n\nInv No:IPCR-AHM26/17864, UHID -400938729 ,  Procedure Name: ORIF LEFT WRIST",
+      "ticketNumber": "418251",
+      "createdTech": "Jobin - Merin Ortho OPD",
+      "assignedTech": "Yoonus",
+      "priority": "High",
+      "status": "Pending",
+      "category": "Software",
+      "lastUpdated": "2026-02-04T06:37:26.963Z"
+    },
+    {
+      "id": "1770187129062",
+      "date": "2026-02-04",
+      "issue": "Doctors’ e-signatures are not reflecting in the discharge summary and medical reports",
+      "description": "Doctors’ e-signatures are not reflecting in the discharge summary and medical reports. We have checked all URLs, and the e-signatures are not reflecting in any of them\nUHID: 900266588, IP NO: 26/1924\n\nTemporory Solution: For doctors whose e-signature is not reflecting on the discharge summary and medical report, please enable the tick options for both ‘Signature on File’ and ‘Signature With DateTime’, then save the changes from the Employee page under Provider Details . These changes should be done for all URLs; only then will the signature reflect in the respective URL.",
+      "ticketNumber": "418259",
+      "createdTech": "Jobin- deepu--sanith",
+      "assignedTech": "Yoonus",
+      "priority": "High",
+      "status": "In Progress",
+      "category": "Software",
+      "lastUpdated": "2026-02-13T04:45:06.304Z"
+    },
+    {
+      "id": "1770187938502",
+      "date": "2026-02-04",
+      "issue": "OPD pathway is not working",
+      "description": "The OPD pathway is not working. After clicking on the URL, the page does not open and instead shows an error. For your reference, a screenshot is attached.\n\nThank you for choosing Aster Hospital (AHM)!You have been checked-in at NEW OPD.Please refer your token WA22058 and please use the below link to view the status https://pathway.alif.onl/?data=U2FsdGVkX1_vt5kaTqwXpe7fnMDpiNMBaGCMbwI9dbpb1MmyW-cU5bya0JumJUwSsVZ_ZSYgXO7v6i2C7tGDnQ",
+      "ticketNumber": "418327",
+      "createdTech": "Jobin",
+      "assignedTech": "Naveen",
+      "priority": "High",
+      "status": "Pending",
+      "category": "Software",
+      "lastUpdated": "2026-02-13T05:09:55.195Z"
+    },
+    {
+      "id": "1770190608251",
+      "date": "2026-02-04",
+      "issue": "unable to create the eCAPEX request.",
+      "description": "We are unable to create the eCAPEX request. After entering the item code, the following error is displayed:\n‘The source organization for the given destination type can't be determined. Contact your Supply Chain Operations Manager. (POR-2010790)’.\nKindly check and do the needful.\nItem code: 1-I-K-A1TF-XX09-XX09-00030\nScreenshot attached for your reference.",
+      "ticketNumber": "417247",
+      "createdTech": "jobin",
+      "assignedTech": "Vinoth and saraswathy",
+      "priority": "High",
+      "status": "Resolved",
+      "category": "Software",
+      "lastUpdated": "2026-02-13T05:05:17.089Z"
+    },
+    {
+      "id": "1770265057635",
+      "date": "2026-02-05",
+      "issue": "New Patient Portal Admin Access",
+      "description": "As discussed, Kindly provide patient portal admin access, as I am receiving many tickets and requests related to patient portal issues. With this access, I will be able to check using the patient UHID and resolve the issues. Currently, without OTP, I am unable to access any patient’s portal.",
+      "ticketNumber": "418783",
+      "createdTech": "jobin",
+      "assignedTech": "Naveen",
+      "priority": "High",
+      "status": "Pending",
+      "category": "Software",
+      "lastUpdated": "2026-02-05T04:17:37.635Z"
+    },
+    {
+      "id": "1770636972060",
+      "date": "2026-02-09",
+      "issue": "Mail Box Full",
+      "description": "Dear Team,\n\nKindly archive or increase the email storage for ahmed.rasheed@asterhospital.com. Currently, he is not receiving any emails due to storage limitations.\n\nPlease do the needful at the earliest.",
+      "ticketNumber": "420297",
+      "createdTech": "jobin",
+      "assignedTech": "365",
+      "priority": "High",
+      "status": "Resolved",
+      "category": "Software",
+      "lastUpdated": "2026-02-13T04:42:15.737Z"
+    },
+    {
+      "id": "1770807353736",
+      "date": "2026-02-11",
+      "issue": "ADID for Dr ramya",
+      "description": "Kindly create an AD ID for the newly joined doctor to access Moksha PACS.\n\n\nEmployee No: 245879\nName: Ramya  Muriki",
+      "ticketNumber": "421227",
+      "createdTech": "jobin",
+      "assignedTech": "sonita",
+      "priority": "High",
+      "status": "Resolved",
+      "category": "Software",
+      "lastUpdated": "2026-02-14T03:35:44.764Z"
+    },
+    {
+      "id": "1772249422159",
+      "date": "2026-02-28",
+      "issue": "OPD Tab Creative",
+      "description": "Please remove Dr. Prakash Nair (230870) creative from the OPD Clinic tab (Doctor Picture Upload). The existing one needs to be replaced, as two entries are currently showing and neither is opening. The new creative is attached for replacement.",
+      "ticketNumber": "428519",
+      "createdTech": "jobin",
+      "assignedTech": "yoonus",
+      "priority": "High",
+      "status": "Pending",
+      "category": "Software",
+      "lastUpdated": "2026-02-28T03:30:22.159Z"
+    }
+  ],
+  "issues": [],
+  "implementations": [
+    {
+      "id": "1770188620759",
+      "date": "2026-02-04",
+      "title": "Token display signage",
+      "description": "The token display signage is not working. The operations team is continuously following up on the issue. Currently, only token numbers are being displayed on all token display screens.\n\nWe have videos of all department doctors, along with other hospital procedure signages and videos. These signages are required to be displayed on the screens along with the token information.\n\nThe current token display URL is: https://api.asterhospital.com/QMS/?zoneid=5",
+      "number": "418235",
+      "requestedBy": "Operation Team",
+      "assignedTo": "Naveen",
+      "priority": "High",
+      "status": "Pending",
+      "category": "Integration",
+      "lastUpdated": "2026-02-04T07:03:40.760Z"
+    },
+    {
+      "id": "1770188708924",
+      "date": "2026-02-04",
+      "title": "Token Calling Etriage ",
+      "description": "There is a need to implement a token calling system in E-Triage. Currently, patients are being called manually. This process should be automated through the system so that the QMS TAT can be accurately tracked.\n\nAfter a patient takes a token, the triage team should have access to a token-calling option in the system. This will allow the patient to be called to the triage room to complete the triage process.\n\nOnce the triage is completed, the CSE and doctors should also have the option to call the patient through the system for further consultation.",
+      "number": "418238",
+      "requestedBy": "Jobish",
+      "assignedTo": "Naveen",
+      "priority": "High",
+      "status": "Pending",
+      "category": "Integration",
+      "lastUpdated": "2026-02-04T07:05:08.925Z"
+    },
+    {
+      "id": "1770188797158",
+      "date": "2026-02-04",
+      "title": "Token calling system in Radiology.",
+      "description": "There is a need to implement a token calling system in Radiology. Currently, patients are being called manually. This process should be automated through the system to enable accurate tracking of QMS TAT.\n\nThe radiology workflow differs slightly from the standard process and is outlined below:\n\nThe patient takes a token. The CSE calls the patient to verify the appointment and availability.\n\nAfter the CSE process is completed, the token should appear in the Billing queue, allowing the billing team to call the patient for payment and insurance verification.\n\nOnce the billing procedure is completed, the patient is called by the concerned technician (CT, MRI, or US) for the procedure.",
+      "number": "418245",
+      "requestedBy": "sebastian",
+      "assignedTo": "naveen",
+      "priority": "High",
+      "status": "Pending",
+      "category": "Integration",
+      "lastUpdated": "2026-02-04T07:06:37.158Z"
+    },
+    {
+      "id": "1770959496531",
+      "date": "2026-02-13",
+      "title": "Manual Study Reporting Validation",
+      "description": "As discussed, we need to implement validation for manual study reporting at the system level. At present, radiologists are able to report manual studies without any restriction. This behavior needs to be modified so that reporting is permitted only after successful study reconciliation. Once the reconciliation process is completed, reporting should then be enabled for all corresponding manual entries.\nIn addition, I request access to selectively enable reporting for specific cases where reconciliation cannot be completed or where order-related issues exist. This is critical to ensure that, in emergency scenarios, radiologists are able to proceed with reporting without delay.\nFurther, as discussed in our earlier meeting, please provide me with access to the event log viewer as well.\nGiven the operational impact, I request that these items be addressed on priority. Please let me know if any further clarification or information is required from my end.",
+      "number": "Email to sabari - Moksha",
+      "requestedBy": "Jobin",
+      "assignedTo": "sabari",
+      "priority": "High",
+      "status": "Pending",
+      "category": "New Feature",
+      "lastUpdated": "2026-02-13T05:11:36.531Z"
+    }
+  ],
+  "lastSaved": "2026-03-15T07:08:09.221Z",
+  "totalItems": 12
 }
-
-/* ━━━━ RESET ━━━━ */
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-
-/* ━━━━ ANIMATED BG GRID ━━━━ */
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:
-    linear-gradient(rgba(56,189,248,.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(56,189,248,.03) 1px,transparent 1px);
-  background-size:60px 60px;
-  animation:gridDrift 20s linear infinite;
-  pointer-events:none;z-index:0
-}
-@keyframes gridDrift{0%{transform:translate(0,0)}100%{transform:translate(60px,60px)}}
-
-/* Ambient glows */
-body::after{
-  content:'';position:fixed;inset:0;
-  background:
-    radial-gradient(ellipse 600px 400px at 15% 20%,rgba(56,189,248,.04) 0%,transparent 70%),
-    radial-gradient(ellipse 500px 300px at 85% 80%,rgba(244,114,182,.04) 0%,transparent 70%);
-  pointer-events:none;z-index:0
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   LOGIN
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#loginScreen{
-  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-  z-index:9999;background:var(--bg)
-}
-#loginScreen.fadeout{animation:fadeOut .4s ease forwards}
-@keyframes fadeOut{to{opacity:0;transform:scale(.98)}}
-
-.lc{
-  background:var(--sur);border:1px solid var(--border);border-radius:22px;
-  padding:52px 44px;width:92%;max-width:430px;
-  box-shadow:var(--shl);position:relative;overflow:hidden;
-  animation:slideUp .5s cubic-bezier(.16,1,.3,1) both
-}
-@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-
-/* login card glow ring */
-.lc::before{
-  content:'';position:absolute;inset:-1px;border-radius:23px;
-  background:linear-gradient(135deg,rgba(56,189,248,.2),transparent 40%,rgba(244,114,182,.15) 100%);
-  z-index:-1
-}
-.lc::after{
-  content:'';position:absolute;top:-100px;right:-80px;
-  width:250px;height:250px;
-  background:radial-gradient(circle,rgba(56,189,248,.08),transparent 70%);
-  pointer-events:none
-}
-
-.lc-logo{display:flex;align-items:center;gap:14px;margin-bottom:36px}
-.lc-logo-icon{
-  width:50px;height:50px;border-radius:13px;
-  background:linear-gradient(135deg,var(--a),var(--a2));
-  display:flex;align-items:center;justify-content:center;font-size:22px;
-  box-shadow:0 0 20px rgba(56,189,248,.3);
-  animation:iconPulse 3s ease-in-out infinite
-}
-@keyframes iconPulse{0%,100%{box-shadow:0 0 20px rgba(56,189,248,.3)}50%{box-shadow:0 0 35px rgba(56,189,248,.5)}}
-.lc-name{font-size:24px;font-weight:800;letter-spacing:-0.5px}
-.lc-name span{
-  background:linear-gradient(90deg,var(--a),var(--a2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
-}
-.lc-sub{color:var(--muted);font-size:13px;margin-bottom:30px;line-height:1.6}
-
-.lc-err{
-  background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);
-  border-radius:var(--rs);padding:12px 15px;color:#fca5a5;
-  font-size:13px;display:none;margin-bottom:16px;align-items:center;gap:9px
-}
-.lc-err.show{display:flex}
-
-.lf{position:relative;margin-bottom:18px}
-.lf input{
-  width:100%;background:var(--sur2);border:1px solid var(--border);
-  border-radius:var(--rs);padding:14px 46px 14px 46px;
-  font-family:var(--font);font-size:15px;color:var(--text);outline:none;
-  transition:var(--tr)
-}
-.lf input::placeholder{color:var(--muted)}
-.lf input:focus{border-color:var(--a);box-shadow:0 0 0 3px var(--ag)}
-.lf .fi{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}
-.lf .tp{
-  position:absolute;right:14px;top:50%;transform:translateY(-50%);
-  background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:4px
-}
-
-.lbtn{
-  width:100%;border:none;border-radius:var(--rs);padding:16px;
-  font-family:var(--font);font-size:15px;font-weight:700;color:#fff;cursor:pointer;
-  background:linear-gradient(135deg,var(--a),var(--a2));
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  transition:var(--tr);letter-spacing:.3px;position:relative;overflow:hidden
-}
-.lbtn::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);
-  opacity:0;transition:var(--tr)
-}
-.lbtn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(56,189,248,.35)}
-.lbtn:hover::before{opacity:1}
-.lbtn:active{transform:translateY(0)}
-.lbtn:disabled{opacity:.6;cursor:not-allowed;transform:none}
-
-.lc-note{margin-top:18px;text-align:center;font-size:11px;color:var(--dim);letter-spacing:.3px}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   APP SHELL
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#app{display:none;min-height:100vh;flex-direction:column;position:relative;z-index:1}
-#app.on{display:flex;animation:appIn .4s ease}
-@keyframes appIn{from{opacity:0}to{opacity:1}}
-
-/* ━━━━ TOPBAR ━━━━ */
-.tb{
-  background:rgba(16,24,39,.85);backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);padding:0 30px;height:66px;
-  display:flex;align-items:center;justify-content:space-between;
-  position:sticky;top:0;z-index:200
-}
-.tb-brand{display:flex;align-items:center;gap:13px}
-.tb-icon{
-  width:36px;height:36px;border-radius:9px;
-  background:linear-gradient(135deg,var(--a),var(--a2));
-  display:flex;align-items:center;justify-content:center;font-size:16px;
-  box-shadow:0 0 15px rgba(56,189,248,.25)
-}
-.tb-name{font-size:18px;font-weight:800;letter-spacing:-.3px}
-.tb-name span{
-  background:linear-gradient(90deg,var(--a),var(--a2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
-}
-.tb-r{display:flex;align-items:center;gap:11px}
-.tb-clock{
-  font-family:var(--mono);font-size:12px;color:var(--muted);
-  background:var(--sur2);padding:6px 13px;border-radius:6px;border:1px solid var(--border)
-}
-.tb-sync{
-  display:flex;align-items:center;gap:7px;
-  background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);
-  padding:6px 13px;border-radius:6px;font-size:12px;color:#34d399
-}
-.tb-dot{width:7px;height:7px;background:#34d399;border-radius:50%;animation:tbDot 2.5s ease-in-out infinite}
-@keyframes tbDot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(52,211,153,.4)}50%{opacity:.5;box-shadow:0 0 0 5px rgba(52,211,153,0)}}
-
-.tb-menu{display:flex;gap:4px}
-.tb-btn{
-  background:none;border:1px solid var(--border);border-radius:7px;
-  padding:7px 14px;font-family:var(--font);font-size:12px;color:var(--muted);
-  cursor:pointer;display:flex;align-items:center;gap:6px;transition:var(--tr)
-}
-.tb-btn:hover{border-color:var(--a);color:var(--a)}
-.tb-btn.danger:hover{border-color:var(--danger);color:var(--danger)}
-
-/* ━━━━ CONTENT ━━━━ */
-.ct{flex:1;padding:30px;max-width:1640px;margin:0 auto;width:100%}
-
-/* ━━━━ NOTICE BAR ━━━━ */
-.nb{
-  background:linear-gradient(90deg,rgba(56,189,248,.07),rgba(244,114,182,.05));
-  border:1px solid rgba(56,189,248,.18);border-radius:var(--rs);
-  padding:11px 18px;margin-bottom:26px;
-  display:flex;align-items:center;justify-content:space-between;
-  font-size:12.5px;color:#7dd3fc;
-  animation:nbSlide .5s ease .1s both
-}
-@keyframes nbSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.nb-left{display:flex;align-items:center;gap:9px}
-.nb-right{display:flex;gap:8px}
-.nb-btn{
-  background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);
-  border-radius:5px;padding:4px 11px;font-size:11px;color:var(--a);
-  font-family:var(--font);cursor:pointer;transition:var(--tr)
-}
-.nb-btn:hover{background:rgba(56,189,248,.22)}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   DASHBOARD
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#dashView{}
-.pg-head{margin-bottom:30px;animation:fadeUp .4s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.pg-head h2{font-size:28px;font-weight:800;letter-spacing:-.5px;margin-bottom:5px}
-.pg-head h2 .hi{
-  background:linear-gradient(90deg,var(--a),var(--a2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
-}
-.pg-head p{color:var(--muted);font-size:14px}
-
-/* OVERVIEW STRIP */
-.ov-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:28px}
-.ov-card{
-  background:var(--sur);border:1px solid var(--border);border-radius:var(--r);
-  padding:22px 24px;display:flex;align-items:center;gap:18px;
-  transition:var(--tr);position:relative;overflow:hidden;
-  animation:fadeUp .4s ease both
-}
-.ov-card:nth-child(1){animation-delay:.05s}
-.ov-card:nth-child(2){animation-delay:.1s}
-.ov-card:nth-child(3){animation-delay:.15s}
-.ov-card::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.02),transparent);
-  opacity:0;transition:var(--tr)
-}
-.ov-card:hover{transform:translateY(-3px);box-shadow:var(--sh)}
-.ov-card:hover::after{opacity:1}
-.ov-ico{
-  width:50px;height:50px;border-radius:12px;
-  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0
-}
-.ov-ico.am{background:rgba(251,191,36,.1);color:var(--warn)}
-.ov-ico.bl{background:rgba(56,189,248,.1);color:var(--a)}
-.ov-ico.gr{background:rgba(52,211,153,.1);color:var(--a3)}
-.ov-num{font-size:34px;font-weight:800;font-family:var(--mono);line-height:1;letter-spacing:-2px}
-.ov-lbl{font-size:12px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.6px}
-
-/* MODULE CARDS */
-.mc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:30px}
-.mc{
-  background:var(--sur);border:1px solid var(--border);border-radius:var(--r);
-  padding:30px 26px;cursor:pointer;transition:var(--tr);position:relative;overflow:hidden;
-  animation:fadeUp .45s ease both
-}
-.mc:nth-child(1){animation-delay:.1s}
-.mc:nth-child(2){animation-delay:.18s}
-.mc:nth-child(3){animation-delay:.26s}
-.mc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;transition:var(--tr)}
-.mc::after{
-  content:'';position:absolute;inset:0;opacity:0;transition:var(--tr);
-  background:linear-gradient(135deg,rgba(255,255,255,.015),transparent)
-}
-.mc:hover{transform:translateY(-5px);box-shadow:var(--sh)}
-.mc:hover::after{opacity:1}
-.mc.sky::before{background:linear-gradient(90deg,var(--a),rgba(56,189,248,.2))}
-.mc.pink::before{background:linear-gradient(90deg,var(--a2),rgba(244,114,182,.2))}
-.mc.em::before{background:linear-gradient(90deg,var(--a3),rgba(52,211,153,.2))}
-.mc:hover.sky{border-color:rgba(56,189,248,.3);box-shadow:0 8px 40px rgba(56,189,248,.1)}
-.mc:hover.pink{border-color:rgba(244,114,182,.3);box-shadow:0 8px 40px rgba(244,114,182,.1)}
-.mc:hover.em{border-color:rgba(52,211,153,.3);box-shadow:0 8px 40px rgba(52,211,153,.1)}
-
-.mc-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
-.mc-ico{width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px}
-.mc-ico.sky{background:rgba(56,189,248,.1);color:var(--a)}
-.mc-ico.pink{background:rgba(244,114,182,.1);color:var(--a2)}
-.mc-ico.em{background:rgba(52,211,153,.1);color:var(--a3)}
-.mc-arrow{color:var(--dim);font-size:17px;transition:var(--tr)}
-.mc:hover .mc-arrow{color:var(--muted);transform:translateX(4px) translateY(-2px)}
-.mc h3{font-size:19px;font-weight:700;margin-bottom:7px;letter-spacing:-.3px}
-.mc p{color:var(--muted);font-size:13px;line-height:1.65}
-
-.mc-stats{display:flex;margin-top:22px;border-top:1px solid var(--border);padding-top:20px}
-.ms{flex:1;text-align:center}
-.ms:not(:last-child){border-right:1px solid var(--border)}
-.ms-val{font-size:24px;font-weight:800;font-family:var(--mono);line-height:1.1;transition:var(--tr)}
-.ms-val.sky{color:var(--a)}
-.ms-val.pink{color:var(--a2)}
-.ms-val.em{color:var(--a3)}
-.ms-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   MODULE VIEW
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#modView{display:none}
-#modView.on{display:block;animation:fadeUp .3s ease both}
-
-.mv-top{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:26px;flex-wrap:wrap;gap:14px
-}
-.mv-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.back-btn{
-  background:var(--sur);border:1px solid var(--border);border-radius:var(--rs);
-  padding:10px 18px;font-family:var(--font);font-size:13px;color:var(--text);
-  cursor:pointer;display:flex;align-items:center;gap:8px;transition:var(--tr)
-}
-.back-btn:hover{border-color:var(--a);color:var(--a);transform:translateX(-2px)}
-.mv-title-ico{
-  width:38px;height:38px;border-radius:9px;
-  display:flex;align-items:center;justify-content:center;font-size:17px
-}
-.mv-title h3{font-size:21px;font-weight:800;letter-spacing:-.3px}
-.mv-title p{font-size:12px;color:var(--muted)}
-.mv-right{display:flex;gap:9px;flex-wrap:wrap}
-
-/* STAT BOXES */
-.sb-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
-.sb{
-  background:var(--sur);border:1px solid var(--border);border-radius:var(--r);
-  padding:18px 20px;display:flex;align-items:center;gap:14px;
-  transition:var(--tr);animation:fadeUp .35s ease both
-}
-.sb:hover{transform:translateY(-2px);box-shadow:var(--sh)}
-.sb-ico{width:42px;height:42px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.sb-val{font-size:28px;font-weight:800;font-family:var(--mono);letter-spacing:-1px;line-height:1}
-.sb-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-
-/* ALERT */
-.al{
-  border-radius:var(--rs);padding:12px 18px;margin-bottom:18px;
-  display:none;align-items:center;justify-content:space-between;gap:12px;
-  font-size:13px;font-weight:600;animation:alIn .3s ease
-}
-@keyframes alIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.al.on{display:flex}
-.al-w{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);color:#fde68a}
-.al-r{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:#fca5a5}
-
-/* ━━━━ BUTTONS ━━━━ */
-.btn{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:9px 18px;border-radius:var(--rs);border:none;
-  font-family:var(--font);font-size:13px;font-weight:600;
-  cursor:pointer;transition:var(--tr);white-space:nowrap;
-  position:relative;overflow:hidden
-}
-.btn::before{
-  content:'';position:absolute;inset:0;
-  background:rgba(255,255,255,.1);
-  opacity:0;transition:var(--tr)
-}
-.btn:hover{transform:translateY(-1px)}
-.btn:hover::before{opacity:1}
-.btn:active{transform:translateY(0)}
-.btn-sky{background:var(--a);color:#000;font-weight:700}
-.btn-sky:hover{box-shadow:0 6px 20px rgba(56,189,248,.4)}
-.btn-ghost{background:var(--sur2);border:1px solid var(--border);color:var(--text)}
-.btn-ghost:hover{border-color:var(--bh)}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-danger:hover{box-shadow:0 6px 20px rgba(248,113,113,.35)}
-.btn-green{background:var(--a3);color:#000;font-weight:700}
-.btn-green:hover{box-shadow:0 6px 20px rgba(52,211,153,.35)}
-.btn-sm{padding:6px 12px;font-size:12px}
-
-/* ━━━━ FORM PANEL ━━━━ */
-.fp{
-  background:var(--sur);border:1px solid var(--border);border-radius:var(--r);
-  margin-bottom:22px;overflow:hidden;display:none
-}
-.fp.on{display:block;animation:fpSlide .3s cubic-bezier(.16,1,.3,1)}
-@keyframes fpSlide{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-.fp-hd{
-  padding:17px 24px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  background:linear-gradient(90deg,var(--sur2),var(--sur))
-}
-.fp-hd h4{font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px}
-.fp-body{padding:26px}
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.fg-full{grid-column:1/-1}
-.fgrp{display:flex;flex-direction:column;gap:7px}
-.fgrp label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
-.fgrp input,.fgrp select,.fgrp textarea{
-  background:var(--sur2);border:1px solid var(--border);
-  border-radius:var(--rs);padding:11px 14px;
-  font-family:var(--font);font-size:13px;color:var(--text);
-  outline:none;transition:var(--tr)
-}
-.fgrp input::placeholder,.fgrp textarea::placeholder{color:var(--dim)}
-.fgrp input:focus,.fgrp select:focus,.fgrp textarea:focus{
-  border-color:var(--a);box-shadow:0 0 0 3px var(--ag)
-}
-.fgrp select option{background:var(--sur2);color:var(--text)}
-.fgrp textarea{min-height:88px;resize:vertical}
-.fa{
-  display:flex;justify-content:flex-end;gap:12px;
-  margin-top:22px;padding-top:18px;border-top:1px solid var(--border)
-}
-
-/* ━━━━ TABLE ━━━━ */
-.tw{
-  background:var(--sur);border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden
-}
-.tc{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 20px;border-bottom:1px solid var(--border);
-  background:var(--sur2);flex-wrap:wrap;gap:10px
-}
-.tc-count{font-size:12px;color:var(--muted);font-family:var(--mono)}
-.tc select{
-  background:var(--sur);border:1px solid var(--border);
-  border-radius:6px;padding:7px 12px;
-  font-family:var(--font);font-size:12px;color:var(--text);outline:none;transition:var(--tr)
-}
-.tc select:focus{border-color:var(--a)}
-
-table{width:100%;border-collapse:collapse}
-thead{background:var(--sur2)}
-th{
-  padding:12px 18px;text-align:left;
-  font-size:10px;font-weight:700;color:var(--muted);
-  text-transform:uppercase;letter-spacing:1px;
-  border-bottom:1px solid var(--border)
-}
-td{padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.035);font-size:13px;vertical-align:middle}
-tr.dr{cursor:pointer;transition:background .15s}
-tr.dr:hover td{background:rgba(56,189,248,.03)}
-tr.det td{padding:0;background:var(--sur2)}
-tr.det{display:none}
-tr.det.on{display:table-row;animation:detIn .25s ease}
-@keyframes detIn{from{opacity:0}to{opacity:1}}
-
-.det-in{
-  padding:20px 18px;display:grid;
-  grid-template-columns:1fr 1fr;gap:15px;
-  border-top:1px solid var(--border)
-}
-.df label{
-  font-size:10px;font-weight:700;color:var(--dim);
-  text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px
-}
-.df p{font-size:13px;color:var(--text)}
-.dd{
-  grid-column:1/-1;background:var(--sur3);
-  border:1px solid var(--border);border-radius:9px;padding:15px
-}
-.dd label{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px}
-.dd p{font-size:13px;color:var(--text);line-height:1.75}
-
-.row-age-w td{background:rgba(251,191,36,.03)!important}
-.row-age-c td{background:rgba(248,113,113,.04)!important}
-
-.it-title{font-weight:600;color:var(--text);margin-bottom:3px}
-.it-meta{font-size:11px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap;margin-top:3px}
-.it-meta span{display:flex;align-items:center;gap:4px}
-
-.ra{display:flex;gap:6px}
-
-/* EMPTY */
-.empty{
-  text-align:center;padding:70px 20px;color:var(--muted)
-}
-.empty i{
-  font-size:52px;color:var(--dim);margin-bottom:18px;display:block;
-  animation:emptyFloat 3s ease-in-out infinite
-}
-@keyframes emptyFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.empty h4{font-size:19px;font-weight:700;color:var(--text);margin-bottom:8px}
-.empty p{font-size:13px}
-
-/* ━━━━ BADGES ━━━━ */
-.badge{
-  display:inline-flex;align-items:center;
-  padding:4px 10px;border-radius:20px;
-  font-size:10px;font-weight:700;letter-spacing:.5px;white-space:nowrap
-}
-.b-pending{background:rgba(251,191,36,.12);color:#fde68a;border:1px solid rgba(251,191,36,.2)}
-.b-inprogress{background:rgba(56,189,248,.12);color:#7dd3fc;border:1px solid rgba(56,189,248,.2)}
-.b-resolved,.b-completed{background:rgba(52,211,153,.12);color:#6ee7b7;border:1px solid rgba(52,211,153,.2)}
-.b-onhold{background:rgba(107,114,128,.12);color:#9ca3af;border:1px solid rgba(107,114,128,.2)}
-.b-high{background:rgba(248,113,113,.12);color:#fca5a5;border:1px solid rgba(248,113,113,.2)}
-.b-medium{background:rgba(251,191,36,.12);color:#fde68a;border:1px solid rgba(251,191,36,.2)}
-.b-low{background:rgba(56,189,248,.12);color:#7dd3fc;border:1px solid rgba(56,189,248,.2)}
-
-/* ━━━━ MODAL ━━━━ */
-.mo{
-  position:fixed;inset:0;background:rgba(0,0,0,.75);
-  z-index:9000;display:none;align-items:center;justify-content:center;
-  backdrop-filter:blur(6px)
-}
-.mo.on{display:flex}
-.mo-box{
-  background:var(--sur);border:1px solid var(--border);border-radius:18px;
-  padding:34px;width:92%;max-width:450px;
-  box-shadow:var(--shl);animation:moIn .25s cubic-bezier(.16,1,.3,1)
-}
-@keyframes moIn{from{opacity:0;transform:scale(.94) translateY(-10px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.mo-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.mo-hd h4{font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px}
-.mo-x{background:none;border:none;color:var(--muted);cursor:pointer;font-size:17px;padding:4px;transition:var(--tr)}
-.mo-x:hover{color:var(--text)}
-.mo-body p{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:14px}
-.mo-ft{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
-
-/* TOAST */
-#toast{
-  position:fixed;bottom:26px;right:26px;z-index:9999;
-  display:flex;flex-direction:column;gap:9px;pointer-events:none
-}
-.ti{
-  background:var(--sur);border:1px solid var(--border);
-  border-radius:11px;padding:13px 18px;
-  display:flex;align-items:center;gap:10px;
-  font-size:13px;box-shadow:var(--sh);min-width:260px;
-  animation:tiIn .3s cubic-bezier(.16,1,.3,1);pointer-events:all
-}
-@keyframes tiIn{from{opacity:0;transform:translateX(24px) scale(.96)}to{opacity:1;transform:translateX(0) scale(1)}}
-.ti.ok{border-left:3px solid var(--a3)}
-.ti.er{border-left:3px solid var(--danger)}
-.ti.in{border-left:3px solid var(--a)}
-.ti i{font-size:15px}
-.ti.ok i{color:var(--a3)}
-.ti.er i{color:var(--danger)}
-.ti.in i{color:var(--a)}
-
-/* LOADER */
-.spin{animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* SCROLLBAR */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--sur3);border-radius:3px}
-
-/* ━━━━ RESPONSIVE ━━━━ */
-@media(max-width:900px){
-  .mc-grid,.ov-strip,.sb-row{grid-template-columns:1fr}
-  .ct{padding:16px}
-  .tb{padding:0 16px}
-  .fg{grid-template-columns:1fr}
-  .fg-full{grid-column:1}
-  .det-in{grid-template-columns:1fr}
-  .dd{grid-column:1}
-  .mv-top{flex-direction:column;align-items:flex-start}
-}
-@media(max-width:600px){
-  .tb-clock,.tb-sync{display:none}
-  .mv-right{width:100%;overflow-x:auto}
-}
-</style>
-</head>
-<body>
-
-<!-- ═══ LOGIN ═══ -->
-<div id="loginScreen">
-  <div class="lc">
-    <div class="lc-logo">
-      <div class="lc-logo-icon"><i class="fas fa-server"></i></div>
-      <div>
-        <div class="lc-name">IT <span>Nexus</span></div>
-        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px">TICKET MANAGEMENT SYSTEM</div>
-      </div>
-    </div>
-    <p class="lc-sub">Secure access to your operations dashboard. Enter your password to continue.</p>
-    <div class="lc-err" id="lErr"><i class="fas fa-circle-exclamation"></i><span id="lErrMsg">Incorrect password.</span></div>
-    <div class="lf">
-      <i class="fas fa-lock fi"></i>
-      <input type="password" id="lPw" placeholder="Enter your password" autocomplete="current-password">
-      <button class="tp" onclick="togglePw()"><i class="fas fa-eye" id="eyeI"></i></button>
-    </div>
-    <button class="lbtn" id="lBtn" onclick="doLogin()">
-      <i class="fas fa-arrow-right-to-bracket"></i> Sign In
-    </button>
-    <p class="lc-note"><i class="fas fa-shield-halved"></i> &nbsp;SHA-256 encrypted · Default password: <strong>jobin</strong></p>
-  </div>
-</div>
-
-<!-- ═══ APP ═══ -->
-<div id="app">
-  <!-- TOPBAR -->
-  <div class="tb">
-    <div class="tb-brand">
-      <div class="tb-icon"><i class="fas fa-server"></i></div>
-      <div class="tb-name">IT <span>Nexus</span></div>
-    </div>
-    <div class="tb-r">
-      <div class="tb-clock" id="tbClock">--:--</div>
-      <div class="tb-sync"><span class="tb-dot"></span>Saved Locally</div>
-      <div class="tb-menu">
-        <button class="tb-btn" onclick="exportAllJSON()"><i class="fas fa-file-export"></i> Backup</button>
-        <button class="tb-btn" onclick="triggerImport()"><i class="fas fa-file-import"></i> Restore</button>
-        <button class="tb-btn danger" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
-      </div>
-    </div>
-    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
-  </div>
-
-  <div class="ct">
-    <!-- NOTICE -->
-    <div class="nb">
-      <div class="nb-left">
-        <i class="fas fa-circle-info"></i>
-        <span>Data saves to <strong>this browser</strong>. Use <strong>Backup</strong> to export & <strong>Restore</strong> to load on other devices.</span>
-      </div>
-      <div class="nb-right">
-        <button class="nb-btn" onclick="exportAllJSON()"><i class="fas fa-download"></i> Backup Now</button>
-      </div>
-    </div>
-
-    <!-- DASHBOARD -->
-    <div id="dashView">
-      <div class="pg-head">
-        <h2>Operations <span class="hi">Dashboard</span></h2>
-        <p>Monitor and manage all IT tickets, issues, and implementations.</p>
-      </div>
-
-      <div class="ov-strip">
-        <div class="ov-card">
-          <div class="ov-ico am"><i class="fas fa-hourglass-half"></i></div>
-          <div><div class="ov-num" id="ovP">0</div><div class="ov-lbl">Total Pending</div></div>
-        </div>
-        <div class="ov-card">
-          <div class="ov-ico bl"><i class="fas fa-gears"></i></div>
-          <div><div class="ov-num" id="ovI">0</div><div class="ov-lbl">In Progress</div></div>
-        </div>
-        <div class="ov-card">
-          <div class="ov-ico gr"><i class="fas fa-circle-check"></i></div>
-          <div><div class="ov-num" id="ovR">0</div><div class="ov-lbl">Resolved / Done</div></div>
-        </div>
-      </div>
-
-      <div class="mc-grid">
-        <div class="mc sky" onclick="openMod('tickets')">
-          <div class="mc-hd">
-            <div class="mc-ico sky"><i class="fas fa-ticket"></i></div>
-            <i class="fas fa-arrow-up-right mc-arrow"></i>
-          </div>
-          <h3>Support Tickets</h3>
-          <p>Track IT support tickets with priority, assignment, and resolution status.</p>
-          <div class="mc-stats">
-            <div class="ms"><div class="ms-val sky" id="mt-p">0</div><div class="ms-lbl">Pending</div></div>
-            <div class="ms"><div class="ms-val sky" id="mt-i">0</div><div class="ms-lbl">In Progress</div></div>
-            <div class="ms"><div class="ms-val sky" id="mt-r">0</div><div class="ms-lbl">Resolved</div></div>
-          </div>
-        </div>
-        <div class="mc pink" onclick="openMod('issues')">
-          <div class="mc-hd">
-            <div class="mc-ico pink"><i class="fas fa-triangle-exclamation"></i></div>
-            <i class="fas fa-arrow-up-right mc-arrow"></i>
-          </div>
-          <h3>Pending Issues</h3>
-          <p>Focus on active issues. Export or print for team follow-up meetings.</p>
-          <div class="mc-stats">
-            <div class="ms"><div class="ms-val pink" id="mi-p">0</div><div class="ms-lbl">Pending</div></div>
-            <div class="ms"><div class="ms-val pink" id="mi-i">0</div><div class="ms-lbl">In Progress</div></div>
-            <div class="ms"><div class="ms-val pink" id="mi-r">0</div><div class="ms-lbl">Resolved</div></div>
-          </div>
-        </div>
-        <div class="mc em" onclick="openMod('impls')">
-          <div class="mc-hd">
-            <div class="mc-ico em"><i class="fas fa-rocket"></i></div>
-            <i class="fas fa-arrow-up-right mc-arrow"></i>
-          </div>
-          <h3>Implementations</h3>
-          <p>Track feature requests and system implementations from start to delivery.</p>
-          <div class="mc-stats">
-            <div class="ms"><div class="ms-val em" id="mm-p">0</div><div class="ms-lbl">Pending</div></div>
-            <div class="ms"><div class="ms-val em" id="mm-i">0</div><div class="ms-lbl">In Progress</div></div>
-            <div class="ms"><div class="ms-val em" id="mm-c">0</div><div class="ms-lbl">Completed</div></div>
-          </div>
-        </div>
-      </div>
-    </div><!-- /dashView -->
-
-    <!-- MODULE VIEW -->
-    <div id="modView">
-      <div class="mv-top">
-        <div class="mv-left">
-          <button class="back-btn" onclick="closeMod()"><i class="fas fa-arrow-left"></i> Dashboard</button>
-          <div style="display:flex;align-items:center;gap:12px">
-            <div class="mv-title-ico" id="mvIco"></div>
-            <div class="mv-title">
-              <h3 id="mvTitle"></h3>
-              <p id="mvSub"></p>
-            </div>
-          </div>
-        </div>
-        <div class="mv-right" id="mvActs"></div>
-      </div>
-
-      <div class="sb-row" id="sbRow"></div>
-      <div class="al" id="modAl"><div style="display:flex;align-items:center;gap:9px"><i class="fas fa-clock"></i><span id="alTxt"></span></div><button class="btn btn-sm btn-ghost" onclick="gotoOld()">View</button></div>
-
-      <!-- FORM -->
-      <div class="fp" id="fp">
-        <div class="fp-hd">
-          <h4 id="fpTitle"><i class="fas fa-plus"></i> Add</h4>
-          <button class="btn btn-ghost btn-sm" onclick="closeFp()"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="fp-body" id="fpBody"></div>
-      </div>
-
-      <!-- TABLE -->
-      <div class="tw">
-        <div class="tc">
-          <div class="tc-count" id="tcCnt">0 items</div>
-          <select id="sortSel" onchange="renderTbl()">
-            <option value="status">Sort: Status (Pending First)</option>
-            <option value="priority">Sort: Priority (High First)</option>
-            <option value="date">Sort: Date (Newest)</option>
-          </select>
-        </div>
-        <div id="tblInner"></div>
-      </div>
-    </div><!-- /modView -->
-  </div>
-</div><!-- /app -->
-
-<!-- CLEAR MODAL -->
-<div class="mo" id="clearMo">
-  <div class="mo-box">
-    <div class="mo-hd">
-      <h4><i class="fas fa-trash-can" style="color:var(--danger)"></i> Clear All Data</h4>
-      <button class="mo-x" onclick="closeClearMo()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="mo-body">
-      <p>This permanently deletes <strong>all tickets, issues, and implementations</strong>. This cannot be undone.</p>
-      <div class="fgrp">
-        <label>Confirm with Password</label>
-        <input type="password" id="clearPw" placeholder="Enter your password">
-      </div>
-      <div class="lc-err" id="clearErr" style="margin-top:10px"><i class="fas fa-circle-exclamation"></i> Incorrect password</div>
-    </div>
-    <div class="mo-ft">
-      <button class="btn btn-ghost" onclick="closeClearMo()">Cancel</button>
-      <button class="btn btn-danger" onclick="confirmClear()"><i class="fas fa-trash-can"></i> Clear All Data</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast"></div>
-
-<script>
-// ══════════════════════════════════════════════
-// SHA-256
-// ══════════════════════════════════════════════
-async function sha256(msg){
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(msg));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-
-// ══════════════════════════════════════════════
-// CONFIG — SHA-256 hash of "jobin"
-// ══════════════════════════════════════════════
-const PW_HASH_DEFAULT = '8a4ed630c5556ab78c847b7b3a5dd6761a372b22ddff9fb4d5d5696262162c8c';
-const LS = {
-  TICKETS:'itnexus_v3_tickets',
-  ISSUES:'itnexus_v3_issues',
-  IMPLS:'itnexus_v3_impls',
-  SESSION:'itnexus_v3_sess',
-  PWHASH:'itnexus_v3_pwhash'
-};
-
-// ══════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════
-let MOD=null, EDIT=null;
-let DB={tickets:[],issues:[],impls:[]};
-
-// ══════════════════════════════════════════════
-// PERSIST — localStorage (works everywhere)
-// ══════════════════════════════════════════════
-function dbLoad(){
-  try{DB.tickets=JSON.parse(localStorage.getItem(LS.TICKETS)||'[]');}catch(e){DB.tickets=[];}
-  try{DB.issues=JSON.parse(localStorage.getItem(LS.ISSUES)||'[]');}catch(e){DB.issues=[];}
-  try{DB.impls=JSON.parse(localStorage.getItem(LS.IMPLS)||'[]');}catch(e){DB.impls=[];}
-}
-function dbSave(){
-  localStorage.setItem(LS.TICKETS,JSON.stringify(DB.tickets));
-  localStorage.setItem(LS.ISSUES,JSON.stringify(DB.issues));
-  localStorage.setItem(LS.IMPLS,JSON.stringify(DB.impls));
-}
-
-// JSON Backup/Restore
-function exportAllJSON(){
-  const data={tickets:DB.tickets,issues:DB.issues,impls:DB.impls,savedAt:new Date().toISOString(),version:3};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`itnexus-backup-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  toast('Backup file downloaded','ok');
-}
-function triggerImport(){document.getElementById('importFile').click();}
-function importJSON(e){
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=ev=>{
-    try{
-      const d=JSON.parse(ev.target.result);
-      if(d.version!==3&&!d.tickets&&!d.issues&&!d.impls){toast('Invalid backup file','er');return;}
-      DB.tickets=d.tickets||[];DB.issues=d.issues||[];DB.impls=d.impls||[];
-      dbSave();refreshDash();
-      if(MOD){renderTbl();updateSB();}
-      toast(`Restored: ${DB.tickets.length+DB.issues.length+DB.impls.length} items`,'ok');
-    }catch{toast('Could not read backup file','er');}
-  };
-  r.readAsText(f);
-  e.target.value='';
-}
-
-// ══════════════════════════════════════════════
-// AUTH
-// ══════════════════════════════════════════════
-function togglePw(){
-  const i=document.getElementById('lPw'),ic=document.getElementById('eyeI');
-  i.type=i.type==='password'?'text':'password';
-  ic.className=i.type==='password'?'fas fa-eye':'fas fa-eye-slash';
-}
-async function doLogin(){
-  const pw=document.getElementById('lPw').value;if(!pw)return;
-  const btn=document.getElementById('lBtn');
-  btn.innerHTML='<i class="fas fa-spinner spin"></i> Verifying…';btn.disabled=true;
-  const h=await sha256(pw);
-  const stored=localStorage.getItem(LS.PWHASH)||PW_HASH_DEFAULT;
-  if(h===stored){
-    sessionStorage.setItem(LS.SESSION,'1');
-    const ls=document.getElementById('loginScreen');
-    ls.classList.add('fadeout');
-    setTimeout(()=>{ls.style.display='none';startApp();},380);
-  } else {
-    const e=document.getElementById('lErr');
-    document.getElementById('lErrMsg').textContent='Incorrect password. Please try again.';
-    e.classList.add('show');
-    btn.innerHTML='<i class="fas fa-arrow-right-to-bracket"></i> Sign In';btn.disabled=false;
-    setTimeout(()=>e.classList.remove('show'),4000);
-  }
-}
-function doLogout(){sessionStorage.removeItem(LS.SESSION);location.reload();}
-document.getElementById('lPw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-
-// ══════════════════════════════════════════════
-// BOOT
-// ══════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded',()=>{
-  if(sessionStorage.getItem(LS.SESSION)){
-    document.getElementById('loginScreen').style.display='none';
-    startApp();
-  }
-  setInterval(()=>{
-    const n=new Date();
-    const el=document.getElementById('tbClock');
-    if(el)el.textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
-  },1000);
-});
-
-function startApp(){
-  dbLoad();
-  const app=document.getElementById('app');
-  app.classList.add('on');
-  refreshDash();
-  toast('Welcome to IT Nexus','in');
-}
-
-// ══════════════════════════════════════════════
-// DASHBOARD
-// ══════════════════════════════════════════════
-function refreshDash(){
-  const all=[...DB.tickets,...DB.issues,...DB.impls];
-  s('ovP',all.filter(x=>x.status==='Pending').length);
-  s('ovI',all.filter(x=>x.status==='In Progress').length);
-  s('ovR',all.filter(x=>x.status==='Resolved'||x.status==='Completed').length);
-
-  const cnt=(arr,st)=>arr.filter(x=>x.status===st).length;
-  s('mt-p',cnt(DB.tickets,'Pending'));s('mt-i',cnt(DB.tickets,'In Progress'));s('mt-r',cnt(DB.tickets,'Resolved'));
-  s('mi-p',cnt(DB.issues,'Pending'));s('mi-i',cnt(DB.issues,'In Progress'));s('mi-r',cnt(DB.issues,'Resolved'));
-  s('mm-p',cnt(DB.impls,'Pending'));s('mm-i',cnt(DB.impls,'In Progress'));s('mm-c',cnt(DB.impls,'Completed'));
-}
-
-// ══════════════════════════════════════════════
-// MODULE CONFIG
-// ══════════════════════════════════════════════
-const CFG={
-  tickets:{
-    label:'Support Tickets',sub:'IT support ticket tracking',
-    icon:'<i class="fas fa-ticket"></i>',icoClass:'mc-ico sky',
-    data:()=>DB.tickets,set:d=>{DB.tickets=d;},key:LS.TICKETS,
-    done:'Resolved',
-    form:item=>`<div class="fg">
-      <div class="fgrp"><label>Date</label><input type="date" id="fd" value="${item?.date||tod()}" required></div>
-      <div class="fgrp"><label>Ticket #</label><input type="text" id="fn" value="${x(item?.ticketNumber||'')}" placeholder="TKT-2025-001" required></div>
-      <div class="fgrp fg-full"><label>Issue Title</label><input type="text" id="ft" value="${x(item?.issue||'')}" placeholder="Brief issue description" required></div>
-      <div class="fgrp fg-full"><label>Description</label><textarea id="fdesc" placeholder="Full details…">${x(item?.description||'')}</textarea></div>
-      <div class="fgrp"><label>Created By</label><input type="text" id="fb" value="${x(item?.createdBy||'')}" placeholder="Technician name" required></div>
-      <div class="fgrp"><label>Assigned To</label><input type="text" id="fa" value="${x(item?.assignedTo||'')}" placeholder="Technician name" required></div>
-      <div class="fgrp"><label>Priority</label><select id="fp2">${o(['High','Medium','Low'],item?.priority)}</select></div>
-      <div class="fgrp"><label>Status</label><select id="fs">${o(['Pending','In Progress','Resolved'],item?.status)}</select></div>
-      <div class="fgrp"><label>Category</label><select id="fc">${o(['Hardware','Software','Network','Security','Other'],item?.category)}</select></div>
-    </div>`,
-    collect:id=>({id,date:v('fd'),ticketNumber:v('fn'),issue:v('ft'),description:v('fdesc'),createdBy:v('fb'),assignedTo:v('fa'),priority:v('fp2'),status:v('fs'),category:v('fc'),updated:new Date().toISOString()}),
-    thead:`<tr><th>Date</th><th>Issue</th><th>Ticket #</th><th>Priority</th><th>Status</th><th>Actions</th></tr>`,
-    trow:item=>`<td>${fd(item.date)}</td>
-      <td><div class="it-title">${x(item.issue)}</div>
-      <div class="it-meta"><span><i class="fas fa-user"></i>${x(item.createdBy)}</span><span><i class="fas fa-user-check"></i>${x(item.assignedTo)}</span><span><i class="fas fa-tag"></i>${x(item.category)}</span></div></td>
-      <td><span style="font-family:var(--mono);font-size:12px">${x(item.ticketNumber)}</span></td>
-      <td>${pB(item.priority)}</td><td>${sB(item.status)}</td>`,
-    detail:item=>`
-      <div class="df"><label>Created By</label><p>${x(item.createdBy)}</p></div>
-      <div class="df"><label>Assigned To</label><p>${x(item.assignedTo)}</p></div>
-      <div class="df"><label>Category</label><p>${x(item.category)}</p></div>
-      <div class="df"><label>Last Updated</label><p>${fdt(item.updated)}</p></div>
-      <div class="dd"><label>Description</label><p>${x(item.description)}</p></div>`
-  },
-  issues:{
-    label:'Pending Issues',sub:'Active issue tracking & follow-up',
-    icon:'<i class="fas fa-triangle-exclamation"></i>',icoClass:'mc-ico pink',
-    data:()=>DB.issues,set:d=>{DB.issues=d;},key:LS.ISSUES,
-    done:'Resolved',
-    form:item=>`<div class="fg">
-      <div class="fgrp"><label>Date</label><input type="date" id="fd" value="${item?.date||tod()}" required></div>
-      <div class="fgrp"><label>Ticket #</label><input type="text" id="fn" value="${x(item?.ticketNumber||'')}" placeholder="TKT-2025-001" required></div>
-      <div class="fgrp fg-full"><label>Issue Title</label><input type="text" id="ft" value="${x(item?.issue||'')}" placeholder="Brief issue description" required></div>
-      <div class="fgrp fg-full"><label>Description</label><textarea id="fdesc" placeholder="Full details…">${x(item?.description||'')}</textarea></div>
-      <div class="fgrp"><label>Reported By</label><input type="text" id="fb" value="${x(item?.reportedBy||'')}" placeholder="Reporter name" required></div>
-      <div class="fgrp"><label>Assigned By</label><input type="text" id="fa" value="${x(item?.assignedBy||'')}" placeholder="Assigned by" required></div>
-      <div class="fgrp"><label>Priority</label><select id="fp2">${o(['High','Medium','Low'],item?.priority)}</select></div>
-      <div class="fgrp"><label>Status</label><select id="fs">${o(['Pending','In Progress','Resolved'],item?.status)}</select></div>
-      <div class="fgrp"><label>Category</label><select id="fc">${o(['Critical','High Priority','Medium Priority','Low Priority'],item?.category)}</select></div>
-    </div>`,
-    collect:id=>({id,date:v('fd'),ticketNumber:v('fn'),issue:v('ft'),description:v('fdesc'),reportedBy:v('fb'),assignedBy:v('fa'),priority:v('fp2'),status:v('fs'),category:v('fc'),updated:new Date().toISOString()}),
-    thead:`<tr><th>Date</th><th>Issue</th><th>Reported By</th><th>Priority</th><th>Status</th><th>Actions</th></tr>`,
-    trow:item=>`<td>${fd(item.date)}</td>
-      <td><div class="it-title">${x(item.issue)}</div>
-      <div class="it-meta"><span><i class="fas fa-tag"></i>${x(item.category)}</span><span><i class="fas fa-hashtag"></i>${x(item.ticketNumber)}</span></div></td>
-      <td>${x(item.reportedBy)}</td>
-      <td>${pB(item.priority)}</td><td>${sB(item.status)}</td>`,
-    detail:item=>`
-      <div class="df"><label>Reported By</label><p>${x(item.reportedBy)}</p></div>
-      <div class="df"><label>Assigned By</label><p>${x(item.assignedBy)}</p></div>
-      <div class="df"><label>Ticket #</label><p>${x(item.ticketNumber)}</p></div>
-      <div class="df"><label>Last Updated</label><p>${fdt(item.updated)}</p></div>
-      <div class="dd"><label>Description</label><p>${x(item.description)}</p></div>`
-  },
-  impls:{
-    label:'Implementations',sub:'Feature requests & system changes',
-    icon:'<i class="fas fa-rocket"></i>',icoClass:'mc-ico em',
-    data:()=>DB.impls,set:d=>{DB.impls=d;},key:LS.IMPLS,
-    done:'Completed',
-    form:item=>`<div class="fg">
-      <div class="fgrp"><label>Request Date</label><input type="date" id="fd" value="${item?.date||tod()}" required></div>
-      <div class="fgrp"><label>Request #</label><input type="text" id="fn" value="${x(item?.number||'')}" placeholder="IMP-2025-001" required></div>
-      <div class="fgrp fg-full"><label>Title</label><input type="text" id="ft" value="${x(item?.title||'')}" placeholder="Implementation title" required></div>
-      <div class="fgrp fg-full"><label>Description</label><textarea id="fdesc" placeholder="Full details…">${x(item?.description||'')}</textarea></div>
-      <div class="fgrp"><label>Requested By</label><input type="text" id="fb" value="${x(item?.requestedBy||'')}" placeholder="Person / dept" required></div>
-      <div class="fgrp"><label>Assigned To</label><input type="text" id="fa" value="${x(item?.assignedTo||'')}" placeholder="Team / person" required></div>
-      <div class="fgrp"><label>Priority</label><select id="fp2">${o(['High','Medium','Low'],item?.priority)}</select></div>
-      <div class="fgrp"><label>Status</label><select id="fs">${o(['Pending','In Progress','Completed','On Hold'],item?.status)}</select></div>
-      <div class="fgrp"><label>Category</label><select id="fc">${o(['New Feature','Enhancement','Integration','Upgrade','Other'],item?.category)}</select></div>
-    </div>`,
-    collect:id=>({id,date:v('fd'),number:v('fn'),title:v('ft'),description:v('fdesc'),requestedBy:v('fb'),assignedTo:v('fa'),priority:v('fp2'),status:v('fs'),category:v('fc'),updated:new Date().toISOString()}),
-    thead:`<tr><th>Date</th><th>Title</th><th>Requested By</th><th>Priority</th><th>Status</th><th>Actions</th></tr>`,
-    trow:item=>`<td>${fd(item.date)}</td>
-      <td><div class="it-title">${x(item.title)}</div>
-      <div class="it-meta"><span><i class="fas fa-tag"></i>${x(item.category)}</span><span><i class="fas fa-hashtag"></i>${x(item.number)}</span><span><i class="fas fa-user-check"></i>${x(item.assignedTo)}</span></div></td>
-      <td>${x(item.requestedBy)}</td>
-      <td>${pB(item.priority)}</td><td>${sB(item.status)}</td>`,
-    detail:item=>`
-      <div class="df"><label>Requested By</label><p>${x(item.requestedBy)}</p></div>
-      <div class="df"><label>Assigned To</label><p>${x(item.assignedTo)}</p></div>
-      <div class="df"><label>Request #</label><p>${x(item.number)}</p></div>
-      <div class="df"><label>Last Updated</label><p>${fdt(item.updated)}</p></div>
-      <div class="dd"><label>Description</label><p>${x(item.description)}</p></div>`
-  }
-};
-
-// ══════════════════════════════════════════════
-// MODULE OPEN/CLOSE
-// ══════════════════════════════════════════════
-function openMod(mod){
-  MOD=mod;EDIT=null;
-  const c=CFG[mod];
-  document.getElementById('dashView').style.display='none';
-  const mv=document.getElementById('modView');mv.classList.add('on');
-
-  const ico=document.getElementById('mvIco');
-  ico.className=c.icoClass;
-  ico.style.cssText='width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;';
-  ico.innerHTML=c.icon;
-  s('mvTitle',c.label);s('mvSub',c.sub);
-
-  document.getElementById('mvActs').innerHTML=`
-    <button class="btn btn-ghost" onclick="exportCSV()"><i class="fas fa-download"></i> Export CSV</button>
-    <button class="btn btn-ghost" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
-    <button class="btn btn-ghost" onclick="openClearMo()"><i class="fas fa-trash"></i> Clear</button>
-    <button class="btn btn-sky" onclick="openFp()"><i class="fas fa-plus"></i> Add New</button>`;
-
-  closeFp();renderTbl();updateSB();
-}
-function closeMod(){
-  MOD=null;EDIT=null;
-  document.getElementById('dashView').style.display='block';
-  document.getElementById('modView').classList.remove('on');
-  refreshDash();
-}
-
-// ══════════════════════════════════════════════
-// STATS + ALERT
-// ══════════════════════════════════════════════
-function updateSB(){
-  if(!MOD)return;
-  const c=CFG[MOD],d=c.data();
-  const p=d.filter(x=>x.status==='Pending').length;
-  const i=d.filter(x=>x.status==='In Progress').length;
-  const r=d.filter(x=>x.status===c.done).length;
-  document.getElementById('sbRow').innerHTML=`
-    <div class="sb"><div class="sb-ico" style="background:rgba(251,191,36,.1);color:var(--warn)"><i class="fas fa-hourglass-half"></i></div><div><div class="sb-val">${p}</div><div class="sb-lbl">Pending</div></div></div>
-    <div class="sb"><div class="sb-ico" style="background:rgba(56,189,248,.1);color:var(--a)"><i class="fas fa-gears"></i></div><div><div class="sb-val">${i}</div><div class="sb-lbl">In Progress</div></div></div>
-    <div class="sb"><div class="sb-ico" style="background:rgba(52,211,153,.1);color:var(--a3)"><i class="fas fa-circle-check"></i></div><div><div class="sb-val">${r}</div><div class="sb-lbl">${c.done}</div></div></div>`;
-
-  const old=d.filter(z=>{if(z.status===c.done||z.status==='Completed')return false;return dd(z.date)>5;});
-  const al=document.getElementById('modAl');
-  if(old.length){
-    document.getElementById('alTxt').textContent=`${old.length} item${old.length>1?'s':''} pending for more than 5 days`;
-    al.className='al al-w on';
-  } else {al.className='al';}
-}
-
-// ══════════════════════════════════════════════
-// TABLE
-// ══════════════════════════════════════════════
-function renderTbl(){
-  if(!MOD)return;
-  const c=CFG[MOD];
-  let d=[...c.data()];
-  const sort=document.getElementById('sortSel').value;
-  const so={'Pending':1,'In Progress':2,'On Hold':3,'Resolved':4,'Completed':4};
-  const po={'High':1,'Medium':2,'Low':3};
-  if(sort==='status') d.sort((a,b)=>(so[a.status]||9)-(so[b.status]||9)||(po[a.priority]||9)-(po[b.priority]||9)||new Date(b.date)-new Date(a.date));
-  else if(sort==='priority') d.sort((a,b)=>(po[a.priority]||9)-(po[b.priority]||9)||(so[a.status]||9)-(so[b.status]||9)||new Date(b.date)-new Date(a.date));
-  else d.sort((a,b)=>new Date(b.date)-new Date(a.date));
-
-  s('tcCnt',`${d.length} item${d.length!==1?'s':''}`);
-
-  if(!d.length){
-    document.getElementById('tblInner').innerHTML=`<div class="empty"><i class="fas fa-inbox"></i><h4>Nothing here yet</h4><p>Click <strong>Add New</strong> to get started.</p></div>`;
-    return;
-  }
-
-  let h=`<table><thead>${c.thead}</thead><tbody>`;
-  d.forEach(item=>{
-    const age=dd(item.date);
-    const done=item.status===c.done||item.status==='Completed';
-    let rc='dr';
-    if(!done&&age>10)rc+=' row-age-c';
-    else if(!done&&age>5)rc+=' row-age-w';
-    const id=item.id;
-    h+=`<tr class="${rc}" onclick="togDet('${id}')">
-      ${c.trow(item)}
-      <td onclick="event.stopPropagation()"><div class="ra">
-        <button class="btn btn-ghost btn-sm" onclick="editItem('${id}')"><i class="fas fa-pen"></i></button>
-        <button class="btn btn-danger btn-sm" onclick="delItem('${id}')"><i class="fas fa-trash"></i></button>
-      </div></td>
-    </tr>
-    <tr class="det" id="det-${id}"><td colspan="6"><div class="det-in">${c.detail(item)}</div></td></tr>`;
-  });
-  h+='</tbody></table>';
-  document.getElementById('tblInner').innerHTML=h;
-}
-
-function togDet(id){
-  const el=document.getElementById('det-'+id);if(!el)return;
-  const was=el.classList.contains('on');
-  document.querySelectorAll('.det.on').forEach(r=>r.classList.remove('on'));
-  if(!was)el.classList.add('on');
-}
-function gotoOld(){
-  const el=document.querySelector('.row-age-w,.row-age-c');
-  if(el)el.scrollIntoView({behavior:'smooth',block:'center'});
-}
-
-// ══════════════════════════════════════════════
-// FORM
-// ══════════════════════════════════════════════
-function openFp(item){
-  if(!MOD)return;
-  const c=CFG[MOD];
-  const label=item?`<i class="fas fa-pen"></i> Edit`:`<i class="fas fa-plus"></i> Add New`;
-  s('fpTitle','');document.getElementById('fpTitle').innerHTML=`${label} — ${c.label}`;
-  document.getElementById('fpBody').innerHTML=c.form(item)+`
-    <div class="fa">
-      <button class="btn btn-ghost" onclick="closeFp()">Cancel</button>
-      <button class="btn btn-green" onclick="saveItem()"><i class="fas fa-save"></i> Save</button>
-    </div>`;
-  const fp=document.getElementById('fp');
-  fp.classList.add('on');
-  fp.scrollIntoView({behavior:'smooth',block:'start'});
-}
-function closeFp(){document.getElementById('fp').classList.remove('on');EDIT=null;}
-function editItem(id){
-  if(!MOD)return;
-  const item=CFG[MOD].data().find(x=>x.id===id);if(!item)return;
-  EDIT=id;openFp(item);
-}
-async function saveItem(){
-  if(!MOD)return;
-  const ftEl=document.getElementById('ft');
-  if(!ftEl||!ftEl.value.trim()){toast('Title is required','er');return;}
-  const c=CFG[MOD];
-  const id=EDIT||Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-  const item=c.collect(id);
-  const d=c.data();
-  if(EDIT){const i=d.findIndex(z=>z.id===EDIT);if(i>=0)d[i]=item;}
-  else d.push(item);
-  c.set(d);
-  localStorage.setItem(c.key,JSON.stringify(d));
-  closeFp();renderTbl();updateSB();refreshDash();
-  toast(EDIT?'Item updated successfully':'Item added successfully','ok');
-  EDIT=null;
-}
-async function delItem(id){
-  if(!MOD)return;
-  if(!confirm('Delete this item permanently?'))return;
-  const c=CFG[MOD];
-  c.set(c.data().filter(z=>z.id!==id));
-  localStorage.setItem(c.key,JSON.stringify(c.data()));
-  renderTbl();updateSB();refreshDash();
-  toast('Item deleted','in');
-}
-
-// ══════════════════════════════════════════════
-// EXPORT CSV
-// ══════════════════════════════════════════════
-function exportCSV(){
-  if(!MOD)return;
-  const c=CFG[MOD];
-  const d=c.data().filter(z=>z.status!==c.done&&z.status!=='Completed');
-  if(!d.length){toast('No pending items to export','in');return;}
-  let csv='';
-  if(MOD==='tickets'){
-    csv='Date,Ticket#,Issue,Description,Priority,Status,Created By,Assigned To,Category\n';
-    d.forEach(z=>csv+=[fd(z.date),z.ticketNumber,`"${(z.issue||'').replace(/"/g,'""')}"`,`"${(z.description||'').replace(/"/g,'""')}"`,z.priority,z.status,z.createdBy,z.assignedTo,z.category].join(',')+'\n');
-  }else if(MOD==='issues'){
-    csv='Date,Ticket#,Issue,Description,Priority,Status,Reported By,Assigned By,Category\n';
-    d.forEach(z=>csv+=[fd(z.date),z.ticketNumber,`"${(z.issue||'').replace(/"/g,'""')}"`,`"${(z.description||'').replace(/"/g,'""')}"`,z.priority,z.status,z.reportedBy,z.assignedBy,z.category].join(',')+'\n');
-  }else{
-    csv='Date,Request#,Title,Description,Priority,Status,Requested By,Assigned To,Category\n';
-    d.forEach(z=>csv+=[fd(z.date),z.number,`"${(z.title||'').replace(/"/g,'""')}"`,`"${(z.description||'').replace(/"/g,'""')}"`,z.priority,z.status,z.requestedBy,z.assignedTo,z.category].join(',')+'\n');
-  }
-  const bl=new Blob([csv],{type:'text/csv'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(bl);
-  a.download=`${MOD}-${new Date().toISOString().slice(0,10)}.csv`;a.click();
-  toast('CSV exported','ok');
-}
-
-// ══════════════════════════════════════════════
-// CLEAR MODAL
-// ══════════════════════════════════════════════
-function openClearMo(){
-  document.getElementById('clearMo').classList.add('on');
-  document.getElementById('clearPw').value='';
-  document.getElementById('clearErr').classList.remove('show');
-}
-function closeClearMo(){document.getElementById('clearMo').classList.remove('on');}
-async function confirmClear(){
-  const pw=document.getElementById('clearPw').value;
-  const h=await sha256(pw);
-  const stored=localStorage.getItem(LS.PWHASH)||PW_HASH_DEFAULT;
-  if(h!==stored){document.getElementById('clearErr').classList.add('show');return;}
-  DB.tickets=[];DB.issues=[];DB.impls=[];
-  dbSave();closeClearMo();
-  if(MOD){renderTbl();updateSB();}
-  refreshDash();
-  toast('All data cleared','in');
-}
-
-// ══════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════
-function s(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
-function v(id){const el=document.getElementById(id);return el?el.value.trim():'';}
-function x(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function tod(){return new Date().toISOString().slice(0,10);}
-function dd(ds){return Math.floor((Date.now()-new Date(ds))/(864e5));}
-function fd(s){if(!s)return'—';const d=new Date(s+'T00:00:00');return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
-function fdt(s){if(!s)return'—';return new Date(s).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});}
-function o(list,sel){return list.map(i=>`<option value="${i}"${sel===i?' selected':''}>${i}</option>`).join('');}
-
-function sB(st){
-  const m={'Pending':'pending','In Progress':'inprogress','Resolved':'resolved','Completed':'completed','On Hold':'onhold'};
-  return`<span class="badge b-${m[st]||'pending'}">${st}</span>`;
-}
-function pB(p){
-  const m={'High':'high','Medium':'medium','Low':'low'};
-  return`<span class="badge b-${m[p]||'medium'}">${p}</span>`;
-}
-
-function toast(msg,type='in'){
-  const icons={ok:'fa-circle-check',er:'fa-circle-xmark',in:'fa-circle-info'};
-  const d=document.createElement('div');
-  d.className=`ti ${type}`;
-  d.innerHTML=`<i class="fas ${icons[type]||icons.in}"></i><span>${msg}</span>`;
-  document.getElementById('toast').appendChild(d);
-  setTimeout(()=>{d.style.opacity='0';d.style.transform='translateX(10px)';d.style.transition='all .3s';setTimeout(()=>d.remove(),300);},3500);
-}
-</script>
-</body>
-</html>
