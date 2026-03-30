@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Moksha Portal | Unified Medical Imaging Suite</title>
+  <!-- Tailwind + Font Awesome + GSAP -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(145deg, #eef2ff 0%, #e0f2fe 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    
+    /* Main Frame Container - Everything inside one elegant frame */
+    .master-frame {
+      max-width: 1600px;
+      width: 100%;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(2px);
+      border-radius: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.5);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    /* Custom scrollbar inside frame */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e2e8f0;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #14b8a6;
+      border-radius: 10px;
+    }
+    
+    /* Premium card effects */
+    .premium-card {
+      background: white;
+      border-radius: 1.25rem;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      border: 1px solid rgba(20,184,166,0.15);
+    }
+    
+    .premium-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 30px -12px rgba(15,118,110,0.15);
+      border-color: rgba(20,184,166,0.3);
+    }
+    
+    .btn-glow {
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-glow:active {
+      transform: scale(0.97);
+    }
+    
+    .btn-glow::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.4s, height 0.4s;
+    }
+    
+    .btn-glow:active::after {
+      width: 200px;
+      height: 200px;
+    }
+    
+    .animate-pulse-soft {
+      animation: pulseSoft 2s infinite;
+    }
+    
+    @keyframes pulseSoft {
+      0% { box-shadow: 0 0 0 0 rgba(20,184,166,0.3); }
+      70% { box-shadow: 0 0 0 8px rgba(20,184,166,0); }
+      100% { box-shadow: 0 0 0 0 rgba(20,184,166,0); }
+    }
+    
+    .iframe-elegant {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .iframe-elegant:hover {
+      transform: scale(1.002);
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    }
+    
+    /* Status badge animations */
+    .toast-slide {
+      animation: slideUp 0.3s ease forwards;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Gradient border effect */
+    .gradient-border-bottom {
+      position: relative;
+    }
+    
+    .gradient-border-bottom::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #0f766e, #14b8a6, #0f766e);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="master-frame">
+    <!-- Unified Header with Moksha Branding -->
+    <div class="bg-gradient-to-r from-teal-800 via-teal-700 to-emerald-800 px-8 py-6 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 left-0 w-48 h-48 bg-teal-400/10 rounded-full blur-2xl"></div>
+      <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+            <i class="fa-solid fa-hand-holding-medical text-3xl text-teal-100"></i>
+          </div>
+          <div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Moksha<span class="font-light"> Patient Portal</span></h1>
+            <p class="text-teal-100 text-sm flex items-center gap-2 mt-0.5">
+              <i class="fa-regular fa-circle-check text-xs"></i> Enterprise Imaging · Zero-Footprint PACS
+            </p>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <div class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-mono flex items-center gap-2 text-white">
+            <i class="fa-solid fa-shield-hawk"></i> HIPAA Secure
+          </div>
+          <div class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-mono flex items-center gap-2 text-white">
+            <i class="fa-regular fa-clock"></i> DICOM Web
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area - All Controls Inside Frame -->
+    <div class="p-6 md:p-8 bg-gray-50/50">
+      <!-- TOP ROW: Access Study + Shareable Link - Side by Side (Professional Alignment) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        
+        <!-- Access Study Card - Prominent at Top -->
+        <div class="premium-card overflow-hidden shadow-md">
+          <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-6 py-4 border-b border-teal-100">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 text-white flex items-center justify-center shadow-md">
+                <i class="fa-solid fa-qrcode text-lg"></i>
+              </div>
+              <div>
+                <h2 class="text-xl font-bold text-slate-800">Access Study</h2>
+                <p class="text-xs text-slate-500">Retrieve radiology studies via accession number</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                  <i class="fa-regular fa-hashtag text-teal-500 text-xs"></i>Accession Number
+                </label>
+                <input type="text" id="accessionNumber" value="" 
+                       class="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-teal-400 focus:ring-2 focus:ring-teal-200 transition-all outline-none text-base font-medium">
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                  <i class="fa-regular fa-building text-teal-500"></i>Facility ID
+                </label>
+                <input type="text" id="facilityId" value="9" 
+                       class="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-teal-400 focus:ring-2 focus:ring-teal-200 transition-all outline-none">
+              </div>
+            </div>
+            <button onclick="loadPACSStudy()" id="loadStudyBtn" 
+                    class="mt-6 w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold py-3.5 rounded-xl text-base flex items-center justify-center gap-3 transition-all shadow-lg btn-glow animate-pulse-soft">
+              <i class="fa-solid fa-rocket"></i>
+              <span>Launch Viewer & Load Images</span>
+              <i class="fa-regular fa-eye"></i>
+            </button>
+            <div class="mt-3 text-center text-xs text-slate-400 flex items-center justify-center gap-1">
+              <i class="fa-regular fa-keyboard"></i> Press Enter to load
+            </div>
+          </div>
+        </div>
+
+        <!-- Shareable Link Card - Professional Quick Access -->
+        <div class="premium-card overflow-hidden shadow-md">
+          <div class="bg-gradient-to-r from-emerald-50 to-teal-50 px-6 py-4 border-b border-emerald-100">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white flex items-center justify-center shadow-md">
+                <i class="fa-solid fa-share-nodes text-lg"></i>
+              </div>
+              <div>
+                <h2 class="text-xl font-bold text-slate-800">Shareable Link</h2>
+                <p class="text-xs text-slate-500">Secure instant sharing for collaboration</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex flex-col gap-4">
+              <div class="flex items-center gap-3 bg-slate-50 p-1 rounded-xl border-2 border-slate-200 focus-within:border-teal-400 transition-all">
+                <input type="text" id="shareURL" readonly 
+                       class="flex-1 px-4 py-3 bg-transparent text-sm font-mono text-slate-700 outline-none truncate">
+                <button onclick="copyShareLink()" id="copyBtn"
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 shadow-sm active:scale-95">
+                  <i class="fa-regular fa-copy"></i> Copy
+                </button>
+              </div>
+              <div id="copyNotification" class="text-center text-sm font-medium h-8 flex items-center justify-center gap-1"></div>
+              <div class="flex items-start gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                <i class="fa-regular fa-link text-teal-500 mt-0.5"></i>
+                <span>Direct link includes study context. Share with physicians or patients for instant access.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN VIEWER SECTION - Professional PACS Viewer -->
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 transition-all">
+        <div class="bg-white px-6 py-4 border-b border-slate-200 flex flex-wrap justify-between items-center gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600">
+              <i class="fa-solid fa-display-medical text-xl"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-800 text-lg">PACS Diagnostic Viewer</h3>
+              <p class="text-xs text-slate-500 flex items-center gap-1">
+                <i class="fa-regular fa-dot-circle text-teal-400 text-[8px]"></i> Alif PACS · Multiplanar Reconstruction · Advanced Visualization
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <div class="text-[11px] bg-slate-100 px-3 py-1.5 rounded-full text-slate-600 font-mono flex items-center gap-1">
+              <i class="fa-regular fa-circle-check text-teal-500"></i> Zero-footprint
+            </div>
+            <div class="text-[11px] bg-slate-100 px-3 py-1.5 rounded-full text-slate-600 font-mono flex items-center gap-1">
+              <i class="fa-regular fa-image"></i> DICOM Web
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-5 md:p-6 bg-gradient-to-b from-gray-50 to-white">
+          <div class="iframe-elegant rounded-xl overflow-hidden bg-slate-900/5 shadow-lg transition-all">
+            <iframe id="pacsFrame" 
+                    title="Moksha Medical Imaging Viewer"
+                    src="https://pathway.alif.onl/AlifPACSViewerV2.html?redirect=true&accessionNumber=2402609&environment=External&debug=false&facilityId=9"
+                    class="w-full" 
+                    style="height: 620px; border: none; background: #f1f5f9;"
+                    allowfullscreen></iframe>
+          </div>
+          <div id="loadingOverlay" class="hidden mt-4 text-center">
+            <div class="inline-flex items-center gap-2 bg-teal-50 text-teal-700 px-5 py-2.5 rounded-full text-sm font-medium shadow-sm">
+              <i class="fa-solid fa-spinner fa-spin"></i>
+              <span>Synchronizing study data & loading imaging series...</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-500 flex flex-wrap justify-between gap-2">
+          <span><i class="fa-regular fa-shield-check"></i> Encrypted transmission · HIPAA compliant</span>
+          <span><i class="fa-regular fa-chart-line"></i> AI-powered measurements & annotations</span>
+          <span><i class="fa-regular fa-clock"></i> Real-time rendering</span>
+        </div>
+      </div>
+      
+      <!-- Footer inside frame -->
+      <div class="mt-8 pt-4 border-t border-slate-200 text-center text-slate-400 text-xs flex flex-col md:flex-row justify-between items-center gap-3">
+        <div class="flex items-center gap-2">
+          <i class="fa-regular fa-copyright"></i> 2025 Moksha Health · Next-Generation Imaging Platform
+        </div>
+        <div class="flex gap-5">
+          <span class="hover:text-teal-600 transition cursor-pointer"><i class="fa-regular fa-message"></i> Secure Support</span>
+          <span class="hover:text-teal-600 transition cursor-pointer"><i class="fa-regular fa-shield"></i> Privacy Center</span>
+          <span class="hover:text-teal-600 transition cursor-pointer"><i class="fa-regular fa-chart-simple"></i> System Status</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const PACS_BASE_URL = "https://pathway.alif.onl/AlifPACSViewerV2.html";
+    
+    // Helper: Build complete PACS URL
+    function buildPacsUrl() {
+      let accession = document.getElementById('accessionNumber').value.trim();
+      let facility = document.getElementById('facilityId').value.trim();
+      
+      if (!accession) accession = "2402609";
+      if (!facility) facility = "9";
+      
+      const params = new URLSearchParams({
+        redirect: "true",
+        accessionNumber: accession,
+        environment: "External",
+        debug: "false",
+        facilityId: facility
+      });
+      
+      return `${PACS_BASE_URL}?${params.toString()}`;
+    }
+    
+    // Update shareable link field in real-time
+    function updateShareLink() {
+      const shareField = document.getElementById('shareURL');
+      if (shareField) {
+        shareField.value = buildPacsUrl();
+      }
+    }
+    
+    // Professional copy function with toast notification
+    function copyShareLink() {
+      const urlInput = document.getElementById('shareURL');
+      if (!urlInput.value) return;
+      
+      navigator.clipboard.writeText(urlInput.value).then(() => {
+        const notification = document.getElementById('copyNotification');
+        notification.innerHTML = '<span class="text-emerald-700 bg-emerald-50 px-4 py-1.5 rounded-full text-xs shadow-sm inline-flex items-center gap-2 toast-slide"><i class="fa-regular fa-check-circle"></i> Link copied to clipboard</span>';
+        
+        // Button feedback
+        const copyBtn = document.getElementById('copyBtn');
+        if (copyBtn) {
+          copyBtn.classList.add('bg-emerald-800');
+          setTimeout(() => copyBtn.classList.remove('bg-emerald-800'), 200);
+        }
+        
+        setTimeout(() => {
+          if (notification) notification.innerHTML = '';
+        }, 2500);
+      }).catch(() => {
+        const notification = document.getElementById('copyNotification');
+        notification.innerHTML = '<span class="text-red-500 bg-red-50 px-4 py-1.5 rounded-full text-xs inline-flex items-center gap-2"><i class="fa-regular fa-circle-xmark"></i> Copy failed</span>';
+        setTimeout(() => notification.innerHTML = '', 2000);
+      });
+    }
+    
+    // Main load function with animations and professional feedback
+    function loadPACSStudy() {
+      const accessionVal = document.getElementById('accessionNumber').value.trim();
+      if (!accessionVal) {
+        const notification = document.getElementById('copyNotification');
+        notification.innerHTML = '<span class="text-amber-600 bg-amber-50 px-4 py-1.5 rounded-full text-xs"><i class="fa-regular fa-bell"></i> Please enter an Accession Number</span>';
+        setTimeout(() => notification.innerHTML = '', 2500);
+        
+        // Highlight input
+        const accInput = document.getElementById('accessionNumber');
+        accInput.classList.add('border-amber-400', 'ring-2', 'ring-amber-200');
+        setTimeout(() => accInput.classList.remove('border-amber-400', 'ring-2', 'ring-amber-200'), 1500);
+        return;
+      }
+      
+      const targetUrl = buildPacsUrl();
+      const iframe = document.getElementById('pacsFrame');
+      const loader = document.getElementById('loadingOverlay');
+      const loadBtn = document.getElementById('loadStudyBtn');
+      
+      // Animation sequence
+      gsap.to(iframe, { duration: 0.2, opacity: 0.6, ease: "power1.in" });
+      loader.classList.remove('hidden');
+      
+      // Add ripple effect to button
+      if (loadBtn) {
+        loadBtn.style.transform = 'scale(0.98)';
+        setTimeout(() => { if (loadBtn) loadBtn.style.transform = ''; }, 150);
+      }
+      
+      // Visual feedback on viewer card
+      const viewerCard = document.querySelector('.iframe-elegant');
+      if (viewerCard) {
+        viewerCard.style.boxShadow = '0 0 0 3px rgba(20,184,166,0.4)';
+        setTimeout(() => viewerCard.style.boxShadow = '', 800);
+      }
+      
+      // Update iframe source after brief delay for smooth UX
+      setTimeout(() => {
+        iframe.src = targetUrl;
+        
+        iframe.onload = () => {
+          gsap.to(iframe, { duration: 0.5, opacity: 1, ease: "backOut(0.3)" });
+          loader.classList.add('hidden');
+          
+          // Success micro-interaction
+          const successToast = document.getElementById('copyNotification');
+          successToast.innerHTML = '<span class="text-teal-600 bg-teal-50 px-4 py-1.5 rounded-full text-xs toast-slide"><i class="fa-regular fa-circle-check"></i> Study loaded successfully</span>';
+          setTimeout(() => {
+            if (successToast.innerHTML.includes('Study loaded')) successToast.innerHTML = '';
+          }, 2000);
+          
+          // Update share link
+          updateShareLink();
+        };
+        
+        // Fallback timeout
+        setTimeout(() => {
+          if (loader && !loader.classList.contains('hidden')) {
+            loader.classList.add('hidden');
+            gsap.to(iframe, { duration: 0.3, opacity: 1 });
+          }
+        }, 5000);
+      }, 200);
+      
+      // Update share link after load
+      updateShareLink();
+    }
+    
+    // Real-time sync for share link when inputs change
+    const accessionInput = document.getElementById('accessionNumber');
+    const facilityInput = document.getElementById('facilityId');
+    
+    function syncShareField() {
+      updateShareLink();
+    }
+    
+    accessionInput.addEventListener('input', syncShareField);
+    facilityInput.addEventListener('input', syncShareField);
+    
+    // Enter key support for quick loading
+    function handleEnterKey(e) {
+      if (e.key === 'Enter') {
+        if (document.activeElement === accessionInput || document.activeElement === facilityInput) {
+          e.preventDefault();
+          loadPACSStudy();
+        }
+      }
+    }
+    document.addEventListener('keypress', handleEnterKey);
+    
+    // Initialize on page load with GSAP entrance animations
+    window.addEventListener('DOMContentLoaded', () => {
+      // Set initial share link
+      updateShareLink();
+      
+      // Entrance animations for all cards
+      gsap.fromTo('.premium-card', 
+        { y: 20, opacity: 0, stagger: 0.1 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out", delay: 0.1 }
+      );
+      
+      gsap.fromTo('.iframe-elegant', 
+        { scale: 0.98, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.7, ease: "backOut(0.3)", delay: 0.2 }
+      );
+      
+      // Ensure loader is hidden initially
+      const loader = document.getElementById('loadingOverlay');
+      if (loader) loader.classList.add('hidden');
+      
+      // Add smooth hover effect for copy button
+      const copyBtn = document.getElementById('copyBtn');
+      if (copyBtn) {
+        copyBtn.addEventListener('mouseenter', () => {
+          gsap.to(copyBtn, { duration: 0.2, scale: 1.03, ease: "power1" });
+        });
+        copyBtn.addEventListener('mouseleave', () => {
+          gsap.to(copyBtn, { duration: 0.2, scale: 1 });
+        });
+      }
+      
+      // Add tooltip-like effect on load button
+      const loadMainBtn = document.getElementById('loadStudyBtn');
+      if (loadMainBtn) {
+        loadMainBtn.addEventListener('mouseenter', () => {
+          gsap.to(loadMainBtn, { duration: 0.2, scale: 1.02 });
+        });
+        loadMainBtn.addEventListener('mouseleave', () => {
+          gsap.to(loadMainBtn, { duration: 0.2, scale: 1 });
+        });
+      }
+    });
+    
+    // Optional: Auto-refresh share link periodically for safety
+    setInterval(() => {
+      updateShareLink();
+    }, 30000);
+  </script>
+</body>
+</html>
