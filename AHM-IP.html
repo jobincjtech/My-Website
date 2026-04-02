@@ -1500,8 +1500,8 @@ td {
     </div>
 
     <div class="clock-wrap">
-      <div class="clock-time" id="clkTime">12:27:09</div>
-      <div class="clock-date" id="clkDate">WED, MAR 25, 2026</div>
+      <div class="clock-time" id="clkTime">08:00:37</div>
+      <div class="clock-date" id="clkDate">THU, APR 2, 2026</div>
     </div>
   </header>
 
@@ -1560,7 +1560,7 @@ td {
         <i class="fas fa-search"></i>
         <input type="text" id="searchInput" class="search-input" placeholder="Search IP · device · location · department...">
       </div>
-      <div class="result-count" id="resultCount">FOUND <span>1</span> MATCH</div>
+      <div class="result-count" id="resultCount">ALL <span id="rcNum">143</span> DEVICES</div>
     </div>
 
     <div class="unsaved-hint show" id="saveHint">
@@ -1572,10 +1572,10 @@ td {
       <button class="tab-btn" data-tab="token">
         <i class="fas fa-desktop"></i> TOKEN DISPLAYS <span class="tab-chip" id="tc-token">12</span>
       </button>
-      <button class="tab-btn" data-tab="ward">
+      <button class="tab-btn active" data-tab="ward">
         <i class="fas fa-procedures"></i> WARD DISPLAYS <span class="tab-chip" id="tc-ward">15</span>
       </button>
-      <button class="tab-btn active" data-tab="printer">
+      <button class="tab-btn" data-tab="printer">
         <i class="fas fa-print"></i> PRINTERS <span class="tab-chip" id="tc-printer">74</span>
       </button>
       <button class="tab-btn" data-tab="dr">
@@ -1597,7 +1597,7 @@ td {
     <td><span class="ip-tag" onclick="copyIP('172.19.24.77')" title="Click to copy">172.19.24.77</span></td>
     <td style="color:var(--text)">Counter 7</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.77',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',0)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',0)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1607,7 +1607,7 @@ td {
     <td><span class="ip-tag" onclick="copyIP('172.19.24.231')" title="Click to copy">172.19.24.231</span></td>
     <td style="color:var(--text)">Ortho OPD</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.231',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',1)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',1)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1617,7 +1617,7 @@ td {
     <td><span class="ip-tag" onclick="copyIP('172.19.13.116')" title="Click to copy">172.19.13.116</span></td>
     <td style="color:var(--text)">Cardiology OPD</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.116',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',2)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',2)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1627,7 +1627,7 @@ td {
     <td><span class="ip-tag" onclick="copyIP('172.19.24.233')" title="Click to copy">172.19.24.233</span></td>
     <td style="color:var(--text)">Gynaec OPD</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.233',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',3)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',3)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1637,7 +1637,7 @@ td {
     <td><span class="ip-tag" onclick="copyIP('172.19.24.126')" title="Click to copy">172.19.24.126</span></td>
     <td style="color:var(--text)">Pediatric Old</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.126',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',4)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',4)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1647,7 +1647,7 @@ td {
     <td><span class="ip-tag" onclick="copyIP('172.19.13.248')" title="Click to copy">172.19.13.248</span></td>
     <td style="color:var(--text)">Pharmacy counter</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.248',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',5)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',5)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1657,7 +1657,7 @@ td {
     <td><span class="ip-tag" onclick="copyIP('172.19.13.186')" title="Click to copy">172.19.13.186</span></td>
     <td style="color:var(--text)">Main Reception</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.186',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',6)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',6)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1667,7 +1667,7 @@ td {
     <td><span class="ip-tag" onclick="copyIP('172.19.24.17')" title="Click to copy">172.19.24.17</span></td>
     <td style="color:var(--text)">Pediatric New</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.17',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',7)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',7)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1677,7 +1677,7 @@ td {
     <td><span class="ip-tag" onclick="copyIP('172.19.24.118')" title="Click to copy">172.19.24.118</span></td>
     <td style="color:var(--text)">Cadiology Dr sachin</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.118',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',8)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',8)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1687,7 +1687,7 @@ td {
     <td><span class="ip-tag" onclick="copyIP('172.19.13.108')" title="Click to copy">172.19.13.108</span></td>
     <td style="color:var(--text)">Radiology</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.108',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',9)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',9)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1697,7 +1697,7 @@ td {
     <td><span class="ip-tag" onclick="copyIP('172.19.13.106')" title="Click to copy">172.19.13.106</span></td>
     <td style="color:var(--text)">Sample collection</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.106',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',10)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',10)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1707,7 +1707,7 @@ td {
     <td><span class="ip-tag" onclick="copyIP('172.19.13.105')" title="Click to copy">172.19.13.105</span></td>
     <td style="color:var(--text)">Dr Neena OPD</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.105',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',11)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',11)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1716,7 +1716,7 @@ td {
     </div>
 
     <!-- Ward Tab -->
-    <div class="tab-pane" id="tab-ward">
+    <div class="tab-pane active" id="tab-ward">
       <div class="table-wrap">
         <table><thead><tr>
           <th>SL</th><th>Device</th><th>IP Address</th><th>Rooms</th><th>Floor/Area</th><th>Location</th><th>Copy IP</th><th class="actions-col" style="">Actions</th>
@@ -1728,7 +1728,7 @@ td {
     <td><span class="zone-tag zone-blue">5TH FLOOR</span></td>
     <td style="color:var(--text)">E Wing</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.241',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',0)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',0)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1740,7 +1740,7 @@ td {
     <td><span class="zone-tag zone-blue">4TH FLOOR</span></td>
     <td style="color:var(--text)">D Wing</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.242',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',1)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',1)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1752,7 +1752,7 @@ td {
     <td><span class="zone-tag zone-blue">4TH FLOOR</span></td>
     <td style="color:var(--text)">C Wing</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.243',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',2)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',2)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1764,7 +1764,7 @@ td {
     <td><span class="zone-tag zone-blue">3RD FLOOR</span></td>
     <td style="color:var(--text)">B Wing</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.244',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',3)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',3)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1776,7 +1776,7 @@ td {
     <td><span class="zone-tag zone-blue">3RD FLOOR</span></td>
     <td style="color:var(--text)">A Wing</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.245',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',4)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',4)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1788,7 +1788,7 @@ td {
     <td><span class="zone-tag zone-blue">ICU</span></td>
     <td style="color:var(--text)">ICU</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.246',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',5)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',5)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1800,7 +1800,7 @@ td {
     <td><span class="zone-tag zone-blue">LDR ROOM</span></td>
     <td style="color:var(--text)">LDR Room</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.247',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',6)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',6)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1812,7 +1812,7 @@ td {
     <td><span class="zone-tag zone-blue">CICU</span></td>
     <td style="color:var(--text)">CICU</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.249',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',7)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',7)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1820,23 +1820,23 @@ td {
     <td style="font-family:var(--mono);color:var(--cyan)">9</td>
     <td class="dev-name">Mini PC</td>
     <td><span class="ip-tag" onclick="copyIP('172.19.13.95')" title="Click to copy">172.19.13.95</span></td>
-    <td style="color:var(--text2);font-size:0.78rem">C001 to C005</td>
-    <td><span class="zone-tag zone-blue">ER Token Triage display</span></td>
-    <td style="color:var(--text)">ER Token Triage display</td>
+    <td style="color:var(--text2);font-size:0.78rem">Triage</td>
+    <td><span class="zone-tag zone-blue">ER TRIAGE TOKEN DISPLAY</span></td>
+    <td style="color:var(--text)">ER Triage</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.95',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',8)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',8)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
   </tr><tr>
-    <td style="font-family:var(--mono);color:var(--cyan)">10</td>
+    <td style="font-family:var(--mono);color:var(--cyan)">9</td>
     <td class="dev-name">Mini PC</td>
     <td><span class="ip-tag" onclick="copyIP('172.19.13.100')" title="Click to copy">172.19.13.100</span></td>
     <td style="color:var(--text2);font-size:0.78rem">C001 to C005</td>
     <td><span class="zone-tag zone-blue">ER DISPLAY</span></td>
     <td style="color:var(--text)">ER Display</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.100',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',9)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',9)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1848,7 +1848,7 @@ td {
     <td><span class="zone-tag zone-blue">HR BDAY</span></td>
     <td style="color:var(--text)">HR Bday</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.105',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',10)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',10)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1860,7 +1860,7 @@ td {
     <td><span class="zone-tag zone-blue">OT DISPLAY</span></td>
     <td style="color:var(--text)">OT Display</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.102',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',11)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',11)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1872,7 +1872,7 @@ td {
     <td><span class="zone-tag zone-blue">ADSC DISPLAY</span></td>
     <td style="color:var(--text)">ADSC Display</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.244',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',12)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',12)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1884,7 +1884,7 @@ td {
     <td><span class="zone-tag zone-blue">ADSC DISPLAY</span></td>
     <td style="color:var(--text)">adsc Display</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.245',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',13)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',13)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1896,7 +1896,7 @@ td {
     <td><span class="zone-tag zone-blue">LAB RECEPTION</span></td>
     <td style="color:var(--text)">Lab Reception</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.36',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',14)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',14)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1905,7 +1905,7 @@ td {
     </div>
 
     <!-- Printer Tab -->
-    <div class="tab-pane active" id="tab-printer">
+    <div class="tab-pane" id="tab-printer">
       <div class="table-wrap">
         <table><thead><tr>
           <th>#</th><th>Host</th><th>IP Address</th><th>Model</th><th>Department</th><th>Facility</th><th>Copy IP</th><th class="actions-col" style="">Actions</th>
@@ -1917,7 +1917,7 @@ td {
     <td style="color:var(--text)">OT</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.162',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',0)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',0)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1929,7 +1929,7 @@ td {
     <td style="color:var(--text)">Gynec NS</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.163',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',1)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',1)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1941,7 +1941,7 @@ td {
     <td style="color:var(--text)">NICU</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.42',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',2)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',2)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1953,7 +1953,7 @@ td {
     <td style="color:var(--text)">Radiology Billing</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.164',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',3)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',3)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1965,7 +1965,7 @@ td {
     <td style="color:var(--text)">Insurance Paedia</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.199',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',4)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',4)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1977,7 +1977,7 @@ td {
     <td style="color:var(--text)">MAIN STORE</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.166',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',5)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',5)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -1989,7 +1989,7 @@ td {
     <td style="color:var(--text)">BIOMED</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('Flood',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',6)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',6)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2001,7 +2001,7 @@ td {
     <td style="color:var(--text)">Pediatric Rec</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.167',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',7)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',7)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2013,7 +2013,7 @@ td {
     <td style="color:var(--text)">ICU</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.168',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',8)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',8)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2025,7 +2025,7 @@ td {
     <td style="color:var(--text)">2ND DSU</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.169',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',9)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',9)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2037,7 +2037,7 @@ td {
     <td style="color:var(--text)">Labour NS</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.170',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',10)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',10)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2049,7 +2049,7 @@ td {
     <td style="color:var(--text)">ER Radiology Rec</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.77',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',11)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',11)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2061,7 +2061,7 @@ td {
     <td style="color:var(--text)">Gynaec Rec</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.171',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',12)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',12)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2073,7 +2073,7 @@ td {
     <td style="color:var(--text)">B wing</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.172',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',13)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',13)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2085,7 +2085,7 @@ td {
     <td style="color:var(--text)">C Wing</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.173',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',14)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',14)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2097,7 +2097,7 @@ td {
     <td style="color:var(--text)">Ortho Rec</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.174',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',15)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',15)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2109,7 +2109,7 @@ td {
     <td style="color:var(--text)">IM OPD</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.175',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',16)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',16)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2121,7 +2121,7 @@ td {
     <td style="color:var(--text)">D Wing</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.176',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',17)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',17)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2133,7 +2133,7 @@ td {
     <td style="color:var(--text)">E Wing</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.177',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',18)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',18)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2145,7 +2145,7 @@ td {
     <td style="color:var(--text)">ER Observation</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.178',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',19)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',19)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2157,7 +2157,7 @@ td {
     <td style="color:var(--text)">Kitchen</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.179',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',20)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',20)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2169,7 +2169,7 @@ td {
     <td style="color:var(--text)">A Wing</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.180',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',21)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',21)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2181,7 +2181,7 @@ td {
     <td style="color:var(--text)">MAINRECEPTION-N</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.181',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',22)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',22)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2193,7 +2193,7 @@ td {
     <td style="color:var(--text)">PEDIATRIC-NS</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.182',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',23)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',23)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2205,7 +2205,7 @@ td {
     <td style="color:var(--text)">MRD</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.183',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',24)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',24)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2217,7 +2217,7 @@ td {
     <td style="color:var(--text)">Pharmavcy Store</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.184',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',25)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',25)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2229,7 +2229,7 @@ td {
     <td style="color:var(--text)">ER NS</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.185',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',26)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',26)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2241,7 +2241,7 @@ td {
     <td style="color:var(--text)">CSE</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.186',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',27)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',27)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2253,7 +2253,7 @@ td {
     <td style="color:var(--text)">IP Billing</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.187',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',28)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',28)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2265,7 +2265,7 @@ td {
     <td style="color:var(--text)">Pharmacy Approval</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.188',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',29)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',29)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2277,7 +2277,7 @@ td {
     <td style="color:var(--text)">LAB</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.189',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',30)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',30)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2289,7 +2289,7 @@ td {
     <td style="color:var(--text)">Pharmacy Counter</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.190',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',31)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',31)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2301,7 +2301,7 @@ td {
     <td style="color:var(--text)">INSURANCE</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.191',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',32)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',32)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2313,7 +2313,7 @@ td {
     <td style="color:var(--text)">MT</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.192',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',33)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',33)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2325,7 +2325,7 @@ td {
     <td style="color:var(--text)">Main Billing</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.193',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',34)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',34)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2337,7 +2337,7 @@ td {
     <td style="color:var(--text)">HR</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.194',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',35)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',35)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2349,7 +2349,7 @@ td {
     <td style="color:var(--text)">Cardiology Rec</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.195',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',36)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',36)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2361,7 +2361,7 @@ td {
     <td style="color:var(--text)">New OPD</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.196',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',37)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',37)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2373,7 +2373,7 @@ td {
     <td style="color:var(--text)">Admission Counter</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.197',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',38)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',38)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2385,19 +2385,19 @@ td {
     <td style="color:var(--text)">OP Insurance</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.198',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',39)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',39)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
   </tr><tr>
     <td style="font-family:var(--mono);color:var(--text3)">41</td>
-    <td class="host-mono">AH-AHM-2ND-DSU-2</td>
-    <td><span class="ip-tag" onclick="copyIP('172.19.24.43')" title="Click to copy">172.19.24.43</span></td>
-    <td style="font-size:0.75rem;color:var(--text3);font-family:var(--mono)">HP LJ MGD MFP E42540F</td>
-    <td style="color:var(--text)">2ND DSU 2</td>
+    <td class="host-mono">AH-AHM-ER MOD</td>
+    <td><span class="ip-tag" onclick="copyIP('172.19.....')" title="Click to copy">172.19.....</span></td>
+    <td style="font-size:0.75rem;color:var(--text3);font-family:var(--mono)">CNBRQ308N5</td>
+    <td style="color:var(--text)">ER MOD</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
-    <td><button class="copy-btn" onclick="copyIP('172.19.24.43',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><button class="copy-btn" onclick="copyIP('172.19.....',this)"><i class="fas fa-copy"></i></button></td>
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',40)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',40)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2409,7 +2409,7 @@ td {
     <td style="color:var(--text)">Pharmacy</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.200',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',41)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',41)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2421,7 +2421,7 @@ td {
     <td style="color:var(--text)">OLD Endoscopy</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.93',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',42)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',42)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2433,7 +2433,7 @@ td {
     <td style="color:var(--text)">Dr Naveed</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.34',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',43)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',43)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2445,7 +2445,7 @@ td {
     <td style="color:var(--text)">Nursing Admin</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.46',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',44)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',44)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2457,7 +2457,7 @@ td {
     <td style="color:var(--text)">ADSE Reception</td>
     <td><span class="zone-tag zone-green">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.141',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',45)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',45)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2469,7 +2469,7 @@ td {
     <td style="color:var(--text)">ADSE-NS</td>
     <td><span class="zone-tag zone-green">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.162',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',46)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',46)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2481,7 +2481,7 @@ td {
     <td style="color:var(--text)">CICU</td>
     <td><span class="zone-tag zone-green">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.48',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',47)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',47)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2493,7 +2493,7 @@ td {
     <td style="color:var(--text)">Recovery</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.40',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',48)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',48)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2505,7 +2505,7 @@ td {
     <td style="color:var(--text)">ADSE Pharmacy</td>
     <td><span class="zone-tag zone-green">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.179',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',49)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',49)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2517,7 +2517,7 @@ td {
     <td style="color:var(--text)">MEP</td>
     <td><span class="zone-tag zone-green">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.24',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',50)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',50)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2529,7 +2529,7 @@ td {
     <td style="color:var(--text)">ER Reception</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.9',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',51)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',51)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2541,7 +2541,7 @@ td {
     <td style="color:var(--text)">NEW EDOSCOPY</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.92',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',52)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',52)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2553,7 +2553,7 @@ td {
     <td style="color:var(--text)">Gastro OPD</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.91',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',53)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',53)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2565,7 +2565,7 @@ td {
     <td style="color:var(--text)">IP Pharmacy</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.99',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',54)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',54)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2577,7 +2577,7 @@ td {
     <td style="color:var(--text)">DSU 5</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.7',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',55)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',55)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2589,7 +2589,7 @@ td {
     <td style="color:var(--text)">Colour Kalesh</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.27',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',56)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',56)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2601,7 +2601,7 @@ td {
     <td style="color:var(--text)">DIALYSIS</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.94',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',57)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',57)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2613,7 +2613,7 @@ td {
     <td style="color:var(--text)">Ward Clerk B</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.95',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',58)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',58)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2625,7 +2625,7 @@ td {
     <td style="color:var(--text)">CSSD</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.244',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',59)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',59)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2637,7 +2637,7 @@ td {
     <td style="color:var(--text)">CATHLAB</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.96',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',60)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',60)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2649,7 +2649,7 @@ td {
     <td style="color:var(--text)">ADSE OPD</td>
     <td><span class="zone-tag zone-green">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.157',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',61)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',61)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2661,7 +2661,7 @@ td {
     <td style="color:var(--text)">Ortho NS</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.49',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',62)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',62)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2673,7 +2673,7 @@ td {
     <td style="color:var(--text)">ADSE OBSERVATION</td>
     <td><span class="zone-tag zone-green">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.177',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',63)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',63)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2685,7 +2685,7 @@ td {
     <td style="color:var(--text)">ADSE OT</td>
     <td><span class="zone-tag zone-green">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.206',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',64)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',64)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2697,7 +2697,7 @@ td {
     <td style="color:var(--text)">MAINRECEPTION1</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.119',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',65)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',65)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2709,7 +2709,7 @@ td {
     <td style="color:var(--text)">PHARMACY STORE NEW</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.8',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',66)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',66)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2721,7 +2721,7 @@ td {
     <td style="color:var(--text)">BioMed New</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.5',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',67)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',67)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2733,7 +2733,7 @@ td {
     <td style="color:var(--text)">ADSC Colour</td>
     <td><span class="zone-tag zone-teal">ADSC</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.161',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',68)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',68)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2745,7 +2745,7 @@ td {
     <td style="color:var(--text)">BKP</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('11',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',69)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',69)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2757,7 +2757,7 @@ td {
     <td style="color:var(--text)">BKP</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('11',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',70)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',70)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2769,7 +2769,7 @@ td {
     <td style="color:var(--text)">BKP</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('11',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',71)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',71)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2781,7 +2781,7 @@ td {
     <td style="color:var(--text)">BKP</td>
     <td><span class="zone-tag zone-teal">ADSC</span></td>
     <td><button class="copy-btn" onclick="copyIP('11',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',72)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',72)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2793,7 +2793,7 @@ td {
     <td style="color:var(--text)">Asnath</td>
     <td><span class="zone-tag zone-blue">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.26',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',73)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',73)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2813,7 +2813,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 4</span></td>
     <td class="host-mono">AHM-D-CLINIC2</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.1',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',0)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',0)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2824,7 +2824,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 4</span></td>
     <td class="host-mono">AHM-D-DRNAVEED</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.2',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',1)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',1)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2835,7 +2835,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC03</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.3',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',2)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',2)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2846,7 +2846,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC-4</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.4',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',3)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',3)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2857,7 +2857,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC5</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.5',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',4)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',4)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2868,7 +2868,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC06</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.6',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',5)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',5)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2879,7 +2879,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 3</span></td>
     <td class="host-mono">AHM-D-CLINIC07</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.7',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',6)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',6)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2890,7 +2890,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 3</span></td>
     <td class="host-mono">AHM-D-CLINIC08</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.8',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',7)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',7)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2901,7 +2901,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 3</span></td>
     <td class="host-mono">AHM-D-CLINI9</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.9',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',8)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',8)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2912,7 +2912,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 3</span></td>
     <td class="host-mono">AHM-D-CLINIC10N</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.10',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',9)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',9)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2923,7 +2923,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 3</span></td>
     <td class="host-mono">AHM-D-CLINIC11</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.11',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',10)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',10)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2934,7 +2934,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 3</span></td>
     <td class="host-mono">AHM-D-CLINIC12</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.12',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',11)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',11)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2945,7 +2945,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 3</span></td>
     <td class="host-mono">AHM-D-INS10</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.79',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',12)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',12)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2956,7 +2956,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC014</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.13',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',13)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',13)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2967,7 +2967,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC014</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.14',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',14)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',14)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2978,7 +2978,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC15</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.15',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',15)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',15)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -2989,7 +2989,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC-16</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.16',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',16)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',16)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3000,7 +3000,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC017</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.17',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',17)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',17)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3011,7 +3011,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC018</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.18',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',18)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',18)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3022,7 +3022,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC29</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.19',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',19)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',19)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3033,7 +3033,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC020</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.20',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',20)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',20)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3044,7 +3044,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 2</span></td>
     <td class="host-mono">AHM-D-CLINIC21</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.21',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',21)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',21)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3055,7 +3055,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 2</span></td>
     <td class="host-mono">AHM-D-CLINIC-22</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.22',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',22)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',22)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3066,7 +3066,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 2</span></td>
     <td class="host-mono">AHM-D-CLINIC23</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.23',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',23)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',23)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3077,7 +3077,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 2</span></td>
     <td class="host-mono">AHM-D-CLINIC24</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.24',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',24)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',24)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3088,7 +3088,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 1</span></td>
     <td class="host-mono">AHM-D-CLINIC-25</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.25',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',25)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',25)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3099,7 +3099,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 1</span></td>
     <td class="host-mono">AHM-D-CLINIC26</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.26',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',26)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',26)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3110,7 +3110,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 1</span></td>
     <td class="host-mono">AHM-D-CLINIC27</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.27',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',27)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',27)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3121,7 +3121,7 @@ td {
     <td><span class="zone-tag zone-blue">ZONE 1</span></td>
     <td class="host-mono">AHM-D-CLINIC028</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.28',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',28)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',28)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3132,7 +3132,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC-29</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.29',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',29)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',29)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3143,7 +3143,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC-30</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.30',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',30)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',30)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3154,7 +3154,7 @@ td {
     <td><span class="zone-tag zone-green">ZONE 5</span></td>
     <td class="host-mono">AHM-D-CLINIC31</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.31',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',31)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',31)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3165,7 +3165,7 @@ td {
     <td><span class="zone-tag zone-purple">ZONE 22</span></td>
     <td class="host-mono">AHM-D-CLINIC32</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.32',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',32)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',32)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3176,7 +3176,7 @@ td {
     <td><span class="zone-tag zone-purple">ZONE 22</span></td>
     <td class="host-mono">AHM-D-DRSACHIN</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.33',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',33)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',33)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3187,7 +3187,7 @@ td {
     <td><span class="zone-tag zone-purple">ZONE 22</span></td>
     <td class="host-mono">Clinic 34</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.34',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',34)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',34)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3198,7 +3198,7 @@ td {
     <td><span class="zone-tag zone-purple">ZONE 22</span></td>
     <td class="host-mono">Clinic 35</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.35',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',35)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',35)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3209,7 +3209,7 @@ td {
     <td><span class="zone-tag zone-purple">OT</span></td>
     <td class="host-mono">ot</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.10.46',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',36)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',36)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3220,7 +3220,7 @@ td {
     <td><span class="zone-tag zone-teal">ADSC</span></td>
     <td class="host-mono">ADSC</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.175',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',37)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',37)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3231,7 +3231,7 @@ td {
     <td><span class="zone-tag zone-teal">ADSC</span></td>
     <td class="host-mono">ADSC</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.187',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',38)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',38)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3242,7 +3242,7 @@ td {
     <td><span class="zone-tag zone-teal">ADSC</span></td>
     <td class="host-mono">ADSC</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.185',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',39)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',39)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3253,7 +3253,7 @@ td {
     <td><span class="zone-tag zone-teal">ADSC</span></td>
     <td class="host-mono">ADSC</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.101',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',40)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',40)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3264,7 +3264,7 @@ td {
     <td><span class="zone-tag zone-amber">ER</span></td>
     <td class="host-mono">ER</td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.237',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',41)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',41)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3284,7 +3284,7 @@ td {
     <td style="color:var(--text2)">Counter 7</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.77',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',0)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',0)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3295,7 +3295,7 @@ td {
     <td style="color:var(--text2)">Ortho OPD</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 3</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.231',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',1)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',1)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3306,7 +3306,7 @@ td {
     <td style="color:var(--text2)">Cardiology OPD</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 4</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.116',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',2)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',2)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3317,7 +3317,7 @@ td {
     <td style="color:var(--text2)">Gynaec OPD</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 2</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.233',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',3)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',3)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3328,7 +3328,7 @@ td {
     <td style="color:var(--text2)">Pediatric Old</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 1</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.126',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',4)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',4)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3339,7 +3339,7 @@ td {
     <td style="color:var(--text2)">Pharmacy counter</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 9</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.248',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',5)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',5)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3350,7 +3350,7 @@ td {
     <td style="color:var(--text2)">Main Reception</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.186',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',6)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',6)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3361,7 +3361,7 @@ td {
     <td style="color:var(--text2)">Pediatric New</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 1</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.17',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',7)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',7)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3372,7 +3372,7 @@ td {
     <td style="color:var(--text2)">Cadiology Dr sachin</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 4</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.118',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',8)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',8)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3383,7 +3383,7 @@ td {
     <td style="color:var(--text2)">Radiology</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 18</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.108',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',9)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',9)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3394,7 +3394,7 @@ td {
     <td style="color:var(--text2)">Sample collection</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 15</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.106',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',10)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',10)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3405,7 +3405,7 @@ td {
     <td style="color:var(--text2)">Dr Neena OPD</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 22</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.105',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('token',11)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('token',11)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3416,7 +3416,7 @@ td {
     <td style="color:var(--text2)">E Wing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">5th Floor</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.241',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',0)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',0)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3427,7 +3427,7 @@ td {
     <td style="color:var(--text2)">D Wing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">4th Floor</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.242',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',1)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',1)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3438,7 +3438,7 @@ td {
     <td style="color:var(--text2)">C Wing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">4th Floor</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.243',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',2)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',2)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3449,7 +3449,7 @@ td {
     <td style="color:var(--text2)">B Wing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">3rd Floor</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.244',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',3)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',3)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3460,7 +3460,7 @@ td {
     <td style="color:var(--text2)">A Wing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">3rd Floor</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.245',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',4)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',4)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3471,7 +3471,7 @@ td {
     <td style="color:var(--text2)">ICU</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ICU</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.246',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',5)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',5)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3482,7 +3482,7 @@ td {
     <td style="color:var(--text2)">LDR Room</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">LDR Room</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.247',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',6)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',6)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3493,7 +3493,7 @@ td {
     <td style="color:var(--text2)">CICU</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">CICU</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.249',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',7)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',7)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3501,10 +3501,10 @@ td {
     <td><span class="cat-tag ward">WARD</span></td>
     <td class="dev-name">Mini PC</td>
     <td><span class="ip-tag" onclick="copyIP('172.19.13.95')" title="Click to copy">172.19.13.95</span></td>
-    <td style="color:var(--text2)">ER Triage Token Display</td>
+    <td style="color:var(--text2)">ER Triage</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ER Triage Token Display</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.95',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',8)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',8)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3515,7 +3515,7 @@ td {
     <td style="color:var(--text2)">ER Display</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ER Display</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.100',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',9)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',9)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3526,7 +3526,7 @@ td {
     <td style="color:var(--text2)">HR Bday</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">HR Bday</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.105',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',10)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',10)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3537,7 +3537,7 @@ td {
     <td style="color:var(--text2)">OT Display</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">OT Display</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.102',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',11)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',11)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3548,7 +3548,7 @@ td {
     <td style="color:var(--text2)">ADSC Display</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSC Display</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.244',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',12)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',12)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3559,7 +3559,7 @@ td {
     <td style="color:var(--text2)">adsc Display</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSC Display</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.245',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',13)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',13)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3570,7 +3570,7 @@ td {
     <td style="color:var(--text2)">Lab Reception</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Lab Reception</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.36',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('ward',14)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('ward',14)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3581,7 +3581,7 @@ td {
     <td style="color:var(--text2)">OT</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.162',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',0)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',0)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3592,7 +3592,7 @@ td {
     <td style="color:var(--text2)">Gynec NS</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.163',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',1)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',1)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3603,7 +3603,7 @@ td {
     <td style="color:var(--text2)">NICU</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.42',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',2)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',2)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3614,7 +3614,7 @@ td {
     <td style="color:var(--text2)">Radiology Billing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.164',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',3)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',3)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3625,7 +3625,7 @@ td {
     <td style="color:var(--text2)">Insurance Paedia</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.199',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',4)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',4)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3636,7 +3636,7 @@ td {
     <td style="color:var(--text2)">MAIN STORE</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.166',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',5)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',5)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3647,7 +3647,7 @@ td {
     <td style="color:var(--text2)">BIOMED</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('Flood',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',6)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',6)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3658,7 +3658,7 @@ td {
     <td style="color:var(--text2)">Pediatric Rec</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.167',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',7)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',7)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3669,7 +3669,7 @@ td {
     <td style="color:var(--text2)">ICU</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.168',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',8)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',8)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3680,7 +3680,7 @@ td {
     <td style="color:var(--text2)">2ND DSU</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.169',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',9)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',9)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3691,7 +3691,7 @@ td {
     <td style="color:var(--text2)">Labour NS</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.170',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',10)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',10)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3702,7 +3702,7 @@ td {
     <td style="color:var(--text2)">ER Radiology Rec</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.77',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',11)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',11)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3713,7 +3713,7 @@ td {
     <td style="color:var(--text2)">Gynaec Rec</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.171',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',12)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',12)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3724,7 +3724,7 @@ td {
     <td style="color:var(--text2)">B wing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.172',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',13)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',13)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3735,7 +3735,7 @@ td {
     <td style="color:var(--text2)">C Wing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.173',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',14)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',14)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3746,7 +3746,7 @@ td {
     <td style="color:var(--text2)">Ortho Rec</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.174',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',15)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',15)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3757,7 +3757,7 @@ td {
     <td style="color:var(--text2)">IM OPD</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.175',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',16)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',16)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3768,7 +3768,7 @@ td {
     <td style="color:var(--text2)">D Wing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.176',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',17)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',17)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3779,7 +3779,7 @@ td {
     <td style="color:var(--text2)">E Wing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.177',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',18)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',18)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3790,7 +3790,7 @@ td {
     <td style="color:var(--text2)">ER Observation</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.178',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',19)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',19)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3801,7 +3801,7 @@ td {
     <td style="color:var(--text2)">Kitchen</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.179',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',20)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',20)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3812,7 +3812,7 @@ td {
     <td style="color:var(--text2)">A Wing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.180',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',21)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',21)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3823,7 +3823,7 @@ td {
     <td style="color:var(--text2)">MAINRECEPTION-N</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.181',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',22)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',22)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3834,7 +3834,7 @@ td {
     <td style="color:var(--text2)">PEDIATRIC-NS</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.182',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',23)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',23)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3845,7 +3845,7 @@ td {
     <td style="color:var(--text2)">MRD</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.183',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',24)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',24)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3856,7 +3856,7 @@ td {
     <td style="color:var(--text2)">Pharmavcy Store</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.184',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',25)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',25)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3867,7 +3867,7 @@ td {
     <td style="color:var(--text2)">ER NS</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.185',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',26)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',26)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3878,7 +3878,7 @@ td {
     <td style="color:var(--text2)">CSE</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.186',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',27)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',27)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3889,7 +3889,7 @@ td {
     <td style="color:var(--text2)">IP Billing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.187',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',28)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',28)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3900,7 +3900,7 @@ td {
     <td style="color:var(--text2)">Pharmacy Approval</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.188',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',29)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',29)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3911,7 +3911,7 @@ td {
     <td style="color:var(--text2)">LAB</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.189',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',30)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',30)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3922,7 +3922,7 @@ td {
     <td style="color:var(--text2)">Pharmacy Counter</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.190',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',31)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',31)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3933,7 +3933,7 @@ td {
     <td style="color:var(--text2)">INSURANCE</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.191',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',32)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',32)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3944,7 +3944,7 @@ td {
     <td style="color:var(--text2)">MT</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.192',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',33)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',33)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3955,7 +3955,7 @@ td {
     <td style="color:var(--text2)">Main Billing</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.193',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',34)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',34)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3966,7 +3966,7 @@ td {
     <td style="color:var(--text2)">HR</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.194',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',35)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',35)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3977,7 +3977,7 @@ td {
     <td style="color:var(--text2)">Cardiology Rec</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.195',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',36)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',36)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3988,7 +3988,7 @@ td {
     <td style="color:var(--text2)">New OPD</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.196',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',37)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',37)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -3999,7 +3999,7 @@ td {
     <td style="color:var(--text2)">Admission Counter</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.197',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',38)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',38)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4010,18 +4010,18 @@ td {
     <td style="color:var(--text2)">OP Insurance</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.198',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',39)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',39)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
   </tr><tr>
     <td><span class="cat-tag printer">PRINTER</span></td>
-    <td class="dev-name">AH-AHM-2ND-DSU-2</td>
-    <td><span class="ip-tag" onclick="copyIP('172.19.24.43')" title="Click to copy">172.19.24.43</span></td>
-    <td style="color:var(--text2)">2ND DSU 2</td>
+    <td class="dev-name">AH-AHM-ER MOD</td>
+    <td><span class="ip-tag" onclick="copyIP('172.19.....')" title="Click to copy">172.19.....</span></td>
+    <td style="color:var(--text2)">ER MOD</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
-    <td><button class="copy-btn" onclick="copyIP('172.19.24.43',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><button class="copy-btn" onclick="copyIP('172.19.....',this)"><i class="fas fa-copy"></i></button></td>
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',40)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',40)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4032,7 +4032,7 @@ td {
     <td style="color:var(--text2)">Pharmacy</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.200',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',41)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',41)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4043,7 +4043,7 @@ td {
     <td style="color:var(--text2)">OLD Endoscopy</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.93',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',42)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',42)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4054,7 +4054,7 @@ td {
     <td style="color:var(--text2)">Dr Naveed</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.34',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',43)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',43)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4065,7 +4065,7 @@ td {
     <td style="color:var(--text2)">Nursing Admin</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.46',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',44)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',44)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4076,7 +4076,7 @@ td {
     <td style="color:var(--text2)">ADSE Reception</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.141',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',45)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',45)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4087,7 +4087,7 @@ td {
     <td style="color:var(--text2)">ADSE-NS</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.162',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',46)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',46)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4098,7 +4098,7 @@ td {
     <td style="color:var(--text2)">CICU</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.48',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',47)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',47)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4109,7 +4109,7 @@ td {
     <td style="color:var(--text2)">Recovery</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.40',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',48)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',48)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4120,7 +4120,7 @@ td {
     <td style="color:var(--text2)">ADSE Pharmacy</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.179',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',49)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',49)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4131,7 +4131,7 @@ td {
     <td style="color:var(--text2)">MEP</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.24',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',50)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',50)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4142,7 +4142,7 @@ td {
     <td style="color:var(--text2)">ER Reception</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.9',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',51)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',51)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4153,7 +4153,7 @@ td {
     <td style="color:var(--text2)">NEW EDOSCOPY</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.92',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',52)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',52)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4164,7 +4164,7 @@ td {
     <td style="color:var(--text2)">Gastro OPD</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.91',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',53)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',53)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4175,7 +4175,7 @@ td {
     <td style="color:var(--text2)">IP Pharmacy</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.99',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',54)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',54)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4186,7 +4186,7 @@ td {
     <td style="color:var(--text2)">DSU 5</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.7',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',55)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',55)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4197,7 +4197,7 @@ td {
     <td style="color:var(--text2)">Colour Kalesh</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.27',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',56)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',56)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4208,7 +4208,7 @@ td {
     <td style="color:var(--text2)">DIALYSIS</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.94',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',57)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',57)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4219,7 +4219,7 @@ td {
     <td style="color:var(--text2)">Ward Clerk B</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.95',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',58)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',58)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4230,7 +4230,7 @@ td {
     <td style="color:var(--text2)">CSSD</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.244',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',59)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',59)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4241,7 +4241,7 @@ td {
     <td style="color:var(--text2)">CATHLAB</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.96',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',60)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',60)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4252,7 +4252,7 @@ td {
     <td style="color:var(--text2)">ADSE OPD</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.157',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',61)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',61)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4263,7 +4263,7 @@ td {
     <td style="color:var(--text2)">Ortho NS</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.49',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',62)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',62)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4274,7 +4274,7 @@ td {
     <td style="color:var(--text2)">ADSE OBSERVATION</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.177',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',63)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',63)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4285,7 +4285,7 @@ td {
     <td style="color:var(--text2)">ADSE OT</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSE</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.206',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',64)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',64)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4296,7 +4296,7 @@ td {
     <td style="color:var(--text2)">MAINRECEPTION1</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.119',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',65)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',65)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4307,7 +4307,7 @@ td {
     <td style="color:var(--text2)">PHARMACY STORE NEW</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.8',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',66)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',66)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4318,7 +4318,7 @@ td {
     <td style="color:var(--text2)">BioMed New</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.5',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',67)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',67)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4329,7 +4329,7 @@ td {
     <td style="color:var(--text2)">ADSC Colour</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSC</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.161',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',68)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',68)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4340,7 +4340,7 @@ td {
     <td style="color:var(--text2)">BKP</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('11',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',69)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',69)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4351,7 +4351,7 @@ td {
     <td style="color:var(--text2)">BKP</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('11',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',70)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',70)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4362,7 +4362,7 @@ td {
     <td style="color:var(--text2)">BKP</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('11',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',71)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',71)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4373,7 +4373,7 @@ td {
     <td style="color:var(--text2)">BKP</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSC</span></td>
     <td><button class="copy-btn" onclick="copyIP('11',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',72)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',72)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4384,7 +4384,7 @@ td {
     <td style="color:var(--text2)">Asnath</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">AHM</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.26',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('printer',73)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('printer',73)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4395,7 +4395,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC2</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 4</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.1',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',0)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',0)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4406,7 +4406,7 @@ td {
     <td style="color:var(--text2)">AHM-D-DRNAVEED</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 4</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.2',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',1)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',1)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4417,7 +4417,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC03</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.3',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',2)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',2)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4428,7 +4428,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC-4</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.4',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',3)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',3)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4439,7 +4439,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC5</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.5',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',4)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',4)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4450,7 +4450,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC06</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.6',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',5)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',5)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4461,7 +4461,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC07</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 3</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.7',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',6)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',6)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4472,7 +4472,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC08</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 3</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.8',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',7)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',7)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4483,7 +4483,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINI9</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 3</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.9',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',8)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',8)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4494,7 +4494,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC10N</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 3</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.10',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',9)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',9)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4505,7 +4505,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC11</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 3</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.11',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',10)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',10)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4516,7 +4516,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC12</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 3</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.12',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',11)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',11)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4527,7 +4527,7 @@ td {
     <td style="color:var(--text2)">AHM-D-INS10</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 3</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.24.79',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',12)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',12)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4538,7 +4538,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC014</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.13',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',13)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',13)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4549,7 +4549,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC014</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.14',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',14)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',14)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4560,7 +4560,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC15</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.15',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',15)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',15)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4571,7 +4571,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC-16</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.16',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',16)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',16)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4582,7 +4582,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC017</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.17',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',17)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',17)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4593,7 +4593,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC018</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.18',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',18)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',18)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4604,7 +4604,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC29</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.19',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',19)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',19)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4615,7 +4615,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC020</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.20',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',20)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',20)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4626,7 +4626,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC21</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 2</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.21',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',21)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',21)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4637,7 +4637,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC-22</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 2</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.22',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',22)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',22)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4648,7 +4648,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC23</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 2</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.23',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',23)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',23)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4659,7 +4659,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC24</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 2</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.24',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',24)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',24)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4670,7 +4670,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC-25</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 1</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.25',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',25)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',25)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4681,7 +4681,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC26</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 1</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.26',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',26)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',26)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4692,7 +4692,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC27</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 1</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.27',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',27)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',27)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4703,7 +4703,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC028</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 1</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.28',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',28)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',28)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4714,7 +4714,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC-29</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.29',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',29)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',29)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4725,7 +4725,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC-30</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.30',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',30)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',30)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4736,7 +4736,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC31</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 5</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.31',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',31)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',31)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4747,7 +4747,7 @@ td {
     <td style="color:var(--text2)">AHM-D-CLINIC32</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 22</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.32',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',32)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',32)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4758,7 +4758,7 @@ td {
     <td style="color:var(--text2)">AHM-D-DRSACHIN</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 22</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.33',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',33)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',33)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4769,7 +4769,7 @@ td {
     <td style="color:var(--text2)">Clinic 34</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 22</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.34',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',34)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',34)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4780,7 +4780,7 @@ td {
     <td style="color:var(--text2)">Clinic 35</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">Zone 22</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.25.35',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',35)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',35)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4791,7 +4791,7 @@ td {
     <td style="color:var(--text2)">ot</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">OT</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.10.46',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',36)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',36)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4802,7 +4802,7 @@ td {
     <td style="color:var(--text2)">ADSC</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSC</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.175',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',37)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',37)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4813,7 +4813,7 @@ td {
     <td style="color:var(--text2)">ADSC</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSC</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.187',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',38)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',38)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4824,7 +4824,7 @@ td {
     <td style="color:var(--text2)">ADSC</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSC</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.185',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',39)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',39)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4835,7 +4835,7 @@ td {
     <td style="color:var(--text2)">ADSC</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ADSC</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.1.101',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',40)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',40)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4846,7 +4846,7 @@ td {
     <td style="color:var(--text2)">ER</td>
     <td><span class="zone-tag zone-blue" style="font-size:0.65rem">ER</span></td>
     <td><button class="copy-btn" onclick="copyIP('172.19.13.237',this)"><i class="fas fa-copy"></i></button></td>
-    <td><div class="acts">
+    <td><div class="acts" style="display: flex;">
     <button class="act-btn edit" onclick="openEdit('dr',41)" title="Edit"><i class="fas fa-pen"></i></button>
     <button class="act-btn del" onclick="delItem('dr',41)" title="Delete"><i class="fas fa-trash-alt"></i></button>
   </div></td>
@@ -4914,9 +4914,9 @@ td {
           <option value="dr">Doctor Clinic</option>
         </select>
       </div>
-      <div id="dynFields"><div class="form-grid"><div class="fgroup"><label>Entry #</label><input id="f_cn" placeholder="Entry #"></div><div class="fgroup"><label>Host Name</label><input id="f_host" placeholder="AH-AHM-..."></div></div><div class="fgroup"><label>IP Address</label><input id="f_ip" placeholder="172.19.x.x"></div><div class="form-grid"><div class="fgroup"><label>Printer Model</label><input id="f_model" placeholder="Printer Model"></div><div class="fgroup"><label>Department</label><input id="f_dept" placeholder="Department"></div></div><div class="fgroup"><label>Facility</label><input id="f_facility" placeholder="AHM / ADSE / ADSC"></div></div>
-      <input type="hidden" id="editIdx" value="3">
-      <input type="hidden" id="editType" value="printer">
+      <div id="dynFields"><div class="form-grid"><div class="fgroup"><label>SL No</label><input id="f_sl" placeholder="SL No"></div><div class="fgroup"><label>Device</label><input id="f_device" placeholder="e.g. Mini PC"></div></div><div class="fgroup"><label>IP Address</label><input id="f_ip" placeholder="172.19.x.x"></div><div class="form-grid"><div class="fgroup"><label>Rooms</label><input id="f_rooms" placeholder="e.g. 501 to 510"></div><div class="fgroup"><label>Floor / Area</label><input id="f_floor" placeholder="e.g. 5th Floor"></div></div><div class="fgroup"><label>Location</label><input id="f_location" placeholder="e.g. E Wing"></div></div>
+      <input type="hidden" id="editIdx" value="8">
+      <input type="hidden" id="editType" value="ward">
     </div>
     <div class="modal-foot">
       <button class="mbtn cancel" id="modalCancel"><i class="fas fa-times"></i> Cancel</button>
@@ -4928,7 +4928,7 @@ td {
 <!-- TOAST -->
 <div class="toast success" id="toast">
   <i class="t-icon fas fa-check-circle"></i>
-  <span id="toastMsg">DEVICE UPDATED</span>
+  <span id="toastMsg">ADMIN MODE ACTIVE — WELCOME, JOBIN CJ</span>
 </div>
 
 <script>
@@ -5092,7 +5092,7 @@ const originalWardData = [
         "ip": "172.19.13.95",
         "rooms": "C001 to C005",
         "floor": "ER Triage Token Display",
-        "location": "ER Triage Token Display"
+        "location": "ER Triage"
     },
     {
         "sl": "10",
@@ -5103,7 +5103,7 @@ const originalWardData = [
         "location": "ER Display"
     },
     {
-        "sl": "10",
+        "sl": "11",
         "device": "Mini PC",
         "ip": "172.19.13.105",
         "rooms": "C001 to C005",
@@ -5111,7 +5111,7 @@ const originalWardData = [
         "location": "HR Bday"
     },
     {
-        "sl": "11",
+        "sl": "12",
         "device": "Mini PC",
         "ip": "172.19.13.102",
         "rooms": "C001 to C005",
@@ -5119,7 +5119,7 @@ const originalWardData = [
         "location": "OT Display"
     },
     {
-        "sl": "12",
+        "sl": "13",
         "device": "Mini PC",
         "ip": "172.19.1.244",
         "rooms": "Media player",
@@ -5127,7 +5127,7 @@ const originalWardData = [
         "location": "ADSC Display"
     },
     {
-        "sl": "13",
+        "sl": "14",
         "device": "Mini PC",
         "ip": "172.19.1.245",
         "rooms": "Media Player",
@@ -5135,7 +5135,7 @@ const originalWardData = [
         "location": "adsc Display"
     },
     {
-        "sl": "14",
+        "sl": "15",
         "device": "Mini PC",
         "ip": "172.19.13.36",
         "rooms": "Blood request",
@@ -5466,10 +5466,10 @@ const originalPrinterData = [
     },
     {
         "cn": "41",
-        "host": "AH-AHM-2ND-DSU-2",
-        "ip": "172.19.24.43",
-        "model": "HP LJ MGD MFP E42540F",
-        "dept": "2ND DSU 2",
+        "host": "AH-AHM-ER MOD",
+        "ip": "172.19.....",
+        "model": "CNBRQ308N5",
+        "dept": "ER MOD",
         "facility": "AHM"
     },
     {
@@ -6036,7 +6036,7 @@ const originalDrData = [
 // ================================================================
 
 const STORE = 'ahm_noc_v4';
-const DATA_VERSION = 'export_1774427230545'; // bump this whenever base data is updated
+const DATA_VERSION = 'export_1775102438151'; // bump this whenever base data is updated
 const STORE_VER = 'ahm_noc_dataversion';
 
 function def() {
@@ -6595,6 +6595,7 @@ document.addEventListener('DOMContentLoaded', function() {
   setActionsVisible(false);
 });
 </script>
+
 
 
 </body></html>
