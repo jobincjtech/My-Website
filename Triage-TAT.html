@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triage TAT Dashboard — Aster Hospital</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #07111f;
+  --bg2: #0c1a2d;
+  --card: rgba(255,255,255,.9);
+  --glass: rgba(10,18,32,.62);
+  --surface: rgba(255,255,255,.82);
+  --surface2: rgba(255,255,255,.07);
+  --border: rgba(148,163,184,.20);
+  --border2: rgba(148,163,184,.12);
+  --txt: #e5eefb;
+  --txt-dark: #0f172a;
+  --txt2: #94a3b8;
+  --txt3: #64748b;
+  --blue: #38bdf8;
+  --blue2: #2563eb;
+  --blue-l: rgba(56,189,248,.14);
+  --green: #22c55e;
+  --green-l: rgba(34,197,94,.12);
+  --amber: #f59e0b;
+  --amber-l: rgba(245,158,11,.12);
+  --red: #ef4444;
+  --red-l: rgba(239,68,68,.12);
+  --teal: #14b8a6;
+  --teal-l: rgba(20,184,166,.12);
+  --purple: #8b5cf6;
+  --purple-l: rgba(139,92,246,.12);
+  --shadow: 0 10px 35px rgba(2, 8, 23, .28);
+  --shadow2: 0 18px 48px rgba(2, 8, 23, .42);
+  --glow: 0 0 0 1px rgba(255,255,255,.04), 0 0 28px rgba(56,189,248,.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  color: var(--txt);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(56,189,248,.18), transparent 28%),
+    radial-gradient(circle at 85% 12%, rgba(139,92,246,.15), transparent 24%),
+    radial-gradient(circle at 78% 82%, rgba(34,197,94,.10), transparent 26%),
+    linear-gradient(145deg, #07111f 0%, #0a1527 44%, #0f1f35 100%);
+  overflow-x: hidden;
+}
+body.locked { overflow: hidden; }
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: auto;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: .22;
+  pointer-events: none;
+  z-index: 0;
+  animation: floatOrb 12s ease-in-out infinite;
+}
+body::before { top: -120px; left: -120px; background: #0ea5e9; }
+body::after { right: -130px; bottom: -120px; background: #8b5cf6; animation-delay: -5s; }
+
+@keyframes floatOrb {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-18px) scale(1.06); }
+}
+
+.ticker {
+  position: sticky;
+  top: 0;
+  z-index: 300;
+  height: 28px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  background: rgba(2,6,23,.72);
+  backdrop-filter: blur(14px);
+}
+.ticker-track {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  min-width: 100%;
+  height: 100%;
+  padding-left: 100%;
+  animation: ticker 22s linear infinite;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: lowercase;
+  color: #a5f3fc;
+}
+.ticker-track span { margin-right: 46px; opacity: .92; }
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+.app-shell {
+  position: relative;
+  z-index: 1;
+  transition: filter .35s ease, transform .35s ease;
+}
+body.locked .app-shell {
+  filter: blur(12px) saturate(.7);
+  transform: scale(.985);
+  pointer-events: none;
+  user-select: none;
+}
+
+header {
+  margin: 16px auto 0;
+  width: min(1360px, calc(100% - 28px));
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(15,23,42,.68), rgba(15,23,42,.5));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  position: sticky;
+  top: 40px;
+  z-index: 200;
+}
+.hdr-l { display: flex; align-items: center; gap: 14px; }
+.hdr-logo {
+  width: 42px; height: 42px; border-radius: 14px;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb 55%, #8b5cf6);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 10px 22px rgba(37,99,235,.35);
+}
+.hdr-logo svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.hdr-title { font-size: 16px; font-weight: 700; letter-spacing: -.3px; color: #fff; }
+.hdr-sub { font-size: 11px; color: #93c5fd; margin-top: 2px; letter-spacing: .6px; text-transform: uppercase; }
+.hdr-r { display: flex; align-items: center; gap: 10px; }
+.hdr-date {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #e2e8f0;
+  font-weight: 600;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 7px rgba(34,197,94,.11); }
+
+main { max-width: 1360px; margin: 0 auto; padding: 26px 20px 70px; }
+.hero {
+  display: grid;
+  grid-template-columns: 1.5fr .8fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.hero-card,
+.hero-side {
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(15,23,42,.58), rgba(15,23,42,.44));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  position: relative;
+  overflow: hidden;
+}
+.hero-card { padding: 28px; }
+.hero-side { padding: 22px; display: flex; flex-direction: column; justify-content: space-between; }
+.hero-card::before,
+.hero-side::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(56,189,248,.08), transparent 35%, rgba(139,92,246,.08));
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(56,189,248,.09);
+  border: 1px solid rgba(56,189,248,.22);
+  color: #bae6fd;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .9px;
+  text-transform: uppercase;
+}
+.hero-badge i {
+  width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
+  box-shadow: 0 0 0 6px rgba(34,197,94,.08);
+}
+.hero h1 {
+  margin-top: 16px;
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.06;
+  letter-spacing: -1.4px;
+  color: #fff;
+  max-width: 720px;
+}
+.hero p {
+  margin-top: 12px;
+  max-width: 720px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #94a3b8;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+.mini {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.07);
+}
+.mini .cap { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #7dd3fc; font-weight: 700; }
+.mini .val { margin-top: 8px; font-size: 22px; font-weight: 800; color: #fff; }
+.mini .sub { margin-top: 4px; font-size: 12px; color: #94a3b8; }
+
+.side-top { position: relative; z-index: 1; }
+.side-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; color: #7dd3fc; font-weight: 700; }
+.side-big { margin-top: 10px; font-size: 30px; font-weight: 800; letter-spacing: -1px; color: #fff; }
+.side-desc { margin-top: 8px; font-size: 13px; color: #94a3b8; line-height: 1.7; }
+.side-bars { margin-top: 20px; display: grid; gap: 10px; }
+.bar-row { display: grid; grid-template-columns: 110px 1fr 44px; gap: 10px; align-items: center; font-size: 12px; color: #cbd5e1; }
+.bar-row .bar {
+  height: 8px; border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  overflow: hidden;
+}
+.bar-row .bar > span {
+  display: block; height: 100%; border-radius: inherit;
+  background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+}
+.side-foot {
+  position: relative; z-index: 1;
+  margin-top: 18px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding-top: 14px;
+  color: #a5b4fc;
+  font-size: 12px;
+}
+
+.upload,
+.filters,
+.sum-wrap,
+.det-wrap,
+.kcard,
+.filebar,
+.actbar,
+.rec-pill {
+  backdrop-filter: blur(14px);
+}
+
+.upload {
+  background: linear-gradient(180deg, rgba(15,23,42,.58), rgba(15,23,42,.42));
+  border: 1.5px dashed rgba(125,211,252,.34);
+  border-radius: 22px;
+  padding: 42px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: .28s ease;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.upload::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(56,189,248,.08), transparent 58%);
+  pointer-events: none;
+}
+.upload:hover, .upload.drag {
+  border-color: rgba(56,189,248,.8);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow2), 0 0 0 1px rgba(56,189,248,.16);
+}
+.upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.up-ico {
+  width: 60px; height: 60px;
+  margin: 0 auto 16px;
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, rgba(56,189,248,.18), rgba(139,92,246,.18));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.up-ico svg { width: 26px; height: 26px; stroke: #7dd3fc; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.upload h2 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.upload p { color: #94a3b8; font-size: 13px; }
+.exts { display: inline-flex; gap: 7px; margin-top: 12px; flex-wrap: wrap; }
+.ext {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #cbd5e1;
+}
+
+.filebar {
+  display: none; align-items: center; gap: 9px;
+  background: rgba(16,185,129,.14);
+  border: 1px solid rgba(16,185,129,.32);
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: #d1fae5;
+  box-shadow: var(--shadow);
+}
+.filebar.on, .filters.on, .actbar.on, .kpi-wrap.on, .sum-wrap.on, .det-wrap.on { display: block; }
+.filebar.on { display: flex; }
+.filebar svg { stroke: #22c55e; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.filebar b { color: #bbf7d0; }
+.filebar span { color: #d1fae5; }
+
+.filters {
+  display: none;
+  background: linear-gradient(180deg, rgba(15,23,42,.58), rgba(15,23,42,.44));
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 22px;
+  padding: 18px 18px 16px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+}
+.filt-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 13px; gap: 10px; }
+.filt-hdr h3 { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #7dd3fc; }
+.filt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 10px; }
+.fg label { display: block; font-size: 10.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; }
+.fg select,
+.srch,
+.login-box input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  color: #fff;
+  background: rgba(255,255,255,.06);
+  transition: .18s ease;
+}
+.fg select:focus,
+.srch:focus,
+.login-box input:focus {
+  outline: none;
+  border-color: rgba(56,189,248,.6);
+  box-shadow: 0 0 0 4px rgba(56,189,248,.12);
+}
+.fg select option { color: #0f172a; }
+.filt-actions { display: flex; gap: 9px; margin-top: 13px; flex-wrap: wrap; }
+.btn-apply,
+.btn-rst,
+.btn-dl,
+.login-btn,
+.lock-btn {
+  border: none;
+  border-radius: 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .18s ease;
+}
+.btn-apply,
+.btn-dl,
+.login-btn {
+  padding: 11px 16px;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb 60%, #8b5cf6);
+  color: #fff;
+  box-shadow: 0 14px 24px rgba(37,99,235,.24);
+}
+.btn-apply:hover,
+.btn-dl:hover,
+.login-btn:hover,
+.lock-btn:hover { transform: translateY(-1px); }
+.btn-rst,
+.lock-btn {
+  padding: 11px 14px;
+  background: rgba(255,255,255,.06);
+  color: #dbeafe;
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.actbar { display: none; align-items: center; gap: 10px; margin-bottom: 18px; }
+.actbar.on { display: flex; flex-wrap: wrap; }
+.btn-dl { display: inline-flex; align-items: center; gap: 7px; }
+.btn-dl svg { stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.rec-pill {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #dbeafe;
+}
+
+.sec-lbl {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #7dd3fc;
+  margin-bottom: 12px;
+}
+.kpi-wrap { display: none; margin-bottom: 20px; }
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.kcard {
+  background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.86));
+  border: 1px solid rgba(255,255,255,.55);
+  color: var(--txt-dark);
+  border-radius: 24px;
+  padding: 18px 20px 16px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  transition: transform .2s, box-shadow .2s;
+  animation: riseUp .55s ease both;
+}
+.kcard:nth-child(2) { animation-delay: .06s; }
+.kcard:nth-child(3) { animation-delay: .12s; }
+.kcard:nth-child(4) { animation-delay: .18s; }
+@keyframes riseUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.kcard:hover { box-shadow: var(--shadow2); transform: translateY(-2px); }
+.kcard::before { content: ''; position: absolute; inset: 0 0 auto; height: 4px; }
+.kcard.blue::before  { background: linear-gradient(90deg, #38bdf8, #2563eb); }
+.kcard.green::before { background: linear-gradient(90deg, #34d399, #16a34a); }
+.kcard.amber::before { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+.kcard.red::before   { background: linear-gradient(90deg, #f87171, #ef4444); }
+.kcard.teal::before  { background: linear-gradient(90deg, #2dd4bf, #14b8a6); }
+.kcard.purple::before{ background: linear-gradient(90deg, #a78bfa, #8b5cf6); }
+.k-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+.k-ico {
+  width: 38px; height: 38px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.k-ico svg { width: 18px; height: 18px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.kcard.blue .k-ico { background: rgba(37,99,235,.1); } .kcard.blue .k-ico svg { stroke: #2563eb; }
+.kcard.green .k-ico { background: rgba(34,197,94,.1); } .kcard.green .k-ico svg { stroke: #16a34a; }
+.kcard.amber .k-ico { background: rgba(245,158,11,.1); } .kcard.amber .k-ico svg { stroke: #d97706; }
+.kcard.red .k-ico { background: rgba(239,68,68,.1); } .kcard.red .k-ico svg { stroke: #ef4444; }
+.kcard.teal .k-ico { background: rgba(20,184,166,.1); } .kcard.teal .k-ico svg { stroke: #0f766e; }
+.kcard.purple .k-ico { background: rgba(139,92,246,.1); } .kcard.purple .k-ico svg { stroke: #7c3aed; }
+.k-n {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: #64748b;
+  background: rgba(15,23,42,.05);
+  border: 1px solid rgba(15,23,42,.06);
+  border-radius: 999px;
+  padding: 5px 9px;
+}
+.k-label { font-size: 11.5px; font-weight: 600; color: #475569; margin-bottom: 6px; line-height: 1.35; }
+.k-val { font-size: 34px; font-weight: 800; letter-spacing: -1.7px; line-height: 1; }
+.kcard.blue .k-val { color: #2563eb; }
+.kcard.green .k-val { color: #16a34a; }
+.kcard.amber .k-val { color: #d97706; }
+.kcard.red .k-val { color: #dc2626; }
+.kcard.teal .k-val { color: #0f766e; }
+.kcard.purple .k-val { color: #7c3aed; }
+.k-unit { font-size: 13px; font-weight: 600; opacity: .7; margin-left: 3px; }
+.k-foot { margin-top: 11px; padding-top: 10px; border-top: 1px solid rgba(15,23,42,.08); }
+.k-sub { font-size: 11px; color: #64748b; }
+.k-sub b { color: #334155; }
+
+.sum-wrap,
+.det-wrap {
+  display: none;
+  background: linear-gradient(180deg, rgba(15,23,42,.58), rgba(15,23,42,.44));
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.sum-hdr,
+.det-hdr {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.sum-hdr h2,
+.det-hdr h2 { font-size: 14px; font-weight: 700; color: #fff; }
+.sum-hdr p,
+.det-hdr p { font-size: 11.5px; color: #94a3b8; margin-top: 2px; }
+
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  background: rgba(255,255,255,.04);
+  padding: 11px 18px;
+  text-align: left;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #7dd3fc;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  white-space: nowrap;
+}
+tbody td {
+  padding: 13px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  vertical-align: middle;
+  font-size: 13px;
+  color: #e2e8f0;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: rgba(255,255,255,.03); }
+.mn { font-weight: 700; color: #fff; }
+.msub { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+.pill {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 12px;
+}
+.pill.blue   { color: #dbeafe; background: rgba(37,99,235,.22); }
+.pill.green  { color: #dcfce7; background: rgba(22,163,74,.22); }
+.pill.amber  { color: #fef3c7; background: rgba(217,119,6,.22); }
+.pill.red    { color: #fee2e2; background: rgba(220,38,38,.22); }
+.pill.teal   { color: #ccfbf1; background: rgba(13,148,136,.22); }
+.pill.purple { color: #ede9fe; background: rgba(124,58,237,.22); }
+.brow { display: flex; align-items: center; gap: 8px; }
+.bbg { flex: 1; height: 6px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; min-width: 80px; }
+.bfill { height: 100%; border-radius: 999px; }
+.btxt { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 600; min-width: 48px; color: #e2e8f0; }
+.chip {
+  display: inline-block;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #dbeafe;
+  font-weight: 700;
+}
+.sw { position: relative; }
+.sw svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+.srch { padding-left: 32px; width: 220px; }
+.pg {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  font-size: 12px;
+  color: #cbd5e1;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.pgb-wrap { display: flex; gap: 5px; }
+.pgb {
+  padding: 6px 10px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  background: rgba(255,255,255,.05);
+  cursor: pointer;
+  font-size: 12px;
+  color: #e2e8f0;
+  font-family: 'Inter', sans-serif;
+  transition: .15s;
+}
+.pgb:hover:not(:disabled), .pgb.active {
+  background: linear-gradient(135deg, #0ea5e9, #2563eb 60%, #8b5cf6);
+  color: #fff;
+  border-color: transparent;
+}
+.pgb:disabled { opacity: .3; cursor: not-allowed; }
+.c2,.c3,.c4,.c5 {
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 10.5px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+.c2 { background: rgba(220,38,38,.22); color: #fee2e2; }
+.c3 { background: rgba(217,119,6,.22); color: #fef3c7; }
+.c4 { background: rgba(22,163,74,.22); color: #dcfce7; }
+.c5 { background: rgba(100,116,139,.22); color: #e2e8f0; }
+.empty-row { text-align: center; padding: 36px; color: #94a3b8; font-size: 13px; }
+
+/* Login overlay */
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(2,6,23,.72);
+  backdrop-filter: blur(12px);
+}
+.login-box {
+  width: min(480px, 100%);
+  padding: 28px;
+  border-radius: 28px;
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    linear-gradient(180deg, rgba(15,23,42,.9), rgba(15,23,42,.8)),
+    radial-gradient(circle at top, rgba(56,189,248,.12), transparent 52%);
+  box-shadow: 0 24px 80px rgba(2,6,23,.55), var(--glow);
+  position: relative;
+  overflow: hidden;
+}
+.login-box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(56,189,248,.06), transparent 38%, rgba(139,92,246,.08));
+  pointer-events: none;
+}
+.login-logo {
+  width: 64px; height: 64px; border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb 55%, #8b5cf6);
+  box-shadow: 0 12px 28px rgba(37,99,235,.34);
+}
+.login-logo svg { width: 28px; height: 28px; stroke: #fff; fill: none; stroke-width: 2; }
+.login-box h2 { margin-top: 18px; font-size: 30px; letter-spacing: -1px; color: #fff; }
+.login-box p { margin-top: 8px; color: #94a3b8; line-height: 1.7; font-size: 13px; }
+.login-meta {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  margin: 18px 0 16px;
+}
+.login-mini {
+  padding: 12px; border-radius: 16px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.06);
+}
+.login-mini .k { font-size: 10px; color: #7dd3fc; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+.login-mini .v { margin-top: 7px; color: #fff; font-size: 14px; font-weight: 700; }
+.login-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 12px; }
+.login-help {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.login-status {
+  min-height: 20px;
+  font-size: 12px;
+  color: #fca5a5;
+  font-weight: 600;
+}
+.login-note {
+  margin-top: 14px;
+  padding: 11px 12px;
+  border-radius: 14px;
+  background: rgba(56,189,248,.07);
+  border: 1px solid rgba(56,189,248,.14);
+  color: #bae6fd;
+  font-size: 11.5px;
+  line-height: 1.7;
+}
+.hidden { display: none !important; }
+.top-actions { display:flex; align-items:center; gap:10px; flex-wrap: wrap; }
+.lock-btn { display:inline-flex; align-items:center; gap:7px; }
+.lock-btn svg { width:14px; height:14px; stroke: currentColor; fill:none; stroke-width:2; }
+
+@media (max-width: 1100px) {
+  .hero { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 760px) {
+  header { width: calc(100% - 18px); height: auto; padding: 16px; top: 36px; border-radius: 18px; }
+  .hero-card, .hero-side, .filters, .sum-wrap, .det-wrap, .upload { border-radius: 20px; }
+  .hero-grid, .login-meta { grid-template-columns: 1fr; }
+  .login-row { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: 1fr; }
+  .srch { width: 100%; }
+}
+@media (max-width: 520px) {
+  main { padding: 16px 12px 48px; }
+  header { margin-top: 10px; }
+  .hdr-r { display: none; }
+  .hero h1 { font-size: 26px; }
+}
+</style>
+</head>
+<body class="locked">
+
+<div class="ticker">
+  <div class="ticker-track">
+    <span>jobin tech</span><span>jobin tech</span><span>jobin tech</span><span>jobin tech</span><span>jobin tech</span><span>jobin tech</span>
+  </div>
+</div>
+
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 1l8 4v6c0 5-3.5 9.5-8 11-4.5-1.5-8-6-8-11V5l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+    </div>
+    <h2>                Triage TAT</h2>
+    <p>Emergency Department · Daily KPI Report.</p>
+
+
+    <div class="login-row">
+      <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="current-password">
+      <button class="login-btn" id="loginBtn">Unlock Dashboard</button>
+    </div>
+
+    <div class="login-help">
+      <div class="login-status" id="loginStatus"></div>
+      <div style="font-size:11px;color:#64748b">Press Enter to login</div>
+    </div>
+  </div>
+</div>
+
+<div class="app-shell" id="appShell">
+  <header>
+    <div class="hdr-l">
+      <div class="hdr-logo">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div>
+        <div class="hdr-title">Kadesh Triage TAT Operations Dashboard</div>
+        <div class="hdr-sub">Emergency Department · Daily KPI Report</div>
+      </div>
+    </div>
+    <div class="hdr-r">
+      <div class="dot"></div>
+      <div class="hdr-date" id="hdr-date">—</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="top-actions" style="margin-bottom:18px;">
+      <button class="lock-btn" onclick="lockDashboard()">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+        Lock Dashboard
+      </button>
+    </div>
+
+    <div class="upload" id="upload">
+      <input type="file" id="fileinp" accept=".xlsx,.xls,.csv">
+      <div class="up-ico">
+        <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+      </div>
+      <h2>Upload Daily Triage TAT Excel File</h2>
+      <p>Drop your file here, or click to browse</p>
+      <div class="exts"><span class="ext">.xlsx</span><span class="ext">.xls</span><span class="ext">.csv</span></div>
+    </div>
+
+    <div class="filebar" id="filebar">
+      <svg width="15" height="15" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      <div><b id="fb-name">—</b>&nbsp;<span id="fb-count"></span></div>
+    </div>
+
+    <div class="filters" id="filters">
+      <div class="filt-hdr">
+        <h3>Filters</h3>
+        <span style="font-size:11.5px;color:#94a3b8">All KPIs recalculate on apply</span>
+      </div>
+      <div class="filt-grid">
+        <div class="fg"><label>Speciality</label><select id="f-spec"><option value="">All Specialities</option></select></div>
+        <div class="fg"><label>Triage Doctor</label><select id="f-doc"><option value="">All Doctors</option></select></div>
+        <div class="fg"><label>ER Status</label><select id="f-status"><option value="">All Statuses</option></select></div>
+        <div class="fg"><label>CTAS Level</label><select id="f-ctas"><option value="">All Levels</option></select></div>
+        <div class="fg"><label>Arrival Mode</label><select id="f-arr"><option value="">All Modes</option></select></div>
+      </div>
+      <div class="filt-actions">
+        <button class="btn-apply" onclick="applyF()">Apply Filters</button>
+        <button class="btn-rst" onclick="resetF()">Reset</button>
+      </div>
+    </div>
+
+    <div class="actbar" id="actbar">
+      <button class="btn-dl" onclick="dlExcel()">
+        <svg width="14" height="14" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Summary Excel
+      </button>
+      <div class="rec-pill" id="rec-pill">—</div>
+    </div>
+
+    <div class="kpi-wrap" id="kpi-wrap">
+      <div class="sec-lbl">Key Performance Indicators — Triage Completed Patients Only</div>
+      <div class="kpi-grid" id="kpi-grid"></div>
+    </div>
+
+    <div class="sum-wrap" id="sum-wrap">
+      <div class="sum-hdr">
+        <div><h2>KPI Summary Table</h2><p id="sum-sub">—</p></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Metric</th><th>Value</th>
+              <th>Percentage</th><th>Count</th><th>Base (n)</th>
+            </tr>
+          </thead>
+          <tbody id="sum-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="det-wrap" id="det-wrap">
+      <div class="det-hdr">
+        <div><h2>Patient-Level Detail</h2><p id="det-sub">—</p></div>
+        <div class="sw">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input class="srch" id="srch" type="text" placeholder="Token, patient, doctor…" oninput="doSearch()">
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Token</th>
+              <th>Patient Name</th>
+              <th>Token→Triage (min)</th>
+              <th>Triage End Time (C)</th>
+              <th>Doctor Seen Time (E)</th>
+              <th>Triage→Doctor (min)</th>
+              <th>CTAS Level</th>
+              <th>Speciality</th>
+              <th>Triage Doctor</th>
+              <th>ER Status</th>
+            </tr>
+          </thead>
+          <tbody id="det-body"></tbody>
+        </table>
+      </div>
+      <div class="pg">
+        <span id="pg-info">—</span>
+        <div class="pgb-wrap" id="pgb-wrap"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────
+//  SECURITY SETTINGS
+// ─────────────────────────────────────────────────────────
+const PASSWORD_HASH = '4f5f4e766fc5f679561988e197d7521666a10004010de88e5e92290fa9e09d50'; //
+const SESSION_KEY = 'kadesh_dashboard_auth';
+
+async function sha256(text) {
+  const data = new TextEncoder().encode(text);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function attemptLogin() {
+  const input = document.getElementById('passwordInput');
+  const status = document.getElementById('loginStatus');
+  const value = input.value.trim();
+
+  if (!value) {
+    status.textContent = 'Please enter the password.';
+    input.focus();
+    return;
+  }
+
+  status.style.color = '#93c5fd';
+  status.textContent = 'Checking password...';
+
+  try {
+    const hash = await sha256(value);
+    if (hash === PASSWORD_HASH) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      unlockDashboard();
+    } else {
+      status.style.color = '#fca5a5';
+      status.textContent = 'Incorrect password. Please try again.';
+      input.value = '';
+      input.focus();
+      input.classList.add('shake');
+      setTimeout(() => input.classList.remove('shake'), 300);
+    }
+  } catch (e) {
+    status.style.color = '#fca5a5';
+    status.textContent = 'Unable to verify password in this browser.';
+  }
+}
+
+function unlockDashboard() {
+  document.body.classList.remove('locked');
+  document.getElementById('loginOverlay').classList.add('hidden');
+  document.getElementById('passwordInput').value = '';
+  document.getElementById('loginStatus').textContent = '';
+}
+
+function lockDashboard() {
+  sessionStorage.removeItem(SESSION_KEY);
+  document.body.classList.add('locked');
+  document.getElementById('loginOverlay').classList.remove('hidden');
+  const input = document.getElementById('passwordInput');
+  input.value = '';
+  document.getElementById('loginStatus').textContent = '';
+  setTimeout(() => input.focus(), 120);
+}
+
+function initAuth() {
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    unlockDashboard();
+  } else {
+    document.body.classList.add('locked');
+    setTimeout(() => document.getElementById('passwordInput').focus(), 120);
+  }
+}
+
+document.getElementById('loginBtn').addEventListener('click', attemptLogin);
+document.getElementById('passwordInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') attemptLogin();
+});
+
+// ─────────────────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────────────────
+let ALL = [], FILT = [], DET = [];
+let PAGE = 1; const PER = 25;
+let FNAME = '';
+
+// ─────────────────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────────────────
+document.getElementById('hdr-date').textContent =
+  new Date().toLocaleDateString('en-AE', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
+
+const uploadEl = document.getElementById('upload');
+const fileInp  = document.getElementById('fileinp');
+uploadEl.addEventListener('dragover',  e => { e.preventDefault(); uploadEl.classList.add('drag'); });
+uploadEl.addEventListener('dragleave', () => uploadEl.classList.remove('drag'));
+uploadEl.addEventListener('drop', e => {
+  e.preventDefault(); uploadEl.classList.remove('drag');
+  if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+});
+fileInp.addEventListener('change', () => { if (fileInp.files[0]) loadFile(fileInp.files[0]); });
+initAuth();
+
+// ─────────────────────────────────────────────────────────
+//  LOAD FILE
+// ─────────────────────────────────────────────────────────
+function loadFile(file) {
+  FNAME = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(new Uint8Array(e.target.result), { type:'array', cellDates:false });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json(ws, { defval:'', raw:false });
+      parseRows(raw);
+    } catch(err) { alert('Error reading file: ' + err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function stripKey(s) { return String(s).replace(/\s+/g, '').toLowerCase(); }
+function buildLookup(obj) {
+  const m = {};
+  for (const k of Object.keys(obj)) m[stripKey(k)] = k;
+  return m;
+}
+
+const COLS = {
+  token:      'tokenno',
+  patient:    'patientname',
+  tat1:       'triage1tat(b-a)min',
+  triageEnd:  'triageendttime(c)',
+  docSeen:    'doctorseentime(e)',
+  speciality: 'triagespeciality',
+  doctor:     'triagedoctor',
+  erStatus:   'erstatus',
+  ctas:       'ctaslevel',
+  arrival:    'arrivalmode',
+};
+
+function getV(row, lup, col) {
+  const actual = lup[col];
+  return actual ? String(row[actual] || '').trim() : '';
+}
+
+function parseRows(raw) {
+  if (!raw.length) { alert('No data found.'); return; }
+  const lup = buildLookup(raw[0]);
+
+  ALL = raw.map(row => {
+    const token = getV(row, lup, COLS.token);
+    if (!token) return null;
+
+    const patient    = getV(row, lup, COLS.patient);
+    const tat1Str    = getV(row, lup, COLS.tat1);
+    const triageEnd  = getV(row, lup, COLS.triageEnd);
+    const docSeen    = getV(row, lup, COLS.docSeen);
+    const speciality = getV(row, lup, COLS.speciality);
+    const doctor     = getV(row, lup, COLS.doctor);
+    const erStatus   = getV(row, lup, COLS.erStatus);
+    const ctas       = getV(row, lup, COLS.ctas);
+    const arrival    = getV(row, lup, COLS.arrival);
+
+    const tat1 = (tat1Str !== '' && !isNaN(parseFloat(tat1Str))) ? parseFloat(tat1Str) : null;
+
+    let triageToDoc = null;
+    if (triageEnd && docSeen) {
+      const c = parseTS(triageEnd);
+      const e = parseTS(docSeen);
+      if (c && e) {
+        const diff = (e - c) / 60000;
+        if (diff >= 0 && diff < 1440) triageToDoc = parseFloat(diff.toFixed(1));
+      }
+    }
+
+    return { token, patient, tat1, triageEnd, docSeen, triageToDoc, speciality, doctor, erStatus, ctas, arrival };
+  }).filter(Boolean);
+
+  FILT = ALL.filter(r => r.tat1 !== null);
+  populateFilters();
+
+  ['filebar','filters','actbar','kpi-wrap','sum-wrap','det-wrap'].forEach(id =>
+    document.getElementById(id).classList.add('on'));
+  document.getElementById('fb-name').textContent = FNAME;
+  document.getElementById('fb-count').textContent = `· ${FILT.length} triage-completed records (${ALL.length} total rows)`;
+
+  renderAll();
+}
+
+function parseTS(s) {
+  if (!s) return null;
+  const d = new Date(s.replace(' ', 'T'));
+  return isNaN(d) ? null : d;
+}
+
+function populateFilters() {
+  const base = ALL.filter(r => r.tat1 !== null);
+  const uniq = k => [...new Set(base.map(r => r[k]).filter(v => v !== ''))].sort();
+  fillSel('f-spec',   uniq('speciality'));
+  fillSel('f-doc',    uniq('doctor'));
+  fillSel('f-status', uniq('erStatus'));
+  fillSel('f-ctas',   uniq('ctas'));
+  fillSel('f-arr',    uniq('arrival'));
+}
+function fillSel(id, vals) {
+  const s = document.getElementById(id);
+  const first = s.options[0]; s.innerHTML = ''; s.appendChild(first);
+  vals.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; s.appendChild(o); });
+}
+function applyF() {
+  const spec   = document.getElementById('f-spec').value;
+  const doc    = document.getElementById('f-doc').value;
+  const status = document.getElementById('f-status').value;
+  const ctas   = document.getElementById('f-ctas').value;
+  const arr    = document.getElementById('f-arr').value;
+  FILT = ALL.filter(r =>
+    r.tat1 !== null &&
+    (!spec   || r.speciality === spec) &&
+    (!doc    || r.doctor === doc) &&
+    (!status || r.erStatus === status) &&
+    (!ctas   || r.ctas === ctas) &&
+    (!arr    || r.arrival === arr)
+  );
+  PAGE = 1; renderAll();
+}
+function resetF() {
+  ['f-spec','f-doc','f-status','f-ctas','f-arr'].forEach(id => document.getElementById(id).value = '');
+  FILT = ALL.filter(r => r.tat1 !== null);
+  PAGE = 1; renderAll();
+}
+
+function calcKPI(rows) {
+  const n = rows.length;
+  const tatVals = rows.map(r => r.tat1);
+  const avgTT   = n ? tatVals.reduce((a, b) => a + b, 0) / n : null;
+  const w5n  = rows.filter(r => r.tat1 <= 5).length;
+  const w5p  = n ? (w5n / n * 100) : null;
+  const w10n = rows.filter(r => r.tat1 > 5 && r.tat1 <= 10).length;
+  const w10p = n ? (w10n / n * 100) : null;
+  const tcRows = rows.filter(r => r.triageToDoc !== null);
+  const tcN    = tcRows.length;
+  const avgTC  = tcN ? tcRows.reduce((a, r) => a + r.triageToDoc, 0) / tcN : null;
+  const f1 = v => v !== null ? v.toFixed(1) : '—';
+  const f0 = v => v !== null ? v.toFixed(1) : '—';
+  return { n, tatVals, avgTT: f1(avgTT), w5n, w5p: f1(w5p), w10n, w10p: f1(w10p), tcN, avgTC: f0(avgTC) };
+}
+
+function renderAll() {
+  const kpi = calcKPI(FILT);
+  document.getElementById('rec-pill').innerHTML = `<b>${FILT.length}</b> triage-completed records`;
+  renderKPI(kpi);
+  renderSummary(kpi);
+  DET = [...FILT];
+  document.getElementById('srch').value = '';
+  renderDetail();
+}
+
+function renderKPI(k) {
+  const cards = [
+    { cls: 'blue', label: 'Token to Triage — Average', val: k.avgTT, unit: k.avgTT !== '—' ? 'min' : '', n: k.n, nsub: 'triage-completed patients', foot: 'Source: Triage1 TAT (B-A) column', ico: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>` },
+    { cls: 'green', label: 'Token to Triage ≤ 5 min', val: k.w5p !== '—' ? k.w5p : '—', unit: k.w5p !== '—' ? '%' : '', n: k.w5n, nsub: `of ${k.n} patients`, foot: 'TAT 0 – 5 minutes (within target)', ico: `<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>` },
+    { cls: 'amber', label: 'Token to Triage 5–10 min', val: k.w10p !== '—' ? k.w10p : '—', unit: k.w10p !== '—' ? '%' : '', n: k.w10n, nsub: `of ${k.n} patients`, foot: 'TAT above 5 and up to 10 minutes', ico: `<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>` },
+    { cls: 'teal', label: 'Triage to Consultation — Average', val: k.avgTC, unit: k.avgTC !== '—' ? 'min' : '', n: k.tcN, nsub: 'records with both timestamps', foot: 'Triage End (C) → Doctor Seen (E)', ico: `<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>` },
+  ];
+
+  document.getElementById('kpi-grid').innerHTML = cards.map(c => `
+    <div class="kcard ${c.cls}">
+      <div class="k-top">
+        <div class="k-ico">${c.ico}</div>
+        <span class="k-n">n = ${c.n}</span>
+      </div>
+      <div class="k-label">${c.label}</div>
+      <div class="k-val">${c.val}<span class="k-unit">${c.unit}</span></div>
+      <div class="k-foot">
+        <div class="k-sub"><b>${c.n}</b> ${c.nsub}</div>
+        <div class="k-sub" style="margin-top:2px">${c.foot}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderSummary(k) {
+  document.getElementById('sum-sub').textContent = `${FILT.length} triage-completed patients · ${FNAME}`;
+  const rows = [
+    { i: 1, cls: 'blue', name: 'Token to Triage — Average TAT', sub: 'Read from Triage1 TAT (B-A)min column · minutes', val: k.avgTT !== '—' ? `${k.avgTT} min` : '—', pct: null, count: k.n, base: k.n },
+    { i: 2, cls: 'green', name: 'Token to Triage ≤ 5 min', sub: 'Patients with TAT 0–5 min (within target)', val: `${k.w5n} patients`, pct: k.w5p, pctColor: '#22c55e', count: k.w5n, base: k.n },
+    { i: 3, cls: 'amber', name: 'Token to Triage 5–10 min', sub: 'Patients with TAT above 5 and up to 10 min', val: `${k.w10n} patients`, pct: k.w10p, pctColor: '#f59e0b', count: k.w10n, base: k.n },
+    { i: 4, cls: 'teal', name: 'Triage to Consultation — Average TAT', sub: 'Triage End Time (C) → Doctor Seen Time (E) · minutes', val: k.avgTC !== '—' ? `${k.avgTC} min` : '—', pct: null, count: k.tcN, base: k.n },
+  ];
+
+  document.getElementById('sum-body').innerHTML = rows.map(r => `
+    <tr>
+      <td style="color:#94a3b8;font-family:'JetBrains Mono',monospace;font-size:11px">${r.i}</td>
+      <td><div class="mn">${r.name}</div><div class="msub">${r.sub}</div></td>
+      <td><span class="pill ${r.cls}">${r.val}</span></td>
+      <td>
+        ${r.pct !== null && r.pct !== '—'
+          ? `<div class="brow"><div class="bbg"><div class="bfill" style="width:${Math.min(parseFloat(r.pct),100)}%;background:${r.pctColor}"></div></div><span class="btxt">${r.pct}%</span></div>`
+          : `<span style="color:#64748b;font-size:12px">—</span>`}
+      </td>
+      <td><span class="chip">${r.count}</span></td>
+      <td style="color:#cbd5e1;font-size:12px;font-family:'JetBrains Mono',monospace">${r.base}</td>
+    </tr>`).join('');
+}
+
+function doSearch() {
+  const q = document.getElementById('srch').value.toLowerCase();
+  DET = FILT.filter(r =>
+    r.token.toLowerCase().includes(q) ||
+    r.patient.toLowerCase().includes(q) ||
+    r.doctor.toLowerCase().includes(q) ||
+    r.speciality.toLowerCase().includes(q)
+  );
+  PAGE = 1; renderDetail();
+}
+
+function fmtTime(v) {
+  if (!v) return '—';
+  const m = v.match(/T(\d{2}:\d{2})/);
+  if (m) return m[1];
+  const d = new Date(v);
+  if (!isNaN(d)) return d.toTimeString().substring(0, 5);
+  return v.length > 16 ? v.substring(11, 16) : v;
+}
+
+function ctasCls(v) {
+  const m = String(v).match(/level\s*(\d)/i);
+  return m ? `c${m[1]}` : '';
+}
+function ctasShort(v) {
+  if (!v) return '—';
+  const m = String(v).match(/level\s*(\d)[^-]*-\s*(\S+)/i);
+  return m ? `L${m[1]} ${m[2]}` : v;
+}
+
+function renderDetail() {
+  const s = (PAGE - 1) * PER;
+  const page = DET.slice(s, s + PER);
+  document.getElementById('det-sub').textContent = `${DET.length} records`;
+  const body = document.getElementById('det-body');
+
+  if (!page.length) {
+    body.innerHTML = `<tr><td colspan="10"><div class="empty-row">No records match.</div></td></tr>`;
+  } else {
+    body.innerHTML = page.map(r => {
+      const t1c = r.tat1 > 10 ? 'red' : r.tat1 > 5 ? 'amber' : 'green';
+      return `<tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;white-space:nowrap">${r.token}</td>
+        <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.patient || '—'}</td>
+        <td style="text-align:center"><span class="pill ${t1c}" style="font-size:11.5px;padding:4px 10px">${r.tat1}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#cbd5e1">${fmtTime(r.triageEnd)}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#cbd5e1">${fmtTime(r.docSeen)}</td>
+        <td style="text-align:center">${r.triageToDoc !== null ? `<span class="pill teal" style="font-size:11.5px;padding:4px 10px">${r.triageToDoc}</span>` : `<span style="color:#64748b">—</span>`}</td>
+        <td><span class="${ctasCls(r.ctas)}">${ctasShort(r.ctas)}</span></td>
+        <td style="font-size:12px;color:#e2e8f0">${r.speciality || '—'}</td>
+        <td style="font-size:12px;color:#e2e8f0">${r.doctor || '—'}</td>
+        <td style="font-size:12px;color:#e2e8f0">${r.erStatus || '—'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  const total = DET.length;
+  const pages = Math.ceil(total / PER) || 1;
+  document.getElementById('pg-info').textContent = `${total ? s + 1 : 0}–${Math.min(s + PER, total)} of ${total}`;
+
+  const wrap = document.getElementById('pgb-wrap'); wrap.innerHTML = '';
+  const btn = (label, pg, dis, act) => {
+    const b = document.createElement('button');
+    b.className = 'pgb' + (act ? ' active' : '');
+    b.textContent = label; b.disabled = dis;
+    b.onclick = () => { PAGE = pg; renderDetail(); };
+    wrap.appendChild(b);
+  };
+  btn('‹', PAGE - 1, PAGE === 1);
+  const st = Math.max(1, PAGE - 2), en = Math.min(pages, st + 4);
+  for (let i = st; i <= en; i++) btn(i, i, false, i === PAGE);
+  btn('›', PAGE + 1, PAGE === pages);
+}
+
+function dlExcel() {
+  const k = calcKPI(FILT);
+  const summary = [
+    ['TRIAGE TAT — KPI SUMMARY REPORT'],
+    [''],
+    ['Source File', FNAME],
+    ['Generated', new Date().toLocaleString('en-AE')],
+    ['Triage-Completed Patients (Base)', k.n],
+    [''],
+    ['#', 'Metric', 'Value', 'Unit', 'Percentage (%)', 'Count', 'Base (n)'],
+    [1, 'Token to Triage — Average TAT', k.avgTT, 'minutes', 'N/A', k.n, k.n],
+    [2, 'Token to Triage ≤ 5 min', k.w5n, 'patients', k.w5p + '%', k.w5n, k.n],
+    [3, 'Token to Triage 5–10 min', k.w10n, 'patients', k.w10p + '%', k.w10n, k.n],
+    [4, 'Triage to Consultation — Average TAT (C→E)', k.avgTC, 'minutes', 'N/A', k.tcN, k.n],
+  ];
+
+  const detail = [
+    ['Token No','Patient Name','Token→Triage (min)','Triage End Time (C)','Doctor Seen Time (E)','Triage→Doctor (min)','CTAS Level','Speciality','Triage Doctor','ER Status'],
+    ...FILT.map(r => [r.token, r.patient, r.tat1 !== null ? r.tat1 : '', r.triageEnd, r.docSeen, r.triageToDoc !== null ? r.triageToDoc : '', r.ctas, r.speciality, r.doctor, r.erStatus])
+  ];
+
+  const wb = XLSX.utils.book_new();
+  const ws1 = XLSX.utils.aoa_to_sheet(summary);
+  ws1['!cols'] = [{wch:4},{wch:52},{wch:20},{wch:12},{wch:18},{wch:12},{wch:10}];
+  XLSX.utils.book_append_sheet(wb, ws1, 'KPI Summary');
+
+  const ws2 = XLSX.utils.aoa_to_sheet(detail);
+  ws2['!cols'] = [{wch:14},{wch:32},{wch:20},{wch:24},{wch:24},{wch:20},{wch:30},{wch:24},{wch:28},{wch:16}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Patient Detail');
+
+  XLSX.writeFile(wb, `TAT_${FNAME.replace(/\.[^/.]+$/, '')}_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+</script>
+</body>
+</html>
