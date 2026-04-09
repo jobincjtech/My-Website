@@ -17,14 +17,14 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:var(--F);background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+body{font-family:var(--F);background:radial-gradient(circle at top, rgba(22,34,58,.55), transparent 28%),var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(56,189,248,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.025) 1px,transparent 1px);background-size:50px 50px;animation:gridMove 20s linear infinite}
 @keyframes gridMove{to{background-position:50px 50px}}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 600px 350px at 5% 10%,rgba(56,189,248,.05),transparent 70%),radial-gradient(ellipse 500px 300px at 95% 90%,rgba(244,114,182,.05),transparent 70%)}
 #loginWrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9999;background:var(--bg)}
 #loginWrap.hide{animation:fadeOut .35s ease forwards}
 @keyframes fadeOut{to{opacity:0;transform:scale(.97)}}
-.loginCard{background:var(--s1);border:1px solid var(--bd);border-radius:20px;padding:48px 40px;width:90%;max-width:420px;box-shadow:0 20px 80px rgba(0,0,0,.8);position:relative;overflow:hidden;animation:slideUp .5s cubic-bezier(.16,1,.3,1) both}
+.loginCard{background:linear-gradient(180deg,rgba(18,24,39,.98),rgba(13,18,31,.98));border:1px solid var(--bd);border-radius:24px;padding:52px 42px;width:90%;max-width:430px;box-shadow:0 24px 90px rgba(0,0,0,.82);position:relative;overflow:hidden;animation:slideUp .5s cubic-bezier(.16,1,.3,1) both}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 .loginCard::before{content:'';position:absolute;inset:-1px;border-radius:21px;z-index:-1;background:linear-gradient(135deg,rgba(56,189,248,.2),transparent 40%,rgba(244,114,182,.12))}
 .loginLogo{display:flex;align-items:center;gap:13px;margin-bottom:32px}
@@ -48,7 +48,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
 #app{display:none;min-height:100vh;flex-direction:column;position:relative;z-index:1}
 #app.show{display:flex;animation:appFadeIn .3s ease}
 @keyframes appFadeIn{from{opacity:0}to{opacity:1}}
-.topbar{background:rgba(15,19,32,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.topbar{background:linear-gradient(180deg,rgba(10,14,24,.96),rgba(15,19,32,.88));backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:0 28px;height:72px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 14px 40px rgba(0,0,0,.28)}
 .tbBrand,.tbRight,.infoBarLeft,.mvLeft,.modalHead{display:flex;align-items:center;gap:12px}
 .tbIcon,.mvTitleIco{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--sky),var(--pink));display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 14px rgba(56,189,248,.3)}
 .tbName{font-size:17px;font-weight:800}
@@ -60,22 +60,22 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
 .tbBtn{background:none;border:1px solid var(--bd);border-radius:6px;padding:6px 13px;font-family:var(--F);font-size:12px;color:var(--mu);cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s}
 .tbBtn:hover{border-color:var(--sky);color:var(--sky)}
 .tbBtn.danger:hover{border-color:var(--red);color:var(--red)}
-.content{flex:1;padding:28px;max-width:1600px;margin:0 auto;width:100%}
+.content{flex:1;padding:32px 28px 40px;max-width:1600px;margin:0 auto;width:100%}
 .infoBar{background:linear-gradient(90deg,rgba(56,189,248,.06),rgba(244,114,182,.04));border:1px solid rgba(56,189,248,.16);border-radius:var(--rs);padding:11px 18px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:#7dd3fc;gap:12px;flex-wrap:wrap}
 .infoBarBtn{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.22);border-radius:5px;padding:6px 12px;font-size:11px;color:var(--sky);font-family:var(--F);cursor:pointer;font-weight:600}
 .pageHead{margin-bottom:28px}
 .pageHead h2{font-size:27px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
 .pageHead p,.mvTitleP,.detField label,.detDesc label,.tableCount{color:var(--mu)}
 .ovGrid,.modGrid,.sbRow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
-.ovCard,.modCard,.statBox,.tableWrap,.formPanel,.modalBox{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r)}
-.ovCard{padding:20px 22px;display:flex;align-items:center;gap:16px}
+.ovCard,.modCard,.statBox,.tableWrap,.formPanel,.modalBox{background:linear-gradient(180deg,rgba(18,24,39,.98),rgba(13,18,31,.96));border:1px solid var(--bd);border-radius:18px;box-shadow:0 12px 36px rgba(0,0,0,.24)}
+.ovCard{padding:22px 24px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden}.ovCard::after{content:'';position:absolute;inset:auto -40px -40px auto;width:120px;height:120px;background:radial-gradient(circle,rgba(255,255,255,.08),transparent 65%);pointer-events:none}
 .ovIco,.sbIco{width:48px;height:48px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .ovNum,.sbVal,.mStatVal{font-family:var(--M);font-weight:800;line-height:1}
 .ovNum{font-size:32px;letter-spacing:-2px}
 .ovLbl,.mStatLbl,.sbLbl{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.7px;margin-top:3px}
 .modGrid{gap:20px}
-.modCard{padding:28px 24px;cursor:pointer;transition:.22s;position:relative;overflow:hidden}
-.modCard:hover{transform:translateY(-4px)}
+.modCard{padding:30px 24px;cursor:pointer;transition:.22s;position:relative;overflow:hidden}.modCard::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.025),transparent 40%,rgba(56,189,248,.03));pointer-events:none}
+.modCard:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.13)}
 .modCard.sky{border-top:2px solid var(--sky)}.modCard.pink{border-top:2px solid var(--pink)}.modCard.grn{border-top:2px solid var(--em)}
 .modIco{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
 .modIco.sky{background:rgba(56,189,248,.1);color:var(--sky)} .modIco.pink{background:rgba(244,114,182,.1);color:var(--pink)} .modIco.grn{background:rgba(52,211,153,.1);color:var(--em)}
@@ -89,13 +89,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
 .backBtn{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 17px;font-family:var(--F);font-size:13px;color:var(--tx);cursor:pointer;display:flex;align-items:center;gap:7px}
 .mvTitleH3{font-size:20px;font-weight:800}
 .btn{padding:9px 15px;font-size:13px}
-.btnSky{background:var(--sky);color:#000}.btnGhost{background:var(--s2);border:1px solid var(--bd);color:var(--tx)}.btnRed{background:var(--red);color:#fff}.btnGreen{background:var(--em);color:#000}.btnSm{padding:5px 11px;font-size:12px}
+.btnSky{background:linear-gradient(135deg,var(--sky),#7dd3fc);color:#000;box-shadow:0 8px 22px rgba(56,189,248,.22)}.btnGhost{background:rgba(24,31,50,.85);border:1px solid var(--bd);color:var(--tx)}.btnRed{background:linear-gradient(135deg,var(--red),#fb7185);color:#fff}.btnGreen{background:linear-gradient(135deg,var(--em),#6ee7b7);color:#000}.btnSm{padding:5px 11px;font-size:12px}
 .formPanel{overflow:hidden;display:none;margin-bottom:20px}.formPanel.show{display:block}
 .formHead{padding:16px 22px;border-bottom:1px solid var(--bd);background:var(--s2)}
 .formBody{padding:24px}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.formFull{grid-column:1/-1}.formGroup{display:flex;flex-direction:column;gap:6px}.formGroup label{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px}
 .formGroup textarea{min-height:85px;resize:vertical;padding:10px 13px}
-.tableControls{padding:12px 18px;border-bottom:1px solid var(--bd);background:var(--s2)}
-.tableControls input{background:var(--s1);border:1px solid var(--bd);border-radius:5px;padding:7px 11px;font-family:var(--F);font-size:12px;color:var(--tx);outline:none}
+.tableControls{padding:14px 18px;border-bottom:1px solid var(--bd);background:linear-gradient(180deg,rgba(24,31,50,.98),rgba(21,27,44,.96))}
+.tableControls input{background:rgba(8,12,22,.82);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;font-family:var(--F);font-size:12px;color:var(--tx);outline:none;min-width:220px}
 .tableControls .rightControls{display:flex;gap:9px;flex-wrap:wrap}
 table{width:100%;border-collapse:collapse}thead{background:var(--s2)}th{padding:11px 17px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.9px;border-bottom:1px solid var(--bd)}td{padding:13px 17px;border-bottom:1px solid rgba(255,255,255,.033);font-size:13px;vertical-align:middle}
 tr.dataRow{cursor:pointer}tr.dataRow:hover td{background:rgba(56,189,248,.03)}tr.detRow{display:none}tr.detRow.open{display:table-row}tr.detRow td{padding:0;background:var(--s2)}
@@ -167,7 +167,7 @@ tr.dataRow{cursor:pointer}tr.dataRow:hover td{background:rgba(56,189,248,.03)}tr
     <div class="infoBar">
       <div class="infoBarLeft">
         <i class="fas fa-cloud"></i>
-        <span>This version saves data to <strong>Google Sheets</strong>, so you can access the same records from any browser and any device.</span>
+        <span>This version saves data to <strong>Google Sheets</strong>, giving you one live database across all browsers and devices.</span>
       </div>
       <button class="infoBarBtn" onclick="syncNow()"><i class="fas fa-arrows-rotate"></i> Refresh Data</button>
     </div>
@@ -175,7 +175,7 @@ tr.dataRow{cursor:pointer}tr.dataRow:hover td{background:rgba(56,189,248,.03)}tr
     <div id="dashView">
       <div class="pageHead">
         <h2>Operations <span>Dashboard</span></h2>
-        <p>Manage all IT tickets, issues, and implementations from one place.</p>
+        <p>Professional cloud workspace for support tickets, pending issues, and implementation tracking.</p>
       </div>
 
       <div class="ovGrid">
@@ -273,7 +273,7 @@ tr.dataRow{cursor:pointer}tr.dataRow:hover td{background:rgba(56,189,248,.03)}tr
 <div id="toastArea"></div>
 
 <script>
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwTXgj_m0ic0HOQlfGyWEyxofvL3Y5wMcp7cQj-0A07vLRJH9Ef-7_vOe7rIWWjdFn4/exec';
+const WEB_APP_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 const PW_HASH = '8a4ed630c5556ab78c847b7b3a5dd6761a372b22ddff9fb4d5d5696262162c8c';
 const SESSION_KEY = 'ITNEXUS_SESSION';
 let CURRENT_MOD = null;
@@ -321,8 +321,62 @@ function setText(id, val) { const el = document.getElementById(id); if (el) el.t
 function gv(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
 function e(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function todayStr() { return new Date().toISOString().slice(0,10); }
-function fmtDate(s) { if (!s) return '—'; try { return new Date(s + 'T12:00:00').toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }); } catch { return s; } }
-function fmtDateTime(s) { if (!s) return '—'; try { return new Date(s).toLocaleString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }); } catch { return s; } }
+function normalizeDateValue(value){
+  if(value === null || value === undefined || value === '') return '';
+  if(typeof value === 'string'){
+    const v = value.trim();
+    if(/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+    if(/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(v)){
+      const [d,m,y] = v.split('/');
+      return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    }
+    const match = v.match(/^(\d{4}-\d{2}-\d{2})[T\s]/);
+    if(match) return match[1];
+    const dt = new Date(v);
+    if(!Number.isNaN(dt.getTime())) return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+    return v;
+  }
+  const dt = new Date(value);
+  if(!Number.isNaN(dt.getTime())) return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+  return String(value);
+}
+function normalizeDateTimeValue(value){
+  if(value === null || value === undefined || value === '') return '';
+  if(typeof value === 'string'){
+    const v = value.trim();
+    const dt = new Date(v);
+    if(!Number.isNaN(dt.getTime())) return dt.toISOString();
+    return v;
+  }
+  const dt = new Date(value);
+  if(!Number.isNaN(dt.getTime())) return dt.toISOString();
+  return String(value);
+}
+function normalizeStoreData(raw){
+  const out = { tickets: [], issues: [], impls: [] };
+  ['tickets','issues','impls'].forEach(mod => {
+    out[mod] = (raw?.[mod] || []).map(item => ({
+      ...item,
+      date: normalizeDateValue(item.date),
+      updated: normalizeDateTimeValue(item.updated)
+    }));
+  });
+  return out;
+}
+function fmtDate(s) {
+  const normalized = normalizeDateValue(s);
+  if(!normalized) return '—';
+  const dt = new Date(`${normalized}T12:00:00`);
+  if(Number.isNaN(dt.getTime())) return normalized;
+  return dt.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+}
+function fmtDateTime(s) {
+  const normalized = normalizeDateTimeValue(s);
+  if(!normalized) return '—';
+  const dt = new Date(normalized);
+  if(Number.isNaN(dt.getTime())) return normalized;
+  return dt.toLocaleString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
 function opts(list, sel) { return list.map(o => `<option value="${o}"${sel===o?' selected':''}>${o}</option>`).join(''); }
 function statusBadge(s){ const m={Pending:'bPending','In Progress':'bInProgress',Resolved:'bResolved',Completed:'bCompleted','On Hold':'bOnHold'}; return `<span class="badge ${m[s]||'bPending'}">${e(s||'—')}</span>`; }
 function prioBadge(p){ const m={High:'bHigh',Medium:'bMedium',Low:'bLow'}; return `<span class="badge ${m[p]||'bMedium'}">${e(p||'—')}</span>`; }
@@ -374,7 +428,7 @@ async function syncNow(silent = false){
   try{
     setSyncText('Syncing...');
     const data = await api('getAll');
-    STORE = { tickets: data.tickets || [], issues: data.issues || [], impls: data.impls || [] };
+    STORE = normalizeStoreData(data);
     refreshDashboard();
     if(CURRENT_MOD){ populateStatusFilter(); renderTable(); updateStatBoxes(); }
     setSyncText('Cloud Synced');
@@ -454,6 +508,8 @@ async function saveCurrentItem(){
   const cfg = MODS[CURRENT_MOD];
   const obj = { id: EDITING_ID || crypto.randomUUID(), updated: new Date().toISOString() };
   for(const [key,,type] of cfg.fields){ obj[key] = gv(`f_${key}`); }
+  obj.date = normalizeDateValue(obj.date);
+  obj.updated = normalizeDateTimeValue(obj.updated);
   const mainField = cfg.titleField;
   if(!obj[mainField]) return showToast('Please fill the main title field.', 'er');
   if(!obj.date) obj.date = todayStr();
@@ -506,7 +562,7 @@ function renderTable(){
     if(CURRENT_MOD==='tickets') rowMid = `<td><div class="itemTitle">${e(item.issue)}</div><div class="itemMeta"><span><i class="fas fa-user"></i>${e(item.createdBy)}</span><span><i class="fas fa-user-check"></i>${e(item.assignedTo)}</span><span><i class="fas fa-tag"></i>${e(item.category)}</span></div></td><td><span style="font-family:var(--M);font-size:12px">${e(item.ticketNumber)}</span></td>`;
     if(CURRENT_MOD==='issues') rowMid = `<td><div class="itemTitle">${e(item.issue)}</div><div class="itemMeta"><span><i class="fas fa-user"></i>${e(item.reportedBy)}</span><span><i class="fas fa-user-check"></i>${e(item.assignedBy)}</span><span><i class="fas fa-tag"></i>${e(item.category)}</span></div></td><td>${e(item.reportedBy)}</td>`;
     if(CURRENT_MOD==='impls') rowMid = `<td><div class="itemTitle">${e(item.title)}</div><div class="itemMeta"><span><i class="fas fa-tag"></i>${e(item.category)}</span><span><i class="fas fa-hashtag"></i>${e(item.number)}</span><span><i class="fas fa-user-check"></i>${e(item.assignedTo)}</span></div></td><td>${e(item.requestedBy)}</td>`;
-    const detail = Object.entries(item).filter(([k]) => !['id'].includes(k)).map(([k,v]) => `<div class="detField"><label>${e(k)}</label><p>${e(v)}</p></div>`).join('');
+    const detail = Object.entries(item).filter(([k]) => !['id','description'].includes(k)).map(([k,v]) => `<div class="detField"><label>${e(k)}</label><p>${k==='date' ? e(fmtDate(v)) : k==='updated' ? e(fmtDateTime(v)) : e(v)}</p></div>`).join('');
     return `
       <tr class="dataRow" onclick="toggleDetails('${item.id}')">
         <td>${fmtDate(item.date)}</td>
