@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JobinTech PDF Pro Editor</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f3f5f8;
+      color: #1f2937;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: #ffffff;
+      border-bottom: 1px solid #dbe1ea;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      flex-wrap: wrap;
+    }
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-right: 10px;
+    }
+    button, .file-label {
+      border: 1px solid #cfd8e3;
+      background: #fff;
+      color: #111827;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button.primary, .file-label.primary {
+      background: #0f62fe;
+      color: #fff;
+      border-color: #0f62fe;
+    }
+    button:hover, .file-label:hover { filter: brightness(0.98); }
+    input[type="file"] { display: none; }
+    .status {
+      margin-left: auto;
+      font-size: 13px;
+      color: #4b5563;
+    }
+    .wrap {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 18px;
+      min-height: calc(100vh - 70px);
+    }
+    .panel, .viewer-shell {
+      background: #fff;
+      border: 1px solid #dbe1ea;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+    }
+    .panel { padding: 16px; }
+    .panel h3 {
+      margin: 0 0 12px;
+      font-size: 15px;
+    }
+    .panel p, .panel li {
+      font-size: 13px;
+      line-height: 1.55;
+      color: #4b5563;
+    }
+    .panel ul {
+      padding-left: 18px;
+      margin: 10px 0;
+    }
+    .info-box {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+    .viewer-shell {
+      padding: 18px;
+      overflow: auto;
+    }
+    .canvas-zone {
+      display: flex;
+      justify-content: center;
+      min-height: 600px;
+      padding: 8px;
+      background: #e5e7eb;
+      border-radius: 14px;
+    }
+    .page {
+      position: relative;
+      background: #fff;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+      transform-origin: top center;
+    }
+    #pdfCanvas {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    #textLayer {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      user-select: text;
+    }
+    .editable-text {
+      position: absolute;
+      white-space: pre;
+      min-width: 2px;
+      min-height: 1em;
+      outline: none;
+      border: 1px dashed transparent;
+      padding: 0 1px;
+      line-height: 1;
+      color: transparent;
+      caret-color: #111827;
+      background: transparent;
+    }
+    .editable-text:hover {
+      border-color: transparent;
+      background: rgba(255,255,255,0.18);
+    }
+    .editable-text:focus,
+    .editable-text.edited {
+      color: #111827;
+      border-color: transparent;
+      background: var(--fill-bg, #ffffff);
+      box-shadow: none;
+      outline: none;
+    }
+    .editable-text::selection{
+      background: rgba(15,98,254,.18);
+    }
+    #boldBtn.active-format,
+    #italicBtn.active-format{
+      background:#e8f0ff;
+      border-color:#9fc0ff;
+      color:#0f62fe;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .controls label {
+      font-size: 13px;
+      color: #374151;
+    }
+    .controls input[type="range"] { width: 160px; }
+    .small-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 10px;
+    }
+    textarea#plainText {
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 13px;
+      font-family: Consolas, monospace;
+      margin-top: 10px;
+    }
+    .hidden { display: none; }
+    @media (max-width: 900px) {
+      .wrap { grid-template-columns: 1fr; }
+      .status { width: 100%; margin-left: 0; }
+    }
+  
+    body.locked {
+      overflow: hidden;
+    }
+    .jt-marquee{
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: linear-gradient(90deg,#07111f,#0f1f3a,#07111f);
+      color: #fff;
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+    }
+    .jt-track{
+      display: inline-block;
+      padding-left: 100%;
+      animation: scrollJT 18s linear infinite;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: .3px;
+    }
+    @keyframes scrollJT {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(15,98,254,.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(34,197,94,.08), transparent 22%),
+        linear-gradient(180deg, #eef4fb 0%, #f3f5f8 100%);
+    }
+    .topbar {
+      top: 35px;
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 22px rgba(15,23,42,.05);
+    }
+    .title {
+      font-weight: 800;
+      color: #10203a;
+    }
+    button, .file-label {
+      font-weight: 600;
+      border-radius: 12px;
+      transition: .16s ease;
+      box-shadow: 0 4px 12px rgba(15,23,42,.03);
+    }
+    button:hover, .file-label:hover {
+      filter: none;
+      transform: translateY(-1px);
+    }
+    .panel, .viewer-shell {
+      border-radius: 18px;
+      box-shadow: 0 10px 28px rgba(15,23,42,.06);
+    }
+    .canvas-zone {
+      background: linear-gradient(180deg,#dfe6ee,#d3dce8);
+    }
+    #imageLayer{
+      position:absolute;
+      inset:0;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .placed-image{
+      position:absolute;
+      border:2px solid transparent;
+      cursor: move;
+      user-select:none;
+      pointer-events: auto;
+    }
+    .placed-image.selected{
+      border-color:#0f62fe;
+      box-shadow:0 0 0 2px rgba(15,98,254,.14);
+    }
+    .placed-image img{
+      display:block;
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      pointer-events:none;
+    }
+    .img-handle{
+      position:absolute;
+      width:14px;
+      height:14px;
+      right:-8px;
+      bottom:-8px;
+      background:#0f62fe;
+      border:2px solid #fff;
+      border-radius:50%;
+      cursor:nwse-resize;
+      box-shadow:0 4px 12px rgba(15,98,254,.22);
+    }
+    #loginScreen{
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at top left, rgba(15,98,254,.18), transparent 32%),
+        linear-gradient(135deg, #07111f, #10203a 45%, #07111f);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+    .loginBox{
+      width: min(430px, 100%);
+      background: rgba(255,255,255,.97);
+      padding: 28px;
+      border-radius: 22px;
+      text-align: center;
+      box-shadow: 0 24px 70px rgba(0,0,0,.28);
+      border: 1px solid rgba(255,255,255,.5);
+    }
+    .loginLogo{
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, #0f62fe, #153e90);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 24px;
+      box-shadow: 0 12px 26px rgba(15,98,254,.28);
+    }
+    .loginBox h2{
+      margin: 0 0 8px;
+      font-size: 24px;
+      color: #10203a;
+    }
+    .loginBox p{
+      margin: 0 0 16px;
+      color: #5d6b82;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .loginBox input{
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #cfd8e3;
+      border-radius: 14px;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 12px;
+    }
+    .loginBox input:focus{
+      border-color:#0f62fe;
+      box-shadow:0 0 0 3px rgba(15,98,254,.1);
+    }
+    #loginBtn{
+      width: 100%;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, #0f62fe, #1949b8);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    #err{
+      min-height: 20px;
+      margin-top: 12px;
+      color: #b42318;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+  </style>
+</head>
+<body class="locked">
+  <div id="loginScreen">
+    <div class="loginBox">
+      <div class="loginLogo">JT</div>
+      <h2>JobinTech Secure PDF Editor</h2>
+      <p>Enter password to open the editor.</p>
+      <input type="password" id="pass" placeholder="Enter password" />
+      <button id="loginBtn" onclick="checkLogin()">Unlock Editor</button>
+      <div id="err"></div>
+    </div>
+  </div>
+
+  <div class="jt-marquee">
+    <div class="jt-track">
+      JobinTech • Professional PDF Editor • Secure Access • Add Image • Save as PDF • Save as Image • JobinTech • Professional PDF Editor • Secure Access • Add Image • Save as PDF • Save as Image •
+    </div>
+  </div>
+
+  <div class="topbar">
+    <div class="title">JobinTech PDF Pro Editor</div>
+    <label class="file-label primary" for="pdfInput">Upload PDF</label>
+    <input type="file" id="pdfInput" accept="application/pdf" />
+    <label class="file-label" for="imgUpload">Add Image</label>
+    <input type="file" id="imgUpload" accept="image/*" />
+    <button id="deleteImgBtn">Remove selected image</button>
+    <button id="boldBtn">Bold</button>
+    <button id="italicBtn">Italic</button>
+    <label class="file-label" style="padding:10px 10px;cursor:default;">Font Size
+      <input type="number" id="fontSizeInput" min="6" max="96" value="14" style="width:68px;margin-left:8px;padding:6px 8px;border:1px solid #cfd8e3;border-radius:8px;" />
+    </label>
+    <button id="prevBtn">Previous page</button>
+    <button id="nextBtn">Next page</button>
+    <button id="refreshTextBtn">Rebuild editable text</button>
+    <button id="downloadHtmlBtn">Download editable HTML</button>
+    <button id="savePdfBtn">Save as PDF</button>
+    <button id="saveImageBtn">Save as Image</button>
+    <button id="copyTextBtn">Copy page text</button>
+    <div class="status" id="status">Open a PDF to start.</div>
+  </div>
+
+  <div class="wrap">
+    <div class="panel">
+      <h3>How this works</h3>
+      <p>
+        This tool opens your PDF, shows the page exactly like the original, and places editable zones on top of it. Click a text area to edit. Only edited text is shown in the final export, which avoids overlap. You can also add images, drag them, resize them, and remove selected images.
+      </p>
+      <ul>
+        <li>Best for normal text PDFs, letters, forms, and reports.</li>
+        <li>Scanned PDFs or complex tables may not rebuild perfectly.</li>
+        <li>This is not true PDF-to-Word conversion, but it is often easier for quick edits.</li>
+      </ul>
+
+      <div class="controls">
+        <label>Zoom</label>
+        <input type="range" min="50" max="200" value="100" id="zoomRange" />
+        <span id="zoomLabel">100%</span>
+      </div>
+
+      <div class="info-box">
+        <strong>Current page:</strong> <span id="pageLabel">-</span><br>
+        <strong>Editable text blocks:</strong> <span id="blocksLabel">0</span>
+      </div>
+
+      <p class="small-note">
+        If you want perfect structure editing, the best workflow is still: PDF → Word in Adobe or Microsoft Word.
+        This page is useful when you want a simple single-file browser tool.
+      </p>
+
+      <h3 style="margin-top:18px;">Extracted page text</h3>
+      <textarea id="plainText" placeholder="Extracted text will appear here..."></textarea>
+    </div>
+
+    <div class="viewer-shell">
+      <div class="canvas-zone">
+        <div class="page" id="pageContainer" style="width:595px;height:842px;">
+          <canvas id="pdfCanvas"></canvas>
+          <div id="textLayer"></div>
+          <div id="imageLayer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const pdfInput = document.getElementById('pdfInput');
+    const pdfCanvas = document.getElementById('pdfCanvas');
+    const textLayer = document.getElementById('textLayer');
+    const statusEl = document.getElementById('status');
+    const pageLabel = document.getElementById('pageLabel');
+    const blocksLabel = document.getElementById('blocksLabel');
+    const plainText = document.getElementById('plainText');
+    const pageContainer = document.getElementById('pageContainer');
+    const zoomRange = document.getElementById('zoomRange');
+    const zoomLabel = document.getElementById('zoomLabel');
+
+    let pdfDoc = null;
+    let currentPage = 1;
+    let currentScale = 1.35;
+    let currentViewport = null;
+    let currentPageTextItems = [];
+    let basePageWidth = 595;
+    let basePageHeight = 842;
+
+    function setStatus(msg) {
+      statusEl.textContent = msg;
+    }
+
+    pdfInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        setStatus('Loading PDF...');
+        const buffer = await file.arrayBuffer();
+        pdfDoc = await pdfjsLib.getDocument({ data: buffer }).promise;
+        currentPage = 1;
+        await renderPage(currentPage);
+        setStatus('PDF loaded. Click any text to edit.');
+      } catch (err) {
+        console.error(err);
+        setStatus('Failed to open PDF.');
+        alert('Unable to open this PDF file.');
+      }
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', async () => {
+      if (!pdfDoc || currentPage <= 1) return;
+      currentPage -= 1;
+      await renderPage(currentPage);
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', async () => {
+      if (!pdfDoc || currentPage >= pdfDoc.numPages) return;
+      currentPage += 1;
+      await renderPage(currentPage);
+    });
+
+    document.getElementById('refreshTextBtn').addEventListener('click', async () => {
+      if (!pdfDoc) return;
+      await rebuildEditableText(currentPage);
+      setStatus('Editable text rebuilt.');
+    });
+
+    document.getElementById('copyTextBtn').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(plainText.value || '');
+        setStatus('Page text copied.');
+      } catch {
+        setStatus('Could not copy automatically. You can copy from the text box.');
+      }
+    });
+
+    document.getElementById('downloadHtmlBtn').addEventListener('click', () => {
+      const clone = document.documentElement.cloneNode(true);
+      const scripts = clone.querySelectorAll('script');
+      scripts.forEach(s => s.remove());
+      const livePage = pageContainer.outerHTML;
+      const viewerShell = clone.querySelector('.viewer-shell');
+      viewerShell.innerHTML = '<div class="canvas-zone">' + livePage + '</div>';
+      clone.querySelector('#plainText').value = plainText.value;
+      clone.querySelector('.topbar').insertAdjacentHTML('beforeend', '<div style="font-size:12px;color:#374151;">Downloaded editable page snapshot</div>');
+      const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+      const blob = new Blob([html], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'pdf-editable-page.html';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      setStatus('Editable HTML downloaded.');
+    });
+
+    zoomRange.addEventListener('input', () => {
+      const val = parseInt(zoomRange.value, 10);
+      pageContainer.style.transform = 'scale(' + (val / 100) + ')';
+      zoomLabel.textContent = val + '%';
+    });
+
+    document.getElementById('saveImageBtn').addEventListener('click', async () => {
+      if (!pageContainer) return;
+      try {
+        setStatus('Preparing image...');
+        const canvas = await captureEditedPage();
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'edited-page-' + currentPage + '.png';
+        link.click();
+        setStatus('Image downloaded.');
+      } catch (err) {
+        console.error(err);
+        setStatus('Could not save image.');
+        alert('Unable to save image.');
+      }
+    });
+
+    document.getElementById('savePdfBtn').addEventListener('click', async () => {
+      if (!pageContainer) return;
+      try {
+        setStatus('Preparing PDF...');
+        const canvas = await captureEditedPage();
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: canvas.width >= canvas.height ? 'landscape' : 'portrait',
+          unit: 'px',
+          format: [canvas.width, canvas.height]
+        });
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+        pdf.save('edited-page-' + currentPage + '.pdf');
+        setStatus('PDF downloaded.');
+      } catch (err) {
+        console.error(err);
+        setStatus('Could not save PDF.');
+        alert('Unable to save PDF.');
+      }
+    });
+
+    async function captureEditedPage() {
+      const previousTransform = pageContainer.style.transform;
+      pageContainer.style.transform = 'scale(1)';
+
+      const editedBlocks = [...textLayer.querySelectorAll('.editable-text')];
+      const previousState = editedBlocks.map(el => ({
+        el,
+        color: el.style.color,
+        background: el.style.background,
+        borderColor: el.style.borderColor,
+        boxShadow: el.style.boxShadow
+      }));
+
+      editedBlocks.forEach(el => {
+        if (el.dataset.edited === '1') {
+          applyMatchedBackground(el);
+          el.style.color = '#111827';
+          el.style.background = el.style.getPropertyValue('--fill-bg') || '#ffffff';
+          el.style.borderColor = 'transparent';
+          el.style.boxShadow = 'none';
+        } else {
+          el.style.color = 'transparent';
+          el.style.background = 'transparent';
+          el.style.borderColor = 'transparent';
+          el.style.boxShadow = 'none';
+        }
+      });
+
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      const canvas = await html2canvas(pageContainer, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        useCORS: true
+      });
+
+      previousState.forEach(s => {
+        s.el.style.color = s.color;
+        s.el.style.background = s.background;
+        s.el.style.borderColor = s.borderColor;
+        s.el.style.boxShadow = s.boxShadow;
+      });
+      pageContainer.style.transform = previousTransform;
+      return canvas;
+    }
+
+
+    function rgbToCss(r, g, b) {
+      return 'rgb(' + Math.round(r) + ',' + Math.round(g) + ',' + Math.round(b) + ')';
+    }
+
+    function sampleBackgroundForElement(el) {
+      try {
+        const ctx = pdfCanvas.getContext('2d', { willReadFrequently: true });
+        const rect = el.getBoundingClientRect();
+        const pageRect = pageContainer.getBoundingClientRect();
+
+        const x = rect.left - pageRect.left;
+        const y = rect.top - pageRect.top;
+        const w = Math.max(6, rect.width);
+        const h = Math.max(6, rect.height);
+        const inset = Math.max(2, Math.min(8, Math.floor(Math.min(w, h) / 4)));
+
+        const points = [
+          [x + inset, y + inset],
+          [x + w - inset, y + inset],
+          [x + inset, y + h - inset],
+          [x + w - inset, y + h - inset],
+          [x + w / 2, y + inset],
+          [x + w / 2, y + h - inset],
+          [x + inset, y + h / 2],
+          [x + w - inset, y + h / 2]
+        ];
+
+        const buckets = new Map();
+
+        points.forEach(([px, py]) => {
+          const sx = Math.max(0, Math.min(pdfCanvas.width - 1, Math.round(px)));
+          const sy = Math.max(0, Math.min(pdfCanvas.height - 1, Math.round(py)));
+          const data = ctx.getImageData(sx, sy, 1, 1).data;
+          const alpha = data[3];
+          if (alpha === 0) return;
+
+          const q = [
+            Math.round(data[0] / 8) * 8,
+            Math.round(data[1] / 8) * 8,
+            Math.round(data[2] / 8) * 8
+          ];
+          const key = q.join(',');
+          if (!buckets.has(key)) buckets.set(key, { count: 0, sum: [0, 0, 0] });
+          const bucket = buckets.get(key);
+          bucket.count += 1;
+          bucket.sum[0] += data[0];
+          bucket.sum[1] += data[1];
+          bucket.sum[2] += data[2];
+        });
+
+        if (!buckets.size) return '#ffffff';
+        return finalizeBestBucket(buckets);
+      } catch (e) {
+        return '#ffffff';
+      }
+    }
+
+    function finalizeBestBucket(buckets) {
+      let best = null;
+      for (const bucket of buckets.values()) {
+        if (!best || bucket.count > best.count) best = bucket;
+      }
+      if (!best) return '#ffffff';
+      return rgbToCss(
+        best.sum[0] / best.count,
+        best.sum[1] / best.count,
+        best.sum[2] / best.count
+      );
+    }
+
+    function applyMatchedBackground(el) {
+      const bg = sampleBackgroundForElement(el);
+      el.style.setProperty('--fill-bg', bg);
+      if (el.dataset.edited === '1' || document.activeElement === el) {
+        el.style.background = bg;
+      }
+    }
+
+    async function renderPage(pageNum) {
+      const page = await pdfDoc.getPage(pageNum);
+      currentViewport = page.getViewport({ scale: currentScale });
+      const ctx = pdfCanvas.getContext('2d');
+
+      pdfCanvas.width = currentViewport.width;
+      pdfCanvas.height = currentViewport.height;
+      pdfCanvas.style.width = currentViewport.width + 'px';
+      pdfCanvas.style.height = currentViewport.height + 'px';
+
+      pageContainer.style.width = currentViewport.width + 'px';
+      pageContainer.style.height = currentViewport.height + 'px';
+      textLayer.style.width = currentViewport.width + 'px';
+      textLayer.style.height = currentViewport.height + 'px';
+
+      await page.render({ canvasContext: ctx, viewport: currentViewport }).promise;
+      await rebuildEditableText(pageNum, page);
+      pageLabel.textContent = pageNum + ' / ' + pdfDoc.numPages;
+    }
+
+    async function rebuildEditableText(pageNum, pageObj) {
+      const page = pageObj || await pdfDoc.getPage(pageNum);
+      const textContent = await page.getTextContent();
+      currentPageTextItems = textContent.items || [];
+      textLayer.innerHTML = '';
+      plainText.value = '';
+
+      currentPageTextItems.forEach(item => {
+        if (!item.str || !item.str.trim()) return;
+
+        const tx = pdfjsLib.Util.transform(currentViewport.transform, item.transform);
+        const fontHeight = Math.sqrt(tx[2] * tx[2] + tx[3] * tx[3]);
+        const left = tx[4];
+        const top = tx[5] - fontHeight;
+
+        const div = document.createElement('div');
+        div.className = 'editable-text';
+        div.contentEditable = 'true';
+        div.spellcheck = false;
+        div.textContent = item.str;
+        div.style.left = left + 'px';
+        div.style.top = top + 'px';
+        div.style.fontSize = fontHeight + 'px';
+        div.style.fontFamily = 'Arial, sans-serif';
+        div.style.color = 'transparent';
+        div.style.transformOrigin = 'left top';
+        div.style.minWidth = Math.max(item.width * currentScale, item.str.length * fontHeight * 0.35) + 'px';
+
+        applyMatchedBackground(div);
+
+        div.addEventListener('focus', () => {
+          activeTextEl = div;
+          applyMatchedBackground(div);
+          div.style.color = '#111827';
+          div.style.background = div.style.getPropertyValue('--fill-bg') || '#ffffff';
+          syncFormatToolbar(div);
+        });
+        div.addEventListener('input', () => {
+          activeTextEl = div;
+          div.classList.add('edited');
+          div.dataset.edited = '1';
+          updatePlainTextFromLayer();
+          syncFormatToolbar(div);
+        });
+        div.addEventListener('blur', () => {
+          if (div.dataset.edited === '1') {
+            div.classList.add('edited');
+            applyMatchedBackground(div);
+            div.style.color = '#111827';
+            div.style.background = div.style.getPropertyValue('--fill-bg') || '#ffffff';
+          } else {
+            div.style.color = 'transparent';
+            div.style.background = 'transparent';
+          }
+          setTimeout(() => {
+            syncFormatToolbar(activeTextEl || div);
+          }, 0);
+        });
+        textLayer.appendChild(div);
+        requestAnimationFrame(() => applyMatchedBackground(div));
+      });
+
+      updatePlainTextFromLayer();
+      blocksLabel.textContent = textLayer.children.length;
+    }
+
+    function updatePlainTextFromLayer() {
+      const text = [...textLayer.querySelectorAll('.editable-text')]
+        .map(el => el.textContent)
+        .join('\n');
+      plainText.value = text;
+    }
+
+    const PASSWORD_HASH = '8a4ed630c5556ab78c847b7b3a5dd6761a372b22ddff9fb4d5d5696262162c8c';
+    const imgUpload = document.getElementById('imgUpload');
+    const imageLayer = document.getElementById('imageLayer');
+    const deleteImgBtn = document.getElementById('deleteImgBtn');
+    const boldBtn = document.getElementById('boldBtn');
+    const italicBtn = document.getElementById('italicBtn');
+    const fontSizeInput = document.getElementById('fontSizeInput');
+    let selectedImage = null;
+    let activeTextEl = null;
+
+    function syncFormatToolbar(el){
+      if(!el){
+        boldBtn.classList.remove('active-format');
+        italicBtn.classList.remove('active-format');
+        return;
+      }
+      const fw = el.style.fontWeight || getComputedStyle(el).fontWeight;
+      const fs = parseFloat(el.style.fontSize || getComputedStyle(el).fontSize || 14);
+      const fst = el.style.fontStyle || getComputedStyle(el).fontStyle;
+      boldBtn.classList.toggle('active-format', fw === 'bold' || fw === '700' || fw === 700);
+      italicBtn.classList.toggle('active-format', fst === 'italic');
+      fontSizeInput.value = Math.round(fs) || 14;
+    }
+
+    function applyTextFormat(command){
+      const el = activeTextEl;
+      if(!el) return;
+      if(command === 'bold'){
+        const fw = el.style.fontWeight || getComputedStyle(el).fontWeight;
+        const isBold = fw === 'bold' || fw === '700' || fw === 700;
+        el.style.fontWeight = isBold ? 'normal' : 'bold';
+      }
+      if(command === 'italic'){
+        const fst = el.style.fontStyle || getComputedStyle(el).fontStyle;
+        const isItalic = fst === 'italic';
+        el.style.fontStyle = isItalic ? 'normal' : 'italic';
+      }
+      el.classList.add('edited');
+      el.dataset.edited = '1';
+      el.focus();
+      syncFormatToolbar(el);
+      updatePlainTextFromLayer();
+    }
+
+    function applyFontSize(){
+      const el = activeTextEl;
+      if(!el) return;
+      const size = Math.max(6, Math.min(96, parseInt(fontSizeInput.value || '14', 10)));
+      el.style.fontSize = size + 'px';
+      el.classList.add('edited');
+      el.dataset.edited = '1';
+      updatePlainTextFromLayer();
+      syncFormatToolbar(el);
+    }
+
+    [boldBtn, italicBtn, fontSizeInput].forEach(ctrl => {
+      ctrl.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        if (activeTextEl) activeTextEl.focus();
+      });
+    });
+
+    boldBtn.addEventListener('click', () => applyTextFormat('bold'));
+    italicBtn.addEventListener('click', () => applyTextFormat('italic'));
+    fontSizeInput.addEventListener('change', applyFontSize);
+    fontSizeInput.addEventListener('input', applyFontSize);
+
+    async function sha256(text){
+      const data = new TextEncoder().encode(text);
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      return [...new Uint8Array(hash)].map(x => x.toString(16).padStart(2,'0')).join('');
+    }
+
+    async function checkLogin(){
+      const p = document.getElementById('pass').value;
+      const err = document.getElementById('err');
+      err.textContent = '';
+      const h = await sha256(p);
+      if(h === PASSWORD_HASH){
+        document.getElementById('loginScreen').style.display = 'none';
+        document.body.classList.remove('locked');
+        setStatus('Editor unlocked. Open a PDF to start.');
+      } else {
+        err.textContent = 'Wrong password';
+      }
+    }
+
+    document.getElementById('pass').addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') checkLogin();
+    });
+
+    function clearImageSelection(){
+      [...imageLayer.querySelectorAll('.placed-image')].forEach(el => el.classList.remove('selected'));
+      selectedImage = null;
+    }
+
+    function selectImage(el){
+      clearImageSelection();
+      selectedImage = el;
+      if(el) el.classList.add('selected');
+    }
+
+    function enableImageInteractions(wrap){
+      const handle = wrap.querySelector('.img-handle');
+
+      wrap.addEventListener('mousedown', (e) => {
+        if (e.target === handle) return;
+        selectImage(wrap);
+
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const startLeft = parseFloat(wrap.style.left);
+        const startTop = parseFloat(wrap.style.top);
+
+        function onMove(ev){
+          wrap.style.left = Math.max(0, startLeft + (ev.clientX - startX)) + 'px';
+          wrap.style.top = Math.max(0, startTop + (ev.clientY - startY)) + 'px';
+        }
+        function onUp(){
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+        }
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      handle.addEventListener('mousedown', (e) => {
+        selectImage(wrap);
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const startW = wrap.offsetWidth;
+        const startH = wrap.offsetHeight;
+
+        function onMove(ev){
+          wrap.style.width = Math.max(30, startW + (ev.clientX - startX)) + 'px';
+          wrap.style.height = Math.max(30, startH + (ev.clientY - startY)) + 'px';
+        }
+        function onUp(){
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+        }
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      wrap.addEventListener('click', (e) => {
+        selectImage(wrap);
+        e.stopPropagation();
+      });
+    }
+
+    imgUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev){
+        const wrap = document.createElement('div');
+        wrap.className = 'placed-image';
+        wrap.style.left = '80px';
+        wrap.style.top = '80px';
+        wrap.style.width = '160px';
+        wrap.style.height = '120px';
+
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+
+        const handle = document.createElement('div');
+        handle.className = 'img-handle';
+
+        wrap.appendChild(img);
+        wrap.appendChild(handle);
+        imageLayer.appendChild(wrap);
+        enableImageInteractions(wrap);
+        selectImage(wrap);
+        setStatus('Image added.');
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    });
+
+    deleteImgBtn.addEventListener('click', () => {
+      if(selectedImage){
+        selectedImage.remove();
+        selectedImage = null;
+        setStatus('Selected image removed.');
+      }
+    });
+
+    pageContainer.addEventListener('click', (e) => {
+      if (e.target === pageContainer || e.target === pdfCanvas || e.target === textLayer || e.target.closest('.editable-text')) {
+        clearImageSelection();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if((e.key === 'Delete' || e.key === 'Backspace') && selectedImage && document.activeElement.tagName !== 'TEXTAREA'){
+        selectedImage.remove();
+        selectedImage = null;
+        setStatus('Selected image removed.');
+      }
+    });
+
+    setStatus('Locked. Enter password to open the editor.');
+
+  </script>
+</body>
+</html>
