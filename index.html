@@ -1467,12 +1467,8 @@
     }
 
     function openWithTransition(url) {
-      const overlay = document.getElementById("pageTransition");
-      overlay.classList.add("show");
-      setTimeout(() => {
-        window.location.href = url;
-      }, 280);
-    }
+  window.open(url, "_blank"); // open in new tab
+}
 
     (() => {
       const cards = document.querySelectorAll(".card");
