@@ -251,23 +251,22 @@
       border-bottom: 1px solid var(--border);
       padding: 2px 0;
       overflow: hidden;
-      white-space: nowrap;
-      height: 22px;
+      height: 24px;
       display: flex;
       align-items: center;
+      white-space: nowrap;
     }
     .jt-track {
       display: inline-block;
       padding-left: 100%;
-      animation: scrollJT 40s linear infinite;
-      font-size: 11px;
+      animation: scrollJT 42s linear infinite;
+      font-size: 12px;
       font-weight: 600;
       font-family: 'Syne', sans-serif;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.8px;
       color: var(--text-muted);
       white-space: nowrap;
       line-height: 1;
-      flex: 0 0 auto;
     }
     .jt-track .dot { color: var(--accent); margin: 0 8px; }
     @keyframes scrollJT {
@@ -278,7 +277,7 @@
     /* ─── Top Bar ─── */
     .topbar {
       position: sticky;
-      top: 22px;
+      top: 24px;
       z-index: 20;
       background: rgba(5,12,26,0.88);
       backdrop-filter: blur(20px);
@@ -688,6 +687,8 @@
       user-select: none;
       pointer-events: auto;
       border-radius: 2px;
+      background: #ffffff;
+      overflow: hidden;
     }
     .placed-image.selected {
       border-color: #3b82f6;
@@ -715,8 +716,8 @@
       display: block;
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      background: #fff;
+      object-fit: contain;
+      background: transparent;
       pointer-events: none;
     }
     .img-rotate-handle {
@@ -908,6 +909,8 @@
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15A9 9 0 1 1 23 10"/></svg>
       Rotate
     </button>
+    <button class="btn" id="imgSizeDownBtn" title="Decrease image size">Img-</button>
+    <button class="btn" id="imgSizeUpBtn" title="Increase image size">Img+</button>
     <button class="btn danger" id="deleteImgBtn">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
       Remove
@@ -1490,49 +1493,34 @@
   function applyFontSize() {
     const el = activeTextEl || selectedOverlayText;
     if (!el) return;
-    const rawValue = parseInt(fontSizeInput.value || '14', 10);
-    const size = Math.max(6, Math.min(96, Number.isNaN(rawValue) ? 14 : rawValue));
-    fontSizeInput.value = size;
+    const size = Math.max(6, Math.min(96, parseInt(fontSizeInput.value || '14', 10)));
     el.style.fontSize = size + 'px';
-    el.classList.add('edited');
-    el.dataset.edited = '1';
-    if (el.classList.contains('placed-text')) {
-      el.style.lineHeight = '1.25';
-      el.style.minWidth = Math.max(80, Math.ceil((el.textContent || 'New Text').length * size * 0.45)) + 'px';
-    }
-    updatePlainTextFromLayer();
-    syncFormatToolbar(el);
+    el.classList.add('edited'); el.dataset.edited = '1';
+    updatePlainTextFromLayer(); syncFormatToolbar(el);
   }
 
-  function stepFontSize(delta) {
-    const el = activeTextEl || selectedOverlayText;
-    if (!el) {
-      showToast('Select text first.', '✕');
-      return;
-    }
-    const current = parseInt(el.style.fontSize || getComputedStyle(el).fontSize || fontSizeInput.value || '14', 10) || 14;
-    const next = Math.max(6, Math.min(96, current + delta));
-    fontSizeInput.value = next;
+  function nudgeFontSize(delta) {
+    const current = parseInt(fontSizeInput.value || '14', 10) || 14;
+    fontSizeInput.value = Math.max(6, Math.min(96, current + delta));
     applyFontSize();
-    if (el.focus) el.focus();
   }
 
   [boldBtn, italicBtn, fontSizeInput, fontSizeDownBtn, fontSizeUpBtn].forEach(ctrl => {
     ctrl.addEventListener('mousedown', (e) => {
       e.preventDefault();
       const target = activeTextEl || selectedOverlayText;
-      if (target && target.focus) target.focus();
+      if (target) target.focus();
     });
   });
   boldBtn.addEventListener('click', () => applyTextFormat('bold'));
   italicBtn.addEventListener('click', () => applyTextFormat('italic'));
-  fontSizeDownBtn.addEventListener('click', () => stepFontSize(-1));
-  fontSizeUpBtn.addEventListener('click', () => stepFontSize(1));
+  fontSizeDownBtn.addEventListener('click', () => nudgeFontSize(-1));
+  fontSizeUpBtn.addEventListener('click', () => nudgeFontSize(1));
   fontSizeInput.addEventListener('change', applyFontSize);
   fontSizeInput.addEventListener('input', applyFontSize);
   fontSizeInput.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowUp') { e.preventDefault(); stepFontSize(1); }
-    if (e.key === 'ArrowDown') { e.preventDefault(); stepFontSize(-1); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); nudgeFontSize(1); }
+    if (e.key === 'ArrowDown') { e.preventDefault(); nudgeFontSize(-1); }
   });
 
   /* ─── Image Layer ─── */
@@ -1548,6 +1536,18 @@
     clearImageSelection();
     selectedImage = el;
     if (el) el.classList.add('selected');
+  }
+
+  function resizeSelectedImage(delta) {
+    if (!selectedImage) return;
+    const currentW = parseFloat(selectedImage.style.width) || selectedImage.offsetWidth || 160;
+    const currentH = parseFloat(selectedImage.style.height) || selectedImage.offsetHeight || 120;
+    const ratio = currentH / currentW || 0.75;
+    const nextW = Math.max(20, currentW + delta);
+    const nextH = Math.max(20, nextW * ratio);
+    selectedImage.style.width = nextW + 'px';
+    selectedImage.style.height = nextH + 'px';
+    setStatus('Image size updated.');
   }
 
   function enableImageInteractions(wrap) {
@@ -1687,6 +1687,8 @@
     applyImageRotation(selectedImage);
     setStatus('Image rotated.');
   });
+  document.getElementById('imgSizeDownBtn').addEventListener('click', () => resizeSelectedImage(-10));
+  document.getElementById('imgSizeUpBtn').addEventListener('click', () => resizeSelectedImage(10));
 
   imgUpload.addEventListener('change', (e) => {
     const file = e.target.files[0];
@@ -1739,6 +1741,12 @@
         selectedOverlayText.remove(); selectedOverlayText = null; activeTextEl = null;
         setStatus('Selected text box removed.');
       }
+    }
+    if (e.key === '[' && selectedImage) {
+      resizeSelectedImage(-10);
+    }
+    if (e.key === ']' && selectedImage) {
+      resizeSelectedImage(10);
     }
     if (e.key === 'Escape' && eraserMode) {
       eraserMode = false;
