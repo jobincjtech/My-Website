@@ -3,20 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Moksha Portal | Unified Medical Imaging Suite</title>
-  <!-- Tailwind + Font Awesome + GSAP -->
+  <title>Moksha Patient Portal | Unified Medical Imaging Suite</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(145deg, #eef2ff 0%, #e0f2fe 100%);
@@ -26,8 +19,10 @@
       justify-content: center;
       padding: 24px;
     }
-    
-    /* Main Frame Container - Everything inside one elegant frame */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #14b8a6; border-radius: 10px; }
+
     .master-frame {
       max-width: 1600px;
       width: 100%;
@@ -38,118 +33,222 @@
       overflow: hidden;
       transition: all 0.3s ease;
     }
-    
-    /* Custom scrollbar inside frame */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #e2e8f0;
-      border-radius: 10px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #14b8a6;
-      border-radius: 10px;
-    }
-    
-    /* Premium card effects */
     .premium-card {
       background: white;
       border-radius: 1.25rem;
       transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
       border: 1px solid rgba(20,184,166,0.15);
     }
-    
     .premium-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 20px 30px -12px rgba(15,118,110,0.15);
       border-color: rgba(20,184,166,0.3);
     }
-    
-    .btn-glow {
-      transition: all 0.2s;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .btn-glow:active {
-      transform: scale(0.97);
-    }
-    
+    .btn-glow { transition: all 0.2s; position: relative; overflow: hidden; }
+    .btn-glow:active { transform: scale(0.97); }
     .btn-glow::after {
       content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
+      position: absolute; top: 50%; left: 50%;
+      width: 0; height: 0;
       border-radius: 50%;
       background: rgba(255,255,255,0.3);
       transform: translate(-50%, -50%);
       transition: width 0.4s, height 0.4s;
     }
-    
-    .btn-glow:active::after {
-      width: 200px;
-      height: 200px;
-    }
-    
-    .animate-pulse-soft {
-      animation: pulseSoft 2s infinite;
-    }
-    
+    .btn-glow:active::after { width: 200px; height: 200px; }
+    .animate-pulse-soft { animation: pulseSoft 2s infinite; }
     @keyframes pulseSoft {
       0% { box-shadow: 0 0 0 0 rgba(20,184,166,0.3); }
       70% { box-shadow: 0 0 0 8px rgba(20,184,166,0); }
       100% { box-shadow: 0 0 0 0 rgba(20,184,166,0); }
     }
-    
-    .iframe-elegant {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .iframe-elegant:hover {
-      transform: scale(1.002);
-      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
-    }
-    
-    /* Status badge animations */
-    .toast-slide {
-      animation: slideUp 0.3s ease forwards;
-    }
-    
+    .iframe-elegant { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .iframe-elegant:hover { transform: scale(1.002); box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2); }
+    .toast-slide { animation: slideUp 0.3s ease forwards; }
     @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    
-    /* Gradient border effect */
-    .gradient-border-bottom {
+
+    /* LOGIN OVERLAY */
+    #loginOverlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(145deg, #eef2ff 0%, #e0f2fe 100%);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .login-frame {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(255,255,255,0.97);
+      border-radius: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.5);
+      overflow: hidden;
+    }
+    .login-header {
+      background: linear-gradient(to right, #134e4a, #0f766e, #065f46);
+      padding: 2rem 2rem 1.75rem;
       position: relative;
+      overflow: hidden;
     }
-    
-    .gradient-border-bottom::after {
+    .login-header::before {
       content: '';
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #0f766e, #14b8a6, #0f766e);
-      border-radius: 3px;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      top: -80px; right: -60px;
     }
+    .login-header::after {
+      content: '';
+      position: absolute;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      bottom: -40px; left: -30px;
+    }
+    .login-body { padding: 2rem; }
+    .pw-input-wrap { position: relative; }
+    .pw-input-wrap input {
+      width: 100%;
+      padding: 0.875rem 3rem 0.875rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 0.875rem;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: white;
+      color: #1e293b;
+    }
+    .pw-input-wrap input:focus {
+      border-color: #14b8a6;
+      box-shadow: 0 0 0 3px rgba(20,184,166,0.15);
+    }
+    .pw-input-wrap input.error {
+      border-color: #f87171;
+      box-shadow: 0 0 0 3px rgba(248,113,113,0.15);
+      animation: shake 0.35s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .eye-toggle {
+      position: absolute; right: 1rem; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: #94a3b8; padding: 0; font-size: 1rem;
+      transition: color 0.2s;
+    }
+    .eye-toggle:hover { color: #0f766e; }
+    .login-btn {
+      width: 100%;
+      padding: 0.875rem;
+      background: linear-gradient(to right, #0f766e, #059669);
+      color: white;
+      border: none;
+      border-radius: 0.875rem;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+    .login-btn:hover { opacity: 0.92; }
+    .login-btn:active { transform: scale(0.98); }
+    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .err-msg {
+      margin-top: 0.875rem;
+      padding: 0.75rem 1rem;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 0.75rem;
+      color: #dc2626;
+      font-size: 0.8125rem;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .portal-content { display: none; }
+    .portal-content.visible { display: block; }
   </style>
 </head>
 <body>
-  <div class="master-frame">
-    <!-- Unified Header with Moksha Branding -->
+
+  <!-- ─── LOGIN OVERLAY ─── -->
+  <div id="loginOverlay">
+    <div class="login-frame">
+      <!-- Header matches portal branding exactly -->
+      <div class="login-header">
+        <div class="relative z-10 flex items-center gap-4">
+          <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+            <i class="fa-solid fa-hand-holding-medical text-3xl text-teal-100"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl font-extrabold text-white tracking-tight">Moksha<span class="font-light"> Patient Portal</span></h1>
+            <p class="text-teal-100 text-xs flex items-center gap-2 mt-0.5">
+              <i class="fa-regular fa-circle-check text-xs"></i> Enterprise Imaging · Zero-Footprint PACS
+            </p>
+          </div>
+        </div>
+        <div class="relative z-10 flex gap-2 mt-4">
+          <div class="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-mono flex items-center gap-1.5 text-white">
+            <i class="fa-solid fa-shield-halved text-xs"></i> HIPAA Secure
+          </div>
+          <div class="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-mono flex items-center gap-1.5 text-white">
+            <i class="fa-regular fa-lock text-xs"></i> SHA-256 Protected
+          </div>
+        </div>
+      </div>
+
+      <!-- Login body -->
+      <div class="login-body">
+        <p class="text-slate-500 text-sm mb-5 leading-relaxed">
+          Enter your facility access password to unlock the imaging portal.
+        </p>
+
+        <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+          <i class="fa-regular fa-lock text-teal-500 text-xs"></i> Access Password
+        </label>
+        <div class="pw-input-wrap">
+          <input type="password" id="pwInput" placeholder="Enter your password" autocomplete="current-password" />
+          <button class="eye-toggle" id="eyeBtn" type="button" onclick="toggleEye()">
+            <i id="eyeIcon" class="fa-regular fa-eye"></i>
+          </button>
+        </div>
+
+        <div class="err-msg" id="errMsg">
+          <i class="fa-regular fa-circle-xmark"></i>
+          Incorrect password. Please try again.
+        </div>
+
+        <button class="login-btn btn-glow" id="loginBtn" onclick="doLogin()">
+          <i class="fa-solid fa-rocket" id="btnIcon"></i>
+          <span id="btnText">Unlock Portal</span>
+          <i class="fa-regular fa-eye"></i>
+        </button>
+
+        <div class="mt-5 text-center text-xs text-slate-400 flex items-center justify-center gap-1">
+          <i class="fa-regular fa-shield-check text-teal-400"></i>
+          Encrypted · HIPAA compliant · DICOM Web
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── PORTAL (hidden until login) ─── -->
+  <div id="portalContent" class="master-frame portal-content">
+    <!-- Unified Header -->
     <div class="bg-gradient-to-r from-teal-800 via-teal-700 to-emerald-800 px-8 py-6 relative overflow-hidden">
       <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
       <div class="absolute bottom-0 left-0 w-48 h-48 bg-teal-400/10 rounded-full blur-2xl"></div>
@@ -172,16 +271,16 @@
           <div class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-mono flex items-center gap-2 text-white">
             <i class="fa-regular fa-clock"></i> DICOM Web
           </div>
+          <button onclick="logout()" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-mono flex items-center gap-2 text-white transition-all border border-white/20">
+            <i class="fa-regular fa-right-from-bracket"></i> Sign out
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Main Content Area - All Controls Inside Frame -->
     <div class="p-6 md:p-8 bg-gray-50/50">
-      <!-- TOP ROW: Access Study + Shareable Link - Side by Side (Professional Alignment) -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        
-        <!-- Access Study Card - Prominent at Top -->
+        <!-- Access Study Card -->
         <div class="premium-card overflow-hidden shadow-md">
           <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-6 py-4 border-b border-teal-100">
             <div class="flex items-center gap-3">
@@ -200,18 +299,18 @@
                 <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                   <i class="fa-regular fa-hashtag text-teal-500 text-xs"></i>Accession Number
                 </label>
-                <input type="text" id="accessionNumber" value="1234" 
+                <input type="text" id="accessionNumber" value="1234"
                        class="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-teal-400 focus:ring-2 focus:ring-teal-200 transition-all outline-none text-base font-medium">
               </div>
               <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                   <i class="fa-regular fa-building text-teal-500"></i>Facility ID
                 </label>
-                <input type="text" id="facilityId" value="9" 
+                <input type="text" id="facilityId" value="9"
                        class="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-teal-400 focus:ring-2 focus:ring-teal-200 transition-all outline-none">
               </div>
             </div>
-            <button onclick="loadPACSStudy()" id="loadStudyBtn" 
+            <button onclick="loadPACSStudy()" id="loadStudyBtn"
                     class="mt-6 w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold py-3.5 rounded-xl text-base flex items-center justify-center gap-3 transition-all shadow-lg btn-glow animate-pulse-soft">
               <i class="fa-solid fa-rocket"></i>
               <span>Launch Viewer & Load Images</span>
@@ -223,7 +322,7 @@
           </div>
         </div>
 
-        <!-- Shareable Link Card - Professional Quick Access -->
+        <!-- Shareable Link Card -->
         <div class="premium-card overflow-hidden shadow-md">
           <div class="bg-gradient-to-r from-emerald-50 to-teal-50 px-6 py-4 border-b border-emerald-100">
             <div class="flex items-center gap-3">
@@ -239,7 +338,7 @@
           <div class="p-6">
             <div class="flex flex-col gap-4">
               <div class="flex items-center gap-3 bg-slate-50 p-1 rounded-xl border-2 border-slate-200 focus-within:border-teal-400 transition-all">
-                <input type="text" id="shareURL" readonly 
+                <input type="text" id="shareURL" readonly
                        class="flex-1 px-4 py-3 bg-transparent text-sm font-mono text-slate-700 outline-none truncate">
                 <button onclick="copyShareLink()" id="copyBtn"
                         class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 shadow-sm active:scale-95">
@@ -256,7 +355,7 @@
         </div>
       </div>
 
-      <!-- MAIN VIEWER SECTION - Professional PACS Viewer -->
+      <!-- PACS Viewer -->
       <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 transition-all">
         <div class="bg-white px-6 py-4 border-b border-slate-200 flex flex-wrap justify-between items-center gap-3">
           <div class="flex items-center gap-3">
@@ -279,13 +378,12 @@
             </div>
           </div>
         </div>
-        
         <div class="p-5 md:p-6 bg-gradient-to-b from-gray-50 to-white">
           <div class="iframe-elegant rounded-xl overflow-hidden bg-slate-900/5 shadow-lg transition-all">
-            <iframe id="pacsFrame" 
+            <iframe id="pacsFrame"
                     title="Moksha Medical Imaging Viewer"
                     src="https://pathway.alif.onl/AlifPACSViewerV2.html?redirect=true&accessionNumber=2402609&environment=External&debug=false&facilityId=9"
-                    class="w-full" 
+                    class="w-full"
                     style="height: 620px; border: none; background: #f1f5f9;"
                     allowfullscreen></iframe>
           </div>
@@ -296,15 +394,14 @@
             </div>
           </div>
         </div>
-        
         <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-500 flex flex-wrap justify-between gap-2">
           <span><i class="fa-regular fa-shield-check"></i> Encrypted transmission · HIPAA compliant</span>
           <span><i class="fa-regular fa-chart-line"></i> AI-powered measurements & annotations</span>
           <span><i class="fa-regular fa-clock"></i> Real-time rendering</span>
         </div>
       </div>
-      
-      <!-- Footer inside frame -->
+
+      <!-- Footer -->
       <div class="mt-8 pt-4 border-t border-slate-200 text-center text-slate-400 text-xs flex flex-col md:flex-row justify-between items-center gap-3">
         <div class="flex items-center gap-2">
           <i class="fa-regular fa-copyright"></i> 2025 Moksha Health · Next-Generation Imaging Platform
@@ -319,119 +416,147 @@
   </div>
 
   <script>
-    // Configuration
-    const PACS_BASE_URL = "https://pathway.alif.onl/AlifPACSViewerV2.html";
-    
-    // Helper: Build complete PACS URL
+    const CORRECT_HASH = '175e9c8bf6d7cff85146f0d2b91d5eac19e1f0a1446f1c97a6a8b9827dcdcaad';
+    const PACS_BASE_URL = 'https://pathway.alif.onl/AlifPACSViewerV2.html';
+
+    // ─── SHA-256 via Web Crypto ───
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // ─── Eye toggle ───
+    let eyeOpen = false;
+    function toggleEye() {
+      eyeOpen = !eyeOpen;
+      const input = document.getElementById('pwInput');
+      input.type = eyeOpen ? 'text' : 'password';
+      document.getElementById('eyeIcon').className = eyeOpen ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+    }
+
+    // ─── Login ───
+    async function doLogin() {
+      const pw = document.getElementById('pwInput').value;
+      const errMsg = document.getElementById('errMsg');
+      const btn = document.getElementById('loginBtn');
+      const btnText = document.getElementById('btnText');
+      const btnIcon = document.getElementById('btnIcon');
+
+      if (!pw) {
+        document.getElementById('pwInput').classList.add('error');
+        setTimeout(() => document.getElementById('pwInput').classList.remove('error'), 600);
+        return;
+      }
+
+      // Loading state
+      btn.disabled = true;
+      btnIcon.className = 'fa-solid fa-spinner fa-spin';
+      btnText.textContent = 'Verifying...';
+      errMsg.style.display = 'none';
+
+      const hash = await sha256(pw);
+
+      if (hash === CORRECT_HASH) {
+        btnIcon.className = 'fa-solid fa-circle-check';
+        btnText.textContent = 'Access granted!';
+        btn.style.background = 'linear-gradient(to right, #059669, #047857)';
+
+        setTimeout(() => {
+          // Hide login, show portal
+          const overlay = document.getElementById('loginOverlay');
+          gsap.to(overlay, {
+            opacity: 0, scale: 0.97, duration: 0.4, ease: 'power2.in',
+            onComplete: () => {
+              overlay.style.display = 'none';
+              const portal = document.getElementById('portalContent');
+              portal.classList.add('visible');
+              gsap.fromTo(portal,
+                { opacity: 0, y: 16 },
+                { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+              );
+              updateShareLink();
+            }
+          });
+        }, 600);
+      } else {
+        // Wrong password
+        errMsg.style.display = 'flex';
+        document.getElementById('pwInput').classList.add('error');
+        setTimeout(() => document.getElementById('pwInput').classList.remove('error'), 600);
+        btn.disabled = false;
+        btnIcon.className = 'fa-solid fa-rocket';
+        btnText.textContent = 'Unlock Portal';
+        btn.style.background = '';
+        document.getElementById('pwInput').focus();
+        document.getElementById('pwInput').select();
+      }
+    }
+
+    // Enter key on password field
+    document.getElementById('pwInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+      document.getElementById('errMsg').style.display = 'none';
+    });
+
+    // ─── Sign out ───
+    function logout() {
+      const portal = document.getElementById('portalContent');
+      const overlay = document.getElementById('loginOverlay');
+      gsap.to(portal, {
+        opacity: 0, duration: 0.3, ease: 'power2.in',
+        onComplete: () => {
+          portal.classList.remove('visible');
+          overlay.style.display = 'flex';
+          document.getElementById('pwInput').value = '';
+          document.getElementById('btnText').textContent = 'Unlock Portal';
+          document.getElementById('btnIcon').className = 'fa-solid fa-rocket';
+          document.getElementById('loginBtn').disabled = false;
+          document.getElementById('loginBtn').style.background = '';
+          gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.35 });
+        }
+      });
+    }
+
+    // ─── Portal functions (same as original) ───
     function buildPacsUrl() {
       let accession = document.getElementById('accessionNumber').value.trim();
       let facility = document.getElementById('facilityId').value.trim();
-      
-      if (!accession) accession = "2402609";
-      if (!facility) facility = "9";
-      
-      const params = new URLSearchParams({
-        redirect: "true",
-        accessionNumber: accession,
-        environment: "External",
-        debug: "false",
-        facilityId: facility
-      });
-      
+      if (!accession) accession = '2402609';
+      if (!facility) facility = '9';
+      const params = new URLSearchParams({ redirect: 'true', accessionNumber: accession, environment: 'External', debug: 'false', facilityId: facility });
       return `${PACS_BASE_URL}?${params.toString()}`;
     }
-    
-    // Update shareable link field in real-time
+
     function updateShareLink() {
       const shareField = document.getElementById('shareURL');
-      if (shareField) {
-        shareField.value = buildPacsUrl();
-      }
+      if (shareField) shareField.value = buildPacsUrl();
     }
-    
-    // Professional copy function with toast notification
+
     function copyShareLink() {
       const urlInput = document.getElementById('shareURL');
       if (!urlInput.value) return;
-      
       navigator.clipboard.writeText(urlInput.value).then(() => {
-        const notification = document.getElementById('copyNotification');
-        notification.innerHTML = '<span class="text-emerald-700 bg-emerald-50 px-4 py-1.5 rounded-full text-xs shadow-sm inline-flex items-center gap-2 toast-slide"><i class="fa-regular fa-check-circle"></i> Link copied to clipboard</span>';
-        
-        // Button feedback
-        const copyBtn = document.getElementById('copyBtn');
-        if (copyBtn) {
-          copyBtn.classList.add('bg-emerald-800');
-          setTimeout(() => copyBtn.classList.remove('bg-emerald-800'), 200);
-        }
-        
-        setTimeout(() => {
-          if (notification) notification.innerHTML = '';
-        }, 2500);
-      }).catch(() => {
-        const notification = document.getElementById('copyNotification');
-        notification.innerHTML = '<span class="text-red-500 bg-red-50 px-4 py-1.5 rounded-full text-xs inline-flex items-center gap-2"><i class="fa-regular fa-circle-xmark"></i> Copy failed</span>';
-        setTimeout(() => notification.innerHTML = '', 2000);
+        const n = document.getElementById('copyNotification');
+        n.innerHTML = '<span class="text-emerald-700 bg-emerald-50 px-4 py-1.5 rounded-full text-xs shadow-sm inline-flex items-center gap-2 toast-slide"><i class="fa-regular fa-check-circle"></i> Link copied to clipboard</span>';
+        setTimeout(() => { if (n) n.innerHTML = ''; }, 2500);
       });
     }
-    
-    // Main load function with animations and professional feedback
+
     function loadPACSStudy() {
       const accessionVal = document.getElementById('accessionNumber').value.trim();
-      if (!accessionVal) {
-        const notification = document.getElementById('copyNotification');
-        notification.innerHTML = '<span class="text-amber-600 bg-amber-50 px-4 py-1.5 rounded-full text-xs"><i class="fa-regular fa-bell"></i> Please enter an Accession Number</span>';
-        setTimeout(() => notification.innerHTML = '', 2500);
-        
-        // Highlight input
-        const accInput = document.getElementById('accessionNumber');
-        accInput.classList.add('border-amber-400', 'ring-2', 'ring-amber-200');
-        setTimeout(() => accInput.classList.remove('border-amber-400', 'ring-2', 'ring-amber-200'), 1500);
-        return;
-      }
-      
+      if (!accessionVal) return;
       const targetUrl = buildPacsUrl();
       const iframe = document.getElementById('pacsFrame');
       const loader = document.getElementById('loadingOverlay');
-      const loadBtn = document.getElementById('loadStudyBtn');
-      
-      // Animation sequence
-      gsap.to(iframe, { duration: 0.2, opacity: 0.6, ease: "power1.in" });
+      gsap.to(iframe, { duration: 0.2, opacity: 0.6, ease: 'power1.in' });
       loader.classList.remove('hidden');
-      
-      // Add ripple effect to button
-      if (loadBtn) {
-        loadBtn.style.transform = 'scale(0.98)';
-        setTimeout(() => { if (loadBtn) loadBtn.style.transform = ''; }, 150);
-      }
-      
-      // Visual feedback on viewer card
-      const viewerCard = document.querySelector('.iframe-elegant');
-      if (viewerCard) {
-        viewerCard.style.boxShadow = '0 0 0 3px rgba(20,184,166,0.4)';
-        setTimeout(() => viewerCard.style.boxShadow = '', 800);
-      }
-      
-      // Update iframe source after brief delay for smooth UX
       setTimeout(() => {
         iframe.src = targetUrl;
-        
         iframe.onload = () => {
-          gsap.to(iframe, { duration: 0.5, opacity: 1, ease: "backOut(0.3)" });
+          gsap.to(iframe, { duration: 0.5, opacity: 1, ease: 'backOut(0.3)' });
           loader.classList.add('hidden');
-          
-          // Success micro-interaction
-          const successToast = document.getElementById('copyNotification');
-          successToast.innerHTML = '<span class="text-teal-600 bg-teal-50 px-4 py-1.5 rounded-full text-xs toast-slide"><i class="fa-regular fa-circle-check"></i> Study loaded successfully</span>';
-          setTimeout(() => {
-            if (successToast.innerHTML.includes('Study loaded')) successToast.innerHTML = '';
-          }, 2000);
-          
-          // Update share link
           updateShareLink();
         };
-        
-        // Fallback timeout
         setTimeout(() => {
           if (loader && !loader.classList.contains('hidden')) {
             loader.classList.add('hidden');
@@ -439,80 +564,29 @@
           }
         }, 5000);
       }, 200);
-      
-      // Update share link after load
       updateShareLink();
     }
-    
-    // Real-time sync for share link when inputs change
-    const accessionInput = document.getElementById('accessionNumber');
-    const facilityInput = document.getElementById('facilityId');
-    
-    function syncShareField() {
-      updateShareLink();
-    }
-    
-    accessionInput.addEventListener('input', syncShareField);
-    facilityInput.addEventListener('input', syncShareField);
-    
-    // Enter key support for quick loading
-    function handleEnterKey(e) {
-      if (e.key === 'Enter') {
-        if (document.activeElement === accessionInput || document.activeElement === facilityInput) {
-          e.preventDefault();
-          loadPACSStudy();
-        }
-      }
-    }
-    document.addEventListener('keypress', handleEnterKey);
-    
-    // Initialize on page load with GSAP entrance animations
-    window.addEventListener('DOMContentLoaded', () => {
-      // Set initial share link
-      updateShareLink();
-      
-      // Entrance animations for all cards
-      gsap.fromTo('.premium-card', 
-        { y: 20, opacity: 0, stagger: 0.1 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out", delay: 0.1 }
-      );
-      
-      gsap.fromTo('.iframe-elegant', 
-        { scale: 0.98, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.7, ease: "backOut(0.3)", delay: 0.2 }
-      );
-      
-      // Ensure loader is hidden initially
-      const loader = document.getElementById('loadingOverlay');
-      if (loader) loader.classList.add('hidden');
-      
-      // Add smooth hover effect for copy button
-      const copyBtn = document.getElementById('copyBtn');
-      if (copyBtn) {
-        copyBtn.addEventListener('mouseenter', () => {
-          gsap.to(copyBtn, { duration: 0.2, scale: 1.03, ease: "power1" });
-        });
-        copyBtn.addEventListener('mouseleave', () => {
-          gsap.to(copyBtn, { duration: 0.2, scale: 1 });
-        });
-      }
-      
-      // Add tooltip-like effect on load button
-      const loadMainBtn = document.getElementById('loadStudyBtn');
-      if (loadMainBtn) {
-        loadMainBtn.addEventListener('mouseenter', () => {
-          gsap.to(loadMainBtn, { duration: 0.2, scale: 1.02 });
-        });
-        loadMainBtn.addEventListener('mouseleave', () => {
-          gsap.to(loadMainBtn, { duration: 0.2, scale: 1 });
-        });
+
+    document.addEventListener('keypress', e => {
+      const acc = document.getElementById('accessionNumber');
+      const fac = document.getElementById('facilityId');
+      if (e.key === 'Enter' && (document.activeElement === acc || document.activeElement === fac)) {
+        e.preventDefault();
+        loadPACSStudy();
       }
     });
-    
-    // Optional: Auto-refresh share link periodically for safety
-    setInterval(() => {
-      updateShareLink();
-    }, 30000);
+
+    const accessionInput = document.getElementById('accessionNumber');
+    const facilityInput = document.getElementById('facilityId');
+    if (accessionInput) accessionInput.addEventListener('input', updateShareLink);
+    if (facilityInput) facilityInput.addEventListener('input', updateShareLink);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      gsap.fromTo('#loginOverlay .login-frame',
+        { y: 24, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.55, ease: 'power2.out' }
+      );
+    });
   </script>
 </body>
 </html>
