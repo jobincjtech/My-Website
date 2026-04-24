@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Server & Interface Checklist</title>
+
+<style>
+:root{
+  --bg:#07111f;
+  --panel:#0d1b2e;
+  --line:#263f5e;
+  --text:#eef7ff;
+  --muted:#9fb2c7;
+  --blue:#38bdf8;
+  --green:#22c55e;
+  --amber:#f59e0b;
+  --red:#ef4444;
+  --purple:#a78bfa;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Segoe UI,Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left,rgba(56,189,248,.18),transparent 34%),
+    radial-gradient(circle at top right,rgba(34,197,94,.12),transparent 30%),
+    linear-gradient(135deg,#040a13,#08111f 45%,#020617);
+}
+
+.header{
+  padding:16px 20px;
+  border-bottom:1px solid var(--line);
+  background:rgba(2,6,23,.90);
+  backdrop-filter:blur(14px);
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+h1{
+  margin:0;
+  font-size:23px;
+}
+
+.sub{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:5px;
+}
+
+.container{
+  max-width:1500px;
+  margin:auto;
+  padding:14px;
+}
+
+.toolbar{
+  display:grid;
+  grid-template-columns:160px 1fr 155px repeat(4,120px);
+  gap:8px;
+  margin-bottom:12px;
+}
+
+input,select,textarea{
+  width:100%;
+  border:1px solid #314a68;
+  background:#071827;
+  color:var(--text);
+  border-radius:10px;
+  padding:7px;
+  font-size:12px;
+}
+
+td input,
+td select{
+  height:34px;
+  padding:5px 8px;
+}
+
+textarea{
+  height:38px;
+  min-height:38px;
+  max-height:90px;
+  resize:vertical;
+  line-height:1.25;
+}
+
+button{
+  border:0;
+  border-radius:10px;
+  padding:8px 9px;
+  font-weight:700;
+  cursor:pointer;
+  color:#04111f;
+  background:var(--blue);
+  font-size:12px;
+}
+
+.btn-green{background:var(--green)}
+.btn-amber{background:var(--amber)}
+.btn-red{background:var(--red);color:white}
+.btn-purple{background:var(--purple)}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.card{
+  background:linear-gradient(145deg,rgba(16,29,47,.95),rgba(7,24,39,.95));
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+  box-shadow:0 12px 28px rgba(0,0,0,.22);
+}
+
+.card .label{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.card .num{
+  font-size:24px;
+  font-weight:800;
+  margin-top:2px;
+}
+
+.note{
+  background:rgba(56,189,248,.10);
+  border:1px solid rgba(56,189,248,.28);
+  border-radius:14px;
+  padding:10px 12px;
+  color:#dff6ff;
+  margin-bottom:12px;
+  font-size:13px;
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+}
+
+.tab{
+  color:var(--text);
+  background:#10233b;
+  border:1px solid var(--line);
+}
+
+.tab.active{
+  background:var(--blue);
+  color:#03101d;
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  margin:16px 0 8px;
+  flex-wrap:wrap;
+}
+
+h2{
+  margin:0;
+  font-size:18px;
+}
+
+.table-frame{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(9,20,34,.94);
+  box-shadow:0 16px 34px rgba(0,0,0,.22);
+  overflow:hidden;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+
+th,td{
+  border-bottom:1px solid #1d334d;
+  padding:7px;
+  vertical-align:middle;
+  font-size:12px;
+  overflow:hidden;
+}
+
+th{
+  background:#112846;
+  color:#e3f7ff;
+  text-align:left;
+  font-size:11px;
+  position:sticky;
+  top:0;
+  z-index:3;
+}
+
+/* Completed Row */
+tr.done-row td{
+  background:linear-gradient(90deg,rgba(15,118,110,.58),rgba(20,83,45,.22)) !important;
+  border-bottom-color:rgba(34,197,94,.55);
+}
+
+/* Issue Row */
+tr.issue-row td{
+  background:linear-gradient(90deg,rgba(127,29,29,.45),rgba(69,10,10,.20)) !important;
+  border-bottom-color:rgba(239,68,68,.48);
+}
+
+/* Pending Row */
+tr.pending-row td{
+  background:rgba(245,158,11,.045);
+}
+
+tr.done-row td:first-child{
+  border-left:5px solid #22c55e;
+}
+
+tr.issue-row td:first-child{
+  border-left:5px solid #ef4444;
+}
+
+tr.pending-row td:first-child{
+  border-left:5px solid rgba(245,158,11,.55);
+}
+
+.ip{
+  font-weight:800;
+  color:#dff6ff;
+  white-space:nowrap;
+}
+
+.compactText{
+  font-size:11px;
+  line-height:1.25;
+  color:#bcd3ea;
+  max-height:34px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.compactText:hover{
+  max-height:none;
+  background:#071827;
+  border-radius:8px;
+  padding:5px;
+}
+
+.actionStack{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  align-items:stretch;
+}
+
+.actionStack button{
+  width:100%;
+  height:28px;
+  font-size:11px;
+  border-radius:8px;
+  padding:5px;
+}
+
+/* Table column width - Server */
+.server-table col:nth-child(1){width:3%}
+.server-table col:nth-child(2){width:10%}
+.server-table col:nth-child(3){width:9%}
+.server-table col:nth-child(4){width:10%}
+.server-table col:nth-child(5){width:10%}
+.server-table col:nth-child(6){width:9%}
+.server-table col:nth-child(7){width:17%}
+.server-table col:nth-child(8){width:14%}
+.server-table col:nth-child(9){width:11%}
+.server-table col:nth-child(10){width:7%}
+
+/* Table column width - Interface */
+.interface-table col:nth-child(1){width:3%}
+.interface-table col:nth-child(2){width:8%}
+.interface-table col:nth-child(3){width:10%}
+.interface-table col:nth-child(4){width:13%}
+.interface-table col:nth-child(5){width:7%}
+.interface-table col:nth-child(6){width:8%}
+.interface-table col:nth-child(7){width:7%}
+.interface-table col:nth-child(8){width:9%}
+.interface-table col:nth-child(9){width:9%}
+.interface-table col:nth-child(10){width:8%}
+.interface-table col:nth-child(11){width:10%}
+.interface-table col:nth-child(12){width:8%}
+
+.historyBox{
+  display:none;
+  margin-top:14px;
+}
+
+.historyList{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:8px;
+}
+
+.historyItem{
+  background:#0c1b2d;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px;
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  align-items:center;
+  font-size:13px;
+}
+
+.footer-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:16px 0;
+}
+
+@media(max-width:1050px){
+  .toolbar{grid-template-columns:1fr 1fr}
+  .cards{grid-template-columns:1fr 1fr}
+  table{min-width:1000px}
+  .table-frame{overflow:auto}
+  .header{position:relative}
+}
+
+@media(max-width:700px){
+  .toolbar,.cards{grid-template-columns:1fr}
+  .container{padding:8px}
+}
+
+@media print{
+  .header,.toolbar,.tabs,.footer-actions,.actionStack,.no-print,.historyBox{display:none!important}
+  body{background:#fff;color:#000}
+  .card,.table-frame,.note{
+    box-shadow:none;
+    border:1px solid #999;
+    background:#fff;
+    color:#000;
+  }
+  input,select,textarea{
+    border:0;
+    background:#fff;
+    color:#000;
+  }
+  .compactText{
+    max-height:none;
+    color:#000;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>Daily Server & Interface Checklist</h1>
+  <div class="sub">Daily reset by date. Completed rows turn dark green when Checked + Ticket Created.</div>
+</div>
+
+<div class="container">
+
+  <div class="toolbar no-print">
+    <input type="date" id="workDate">
+    <input type="text" id="searchBox" placeholder="Search IP / interface / ticket / path">
+    <select id="filterBox">
+      <option value="">All Items</option>
+      <option value="Working Fine">Working Fine</option>
+      <option value="Issue Found">Issue Found</option>
+      <option value="Pending">Pending</option>
+      <option value="Ticket Created">Ticket Created</option>
+      <option value="Ticket Not Created">Ticket Not Created</option>
+    </select>
+    <button class="btn-green" onclick="saveData()">Save</button>
+    <button class="btn-amber" onclick="copyReport()">Copy Report</button>
+    <button class="btn-purple" onclick="exportCSV()">Export CSV</button>
+    <button onclick="toggleHistory()">History</button>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="label">Servers</div><div class="num" id="serverCount">0</div></div>
+    <div class="card"><div class="label">Interfaces</div><div class="num" id="interfaceCount">0</div></div>
+    <div class="card"><div class="label">Working Fine</div><div class="num" id="fineCount">0</div></div>
+    <div class="card"><div class="label">Ticket Created</div><div class="num" id="ticketCount">0</div></div>
+    <div class="card"><div class="label">Issue / Pending</div><div class="num" id="issueCount">0</div></div>
+  </div>
+
+  <div class="note">
+    Every day opens as a fresh checklist. Previous dates are available from <b>History</b>. Use <b>Path</b>, <b>Request</b>, <b>Resolution</b>, or <b>Full</b> to copy ticket content.
+  </div>
+
+  <div id="historyBox" class="historyBox no-print">
+    <h2>Saved Dates</h2>
+    <div id="historyList" class="historyList"></div>
+  </div>
+
+  <div class="tabs no-print">
+    <button class="tab active" onclick="showTab('server',this)">Server Checklist</button>
+    <button class="tab" onclick="showTab('interface',this)">Interface Checklist</button>
+    <button class="tab" onclick="showTab('all',this)">Show Both</button>
+  </div>
+
+  <section id="serverSection">
+    <div class="section-head">
+      <h2>Server Check</h2>
+      <button class="btn-green no-print" onclick="markAllServersFine()">Mark All Servers Working Fine</button>
+    </div>
+
+    <div class="table-frame">
+      <table id="serverTable" class="server-table">
+        <colgroup>
+          <col><col><col><col><col><col><col><col><col><col>
+        </colgroup>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Server IP</th>
+            <th>Checked?</th>
+            <th>Working Fine?</th>
+            <th>Ticket Created?</th>
+            <th>Ticket No</th>
+            <th>Storage / Status</th>
+            <th>Request</th>
+            <th>Resolution</th>
+            <th>Copy</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="interfaceSection" style="display:none">
+    <div class="section-head">
+      <h2>Interface Check</h2>
+      <button class="btn-green no-print" onclick="markAllInterfacesFine()">Mark All Interfaces Working Fine</button>
+    </div>
+
+    <div class="table-frame">
+      <table id="interfaceTable" class="interface-table">
+        <colgroup>
+          <col><col><col><col><col><col><col><col><col><col><col><col>
+        </colgroup>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Server IP</th>
+            <th>Interface</th>
+            <th>Path / Details</th>
+            <th>Checked?</th>
+            <th>Running?</th>
+            <th>Logs?</th>
+            <th>Working Fine?</th>
+            <th>Ticket Created?</th>
+            <th>Ticket No</th>
+            <th>Resolution</th>
+            <th>Copy</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="footer-actions no-print">
+    <button onclick="window.print()">Print / Save PDF</button>
+    <button class="btn-red" onclick="resetToday()">Reset Selected Date</button>
+  </div>
+
+</div>
+
+<script>
+const STORE_PREFIX="dailyChecklistFinal_";
+
+const servers=[
+"172.19.8.32",
+"172.19.241.4",
+"172.19.241.6",
+"172.19.241.10",
+"172.19.241.15",
+"172.19.241.21",
+"172.19.241.14",
+"172.19.243.7",
+"172.19.243.9",
+"172.19.243.11",
+"172.19.238.13",
+"172.19.8.150",
+"172.19.238.14",
+"172.19.238.12",
+"172.19.238.15",
+"172.19.241.30",
+"172.19.241.36",
+"172.19.241.24",
+"172.19.241.45",
+"172.19.14.199",
+"172.19.8.20",
+"172.19.241.37",
+"172.19.58.110",
+"172.19.113.50",
+"172.19.8.48"
+];
+
+const interfaces=[
+["172.19.241.24","AHM Sysmax2","E:\\Sysmax\\Sysmax AHM\\ASPLTCPserver.exe"],
+["172.19.241.21","AHM Sysmax1","C:\\Sysmex AHM\\ASPLTCPserver.exe"],
+["172.19.241.24","AHQ Sysmax XN 1000","E:\\Sysmax\\Sysmax AHQ XN 1000\\HL7Communicator.exe"],
+["172.19.241.24","AHQ Sysmax","E:\\Sysmax\\Sysmax AHQ\\HL7Communicator.exe"],
+["172.19.241.24","ACD Sysmax","E:\\Sysmax\\Sysmax Cedar\\HL7Communicator.exe"],
+["172.19.8.32","GRBS (iSTAT)","D:\\POCT\\iSTATserver.exe"],
+["172.19.8.32","ECG Server (MUSE)","D:\\8.85\\MUSE\\HL7Communicator.exe"],
+["172.19.8.32","Beckman Coulter","D:\\8.85\\Coulter\\HL7Communicator.exe"],
+["172.19.8.32","Vitals Monitoring","D:\\Test\\GEVs.exe | D:\\Test\\Client"],
+["172.19.8.32","POCT (Point of Care)","D:\\POCT\\iSTATServer.exe"],
+["172.19.241.24","Cobas Infinity 2","E:\\P\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\HL7Communicator.exe | Old 8.32: C:\\P\\Code\\Infinity\\Debug\\HL7Communicator.exe"],
+["172.19.8.32","iStat","D:\\8.85\\iState\\iSTATServer.exe"],
+["172.19.8.32","Ward Vitals","D:\\Test\\Client\\VsCommunicatorClient.exe"],
+["172.19.8.32","Muse ECG","D:\\8.85\\MUSE\\VsCommunicatorClient.exe"],
+["172.19.8.32","AHSJ OrthoVision","D:/8.85/SHJ-OrthoVision/Ortho Vision"],
+["172.19.238.13","Moksha to HIS","F:\\Padam\\TCPIP\\NEw\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug"],
+["172.19.241.4 & 172.19.238.13","Moksha Order Interface","241.4: E:\\MOKSHA\\ASPL TCPIP CLient.MOKSHA | 238.13: C:\\Users\\KeyAzurSrv\\OneDrive\\Aster Hospital Oman\\ASPL TCPIP CLient\\bin\\Debug"],
+["172.19.241.14","Print Server","net stop PowerBIReportServer | net start PowerBIReportServer"],
+["172.19.241.24","Ortho Vision","E:\\Ortho\\HL7Communicator.exe"],
+["172.19.241.30","Birthday Automation","New: F:\\PatientPortal_1\\PatientPortal\\Content\\img\\WishAs | Wish: D:\\PatientPortal_1\\PatientPortal\\Content\\img\\WishAs | Birthday: Z:\\ | Run: C:\\Users\\KeyAzurSrv\\source\\repos\\xCopy\\xCopy\\bin\\Debug\\net6.0-windows\\xCopy.exe"],
+["172.19.241.37","SMS & NABIDH Services","SMS: http://localhost:801/pcr/smsx?Auto=1 | NABIDH PROD: http://localhost:809/HIE/default?xCall=PROD | NABIDH: http://localhost:980/HIE/default"],
+["172.19.241.24","Urised AHM","E:\\Urised AHM\\Mac"],
+["172.19.241.24","Urised AHQ","E:\\Ahq Urised\\aspl interface\\urised\\Mac"],
+["172.19.241.24","Radio Meter","E:\\RadioMeter\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\"],
+["172.19.241.36","PDMS","C:\\PDMS\\VsCommunicatorClient"],
+["172.19.241.30","Patient Monitor Deepu","F:\\GE-Monitor\\GEVs"],
+["172.19.238.13","Mindray","F:\\Padam\\P\\ASPL TCPIP CLient - Copy"],
+["172.19.8.32","GRBS","D:\\8.85\\MUSE\\Client\\VsCommunicatorClient"],
+["172.19.241.24","Urised AHSO","E:\\AHSO Urised\\aspl interface"],
+["172.19.241.24","MyAster HL7 Service","Windows Service: myAster HL7"],
+["172.19.243.7 / 172.19.243.9","Pharmacy Auto Submission","172.19.238.13 - IIS - Edge Browser"]
+];
+
+const checkedOpt=["Pending","Checked","Not Checked"];
+const fineOpt=["Pending","Working Fine","Issue Found","Not Required"];
+const ticketOpt=["Ticket Not Created","Ticket Created","Not Required"];
+const yesNoOpt=["Pending","Yes","No","Not Required"];
+const runOpt=["Pending","Running","Stopped","Not Required"];
+
+function todayISO(){
+  const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,'0')+"-"+String(d.getDate()).padStart(2,'0');
+}
+
+function key(){
+  return STORE_PREFIX+workDate.value;
+}
+
+function opts(arr,val){
+  return arr.map(x=>`<option ${x===val?'selected':''}>${x}</option>`).join("");
+}
+
+function safeValue(v){
+  return String(v || "").replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+function loadSaved(){
+  try{
+    return JSON.parse(localStorage.getItem(key())) || {};
+  }catch(e){
+    return {};
+  }
+}
+
+function saveData(){
+  localStorage.setItem(key(),JSON.stringify(collect()));
+  updateSummary();
+  updateRowColors();
+  renderHistory();
+  alert("Saved for "+workDate.value);
+}
+
+function serverRequest(ip){
+  return `Kindly perform the daily routine check of server ${ip}, including storage usage, performance and overall server availability.`;
+}
+
+function serverResolution(ip){
+  return `Daily routine check completed for server ${ip}. Storage usage, performance and server availability checked and found working fine.`;
+}
+
+function interfaceRequest(name,ip){
+  return `Kindly perform the daily routine check of ${name} interface on server ${ip}. Please verify the service/application is running, logs are updating, and data is correctly reflecting into HIS.`;
+}
+
+function interfaceResolution(name,ip,path){
+  return `${name} interface check completed on server ${ip}. Service/application is running fine, logs checked in the configured folder/application path, and data reflection into HIS verified. Path/Details: ${path}`;
+}
+
+function render(){
+  const saved=loadSaved();
+
+  serverTable.querySelector("tbody").innerHTML="";
+  interfaceTable.querySelector("tbody").innerHTML="";
+
+  servers.forEach((ip,i)=>{
+    const r=saved["s_"+i]||{};
+    const req=r.request || serverRequest(ip);
+    const res=r.resolution || serverResolution(ip);
+
+    serverTable.querySelector("tbody").insertAdjacentHTML("beforeend",`
+      <tr>
+        <td>${i+1}</td>
+        <td class="ip">${ip}</td>
+        <td><select data-field="checked">${opts(checkedOpt,r.checked||"Pending")}</select></td>
+        <td><select data-field="fine">${opts(fineOpt,r.fine||"Pending")}</select></td>
+        <td><select data-field="ticketCreated">${opts(ticketOpt,r.ticketCreated||"Ticket Not Created")}</select></td>
+        <td><input data-field="ticketNo" value="${safeValue(r.ticketNo)}" placeholder="Ticket No"></td>
+        <td><textarea data-field="storage" placeholder="Storage checked / reachable">${safeValue(r.storage)}</textarea></td>
+        <td>
+          <div class="compactText">${safeValue(req)}</div>
+          <input type="hidden" data-field="request" value="${safeValue(req)}">
+        </td>
+        <td>
+          <div class="compactText">${safeValue(res)}</div>
+          <input type="hidden" data-field="resolution" value="${safeValue(res)}">
+        </td>
+        <td>
+          <div class="actionStack">
+            <button onclick="copyRow('server',${i},'request')">Request</button>
+            <button class="btn-green" onclick="copyRow('server',${i},'resolution')">Resolution</button>
+            <button class="btn-amber" onclick="copyRow('server',${i},'full')">Full</button>
+          </div>
+        </td>
+      </tr>
+    `);
+  });
+
+  interfaces.forEach((it,i)=>{
+    const r=saved["i_"+i]||{};
+    const req=r.request || interfaceRequest(it[1],it[0]);
+    const res=r.resolution || interfaceResolution(it[1],it[0],it[2]);
+
+    interfaceTable.querySelector("tbody").insertAdjacentHTML("beforeend",`
+      <tr>
+        <td>${i+1}</td>
+        <td class="ip">${it[0]}</td>
+        <td><b>${safeValue(it[1])}</b></td>
+        <td><div class="compactText" title="${safeValue(it[2])}">${safeValue(it[2])}</div></td>
+        <td><select data-field="checked">${opts(checkedOpt,r.checked||"Pending")}</select></td>
+        <td><select data-field="running">${opts(runOpt,r.running||"Pending")}</select></td>
+        <td><select data-field="logs">${opts(yesNoOpt,r.logs||"Pending")}</select></td>
+        <td><select data-field="fine">${opts(fineOpt,r.fine||"Pending")}</select></td>
+        <td><select data-field="ticketCreated">${opts(ticketOpt,r.ticketCreated||"Ticket Not Created")}</select></td>
+        <td><input data-field="ticketNo" value="${safeValue(r.ticketNo)}" placeholder="Ticket No"></td>
+        <td>
+          <div class="compactText">${safeValue(res)}</div>
+          <input type="hidden" data-field="resolution" value="${safeValue(res)}">
+          <input type="hidden" data-field="request" value="${safeValue(req)}">
+        </td>
+        <td>
+          <div class="actionStack">
+            <button onclick="copyPath(${i})">Path</button>
+            <button onclick="copyRow('interface',${i},'request')">Request</button>
+            <button class="btn-green" onclick="copyRow('interface',${i},'resolution')">Resolution</button>
+            <button class="btn-amber" onclick="copyRow('interface',${i},'full')">Full</button>
+          </div>
+        </td>
+      </tr>
+    `);
+  });
+
+  applyFilters();
+  updateSummary();
+  updateRowColors();
+  renderHistory();
+}
+
+function collect(){
+  const data={};
+
+  document.querySelectorAll("#serverTable tbody tr").forEach((tr,i)=>{
+    data["s_"+i]={};
+    tr.querySelectorAll("[data-field]").forEach(el=>{
+      data["s_"+i][el.dataset.field]=el.value;
+    });
+  });
+
+  document.querySelectorAll("#interfaceTable tbody tr").forEach((tr,i)=>{
+    data["i_"+i]={};
+    tr.querySelectorAll("[data-field]").forEach(el=>{
+      data["i_"+i][el.dataset.field]=el.value;
+    });
+  });
+
+  return data;
+}
+
+function getRow(type,index){
+  const tr=document.querySelectorAll(type==="server" ? "#serverTable tbody tr" : "#interfaceTable tbody tr")[index];
+  const r={};
+  tr.querySelectorAll("[data-field]").forEach(el=>{
+    r[el.dataset.field]=el.value;
+  });
+  return r;
+}
+
+function copyText(t){
+  navigator.clipboard.writeText(t).then(()=>alert("Copied."));
+}
+
+function copyPath(i){
+  copyText(interfaces[i][2]);
+}
+
+function copyRow(type,index,mode){
+  const r=getRow(type,index);
+  let text="";
+
+  if(type==="server"){
+    const ip=servers[index];
+
+    if(mode==="request"){
+      text=r.request || serverRequest(ip);
+    }
+
+    if(mode==="resolution"){
+      text=r.resolution || serverResolution(ip);
+    }
+
+    if(mode==="full"){
+      text=`Date: ${workDate.value}
+Server: ${ip}
+Ticket Created: ${r.ticketCreated || "Ticket Not Created"}
+Ticket No: ${r.ticketNo || "-"}
+
+Request:
+${r.request || serverRequest(ip)}
+
+Resolution:
+${r.resolution || serverResolution(ip)}
+
+Checked: ${r.checked || "Pending"}
+Working Fine: ${r.fine || "Pending"}
+Storage / Status: ${r.storage || "-"}`;
+    }
+  }else{
+    const it=interfaces[index];
+
+    if(mode==="request"){
+      text=r.request || interfaceRequest(it[1],it[0]);
+    }
+
+    if(mode==="resolution"){
+      text=r.resolution || interfaceResolution(it[1],it[0],it[2]);
+    }
+
+    if(mode==="full"){
+      text=`Date: ${workDate.value}
+Server: ${it[0]}
+Interface: ${it[1]}
+Ticket Created: ${r.ticketCreated || "Ticket Not Created"}
+Ticket No: ${r.ticketNo || "-"}
+
+Request:
+${r.request || interfaceRequest(it[1],it[0])}
+
+Resolution:
+${r.resolution || interfaceResolution(it[1],it[0],it[2])}
+
+Path/Details:
+${it[2]}
+
+Checked: ${r.checked || "Pending"}
+Running: ${r.running || "Pending"}
+Logs Checked: ${r.logs || "Pending"}
+Working Fine: ${r.fine || "Pending"}`;
+    }
+  }
+
+  copyText(text);
+}
+
+function updateRowColors(){
+  document.querySelectorAll("tbody tr").forEach(tr=>{
+    const checked=tr.querySelector('[data-field="checked"]')?.value;
+    const ticket=tr.querySelector('[data-field="ticketCreated"]')?.value;
+    const fine=tr.querySelector('[data-field="fine"]')?.value;
+    const running=tr.querySelector('[data-field="running"]')?.value;
+
+    tr.classList.remove("done-row","issue-row","pending-row");
+
+    if(checked==="Checked" && ticket==="Ticket Created"){
+      tr.classList.add("done-row");
+    }else if(fine==="Issue Found" || running==="Stopped"){
+      tr.classList.add("issue-row");
+    }else{
+      tr.classList.add("pending-row");
+    }
+  });
+}
+
+function updateSummary(){
+  const data=collect();
+  let fine=0,ticket=0,issue=0;
+
+  Object.values(data).forEach(r=>{
+    if(r.fine==="Working Fine") fine++;
+    if(r.ticketCreated==="Ticket Created") ticket++;
+    if(r.fine==="Issue Found" || r.checked==="Pending" || r.running==="Stopped") issue++;
+  });
+
+  serverCount.innerText=servers.length;
+  interfaceCount.innerText=interfaces.length;
+  fineCount.innerText=fine;
+  ticketCount.innerText=ticket;
+  issueCount.innerText=issue;
+}
+
+function applyFilters(){
+  const q=searchBox.value.toLowerCase();
+  const f=filterBox.value;
+
+  document.querySelectorAll("tbody tr").forEach(tr=>{
+    const text=tr.innerText.toLowerCase()+" "+Array.from(tr.querySelectorAll("input,select,textarea")).map(x=>x.value).join(" ").toLowerCase();
+    const values=Array.from(tr.querySelectorAll("input,select,textarea")).map(x=>x.value);
+    tr.style.display=(!q || text.includes(q)) && (!f || values.includes(f)) ? "" : "none";
+  });
+}
+
+function markAllServersFine(){
+  document.querySelectorAll("#serverTable tbody tr").forEach(tr=>{
+    tr.querySelector('[data-field="checked"]').value="Checked";
+    tr.querySelector('[data-field="fine"]').value="Working Fine";
+    tr.querySelector('[data-field="ticketCreated"]').value="Ticket Created";
+  });
+
+  saveData();
+}
+
+function markAllInterfacesFine(){
+  document.querySelectorAll("#interfaceTable tbody tr").forEach(tr=>{
+    tr.querySelector('[data-field="checked"]').value="Checked";
+    tr.querySelector('[data-field="running"]').value="Running";
+    tr.querySelector('[data-field="logs"]').value="Yes";
+    tr.querySelector('[data-field="fine"]').value="Working Fine";
+    tr.querySelector('[data-field="ticketCreated"]').value="Ticket Created";
+  });
+
+  saveData();
+}
+
+function showTab(tab,btn){
+  document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+
+  serverSection.style.display=(tab==="server" || tab==="all") ? "" : "none";
+  interfaceSection.style.display=(tab==="interface" || tab==="all") ? "" : "none";
+}
+
+function copyReport(){
+  const data=collect();
+  let report=`Daily Server & Interface Checklist - ${workDate.value}\n\nSERVER CHECK\n`;
+
+  servers.forEach((ip,i)=>{
+    const r=data["s_"+i] || {};
+    report+=`${i+1}. ${ip} | Checked: ${r.checked || "Pending"} | Working Fine: ${r.fine || "Pending"} | Ticket: ${r.ticketCreated || "Ticket Not Created"} | Ticket No: ${r.ticketNo || "-"} | Storage/Status: ${r.storage || "-"}\nResolution: ${r.resolution || serverResolution(ip)}\n\n`;
+  });
+
+  report+=`\nINTERFACE CHECK\n`;
+
+  interfaces.forEach((it,i)=>{
+    const r=data["i_"+i] || {};
+    report+=`${i+1}. ${it[1]} (${it[0]}) | Checked: ${r.checked || "Pending"} | Running: ${r.running || "Pending"} | Logs: ${r.logs || "Pending"} | Working Fine: ${r.fine || "Pending"} | Ticket: ${r.ticketCreated || "Ticket Not Created"} | Ticket No: ${r.ticketNo || "-"}\nPath: ${it[2]}\nResolution: ${r.resolution || interfaceResolution(it[1],it[0],it[2])}\n\n`;
+  });
+
+  copyText(report);
+}
+
+function exportCSV(){
+  const data=collect();
+
+  const rows=[
+    ["Date","Type","No","Server IP","Name","Path","Checked","Running","Logs","Working Fine","Ticket Created","Ticket No","Storage/Status","Request","Resolution"]
+  ];
+
+  servers.forEach((ip,i)=>{
+    const r=data["s_"+i] || {};
+    rows.push([
+      workDate.value,
+      "Server",
+      i+1,
+      ip,
+      "Server Check",
+      "",
+      r.checked || "Pending",
+      "",
+      "",
+      r.fine || "Pending",
+      r.ticketCreated || "Ticket Not Created",
+      r.ticketNo || "",
+      r.storage || "",
+      r.request || serverRequest(ip),
+      r.resolution || serverResolution(ip)
+    ]);
+  });
+
+  interfaces.forEach((it,i)=>{
+    const r=data["i_"+i] || {};
+    rows.push([
+      workDate.value,
+      "Interface",
+      i+1,
+      it[0],
+      it[1],
+      it[2],
+      r.checked || "Pending",
+      r.running || "Pending",
+      r.logs || "Pending",
+      r.fine || "Pending",
+      r.ticketCreated || "Ticket Not Created",
+      r.ticketNo || "",
+      "",
+      r.request || interfaceRequest(it[1],it[0]),
+      r.resolution || interfaceResolution(it[1],it[0],it[2])
+    ]);
+  });
+
+  const csv=rows.map(row=>row.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=`Daily_Checklist_${workDate.value}.csv`;
+  a.click();
+}
+
+function resetToday(){
+  if(confirm("Clear saved data for selected date only?")){
+    localStorage.removeItem(key());
+    render();
+  }
+}
+
+function toggleHistory(){
+  historyBox.style.display=historyBox.style.display==="block" ? "none" : "block";
+  renderHistory();
+}
+
+function getSavedDates(){
+  const dates=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k && k.startsWith(STORE_PREFIX)){
+      dates.push(k.replace(STORE_PREFIX,""));
+    }
+  }
+  return dates.sort().reverse();
+}
+
+function renderHistory(){
+  const dates=getSavedDates();
+
+  historyList.innerHTML=dates.length ? "" : "<div class='historyItem'>No saved history found</div>";
+
+  dates.forEach(d=>{
+    historyList.insertAdjacentHTML("beforeend",`
+      <div class="historyItem">
+        <span>${d}</span>
+        <button onclick="openDate('${d}')">Open</button>
+      </div>
+    `);
+  });
+}
+
+function openDate(d){
+  workDate.value=d;
+  render();
+  historyBox.style.display="none";
+}
+
+workDate.value=todayISO();
+workDate.addEventListener("change",render);
+searchBox.addEventListener("input",applyFilters);
+filterBox.addEventListener("change",applyFilters);
+
+document.addEventListener("input",e=>{
+  if(e.target.matches("input,select,textarea")){
+    if(e.target.dataset.field==="fine" && e.target.value==="Working Fine"){
+      const tr=e.target.closest("tr");
+      const checked=tr.querySelector('[data-field="checked"]');
+      if(checked) checked.value="Checked";
+    }
+
+    localStorage.setItem(key(),JSON.stringify(collect()));
+    updateSummary();
+    updateRowColors();
+    renderHistory();
+  }
+});
+
+render();
+</script>
+
+</body>
+</html>
