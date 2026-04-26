@@ -1526,26 +1526,30 @@
     if (!username || !password) { errEl.innerHTML = '✕ Please enter username and password.'; return; }
     btn.disabled = true;
     document.getElementById('loginBtnText').textContent = 'Verifying…';
+
+    // Await the hash BEFORE the timeout so we get a real string, not a Promise
     const hash = await sha256(password);
     const users = getUsers() || [];
     const found = users.find(u => u.username === username);
-    setTimeout(() => {
-      if (!found || found.passwordHash !== hash) {
-        errEl.innerHTML = '✕ Invalid username or password.';
-        btn.disabled = false;
-        document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
-        return;
-      }
-      if (found.status === 'disabled') {
-        errEl.innerHTML = '🚫 Your account has been disabled. Contact admin.';
-        btn.disabled = false;
-        document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
-        return;
-      }
-      currentUser = { id: found.id, username: found.username, role: found.role };
-      setSession(currentUser);
-      onLoginSuccess();
-    }, 420);
+
+    // Small visual delay so the button state shows, then check synchronously
+    await new Promise(r => setTimeout(r, 420));
+
+    if (!found || found.passwordHash !== hash) {
+      errEl.innerHTML = '✕ Invalid username or password.';
+      btn.disabled = false;
+      document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
+      return;
+    }
+    if (found.status === 'disabled') {
+      errEl.innerHTML = '🚫 Your account has been disabled. Contact admin.';
+      btn.disabled = false;
+      document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
+      return;
+    }
+    currentUser = { id: found.id, username: found.username, role: found.role };
+    setSession(currentUser);
+    onLoginSuccess();
   }
 
   function onLoginSuccess() {
