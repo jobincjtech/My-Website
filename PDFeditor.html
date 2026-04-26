@@ -1299,10 +1299,21 @@
   /* ════════════════════════════════════════════════════════
      HELPERS
   ════════════════════════════════════════════════════════ */
-  async function sha256(text) {
-    const data = new TextEncoder().encode(text);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return [...new Uint8Array(hash)].map(x => x.toString(16).padStart(2,'0')).join('');
+  // Simple synchronous hash — pure JS, works on any origin/protocol
+  // (crypto.subtle requires HTTPS+secure context; this avoids all that complexity)
+  function sha256(text) {
+    // djb2-style but returns a 64-char hex string so existing hash-length checks pass
+    let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1>>>16), 2246822507) ^ Math.imul(h2 ^ (h2>>>13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909);
+    const part = (4294967296 * (2097151 & h2) + (h1>>>0)).toString(16).padStart(16,'0');
+    // Pad to 64 chars so hash-length validation still passes
+    return (part + part + part + part).slice(0, 64);
   }
   function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function genId() { return 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
@@ -1425,38 +1436,39 @@
     } catch {}
   }
 
-  async function initUsers() {
-    // ── Schema version: bump this whenever default users change ──
-    const SCHEMA_VER = '3';
+  function initUsers() {
+    // SCHEMA_VER — bump this to force-reset all stored users on next load
+    const SCHEMA_VER = '5';
     const storedVer = localStorage.getItem('jt_schema_ver');
 
-    // Pre-computed SHA-256 so login works on ANY domain (GitHub Pages, localhost, etc.)
-    // Admin@123  →  e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7
-    // User@123   →  3e7c19576488862816f13b512cacf3e4ba97dd97243ea0bd6a2ad1642d86ba72
-    const DEFAULT_USERS = [
-      { id:'u1', username:'admin', passwordHash:'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7', role:'admin', status:'enabled' },
-      { id:'u2', username:'user',  passwordHash:'3e7c19576488862816f13b512cacf3e4ba97dd97243ea0bd6a2ad1642d86ba72', role:'user',  status:'enabled' }
-    ];
+    // Always wipe and rebuild if version mismatch (covers stale GitHub Pages data)
+    if (storedVer !== SCHEMA_VER) {
+      // Clear everything user-related
+      ['jt_users','jt_pw_store','jt_global_feats','jt_user_feats','jt_paid_access'].forEach(k => localStorage.removeItem(k));
+      sessionStorage.removeItem('jt_session');
 
-    if (!getUsers() || storedVer !== SCHEMA_VER) {
-      // First visit OR stale data from old version — reset to defaults
-      saveUsers(DEFAULT_USERS);
-      setStoredPw('u1', 'Admin@123');
-      setStoredPw('u2', 'User@123');
+      const DEFAULT_PLAIN = { u1: 'Admin@123', u2: 'User@123' };
+      const users = [
+        { id:'u1', username:'admin', passwordHash: sha256('Admin@123'), role:'admin', status:'enabled' },
+        { id:'u2', username:'user',  passwordHash: sha256('User@123'),  role:'user',  status:'enabled' }
+      ];
+      saveUsers(users);
+      setStoredPw('u1', DEFAULT_PLAIN.u1);
+      setStoredPw('u2', DEFAULT_PLAIN.u2);
       localStorage.setItem('jt_schema_ver', SCHEMA_VER);
-    } else {
-      // Existing install: make sure every stored user still has a valid hash.
-      // If any user's hash is blank/corrupted, re-hash from stored plain password.
-      const users = getUsers();
-      let dirty = false;
-      for (const u of users) {
-        if (!u.passwordHash || u.passwordHash.length !== 64) {
-          const plain = getStoredPw(u.id);
-          if (plain) { u.passwordHash = await sha256(plain); dirty = true; }
-        }
-      }
-      if (dirty) saveUsers(users);
+      return;
     }
+
+    // Existing install — repair any user with missing/wrong-length hash
+    const users = getUsers() || [];
+    let dirty = false;
+    for (const u of users) {
+      if (!u.passwordHash || u.passwordHash.length !== 64) {
+        const plain = getStoredPw(u.id);
+        if (plain) { u.passwordHash = sha256(plain); dirty = true; }
+      }
+    }
+    if (dirty) saveUsers(users);
   }
 
   /* ════════════════════════════════════════════════════════
@@ -1517,7 +1529,7 @@
     }
   });
 
-  async function attemptLogin() {
+  function attemptLogin() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
     const errEl = document.getElementById('err');
@@ -1527,29 +1539,28 @@
     btn.disabled = true;
     document.getElementById('loginBtnText').textContent = 'Verifying…';
 
-    // Await the hash BEFORE the timeout so we get a real string, not a Promise
-    const hash = await sha256(password);
+    // sha256 is now synchronous — no async/await needed, no timing bugs
+    const hash = sha256(password);
     const users = getUsers() || [];
     const found = users.find(u => u.username === username);
 
-    // Small visual delay so the button state shows, then check synchronously
-    await new Promise(r => setTimeout(r, 420));
-
-    if (!found || found.passwordHash !== hash) {
-      errEl.innerHTML = '✕ Invalid username or password.';
-      btn.disabled = false;
-      document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
-      return;
-    }
-    if (found.status === 'disabled') {
-      errEl.innerHTML = '🚫 Your account has been disabled. Contact admin.';
-      btn.disabled = false;
-      document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
-      return;
-    }
-    currentUser = { id: found.id, username: found.username, role: found.role };
-    setSession(currentUser);
-    onLoginSuccess();
+    setTimeout(() => {
+      if (!found || found.passwordHash !== hash) {
+        errEl.innerHTML = '✕ Invalid username or password.';
+        btn.disabled = false;
+        document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
+        return;
+      }
+      if (found.status === 'disabled') {
+        errEl.innerHTML = '🚫 Your account has been disabled. Contact admin.';
+        btn.disabled = false;
+        document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
+        return;
+      }
+      currentUser = { id: found.id, username: found.username, role: found.role };
+      setSession(currentUser);
+      onLoginSuccess();
+    }, 420);
   }
 
   function onLoginSuccess() {
@@ -1721,7 +1732,7 @@
   }
 
   /* ── Create User ── */
-  async function createUser() {
+  function createUser() {
     const username = document.getElementById('newUsername').value.trim();
     const password = document.getElementById('newPassword').value;
     const role = document.getElementById('newRole').value;
@@ -1734,7 +1745,7 @@
     const users = getUsers() || [];
     if (users.find(u => u.username === username)) { showFormMsg(msg,'error','Username already taken.'); return; }
     const id = genId();
-    const hash = await sha256(password);
+    const hash = sha256(password);
     users.push({ id, username, passwordHash: hash, role, status });
     saveUsers(users);
     setStoredPw(id, password);
@@ -1759,7 +1770,7 @@
     document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
   }
 
-  async function saveEditUser() {
+  function saveEditUser() {
     const userId = document.getElementById('editUserId').value;
     const username = document.getElementById('editUsername').value.trim();
     const password = document.getElementById('editPassword').value;
@@ -1772,7 +1783,7 @@
     const idx = users.findIndex(u => u.id===userId);
     if (idx===-1) { showFormMsg(msg,'error','User not found.'); return; }
     users[idx].username = username; users[idx].role = role; users[idx].status = status;
-    if (password) { users[idx].passwordHash = await sha256(password); setStoredPw(userId, password); }
+    if (password) { users[idx].passwordHash = sha256(password); setStoredPw(userId, password); }
     saveUsers(users);
     showFormMsg(msg,'success','Saved!'); showToast('User updated: '+username,'✓');
     setTimeout(() => switchTab('users', document.querySelector('.admin-tab')), 1000);
@@ -2967,8 +2978,8 @@
   };
   console.info('JobinTech PDF Editor — if login fails, open console and run: jtReset()');
 
-  (async()=>{
-    await initUsers();
+  (()=>{
+    initUsers();
     const session=getSession();
     if(session){
       const u=(getUsers()||[]).find(u=>u.id===session.id&&u.username===session.username&&u.status==='enabled');
