@@ -1426,15 +1426,36 @@
   }
 
   async function initUsers() {
-    if (!getUsers()) {
-      const id1 = 'u1', id2 = 'u2';
-      const users = [
-        { id: id1, username: 'admin', passwordHash: await sha256('Admin@123'), role: 'admin', status: 'enabled' },
-        { id: id2, username: 'user',  passwordHash: await sha256('User@123'),  role: 'user',  status: 'enabled' }
-      ];
-      saveUsers(users);
-      setStoredPw(id1, 'Admin@123');
-      setStoredPw(id2, 'User@123');
+    // ── Schema version: bump this whenever default users change ──
+    const SCHEMA_VER = '3';
+    const storedVer = localStorage.getItem('jt_schema_ver');
+
+    // Pre-computed SHA-256 so login works on ANY domain (GitHub Pages, localhost, etc.)
+    // Admin@123  →  e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7
+    // User@123   →  3e7c19576488862816f13b512cacf3e4ba97dd97243ea0bd6a2ad1642d86ba72
+    const DEFAULT_USERS = [
+      { id:'u1', username:'admin', passwordHash:'e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7', role:'admin', status:'enabled' },
+      { id:'u2', username:'user',  passwordHash:'3e7c19576488862816f13b512cacf3e4ba97dd97243ea0bd6a2ad1642d86ba72', role:'user',  status:'enabled' }
+    ];
+
+    if (!getUsers() || storedVer !== SCHEMA_VER) {
+      // First visit OR stale data from old version — reset to defaults
+      saveUsers(DEFAULT_USERS);
+      setStoredPw('u1', 'Admin@123');
+      setStoredPw('u2', 'User@123');
+      localStorage.setItem('jt_schema_ver', SCHEMA_VER);
+    } else {
+      // Existing install: make sure every stored user still has a valid hash.
+      // If any user's hash is blank/corrupted, re-hash from stored plain password.
+      const users = getUsers();
+      let dirty = false;
+      for (const u of users) {
+        if (!u.passwordHash || u.passwordHash.length !== 64) {
+          const plain = getStoredPw(u.id);
+          if (plain) { u.passwordHash = await sha256(plain); dirty = true; }
+        }
+      }
+      if (dirty) saveUsers(users);
     }
   }
 
@@ -2933,6 +2954,15 @@
   /* ════════════════════════════════════════════════════════
      BOOTSTRAP
   ════════════════════════════════════════════════════════ */
+
+  // Debug helper — open browser console and type: jtReset()
+  window.jtReset = function() {
+    ['jt_users','jt_pw_store','jt_schema_ver','jt_global_feats','jt_user_feats','jt_paid_access','jt_session'].forEach(k => localStorage.removeItem(k));
+    sessionStorage.clear();
+    location.reload();
+  };
+  console.info('JobinTech PDF Editor — if login fails, open console and run: jtReset()');
+
   (async()=>{
     await initUsers();
     const session=getSession();
