@@ -1299,22 +1299,8 @@
   /* ════════════════════════════════════════════════════════
      HELPERS
   ════════════════════════════════════════════════════════ */
-  // Simple synchronous hash — pure JS, works on any origin/protocol
-  // (crypto.subtle requires HTTPS+secure context; this avoids all that complexity)
-  function sha256(text) {
-    // djb2-style but returns a 64-char hex string so existing hash-length checks pass
-    let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
-    for (let i = 0; i < text.length; i++) {
-      const ch = text.charCodeAt(i);
-      h1 = Math.imul(h1 ^ ch, 2654435761);
-      h2 = Math.imul(h2 ^ ch, 1597334677);
-    }
-    h1 = Math.imul(h1 ^ (h1>>>16), 2246822507) ^ Math.imul(h2 ^ (h2>>>13), 3266489909);
-    h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909);
-    const part = (4294967296 * (2097151 & h2) + (h1>>>0)).toString(16).padStart(16,'0');
-    // Pad to 64 chars so hash-length validation still passes
-    return (part + part + part + part).slice(0, 64);
-  }
+  // Password stored and compared as plain text (client-side app, no server)
+  function sha256(text) { return text; }
   function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function genId() { return 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
   function avatarColor(username) {
@@ -1437,35 +1423,35 @@
   }
 
   function initUsers() {
-    // SCHEMA_VER — bump this to force-reset all stored users on next load
-    const SCHEMA_VER = '5';
+    // Bump SCHEMA_VER any time you want to force a clean reset on all clients
+    const SCHEMA_VER = '9';
     const storedVer = localStorage.getItem('jt_schema_ver');
 
-    // Always wipe and rebuild if version mismatch (covers stale GitHub Pages data)
     if (storedVer !== SCHEMA_VER) {
-      // Clear everything user-related
+      // Wipe ALL stale data (covers old GitHub Pages cache, old hash formats, etc.)
       ['jt_users','jt_pw_store','jt_global_feats','jt_user_feats','jt_paid_access'].forEach(k => localStorage.removeItem(k));
       sessionStorage.removeItem('jt_session');
 
-      const DEFAULT_PLAIN = { u1: 'Admin@123', u2: 'User@123' };
+      // Store passwords as plain text — simple, reliable, no crypto API needed
       const users = [
-        { id:'u1', username:'admin', passwordHash: sha256('Admin@123'), role:'admin', status:'enabled' },
-        { id:'u2', username:'user',  passwordHash: sha256('User@123'),  role:'user',  status:'enabled' }
+        { id:'u1', username:'admin', password:'Admin@123', role:'admin', status:'enabled' },
+        { id:'u2', username:'user',  password:'User@123',  role:'user',  status:'enabled' }
       ];
       saveUsers(users);
-      setStoredPw('u1', DEFAULT_PLAIN.u1);
-      setStoredPw('u2', DEFAULT_PLAIN.u2);
+      setStoredPw('u1', 'Admin@123');
+      setStoredPw('u2', 'User@123');
       localStorage.setItem('jt_schema_ver', SCHEMA_VER);
       return;
     }
 
-    // Existing install — repair any user with missing/wrong-length hash
+    // Existing install — migrate any user that still uses old passwordHash field
     const users = getUsers() || [];
     let dirty = false;
     for (const u of users) {
-      if (!u.passwordHash || u.passwordHash.length !== 64) {
+      if (u.passwordHash && !u.password) {
+        // Try to recover from stored plain password
         const plain = getStoredPw(u.id);
-        if (plain) { u.passwordHash = sha256(plain); dirty = true; }
+        if (plain) { u.password = plain; dirty = true; }
       }
     }
     if (dirty) saveUsers(users);
@@ -1539,13 +1525,16 @@
     btn.disabled = true;
     document.getElementById('loginBtnText').textContent = 'Verifying…';
 
-    // sha256 is now synchronous — no async/await needed, no timing bugs
-    const hash = sha256(password);
     const users = getUsers() || [];
+    // Support both new plain-password field and legacy passwordHash field
     const found = users.find(u => u.username === username);
 
     setTimeout(() => {
-      if (!found || found.passwordHash !== hash) {
+      const pwMatch = found && (
+        (found.password && found.password === password) ||
+        (found.passwordHash && found.passwordHash === sha256(password))
+      );
+      if (!pwMatch) {
         errEl.innerHTML = '✕ Invalid username or password.';
         btn.disabled = false;
         document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
@@ -1745,8 +1734,7 @@
     const users = getUsers() || [];
     if (users.find(u => u.username === username)) { showFormMsg(msg,'error','Username already taken.'); return; }
     const id = genId();
-    const hash = sha256(password);
-    users.push({ id, username, passwordHash: hash, role, status });
+    users.push({ id, username, password, role, status });
     saveUsers(users);
     setStoredPw(id, password);
     showFormMsg(msg,'success',`User "${username}" created!`);
@@ -1783,7 +1771,7 @@
     const idx = users.findIndex(u => u.id===userId);
     if (idx===-1) { showFormMsg(msg,'error','User not found.'); return; }
     users[idx].username = username; users[idx].role = role; users[idx].status = status;
-    if (password) { users[idx].passwordHash = sha256(password); setStoredPw(userId, password); }
+    if (password) { users[idx].password = password; users[idx].passwordHash = ''; setStoredPw(userId, password); }
     saveUsers(users);
     showFormMsg(msg,'success','Saved!'); showToast('User updated: '+username,'✓');
     setTimeout(() => switchTab('users', document.querySelector('.admin-tab')), 1000);
