@@ -964,6 +964,7 @@
         <span id="loginBtnText">🔒 Authenticate & Enter</span>
       </button>
       <div id="err"></div>
+      <div id="loginStatusMsg" style="text-align:center;font-size:12px;color:#6a8db8;margin-top:6px;min-height:18px;"></div>
 
       <div class="login-footer"><span>JobinTech IT · UAE</span><br>All sessions are monitored and logged</div>
     </div>
@@ -1297,81 +1298,87 @@
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
   /* ════════════════════════════════════════════════════════
+     GOOGLE SHEETS BACKEND CONFIG
+     — Replace SCRIPT_URL with your deployed Apps Script URL
+     — Set USE_GOOGLE_SHEETS = true after setup
+  ════════════════════════════════════════════════════════ */
+  const GS_CONFIG = {
+    USE_GOOGLE_SHEETS: true,
+    SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyiG8jn7qaDHgGYjywvFlZmV7m7mQJvq4X08EdfDc3Q7I4d43nKL-vG-lJZkH5aXgab7Q/exec'
+  };
+
+  /* ════════════════════════════════════════════════════════
+     GOOGLE SHEETS API LAYER
+  ════════════════════════════════════════════════════════ */
+  async function gsCall(action, payload = {}) {
+    const url = GS_CONFIG.SCRIPT_URL + '?action=' + action + '&payload=' + encodeURIComponent(JSON.stringify(payload));
+    const res = await fetch(url);
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || 'GS error');
+    return json.data;
+  }
+
+  // ── Wrapped data layer — falls back to localStorage if GS not configured ──
+  let _gsUsers = null; // in-memory cache
+
+  async function loadUsersFromGS() {
+    if (!GS_CONFIG.USE_GOOGLE_SHEETS || GS_CONFIG.SCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') return false;
+    try {
+      showLoginStatus('Connecting to user database…');
+      _gsUsers = await gsCall('getUsers');
+      return true;
+    } catch(e) {
+      console.error('GS load failed:', e);
+      showLoginStatus('DB error — using local fallback');
+      return false;
+    }
+  }
+
+  function showLoginStatus(msg) {
+    const el = document.getElementById('loginStatusMsg');
+    if (el) el.textContent = msg;
+  }
+
+  // ── Override getUsers/saveUsers to use GS cache when available ──
+  function getUsers() {
+    if (_gsUsers) return _gsUsers;
+    try { return JSON.parse(localStorage.getItem('jt_users') || 'null'); } catch { return null; }
+  }
+
+  async function saveUsersToGS(users) {
+    _gsUsers = users;
+    if (!GS_CONFIG.USE_GOOGLE_SHEETS || GS_CONFIG.SCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+      localStorage.setItem('jt_users', JSON.stringify(users));
+      return;
+    }
+    try { await gsCall('saveUsers', { users }); }
+    catch(e) { console.error('GS save failed:', e); localStorage.setItem('jt_users', JSON.stringify(users)); }
+  }
+
+  async function gsSaveUser(user) {
+    _gsUsers = (_gsUsers || []).filter(u => u.id !== user.id).concat(user);
+    if (!GS_CONFIG.USE_GOOGLE_SHEETS || GS_CONFIG.SCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+      localStorage.setItem('jt_users', JSON.stringify(_gsUsers)); return;
+    }
+    try { await gsCall('saveUser', { user }); }
+    catch(e) { console.error('GS saveUser failed:', e); }
+  }
+
+  async function gsDeleteUser(userId) {
+    _gsUsers = (_gsUsers || []).filter(u => u.id !== userId);
+    if (!GS_CONFIG.USE_GOOGLE_SHEETS || GS_CONFIG.SCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+      localStorage.setItem('jt_users', JSON.stringify(_gsUsers)); return;
+    }
+    try { await gsCall('deleteUser', { userId }); }
+    catch(e) { console.error('GS deleteUser failed:', e); }
+  }
+
+
+  /* ════════════════════════════════════════════════════════
      HELPERS
   ════════════════════════════════════════════════════════ */
-  async function sha256(text) {
-    // GitHub/custom-domain safe SHA-256.
-    // crypto.subtle works only in secure context (HTTPS/localhost). This fallback prevents login failure on some GitHub/custom-domain setups.
-    if (window.crypto && crypto.subtle && window.isSecureContext) {
-      const data = new TextEncoder().encode(text);
-      const hash = await crypto.subtle.digest('SHA-256', data);
-      return [...new Uint8Array(hash)].map(x => x.toString(16).padStart(2,'0')).join('');
-    }
-
-    // Pure JavaScript SHA-256 fallback
-    function rightRotate(value, amount) { return (value >>> amount) | (value << (32 - amount)); }
-    const mathPow = Math.pow, maxWord = mathPow(2, 32);
-    const lengthProperty = 'length';
-    let i, j;
-    let result = '';
-    const words = [];
-    const ascii = unescape(encodeURIComponent(String(text)));
-    const asciiBitLength = ascii[lengthProperty] * 8;
-    const hash = sha256.h = sha256.h || [];
-    const k = sha256.k = sha256.k || [];
-    let primeCounter = k[lengthProperty];
-
-    const isComposite = {};
-    for (let candidate = 2; primeCounter < 64; candidate++) {
-      if (!isComposite[candidate]) {
-        for (i = 0; i < 313; i += candidate) isComposite[i] = candidate;
-        hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
-        k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
-      }
-    }
-
-    ascii += '\x80';
-    while (ascii[lengthProperty] % 64 - 56) ascii += '\x00';
-    for (i = 0; i < ascii[lengthProperty]; i++) {
-      j = ascii.charCodeAt(i);
-      words[i >> 2] |= j << ((3 - i) % 4) * 8;
-    }
-    words[words[lengthProperty]] = ((asciiBitLength / maxWord) | 0);
-    words[words[lengthProperty]] = (asciiBitLength);
-
-    for (j = 0; j < words[lengthProperty];) {
-      const w = words.slice(j, j += 16);
-      const oldHash = hash.slice(0);
-      for (i = 0; i < 64; i++) {
-        const w15 = w[i - 15], w2 = w[i - 2];
-        const a = hash[0], e = hash[4];
-        const temp1 = hash[7]
-          + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25))
-          + ((e & hash[5]) ^ ((~e) & hash[6]))
-          + k[i]
-          + (w[i] = (i < 16) ? w[i] : (
-            w[i - 16]
-            + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3))
-            + w[i - 7]
-            + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))
-          ) | 0);
-        const temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22))
-          + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
-        hash.unshift((temp1 + temp2) | 0);
-        hash[4] = (hash[4] + temp1) | 0;
-        hash.pop();
-      }
-      for (i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
-    }
-
-    for (i = 0; i < 8; i++) {
-      for (j = 3; j + 1; j--) {
-        const b = (hash[i] >> (j * 8)) & 255;
-        result += ((b < 16) ? 0 : '') + b.toString(16);
-      }
-    }
-    return result;
-  }
+  // Password stored and compared as plain text (client-side app, no server)
+  function sha256(text) { return text; }
   function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function genId() { return 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
   function avatarColor(username) {
@@ -1444,6 +1451,10 @@
   function savePaidAccess(d) { localStorage.setItem('jt_paid_access', JSON.stringify(d)); }
   function hasPaidAccess(userId) {
     if (!userId) return false;
+    // Check user object first (synced from GS), then localStorage fallback
+    const users = getUsers() || [];
+    const u = users.find(u => u.id === userId);
+    if (u && u.paidAccess === true) return true;
     return getPaidAccess()[userId] === true;
   }
   function setPaidAccess(userId, val) {
@@ -1468,11 +1479,8 @@
     if (e.target === this) closeSubModal();
   });
 
-  // Users
-  function getUsers() {
-    try { return JSON.parse(localStorage.getItem('jt_users') || 'null'); } catch { return null; }
-  }
-  function saveUsers(u) { localStorage.setItem('jt_users', JSON.stringify(u)); }
+  // Users — getUsers is defined above in GS layer; saveUsers proxies to GS
+  function saveUsers(u) { _gsUsers = u; localStorage.setItem('jt_users', JSON.stringify(u)); }
 
   // Stored plain passwords for admin reference (separate store, admin-only)
   function getStoredPw(userId) {
@@ -1494,26 +1502,39 @@
   }
 
   async function initUsers() {
-    let users = getUsers();
-    if (!Array.isArray(users)) users = [];
+    // Try Google Sheets first
+    const gsLoaded = await loadUsersFromGS();
+    if (gsLoaded && _gsUsers && _gsUsers.length > 0) {
+      showLoginStatus('');
+      return; // GS has users, we're good
+    }
 
-    const ensureUser = async (id, username, password, role) => {
-      let u = users.find(x => x.username === username);
-      if (!u) {
-        u = { id, username, passwordHash: await sha256(password), role, status: 'enabled' };
-        users.push(u);
-      } else {
-        if (!u.id) u.id = id;
-        if (!u.passwordHash) u.passwordHash = await sha256(password);
-        if (!u.role) u.role = role;
-        if (!u.status) u.status = 'enabled';
+    // Fallback: localStorage with plain-text passwords
+    const SCHEMA_VER = '9';
+    const storedVer = localStorage.getItem('jt_schema_ver');
+    if (storedVer !== SCHEMA_VER) {
+      ['jt_users','jt_pw_store','jt_global_feats','jt_user_feats','jt_paid_access'].forEach(k => localStorage.removeItem(k));
+      sessionStorage.removeItem('jt_session');
+      const users = [
+        { id:'u1', username:'admin', password:'Admin@123', role:'admin', status:'enabled' },
+        { id:'u2', username:'user',  password:'User@123',  role:'user',  status:'enabled' }
+      ];
+      saveUsers(users);
+      setStoredPw('u1', 'Admin@123');
+      setStoredPw('u2', 'User@123');
+      localStorage.setItem('jt_schema_ver', SCHEMA_VER);
+      return;
+    }
+    // Migrate old hash-based users
+    const users = getUsers() || [];
+    let dirty = false;
+    for (const u of users) {
+      if (u.passwordHash && !u.password) {
+        const plain = getStoredPw(u.id);
+        if (plain) { u.password = plain; dirty = true; }
       }
-      setStoredPw(u.id, password);
-    };
-
-    await ensureUser('u1', 'admin', 'Admin@123', 'admin');
-    await ensureUser('u2', 'user', 'User@123', 'user');
-    saveUsers(users);
+    }
+    if (dirty) saveUsers(users);
   }
 
   /* ════════════════════════════════════════════════════════
@@ -1583,26 +1604,39 @@
     if (!username || !password) { errEl.innerHTML = '✕ Please enter username and password.'; return; }
     btn.disabled = true;
     document.getElementById('loginBtnText').textContent = 'Verifying…';
-    const hash = await sha256(password);
+
+    // If using Google Sheets, always re-fetch users fresh on each login attempt
+    // This ensures newly created users and password changes take effect immediately
+    if (GS_CONFIG.USE_GOOGLE_SHEETS && GS_CONFIG.SCRIPT_URL !== 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+      try {
+        showLoginStatus('Checking credentials…');
+        _gsUsers = await gsCall('getUsers');
+        showLoginStatus('');
+      } catch(e) { /* use cached */ }
+    }
+
     const users = getUsers() || [];
     const found = users.find(u => u.username === username);
-    setTimeout(() => {
-      if (!found || found.passwordHash !== hash) {
-        errEl.innerHTML = '✕ Invalid username or password.';
-        btn.disabled = false;
-        document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
-        return;
-      }
-      if (found.status === 'disabled') {
-        errEl.innerHTML = '🚫 Your account has been disabled. Contact admin.';
-        btn.disabled = false;
-        document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
-        return;
-      }
-      currentUser = { id: found.id, username: found.username, role: found.role };
-      setSession(currentUser);
-      onLoginSuccess();
-    }, 420);
+    const pwMatch = found && (
+      (found.password && found.password === password) ||
+      (found.passwordHash && found.passwordHash === password)
+    );
+
+    if (!pwMatch) {
+      errEl.innerHTML = '✕ Invalid username or password.';
+      btn.disabled = false;
+      document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
+      return;
+    }
+    if (found.status === 'disabled') {
+      errEl.innerHTML = '🚫 Your account has been disabled. Contact admin.';
+      btn.disabled = false;
+      document.getElementById('loginBtnText').textContent = '🔒 Authenticate & Enter';
+      return;
+    }
+    currentUser = { id: found.id, username: found.username, role: found.role };
+    setSession(currentUser);
+    onLoginSuccess();
   }
 
   function onLoginSuccess() {
@@ -1787,9 +1821,8 @@
     const users = getUsers() || [];
     if (users.find(u => u.username === username)) { showFormMsg(msg,'error','Username already taken.'); return; }
     const id = genId();
-    const hash = await sha256(password);
-    users.push({ id, username, passwordHash: hash, role, status });
-    saveUsers(users);
+    const newUser = { id, username, password, role, status };
+    await gsSaveUser(newUser);
     setStoredPw(id, password);
     showFormMsg(msg,'success',`User "${username}" created!`);
     document.getElementById('newUsername').value = '';
@@ -1825,29 +1858,28 @@
     const idx = users.findIndex(u => u.id===userId);
     if (idx===-1) { showFormMsg(msg,'error','User not found.'); return; }
     users[idx].username = username; users[idx].role = role; users[idx].status = status;
-    if (password) { users[idx].passwordHash = await sha256(password); setStoredPw(userId, password); }
-    saveUsers(users);
+    if (password) { users[idx].password = password; users[idx].passwordHash = ''; setStoredPw(userId, password); }
+    await gsSaveUser(users[idx]);
     showFormMsg(msg,'success','Saved!'); showToast('User updated: '+username,'✓');
     setTimeout(() => switchTab('users', document.querySelector('.admin-tab')), 1000);
   }
 
-  function toggleStatus(userId) {
+  async function toggleStatus(userId) {
     const users = getUsers()||[];
     const u = users.find(u => u.id===userId);
     if (!u) return;
     if (currentUser && u.id===currentUser.id) { showToast("Can't disable yourself",'✕'); return; }
     u.status = u.status==='enabled'?'disabled':'enabled';
-    saveUsers(users); renderUserTable();
+    await gsSaveUser(u); renderUserTable();
     showToast(`User ${u.status}: ${u.username}`, u.status==='enabled'?'✓':'🚫');
   }
 
-  function deleteUser(userId) {
+  async function deleteUser(userId) {
     if (currentUser && userId===currentUser.id) { showToast("Can't delete yourself",'✕'); return; }
     let users = getUsers()||[];
     const u = users.find(u => u.id===userId);
     if (!u || !confirm(`Delete user "${u.username}"?`)) return;
-    users = users.filter(u => u.id!==userId);
-    saveUsers(users);
+    await gsDeleteUser(userId);
     delStoredPw(userId);
     // Remove user feature overrides
     const uFeats = getUserFeats();
@@ -2064,13 +2096,19 @@
     });
   }
 
-  function togglePaidAccess(userId) {
+  async function togglePaidAccess(userId) {
     if (!currentUser || currentUser.role !== 'admin') return;
     const current = hasPaidAccess(userId);
-    setPaidAccess(userId, !current);
+    const newVal = !current;
+    // Update in users record too (so GS has it)
     const users = getUsers() || [];
     const u = users.find(u => u.id === userId);
-    showToast(`${u ? u.username : 'User'}: paid access ${!current ? 'granted 💎' : 'revoked 🔒'}`, !current ? '💎' : '🔒');
+    if (u) {
+      u.paidAccess = newVal;
+      await gsSaveUser(u);
+    }
+    setPaidAccess(userId, newVal);
+    showToast(`${u ? u.username : 'User'}: paid access ${newVal ? 'granted 💎' : 'revoked 🔒'}`, newVal ? '💎' : '🔒');
     renderPaidAccessPanel();
     applyFeatureRestrictions();
   }
@@ -3011,6 +3049,15 @@
   /* ════════════════════════════════════════════════════════
      BOOTSTRAP
   ════════════════════════════════════════════════════════ */
+
+  // Debug helper — open browser console and type: jtReset()
+  window.jtReset = function() {
+    ['jt_users','jt_pw_store','jt_schema_ver','jt_global_feats','jt_user_feats','jt_paid_access','jt_session'].forEach(k => localStorage.removeItem(k));
+    sessionStorage.clear();
+    location.reload();
+  };
+  console.info('JobinTech PDF Editor — if login fails, open console and run: jtReset()');
+
   (async()=>{
     await initUsers();
     const session=getSession();
