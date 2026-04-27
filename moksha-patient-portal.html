@@ -1,592 +1,1613 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Moksha Patient Portal | Unified Medical Imaging Suite</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(145deg, #eef2ff 0%, #e0f2fe 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb { background: #14b8a6; border-radius: 10px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#030b14;--bg2:#050f1c;--panel:rgba(8,20,38,.95);--panel2:rgba(5,13,25,.97);
+  --b1:rgba(56,189,248,.10);--b2:rgba(56,189,248,.22);
+  --tx:#e2f0ff;--mu:#5a7a96;--dim:#2a4a64;
+  --bl:#38bdf8;--bl2:#0ea5e9;--bl3:#075985;
+  --gn:#22c55e;--gn2:#16a34a;
+  --am:#f59e0b;--am2:#d97706;
+  --rd:#ef4444;--rd2:#dc2626;
+  --pu:#a78bfa;--pu2:#7c3aed;
+  --tl:#2dd4bf;--cy:#67e8f9;
+  --r:12px;--rl:18px;--rs:8px;
+  --font:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 50% at -10% -10%,rgba(56,189,248,.07),transparent 60%),
+  radial-gradient(ellipse 60% 40% at 110% 110%,rgba(167,139,250,.05),transparent 55%);
+  pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(56,189,248,.018) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(56,189,248,.018) 1px,transparent 1px);
+  background-size:52px 52px;pointer-events:none;z-index:0}
+.app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--bl3);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--bl2)}
 
-    .master-frame {
-      max-width: 1600px;
-      width: 100%;
-      background: rgba(255,255,255,0.96);
-      backdrop-filter: blur(2px);
-      border-radius: 2rem;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.5);
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-    .premium-card {
-      background: white;
-      border-radius: 1.25rem;
-      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-      border: 1px solid rgba(20,184,166,0.15);
-    }
-    .premium-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 20px 30px -12px rgba(15,118,110,0.15);
-      border-color: rgba(20,184,166,0.3);
-    }
-    .btn-glow { transition: all 0.2s; position: relative; overflow: hidden; }
-    .btn-glow:active { transform: scale(0.97); }
-    .btn-glow::after {
-      content: '';
-      position: absolute; top: 50%; left: 50%;
-      width: 0; height: 0;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.3);
-      transform: translate(-50%, -50%);
-      transition: width 0.4s, height 0.4s;
-    }
-    .btn-glow:active::after { width: 200px; height: 200px; }
-    .animate-pulse-soft { animation: pulseSoft 2s infinite; }
-    @keyframes pulseSoft {
-      0% { box-shadow: 0 0 0 0 rgba(20,184,166,0.3); }
-      70% { box-shadow: 0 0 0 8px rgba(20,184,166,0); }
-      100% { box-shadow: 0 0 0 0 rgba(20,184,166,0); }
-    }
-    .iframe-elegant { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .iframe-elegant:hover { transform: scale(1.002); box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2); }
-    .toast-slide { animation: slideUp 0.3s ease forwards; }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:200;height:58px;
+  background:rgba(3,11,20,.96);border-bottom:1px solid var(--b2);
+  backdrop-filter:blur(20px);display:flex;align-items:center;
+  justify-content:space-between;padding:0 20px;gap:12px}
+.tbar-l{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-ico{width:32px;height:32px;border-radius:9px;
+  background:linear-gradient(135deg,var(--bl2),var(--tl));
+  display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.logo-t{font-size:14px;font-weight:700}
+.logo-s{font-size:9.5px;color:var(--mu);font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase}
+.tdiv{width:1px;height:28px;background:var(--b2)}
+.clock{font-family:var(--mono);font-size:13px;color:var(--cy)}
+.clkd{font-size:9.5px;color:var(--mu);font-family:var(--mono)}
+.tbar-r{display:flex;align-items:center;gap:8px}
+.user-btn{display:flex;align-items:center;gap:7px;background:rgba(56,189,248,.06);
+  border:1px solid var(--b2);border-radius:30px;padding:4px 12px 4px 6px;cursor:pointer;transition:.2s}
+.user-btn:hover{background:rgba(56,189,248,.12)}
+.uavi{width:24px;height:24px;border-radius:50%;
+  background:linear-gradient(135deg,var(--bl2),var(--pu));
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.unm{font-size:11.5px;font-weight:600}
 
-    /* LOGIN OVERLAY */
-    #loginOverlay {
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(145deg, #eef2ff 0%, #e0f2fe 100%);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .login-frame {
-      width: 100%;
-      max-width: 460px;
-      background: rgba(255,255,255,0.97);
-      border-radius: 2rem;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.5);
-      overflow: hidden;
-    }
-    .login-header {
-      background: linear-gradient(to right, #134e4a, #0f766e, #065f46);
-      padding: 2rem 2rem 1.75rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .login-header::before {
-      content: '';
-      position: absolute;
-      width: 220px; height: 220px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
-      top: -80px; right: -60px;
-    }
-    .login-header::after {
-      content: '';
-      position: absolute;
-      width: 120px; height: 120px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.04);
-      bottom: -40px; left: -30px;
-    }
-    .login-body { padding: 2rem; }
-    .pw-input-wrap { position: relative; }
-    .pw-input-wrap input {
-      width: 100%;
-      padding: 0.875rem 3rem 0.875rem 1rem;
-      border: 2px solid #e2e8f0;
-      border-radius: 0.875rem;
-      font-size: 1rem;
-      font-family: 'Inter', sans-serif;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      background: white;
-      color: #1e293b;
-    }
-    .pw-input-wrap input:focus {
-      border-color: #14b8a6;
-      box-shadow: 0 0 0 3px rgba(20,184,166,0.15);
-    }
-    .pw-input-wrap input.error {
-      border-color: #f87171;
-      box-shadow: 0 0 0 3px rgba(248,113,113,0.15);
-      animation: shake 0.35s ease;
-    }
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20% { transform: translateX(-6px); }
-      40% { transform: translateX(6px); }
-      60% { transform: translateX(-4px); }
-      80% { transform: translateX(4px); }
-    }
-    .eye-toggle {
-      position: absolute; right: 1rem; top: 50%;
-      transform: translateY(-50%);
-      background: none; border: none; cursor: pointer;
-      color: #94a3b8; padding: 0; font-size: 1rem;
-      transition: color 0.2s;
-    }
-    .eye-toggle:hover { color: #0f766e; }
-    .login-btn {
-      width: 100%;
-      padding: 0.875rem;
-      background: linear-gradient(to right, #0f766e, #059669);
-      color: white;
-      border: none;
-      border-radius: 0.875rem;
-      font-size: 1rem;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.15s;
-      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-      margin-top: 1.25rem;
-    }
-    .login-btn:hover { opacity: 0.92; }
-    .login-btn:active { transform: scale(0.98); }
-    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .err-msg {
-      margin-top: 0.875rem;
-      padding: 0.75rem 1rem;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 0.75rem;
-      color: #dc2626;
-      font-size: 0.8125rem;
-      display: none;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .portal-content { display: none; }
-    .portal-content.visible { display: block; }
-  </style>
+/* LAYOUT */
+.layout{display:flex;flex:1}
+.sidebar{width:210px;flex-shrink:0;background:var(--panel2);
+  border-right:1px solid var(--b1);padding:14px 10px;
+  display:flex;flex-direction:column;gap:3px;
+  position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto}
+.slbl{font-size:9px;font-family:var(--mono);color:var(--mu);
+  text-transform:uppercase;letter-spacing:.8px;padding:8px 8px 4px;margin-top:4px}
+.nbtn{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:9px;
+  font-size:12px;font-weight:500;color:var(--mu);cursor:pointer;transition:.15s;
+  border:none;background:transparent;width:100%;text-align:left}
+.nbtn:hover{background:rgba(56,189,248,.07);color:var(--tx)}
+.nbtn.active{background:rgba(56,189,248,.12);color:var(--bl);border:1px solid var(--b2)}
+.nbtn .ni{font-size:14px;width:20px;text-align:center;flex-shrink:0}
+.nbtn .nbg{margin-left:auto;font-family:var(--mono);font-size:9px;
+  background:rgba(56,189,248,.15);border-radius:10px;padding:1px 6px;color:var(--bl)}
+.ssep{height:1px;background:var(--b1);margin:5px 0}
+
+/* CONTENT */
+.content{flex:1;padding:18px 20px 40px;min-width:0}
+
+/* BUTTONS */
+.btn{font-family:var(--font);font-size:11.5px;font-weight:600;
+  border:none;border-radius:var(--rs);padding:7px 13px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;transition:.18s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.bp{background:var(--bl2);color:#020e1c}.bp:hover{background:var(--bl)}
+.bg{background:var(--gn2);color:#f0fff4}.bg:hover{background:var(--gn)}
+.ba{background:var(--am2);color:#1a0800}.ba:hover{background:var(--am)}
+.br{background:rgba(239,68,68,.12);color:var(--rd);border:1px solid rgba(239,68,68,.25)}.br:hover{background:var(--rd2);color:#fff}
+.bgh{background:rgba(56,189,248,.07);color:var(--bl);border:1px solid var(--b2)}.bgh:hover{background:rgba(56,189,248,.15)}
+.bpu{background:rgba(167,139,250,.12);color:var(--pu);border:1px solid rgba(167,139,250,.25)}.bpu:hover{background:var(--pu2);color:#fff}
+.btl{background:rgba(45,212,191,.1);color:var(--tl);border:1px solid rgba(45,212,191,.22)}.btl:hover{background:var(--tl);color:#021a18}
+.bsm{padding:5px 10px;font-size:10.5px;border-radius:7px}
+.bxs{padding:3px 7px;font-size:10px;border-radius:6px}
+
+/* FORM */
+input,select,textarea{font-family:var(--font);font-size:12px;
+  background:rgba(3,11,20,.9);border:1px solid rgba(56,189,248,.15);
+  color:var(--tx);border-radius:var(--rs);padding:7px 10px;outline:none;transition:.18s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--bl2);box-shadow:0 0 0 2px rgba(56,189,248,.1)}
+select{cursor:pointer}
+select option{background:#05101e}
+textarea{resize:vertical;line-height:1.4}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  background:var(--panel);border:1px solid var(--b1);border-radius:var(--rl);
+  padding:10px 14px;margin-bottom:16px}
+.tblbl{font-size:9.5px;color:var(--mu);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.tbsep{width:1px;height:26px;background:var(--b2);flex-shrink:0}
+input[type=date]{width:138px}
+input[type=search]{width:200px}
+
+/* KPI */
+.kgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:12px}
+.kpi{background:var(--panel);border:1px solid var(--b1);border-radius:var(--r);
+  padding:13px 15px;position:relative;overflow:hidden;transition:.2s}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0}
+.kpi:hover{border-color:var(--b2);transform:translateY(-1px)}
+.kbl::after{background:linear-gradient(90deg,var(--bl2),var(--cy))}
+.kgn::after{background:linear-gradient(90deg,var(--gn2),var(--tl))}
+.kam::after{background:linear-gradient(90deg,var(--am2),var(--am))}
+.krd::after{background:linear-gradient(90deg,var(--rd2),var(--rd))}
+.kpu::after{background:linear-gradient(90deg,var(--pu2),var(--pu))}
+.ktl::after{background:linear-gradient(90deg,var(--tl),var(--cy))}
+.kico{font-size:16px;margin-bottom:5px}
+.klbl{font-size:9.5px;color:var(--mu);font-family:var(--mono);text-transform:uppercase;letter-spacing:.4px}
+.kval{font-size:26px;font-weight:800;line-height:1.1;margin-top:2px;letter-spacing:-1px}
+.kbl .kval{color:var(--bl)}.kgn .kval{color:var(--gn)}.kam .kval{color:var(--am)}
+.krd .kval{color:var(--rd)}.kpu .kval{color:var(--pu)}.ktl .kval{color:var(--tl)}
+.ksub{font-size:9.5px;color:var(--mu);margin-top:3px;font-family:var(--mono)}
+.kbar{margin-top:7px;height:3px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.kbarf{height:100%;border-radius:3px;transition:width .5s ease}
+.kgn .kbarf{background:var(--gn)}.krd .kbarf{background:var(--rd)}
+.kam .kbarf{background:var(--am)}.ktl .kbarf{background:var(--tl)}
+
+/* CAT BREAKDOWN */
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.ccard{background:var(--panel);border:1px solid var(--b1);border-radius:var(--rl);padding:15px 17px;position:relative;overflow:hidden;transition:.2s}
+.ccard:hover{border-color:var(--b2)}
+.ctop{position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0}
+.chdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ctitle{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700}
+.cbadge{font-family:var(--mono);font-size:9.5px;padding:2px 9px;border-radius:20px;font-weight:600}
+.cbbl{color:var(--bl);background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2)}
+.cbtl{color:var(--tl);background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.2)}
+.cbpu{color:var(--pu);background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2)}
+.cstats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px}
+.cs{text-align:center;border-radius:9px;padding:9px 4px}
+.csgn{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.16)}
+.csrd{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.16)}
+.csmu{background:rgba(90,122,150,.07);border:1px solid rgba(90,122,150,.16)}
+.csnum{font-size:20px;font-weight:800;letter-spacing:-1px;line-height:1}
+.csgn .csnum{color:var(--gn)}.csrd .csnum{color:var(--rd)}.csmu .csnum{color:var(--mu)}
+.cslbl{font-size:8.5px;color:var(--mu);margin-top:3px;font-family:var(--mono);letter-spacing:.4px}
+.cbarw{height:3px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden}
+.cbar{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.cpct{margin-top:4px;font-size:9.5px;color:var(--mu);font-family:var(--mono);text-align:right}
+
+/* STREAK */
+.skbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--b1);border-radius:var(--r);
+  padding:9px 16px;margin-bottom:14px}
+.skim{display:flex;align-items:center;gap:7px;font-size:12px}
+.skico{font-size:18px}
+.skval{font-size:16px;font-weight:800;font-family:var(--mono)}
+.sklbl{font-size:9px;color:var(--mu);font-family:var(--mono);text-transform:uppercase}
+.sksep{width:1px;height:26px;background:var(--b2)}
+
+/* ALERT */
+.alrt{display:flex;align-items:center;gap:9px;border-radius:var(--r);padding:9px 14px;margin-bottom:12px;font-size:12px}
+.awarn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.22);color:#fde68a}
+
+/* SECTION */
+.shdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;flex-wrap:wrap}
+.stitle{display:flex;align-items:center;gap:9px}
+.stitle h2{font-size:15px;font-weight:700}
+.sbadge{font-family:var(--mono);font-size:9.5px;color:var(--bl);
+  background:rgba(56,189,248,.08);border:1px solid var(--b2);padding:2px 9px;border-radius:20px}
+.sacts{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+
+/* TABLE */
+.tw{border:1px solid var(--b1);border-radius:var(--rl);overflow:hidden;
+  background:var(--panel2);box-shadow:0 0 0 1px rgba(56,189,248,.08),0 20px 60px rgba(0,0,0,.5);
+  margin-bottom:20px}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:860px}
+thead th{background:rgba(3,9,18,.98);color:var(--mu);font-size:9.5px;font-family:var(--mono);
+  text-transform:uppercase;letter-spacing:.5px;padding:9px 10px;text-align:left;
+  border-bottom:1px solid var(--b2);white-space:nowrap}
+tbody td{padding:7px 9px;border-bottom:1px solid rgba(20,40,65,.6);vertical-align:middle;font-size:11.5px;overflow:hidden}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(56,189,248,.04)}
+tr.rdn td{
+  background:linear-gradient(90deg,rgba(22,163,74,.22) 0%,rgba(6,78,59,.15) 100%);
+  border-bottom:1px solid rgba(34,197,94,.25)!important;
+}
+tr.rdn td:first-child{border-left:4px solid #22c55e!important}
+tr.rdn .cip,tr.rdn .cnm{color:#86efac!important}
+tr.rdn{box-shadow:inset 4px 0 0 rgba(34,197,94,.6)}
+
+tr.ris td{
+  background:linear-gradient(90deg,rgba(220,38,38,.28) 0%,rgba(127,29,29,.18) 100%);
+  border-bottom:1px solid rgba(239,68,68,.3)!important;
+}
+tr.ris td:first-child{border-left:4px solid #ef4444!important}
+tr.ris .cip,tr.ris .cnm{color:#fca5a5!important}
+tr.ris{box-shadow:inset 4px 0 0 rgba(239,68,68,.7)}
+
+tr.rov td{
+  background:linear-gradient(90deg,rgba(217,119,6,.22) 0%,rgba(120,53,15,.12) 100%);
+  border-bottom:1px solid rgba(245,158,11,.25)!important;
+}
+tr.rov td:first-child{border-left:4px solid #f59e0b!important}
+@keyframes pulse-ov{0%,100%{box-shadow:inset 4px 0 0 rgba(245,158,11,.7)}50%{box-shadow:inset 4px 0 0 rgba(245,158,11,.2)}}
+tr.rov{animation:pulse-ov 2.5s ease infinite}
+
+tr.rpn td:first-child{border-left:4px solid rgba(42,74,100,.6)!important}
+tr.rpn td{border-bottom:1px solid rgba(20,40,65,.5)!important}
+
+.cnum{font-family:var(--mono);font-size:9.5px;color:var(--mu);text-align:center}
+.cip{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--cy);white-space:nowrap}
+.cnm{font-weight:600;font-size:11.5px}
+.cpath{font-family:var(--mono);font-size:9px;color:var(--mu);line-height:1.3;max-height:32px;overflow:hidden;cursor:help;word-break:break-all}
+.cpath:hover{max-height:none;background:rgba(0,0,0,.5);border-radius:6px;padding:4px;position:relative;z-index:10}
+td select,td input[type=text]{height:28px;font-size:10.5px;padding:3px 7px;
+  background:rgba(3,11,20,.85);border:1px solid rgba(56,189,248,.12);
+  color:var(--tx);border-radius:6px;width:100%}
+td select:focus,td input[type=text]:focus{border-color:var(--bl2)}
+td textarea{width:100%;min-height:30px;max-height:70px;font-size:10.5px;
+  background:rgba(3,11,20,.85);border:1px solid rgba(56,189,248,.12);
+  color:var(--tx);border-radius:6px;padding:4px 7px;resize:vertical}
+.astk{display:flex;flex-direction:column;gap:3px}
+.lc{font-size:9.5px;font-family:var(--mono);white-space:nowrap;cursor:help}
+.lok{color:var(--gn);font-weight:600}
+.lyd{color:var(--am);font-weight:600}
+.lov{color:var(--rd);font-weight:600}
+.lnv{color:var(--mu);font-style:italic}
+
+/* PANELS */
+.panel{background:var(--panel);border:1px solid var(--b2);border-radius:var(--rl);
+  padding:18px 20px;margin-bottom:14px;display:none}
+.panel.open{display:block}
+.phdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.phdr h3{font-size:13.5px;font-weight:700;margin:0}
+
+/* AI PANEL */
+.aipan{background:linear-gradient(135deg,rgba(7,20,40,.97),rgba(10,14,35,.97));
+  border:1px solid rgba(167,139,250,.25);border-radius:var(--rl);
+  padding:18px 20px;margin-bottom:14px;display:none}
+.aipan.open{display:block}
+.aiout{background:rgba(0,0,0,.4);border:1px solid rgba(167,139,250,.2);
+  border-radius:var(--rs);padding:13px 15px;font-size:12px;line-height:1.7;
+  color:var(--tx);min-height:80px;max-height:320px;overflow-y:auto;white-space:pre-wrap}
+.aichips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.aichip{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.22);
+  color:var(--pu);font-size:10.5px;padding:4px 12px;border-radius:20px;cursor:pointer;transition:.15s}
+.aichip:hover{background:rgba(167,139,250,.2)}
+.aichip.active{background:var(--pu2);color:#fff;border-color:var(--pu2)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.typing::after{content:'\25ae';animation:blink .7s step-end infinite;margin-left:2px}
+
+/* NOTES */
+.nlist{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;margin-bottom:11px}
+.nitem{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.16);
+  border-radius:9px;padding:9px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.ntxt{font-size:11.5px;flex:1;line-height:1.4}
+.nmeta{font-size:9.5px;color:var(--mu);font-family:var(--mono);margin-top:2px}
+.nrow{display:flex;gap:7px}
+.nrow input{flex:1}
+
+/* ACTIVITY */
+.alog{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:5px}
+.alogit{display:flex;align-items:center;gap:9px;padding:6px 9px;border-radius:7px;background:rgba(255,255,255,.02);font-size:11px}
+.adot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.agn{background:var(--gn)}.ard{background:var(--rd)}.aam{background:var(--am)}.abl{background:var(--bl)}
+.atm{font-family:var(--mono);font-size:9.5px;color:var(--mu);white-space:nowrap;min-width:55px}
+
+/* HANDOVER */
+.hogrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.hofld label{display:block;font-size:9.5px;color:var(--mu);font-family:var(--mono);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.hofld textarea{min-height:65px}
+.hoout{background:rgba(0,0,0,.4);border:1px solid var(--b2);border-radius:var(--rs);
+  padding:12px;font-family:var(--mono);font-size:10.5px;line-height:1.65;
+  color:var(--tx);white-space:pre-wrap;max-height:220px;overflow-y:auto;margin-top:10px}
+
+/* PING */
+.pggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:7px;margin-top:10px}
+.pgcard{background:rgba(0,0,0,.3);border:1px solid var(--b1);border-radius:9px;
+  padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.pgip{font-family:var(--mono);font-size:10.5px;color:var(--cy)}
+.pgst{font-family:var(--mono);font-size:9.5px;padding:2px 8px;border-radius:20px;font-weight:600}
+.psok{background:rgba(34,197,94,.12);color:var(--gn);border:1px solid rgba(34,197,94,.25)}
+.psfail{background:rgba(239,68,68,.12);color:var(--rd);border:1px solid rgba(239,68,68,.25)}
+.pschk{background:rgba(56,189,248,.08);color:var(--bl);border:1px solid var(--b2)}
+
+/* TICKET OUT */
+.tktout{background:rgba(0,0,0,.4);border:1px solid var(--b1);border-radius:var(--rs);
+  padding:12px;font-family:var(--mono);font-size:10.5px;line-height:1.6;
+  color:var(--tx);white-space:pre-wrap;min-height:80px;max-height:240px;overflow-y:auto;margin-top:10px}
+
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:600;
+  backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:linear-gradient(145deg,#07131f,#030b14);border:1px solid var(--b2);
+  border-radius:var(--rl);padding:22px 26px;max-width:520px;width:95%;max-height:88vh;overflow-y:auto}
+.mhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.mhdr h3{font-size:14.5px;font-weight:700;margin:0}
+.scrow{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 10px;background:rgba(255,255,255,.025);border-radius:7px;font-size:11.5px;margin-bottom:5px}
+.kbd{display:inline-block;font-family:var(--mono);font-size:9px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  border-radius:4px;padding:1px 5px;color:var(--mu);margin-left:3px}
+.admfg{display:grid;gap:11px}
+.admr2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fld label{display:block;font-size:9.5px;color:var(--mu);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.fld textarea{min-height:55px}
+
+/* USER DROP */
+.udrop{display:none;position:absolute;top:62px;right:20px;
+  background:#071520;border:1px solid var(--b2);border-radius:var(--r);
+  padding:12px 15px;z-index:300;min-width:210px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.udrop.open{display:block}
+
+/* HIST */
+.hgrid{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.hchip{background:rgba(56,189,248,.06);border:1px solid var(--b2);border-radius:30px;
+  padding:5px 14px;font-size:11.5px;font-family:var(--mono);cursor:pointer;
+  transition:.15s;display:flex;align-items:center;gap:7px}
+.hchip:hover{background:rgba(56,189,248,.14)}
+.hdel{color:var(--rd);font-size:11px;opacity:.55;cursor:pointer}
+.hdel:hover{opacity:1}
+
+/* CONFETTI */
+@keyframes cffall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.cf{position:fixed;animation:cffall 2.5s ease forwards;pointer-events:none;z-index:9999;border-radius:2px}
+
+/* TOAST */
+.tc{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{background:#071828;border:1px solid var(--b2);border-radius:var(--r);
+  padding:10px 16px;font-size:12px;display:flex;align-items:center;gap:9px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);max-width:300px}
+.tst-s{border-color:rgba(34,197,94,.35)}.tst-e{border-color:rgba(239,68,68,.35)}.tst-i{border-color:rgba(56,189,248,.3)}
+@keyframes tIn{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes tOut{to{opacity:0;transform:translateX(30px)}}
+.toast{animation:tIn .22s ease}
+
+/* LIGHT THEME */
+body.lt{--bg:#f0f4f8;--bg2:#e2eaf2;--panel:rgba(255,255,255,.94);--panel2:rgba(245,250,255,.97);--b1:rgba(14,165,233,.12);--b2:rgba(14,165,233,.25);--tx:#0d2137;--mu:#4a6d8a;--dim:#8fb0c8}
+body.lt::before{opacity:.3}body.lt::after{opacity:.4}
+body.lt .topbar,body.lt .sidebar{background:rgba(240,244,248,.97)}
+body.lt thead th{background:#dbeafe!important;color:#1e3a5f!important}
+body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0f6ff!important;color:#0d2137!important;border-color:rgba(14,165,233,.2)!important}
+
+/* PRINT */
+@media print{
+  .sidebar,.topbar,.toolbar,.panel,.aipan,.overlay,.tc,.udrop,
+  .astk,.skbar,.sacts,.fbr{display:none!important}
+  body{background:#fff;color:#000}
+  .kpi,.ccard,.tw{border:1px solid #ccc;background:#fff;box-shadow:none}
+  .kval,.csnum{color:#000!important}
+  thead th{background:#e5e7eb!important;color:#333!important}
+  tbody td{border-color:#ddd!important}
+  body::before,body::after{display:none}
+}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.kgrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:860px){
+  .layout{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap;padding:8px}
+  .slbl,.ssep{display:none}
+  .kgrid{grid-template-columns:repeat(2,1fr)}
+  .cgrid{grid-template-columns:1fr}
+}
+@media(max-width:560px){.kgrid{grid-template-columns:1fr 1fr}.hogrid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
+<div class="app">
 
-  <!-- ─── LOGIN OVERLAY ─── -->
-  <div id="loginOverlay">
-    <div class="login-frame">
-      <!-- Header matches portal branding exactly -->
-      <div class="login-header">
-        <div class="relative z-10 flex items-center gap-4">
-          <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
-            <i class="fa-solid fa-hand-holding-medical text-3xl text-teal-100"></i>
-          </div>
-          <div>
-            <h1 class="text-2xl font-extrabold text-white tracking-tight">Moksha<span class="font-light"> Patient Portal</span></h1>
-            <p class="text-teal-100 text-xs flex items-center gap-2 mt-0.5">
-              <i class="fa-regular fa-circle-check text-xs"></i> Enterprise Imaging · Zero-Footprint PACS
-            </p>
-          </div>
-        </div>
-        <div class="relative z-10 flex gap-2 mt-4">
-          <div class="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-mono flex items-center gap-1.5 text-white">
-            <i class="fa-solid fa-shield-halved text-xs"></i> HIPAA Secure
-          </div>
-          <div class="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-mono flex items-center gap-1.5 text-white">
-            <i class="fa-regular fa-lock text-xs"></i> SHA-256 Protected
-          </div>
-        </div>
+<header class="topbar">
+  <div class="tbar-l">
+    <div class="logo">
+      <div class="logo-ico">&#9889;</div>
+      <div><div class="logo-t">IT Command Center</div><div class="logo-s">Daily Monitoring &middot; v4.0</div></div>
+    </div>
+    <div class="tdiv"></div>
+    <div><div class="clock" id="clk">00:00:00</div><div class="clkd" id="clkd">&#8212;</div></div>
+  </div>
+  <div class="tbar-r">
+    <button class="btn bgh bsm" onclick="toggleTheme()">&#127763; Theme</button>
+    <button class="btn bgh bsm" onclick="openSC()">&#9000; Shortcuts</button>
+    <div class="user-btn" onclick="toggleUD()">
+      <div class="uavi" id="uAvi">IT</div>
+      <span class="unm" id="uNm">Inspector</span>
+    </div>
+  </div>
+</header>
+
+<div class="udrop" id="udrop">
+  <div style="font-size:9.5px;color:var(--mu);font-family:var(--mono);text-transform:uppercase;margin-bottom:5px">Inspector Name</div>
+  <input type="text" id="insInp" placeholder="Enter your name..." oninput="setIns(this.value)" style="margin-bottom:6px">
+  <div style="font-size:10.5px;color:var(--mu)">Saved automatically.</div>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="slbl">Navigation</div>
+  <button class="nbtn active" id="nb1" onclick="showTab('server',this)"><span class="ni">&#128187;</span> Servers <span class="nbg" id="nb1c">25</span></button>
+  <button class="nbtn" id="nb2" onclick="showTab('iface',this)"><span class="ni">&#128268;</span> Interfaces <span class="nbg" id="nb2c">31</span></button>
+  <button class="nbtn" id="nb3" onclick="showTab('special',this)"><span class="ni">&#128311;</span> Special <span class="nbg" id="nb3c">2</span></button>
+  <button class="nbtn" id="nb4" onclick="showTab('all',this)"><span class="ni">&#128203;</span> Show All</button>
+  <div class="ssep"></div>
+  <div class="slbl">Tools</div>
+  <button class="nbtn" onclick="toggleP('aiPan')"><span class="ni">&#129302;</span> AI Summary</button>
+  <button class="nbtn" onclick="toggleP('tktPan');genTkt()"><span class="ni">&#127915;</span> Quick Ticket</button>
+  <button class="nbtn" onclick="toggleP('hoPan')"><span class="ni">&#128260;</span> Handover</button>
+  <button class="nbtn" onclick="toggleP('ntPan');renderNotes()"><span class="ni">&#128221;</span> Notes</button>
+  <button class="nbtn" onclick="toggleP('actPan');renderAct()"><span class="ni">&#128203;</span> Activity Log</button>
+  <button class="nbtn" onclick="toggleP('pgPan')"><span class="ni">&#127955;</span> Ping Check</button>
+  <button class="nbtn" onclick="toggleP('hisPan');renderHist()"><span class="ni">&#128336;</span> History</button>
+  <div class="ssep"></div>
+  <div class="slbl">Actions</div>
+  <button class="nbtn" onclick="saveData()"><span class="ni">&#128190;</span> Save</button>
+  <button class="nbtn" onclick="copyRpt()"><span class="ni">&#128203;</span> Copy Report</button>
+  <button class="nbtn" onclick="exportCSV()"><span class="ni">&#128202;</span> Export CSV</button>
+  <button class="nbtn" onclick="window.print()"><span class="ni">&#128424;</span> Print / PDF</button>
+  <button class="nbtn" onclick="openAdm()"><span class="ni">&#9881;</span> Admin</button>
+  <button class="nbtn" style="color:var(--rd)" onclick="resetDay()"><span class="ni">&#128465;</span> Reset Date</button>
+</nav>
+
+<main class="content">
+  <div class="toolbar">
+    <div style="display:flex;align-items:center;gap:7px">
+      <span class="tblbl">Date</span>
+      <input type="date" id="wd">
+    </div>
+    <div class="tbsep"></div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <span class="tblbl">Search</span>
+      <input type="search" id="srch" placeholder="IP &middot; name &middot; ticket &middot; path...">
+    </div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <span class="tblbl">Filter</span>
+      <select id="flt">
+        <option value="">All Items</option>
+        <option value="Working Fine">Working Fine</option>
+        <option value="Issue Found">Issue Found</option>
+        <option value="Pending">Pending</option>
+        <option value="Ticket Created">Ticket Created</option>
+        <option value="Ticket Not Created">No Ticket</option>
+        <option value="__over__">Overdue</option>
+      </select>
+    </div>
+    <div class="tbsep"></div>
+    <button class="btn bp bsm" onclick="saveData()">Save</button>
+    <button class="btn bg bsm" onclick="copyRpt()">Report</button>
+    <button class="btn ba bsm" onclick="exportCSV()">CSV</button>
+  </div>
+
+  <!-- KPI ROW 1 -->
+  <div class="kgrid">
+    <div class="kpi kbl"><div class="kico">&#128203;</div><div class="klbl">Total Items</div><div class="kval" id="kTot">0</div><div class="ksub">All categories</div></div>
+    <div class="kpi kgn"><div class="kico">&#10003;</div><div class="klbl">Completed</div><div class="kval" id="kDn">0</div><div class="kbar"><div class="kbarf kgn" id="kDnB" style="width:0%"></div></div></div>
+    <div class="kpi krd"><div class="kico">&#10007;</div><div class="klbl">Issues Found</div><div class="kval" id="kIs">0</div><div class="kbar"><div class="kbarf krd" id="kIsB" style="width:0%"></div></div></div>
+    <div class="kpi kam"><div class="kico">&#127915;</div><div class="klbl">Tickets Created</div><div class="kval" id="kTk">0</div><div class="kbar"><div class="kbarf kam" id="kTkB" style="width:0%"></div></div></div>
+    <div class="kpi kpu"><div class="kico">&#9888;</div><div class="klbl">Overdue &gt;24h</div><div class="kval" id="kOv">0</div><div class="ksub">Needs attention</div></div>
+    <div class="kpi ktl"><div class="kico">&#128202;</div><div class="klbl">Progress</div><div class="kval" id="kPct">0%</div><div class="kbar"><div class="kbarf ktl" id="kPctB" style="width:0%"></div></div></div>
+  </div>
+
+  <!-- KPI ROW 2 per-category -->
+  <div class="cgrid">
+    <div class="ccard">
+      <div class="ctop" style="background:linear-gradient(90deg,var(--bl2),var(--cy))"></div>
+      <div class="chdr"><div class="ctitle">&#128187; Servers</div><span class="cbadge cbbl" id="csBg">25 total</span></div>
+      <div class="cstats">
+        <div class="cs csgn"><div class="csnum" id="csDn">0</div><div class="cslbl">DONE</div></div>
+        <div class="cs csrd"><div class="csnum" id="csIs">0</div><div class="cslbl">ISSUE</div></div>
+        <div class="cs csmu"><div class="csnum" id="csPn">0</div><div class="cslbl">PENDING</div></div>
       </div>
-
-      <!-- Login body -->
-      <div class="login-body">
-        <p class="text-slate-500 text-sm mb-5 leading-relaxed">
-          Enter your facility access password to unlock the imaging portal.
-        </p>
-
-        <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
-          <i class="fa-regular fa-lock text-teal-500 text-xs"></i> Access Password
-        </label>
-        <div class="pw-input-wrap">
-          <input type="password" id="pwInput" placeholder="Enter your password" autocomplete="current-password" />
-          <button class="eye-toggle" id="eyeBtn" type="button" onclick="toggleEye()">
-            <i id="eyeIcon" class="fa-regular fa-eye"></i>
-          </button>
-        </div>
-
-        <div class="err-msg" id="errMsg">
-          <i class="fa-regular fa-circle-xmark"></i>
-          Incorrect password. Please try again.
-        </div>
-
-        <button class="login-btn btn-glow" id="loginBtn" onclick="doLogin()">
-          <i class="fa-solid fa-rocket" id="btnIcon"></i>
-          <span id="btnText">Unlock Portal</span>
-          <i class="fa-regular fa-eye"></i>
-        </button>
-
-        <div class="mt-5 text-center text-xs text-slate-400 flex items-center justify-center gap-1">
-          <i class="fa-regular fa-shield-check text-teal-400"></i>
-          Encrypted · HIPAA compliant · DICOM Web
-        </div>
+      <div class="cbarw"><div class="cbar" id="csBr" style="background:linear-gradient(90deg,var(--gn2),var(--gn));width:0%"></div></div>
+      <div class="cpct" id="csPct">0% complete</div>
+    </div>
+    <div class="ccard">
+      <div class="ctop" style="background:linear-gradient(90deg,var(--tl),var(--cy))"></div>
+      <div class="chdr"><div class="ctitle">&#128268; Interfaces</div><span class="cbadge cbtl" id="ciBg">31 total</span></div>
+      <div class="cstats">
+        <div class="cs csgn"><div class="csnum" id="ciDn">0</div><div class="cslbl">DONE</div></div>
+        <div class="cs csrd"><div class="csnum" id="ciIs">0</div><div class="cslbl">ISSUE</div></div>
+        <div class="cs csmu"><div class="csnum" id="ciPn">0</div><div class="cslbl">PENDING</div></div>
       </div>
+      <div class="cbarw"><div class="cbar" id="ciBr" style="background:linear-gradient(90deg,var(--tl),var(--cy));width:0%"></div></div>
+      <div class="cpct" id="ciPct">0% complete</div>
+    </div>
+    <div class="ccard">
+      <div class="ctop" style="background:linear-gradient(90deg,var(--pu),var(--bl2))"></div>
+      <div class="chdr"><div class="ctitle">&#128311; Special Checks</div><span class="cbadge cbpu" id="cpBg">2 total</span></div>
+      <div class="cstats">
+        <div class="cs csgn"><div class="csnum" id="cpDn">0</div><div class="cslbl">DONE</div></div>
+        <div class="cs csrd"><div class="csnum" id="cpIs">0</div><div class="cslbl">ISSUE</div></div>
+        <div class="cs csmu"><div class="csnum" id="cpPn">0</div><div class="cslbl">PENDING</div></div>
+      </div>
+      <div class="cbarw"><div class="cbar" id="cpBr" style="background:linear-gradient(90deg,var(--pu),var(--bl2));width:0%"></div></div>
+      <div class="cpct" id="cpPct">0% complete</div>
     </div>
   </div>
 
-  <!-- ─── PORTAL (hidden until login) ─── -->
-  <div id="portalContent" class="master-frame portal-content">
-    <!-- Unified Header -->
-    <div class="bg-gradient-to-r from-teal-800 via-teal-700 to-emerald-800 px-8 py-6 relative overflow-hidden">
-      <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-0 left-0 w-48 h-48 bg-teal-400/10 rounded-full blur-2xl"></div>
-      <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="flex items-center gap-4">
-          <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
-            <i class="fa-solid fa-hand-holding-medical text-3xl text-teal-100"></i>
-          </div>
-          <div>
-            <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Moksha<span class="font-light"> Patient Portal</span></h1>
-            <p class="text-teal-100 text-sm flex items-center gap-2 mt-0.5">
-              <i class="fa-regular fa-circle-check text-xs"></i> Enterprise Imaging · Zero-Footprint PACS
-            </p>
-          </div>
-        </div>
-        <div class="flex gap-3">
-          <div class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-mono flex items-center gap-2 text-white">
-            <i class="fa-solid fa-shield-hawk"></i> HIPAA Secure
-          </div>
-          <div class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-mono flex items-center gap-2 text-white">
-            <i class="fa-regular fa-clock"></i> DICOM Web
-          </div>
-          <button onclick="logout()" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-mono flex items-center gap-2 text-white transition-all border border-white/20">
-            <i class="fa-regular fa-right-from-bracket"></i> Sign out
-          </button>
-        </div>
+  <!-- STREAK -->
+  <div class="skbar">
+    <div class="skim"><span class="skico">&#128293;</span><div><div class="skval" id="skD" style="color:var(--am)">0</div><div class="sklbl">Day Streak</div></div></div>
+    <div class="sksep"></div>
+    <div class="skim"><span class="skico">&#127942;</span><div><div class="skval" id="skB" style="color:var(--pu)">0</div><div class="sklbl">Best Streak</div></div></div>
+    <div class="sksep"></div>
+    <div class="skim"><span class="skico">&#128197;</span><div><div class="skval" id="skT" style="color:var(--bl)">0</div><div class="sklbl">Days Logged</div></div></div>
+    <div class="sksep"></div>
+    <div class="skim"><span class="skico">&#9889;</span><div><div class="skval" id="skA" style="color:var(--tl)">0%</div><div class="sklbl">Avg Completion</div></div></div>
+    <div style="flex:1"></div>
+  </div>
+
+  <!-- OVERDUE ALERT -->
+  <div class="alrt awarn" id="ovAlert" style="display:none">
+    &#9888; <strong>Attention:</strong> <span id="ovCnt">0</span> items not checked in over 24 hours.
+  </div>
+
+  <!-- AI PANEL -->
+  <div class="aipan" id="aiPan">
+    <div class="phdr">
+      <h3 style="color:var(--pu)">&#129302; AI Smart Summary</h3>
+      <button class="btn bgh bsm" onclick="toggleP('aiPan')">&#10005;</button>
+    </div>
+    <div class="aichips">
+      <div class="aichip active" onclick="setAIMode('summary',this)">Daily Summary</div>
+      <div class="aichip" onclick="setAIMode('issues',this)">Issue Analysis</div>
+      <div class="aichip" onclick="setAIMode('ticket',this)">Ticket Draft</div>
+      <div class="aichip" onclick="setAIMode('handover',this)">Shift Briefing</div>
+      <div class="aichip" onclick="setAIMode('recommend',this)">Recommendations</div>
+    </div>
+    <div style="display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap">
+      <button class="btn bpu bsm" onclick="runAI()">Generate</button>
+      <button class="btn bgh bsm" onclick="cpTxt(document.getElementById('aiOut').textContent)">Copy</button>
+      <button class="btn bgh bsm" onclick="document.getElementById('aiOut').textContent=''">Clear</button>
+    </div>
+    <div class="aiout" id="aiOut">Click Generate to analyse today's checklist data with AI...</div>
+  </div>
+
+  <!-- TICKET PANEL -->
+  <div class="panel" id="tktPan">
+    <div class="phdr">
+      <h3 style="color:var(--am)">&#127915; Quick Ticket Generator</h3>
+      <div style="display:flex;gap:7px">
+        <button class="btn bp bsm" onclick="genTkt()">Refresh</button>
+        <button class="btn bg bsm" onclick="cpTxt(document.getElementById('tktOut').textContent)">Copy</button>
+        <button class="btn bgh bsm" onclick="toggleP('tktPan')">&#10005;</button>
       </div>
     </div>
+    <div class="tktout" id="tktOut">Loading...</div>
+  </div>
 
-    <div class="p-6 md:p-8 bg-gray-50/50">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <!-- Access Study Card -->
-        <div class="premium-card overflow-hidden shadow-md">
-          <div class="bg-gradient-to-r from-teal-50 to-emerald-50 px-6 py-4 border-b border-teal-100">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 text-white flex items-center justify-center shadow-md">
-                <i class="fa-solid fa-qrcode text-lg"></i>
-              </div>
-              <div>
-                <h2 class="text-xl font-bold text-slate-800">Access Study</h2>
-                <p class="text-xs text-slate-500">Retrieve radiology studies via accession number</p>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                  <i class="fa-regular fa-hashtag text-teal-500 text-xs"></i>Accession Number
-                </label>
-                <input type="text" id="accessionNumber" value="1234"
-                       class="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-teal-400 focus:ring-2 focus:ring-teal-200 transition-all outline-none text-base font-medium">
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                  <i class="fa-regular fa-building text-teal-500"></i>Facility ID
-                </label>
-                <input type="text" id="facilityId" value="9"
-                       class="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-teal-400 focus:ring-2 focus:ring-teal-200 transition-all outline-none">
-              </div>
-            </div>
-            <button onclick="loadPACSStudy()" id="loadStudyBtn"
-                    class="mt-6 w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold py-3.5 rounded-xl text-base flex items-center justify-center gap-3 transition-all shadow-lg btn-glow animate-pulse-soft">
-              <i class="fa-solid fa-rocket"></i>
-              <span>Launch Viewer & Load Images</span>
-              <i class="fa-regular fa-eye"></i>
-            </button>
-            <div class="mt-3 text-center text-xs text-slate-400 flex items-center justify-center gap-1">
-              <i class="fa-regular fa-keyboard"></i> Press Enter to load
-            </div>
-          </div>
-        </div>
-
-        <!-- Shareable Link Card -->
-        <div class="premium-card overflow-hidden shadow-md">
-          <div class="bg-gradient-to-r from-emerald-50 to-teal-50 px-6 py-4 border-b border-emerald-100">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white flex items-center justify-center shadow-md">
-                <i class="fa-solid fa-share-nodes text-lg"></i>
-              </div>
-              <div>
-                <h2 class="text-xl font-bold text-slate-800">Shareable Link</h2>
-                <p class="text-xs text-slate-500">Secure instant sharing for collaboration</p>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex flex-col gap-4">
-              <div class="flex items-center gap-3 bg-slate-50 p-1 rounded-xl border-2 border-slate-200 focus-within:border-teal-400 transition-all">
-                <input type="text" id="shareURL" readonly
-                       class="flex-1 px-4 py-3 bg-transparent text-sm font-mono text-slate-700 outline-none truncate">
-                <button onclick="copyShareLink()" id="copyBtn"
-                        class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-medium transition-all flex items-center gap-2 shadow-sm active:scale-95">
-                  <i class="fa-regular fa-copy"></i> Copy
-                </button>
-              </div>
-              <div id="copyNotification" class="text-center text-sm font-medium h-8 flex items-center justify-center gap-1"></div>
-              <div class="flex items-start gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                <i class="fa-regular fa-link text-teal-500 mt-0.5"></i>
-                <span>Direct link includes study context. Share with physicians or patients for instant access.</span>
-              </div>
-            </div>
-          </div>
-        </div>
+  <!-- HANDOVER -->
+  <div class="panel" id="hoPan">
+    <div class="phdr">
+      <h3 style="color:var(--tl)">&#128260; Shift Handover Report</h3>
+      <button class="btn bgh bsm" onclick="toggleP('hoPan')">&#10005;</button>
+    </div>
+    <div class="hogrid">
+      <div class="hofld"><label>Outgoing Inspector</label><input type="text" id="hoO" placeholder="Your name"></div>
+      <div class="hofld"><label>Incoming Inspector</label><input type="text" id="hoI" placeholder="Next shift name"></div>
+      <div class="hofld"><label>Issues Encountered</label><textarea id="hoIs" placeholder="Describe issues found..."></textarea></div>
+      <div class="hofld"><label>Pending Actions</label><textarea id="hoPn" placeholder="What needs follow-up..."></textarea></div>
+      <div class="hofld"><label>Special Notes</label><textarea id="hoNt" placeholder="Anything next shift should know..."></textarea></div>
+      <div class="hofld" style="display:flex;flex-direction:column;justify-content:flex-end;gap:7px">
+        <button class="btn bp" onclick="genHO()">Generate Report</button>
+        <button class="btn bg" onclick="cpTxt(document.getElementById('hoOut').textContent)">Copy Report</button>
       </div>
+    </div>
+    <div class="hoout" id="hoOut">Fill in the fields above and click Generate Report...</div>
+  </div>
 
-      <!-- PACS Viewer -->
-      <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 transition-all">
-        <div class="bg-white px-6 py-4 border-b border-slate-200 flex flex-wrap justify-between items-center gap-3">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600">
-              <i class="fa-solid fa-display-medical text-xl"></i>
-            </div>
-            <div>
-              <h3 class="font-bold text-slate-800 text-lg">PACS Diagnostic Viewer</h3>
-              <p class="text-xs text-slate-500 flex items-center gap-1">
-                <i class="fa-regular fa-dot-circle text-teal-400 text-[8px]"></i> Alif PACS · Multiplanar Reconstruction · Advanced Visualization
-              </p>
-            </div>
-          </div>
-          <div class="flex gap-2">
-            <div class="text-[11px] bg-slate-100 px-3 py-1.5 rounded-full text-slate-600 font-mono flex items-center gap-1">
-              <i class="fa-regular fa-circle-check text-teal-500"></i> Zero-footprint
-            </div>
-            <div class="text-[11px] bg-slate-100 px-3 py-1.5 rounded-full text-slate-600 font-mono flex items-center gap-1">
-              <i class="fa-regular fa-image"></i> DICOM Web
-            </div>
-          </div>
-        </div>
-        <div class="p-5 md:p-6 bg-gradient-to-b from-gray-50 to-white">
-          <div class="iframe-elegant rounded-xl overflow-hidden bg-slate-900/5 shadow-lg transition-all">
-            <iframe id="pacsFrame"
-                    title="Moksha Medical Imaging Viewer"
-                    src="https://pathway.alif.onl/AlifPACSViewerV2.html?redirect=true&accessionNumber=2402609&environment=External&debug=false&facilityId=9"
-                    class="w-full"
-                    style="height: 620px; border: none; background: #f1f5f9;"
-                    allowfullscreen></iframe>
-          </div>
-          <div id="loadingOverlay" class="hidden mt-4 text-center">
-            <div class="inline-flex items-center gap-2 bg-teal-50 text-teal-700 px-5 py-2.5 rounded-full text-sm font-medium shadow-sm">
-              <i class="fa-solid fa-spinner fa-spin"></i>
-              <span>Synchronizing study data & loading imaging series...</span>
-            </div>
-          </div>
-        </div>
-        <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-500 flex flex-wrap justify-between gap-2">
-          <span><i class="fa-regular fa-shield-check"></i> Encrypted transmission · HIPAA compliant</span>
-          <span><i class="fa-regular fa-chart-line"></i> AI-powered measurements & annotations</span>
-          <span><i class="fa-regular fa-clock"></i> Real-time rendering</span>
-        </div>
+  <!-- NOTES -->
+  <div class="panel" id="ntPan">
+    <div class="phdr">
+      <h3 style="color:var(--am)">&#128221; Shift Notes</h3>
+      <div style="display:flex;gap:7px">
+        <button class="btn br bsm" onclick="clearNotes()">Clear</button>
+        <button class="btn bgh bsm" onclick="toggleP('ntPan')">&#10005;</button>
       </div>
-
-      <!-- Footer -->
-      <div class="mt-8 pt-4 border-t border-slate-200 text-center text-slate-400 text-xs flex flex-col md:flex-row justify-between items-center gap-3">
-        <div class="flex items-center gap-2">
-          <i class="fa-regular fa-copyright"></i> 2025 Moksha Health · Next-Generation Imaging Platform
-        </div>
-        <div class="flex gap-5">
-          <span class="hover:text-teal-600 transition cursor-pointer"><i class="fa-regular fa-message"></i> Secure Support</span>
-          <span class="hover:text-teal-600 transition cursor-pointer"><i class="fa-regular fa-shield"></i> Privacy Center</span>
-          <span class="hover:text-teal-600 transition cursor-pointer"><i class="fa-regular fa-chart-simple"></i> System Status</span>
-        </div>
-      </div>
+    </div>
+    <div class="nlist" id="ntList"></div>
+    <div class="nrow">
+      <input type="text" id="ntInp" placeholder="Add a note... (Enter to save)" onkeydown="if(event.key==='Enter')addNote()">
+      <button class="btn ba bsm" onclick="addNote()">Add</button>
     </div>
   </div>
 
-  <script>
-    const CORRECT_HASH = '175e9c8bf6d7cff85146f0d2b91d5eac19e1f0a1446f1c97a6a8b9827dcdcaad';
-    const PACS_BASE_URL = 'https://pathway.alif.onl/AlifPACSViewerV2.html';
+  <!-- ACTIVITY LOG -->
+  <div class="panel" id="actPan">
+    <div class="phdr">
+      <h3 style="color:var(--pu)">&#128203; Activity Log</h3>
+      <div style="display:flex;gap:7px">
+        <button class="btn br bsm" onclick="clearAct()">Clear</button>
+        <button class="btn bgh bsm" onclick="toggleP('actPan')">&#10005;</button>
+      </div>
+    </div>
+    <div class="alog" id="actLog"></div>
+  </div>
 
-    // ─── SHA-256 via Web Crypto ───
-    async function sha256(str) {
-      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
+  <!-- PING -->
+  <div class="panel" id="pgPan">
+    <div class="phdr">
+      <h3 style="color:var(--cy)">&#127955; Server Connectivity</h3>
+      <div style="display:flex;gap:7px">
+        <button class="btn bp bsm" onclick="runPing()">Check All</button>
+        <button class="btn bgh bsm" onclick="document.getElementById('pgGrid').innerHTML=''">Reset</button>
+        <button class="btn bgh bsm" onclick="toggleP('pgPan')">&#10005;</button>
+      </div>
+    </div>
+    <div style="font-size:10.5px;color:var(--mu);margin-bottom:8px">HTTP reachability check (not raw ICMP ping). Results reflect HTTP-level connectivity.</div>
+    <div class="pggrid" id="pgGrid"></div>
+  </div>
 
-    // ─── Eye toggle ───
-    let eyeOpen = false;
-    function toggleEye() {
-      eyeOpen = !eyeOpen;
-      const input = document.getElementById('pwInput');
-      input.type = eyeOpen ? 'text' : 'password';
-      document.getElementById('eyeIcon').className = eyeOpen ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
-    }
+  <!-- HISTORY -->
+  <div class="panel" id="hisPan">
+    <div class="phdr">
+      <h3>&#128336; Saved History</h3>
+      <button class="btn bgh bsm" onclick="toggleP('hisPan')">&#10005;</button>
+    </div>
+    <div class="hgrid" id="hisGrid"></div>
+  </div>
 
-    // ─── Login ───
-    async function doLogin() {
-      const pw = document.getElementById('pwInput').value;
-      const errMsg = document.getElementById('errMsg');
-      const btn = document.getElementById('loginBtn');
-      const btnText = document.getElementById('btnText');
-      const btnIcon = document.getElementById('btnIcon');
+  <!-- SERVER TABLE -->
+  <section id="secS">
+    <div class="shdr">
+      <div class="stitle"><h2>&#128187; Server Check</h2><span class="sbadge" id="sBg">25 servers</span></div>
+      <div class="sacts">
+        <button class="btn bg bsm" onclick="markFine('s')">Mark All Fine</button>
+        <button class="btn bgh bsm" onclick="togDone('sTb')">Toggle Done</button>
+      </div>
+    </div>
+    <div class="tw"><div class="tscroll">
+      <table>
+        <thead><tr><th style="width:3%">#</th><th style="width:10%">Server IP</th><th style="width:9%">Checked?</th><th style="width:9%">Status</th><th style="width:9%">Ticket</th><th style="width:8%">Ticket No</th><th style="width:9%">Inspector</th><th style="width:9%">Last Checked</th><th style="width:11%">Storage / Notes</th><th style="width:11%">Resolution</th><th style="width:12%">Copy</th></tr></thead>
+        <tbody id="sTb"></tbody>
+      </table>
+    </div></div>
+  </section>
 
-      if (!pw) {
-        document.getElementById('pwInput').classList.add('error');
-        setTimeout(() => document.getElementById('pwInput').classList.remove('error'), 600);
-        return;
-      }
+  <!-- INTERFACE TABLE -->
+  <section id="secI" style="display:none">
+    <div class="shdr">
+      <div class="stitle"><h2>&#128268; Interface Check</h2><span class="sbadge" id="iBg">31 interfaces</span></div>
+      <div class="sacts">
+        <button class="btn bg bsm" onclick="markFine('i')">Mark All Fine</button>
+        <button class="btn bgh bsm" onclick="togDone('iTb')">Toggle Done</button>
+      </div>
+    </div>
+    <div class="tw"><div class="tscroll">
+      <table>
+        <thead><tr><th style="width:3%">#</th><th style="width:9%">Server IP</th><th style="width:9%">Interface</th><th style="width:12%">Path / Details</th><th style="width:7%">Checked?</th><th style="width:7%">Running?</th><th style="width:7%">Logs?</th><th style="width:7%">Status</th><th style="width:7%">Ticket</th><th style="width:8%">Ticket No</th><th style="width:8%">Inspector</th><th style="width:8%">Last Checked</th><th style="width:8%">Copy</th></tr></thead>
+        <tbody id="iTb"></tbody>
+      </table>
+    </div></div>
+  </section>
 
-      // Loading state
-      btn.disabled = true;
-      btnIcon.className = 'fa-solid fa-spinner fa-spin';
-      btnText.textContent = 'Verifying...';
-      errMsg.style.display = 'none';
+  <!-- SPECIAL TABLE -->
+  <section id="secSp" style="display:none">
+    <div class="shdr">
+      <div class="stitle"><h2>&#128311; Special Checks</h2><span class="sbadge" id="spBg">2 items</span></div>
+      <div class="sacts"><button class="btn bg bsm" onclick="markFine('sp')">Mark All Fine</button></div>
+    </div>
+    <div class="tw"><div class="tscroll">
+      <table>
+        <thead><tr><th style="width:3%">#</th><th style="width:9%">Category</th><th style="width:9%">Check Name</th><th style="width:12%">Details</th><th style="width:7%">Checked?</th><th style="width:7%">Running?</th><th style="width:7%">Logs?</th><th style="width:7%">Status</th><th style="width:7%">Ticket</th><th style="width:8%">Ticket No</th><th style="width:8%">Inspector</th><th style="width:8%">Last Checked</th><th style="width:8%">Copy</th></tr></thead>
+        <tbody id="spTb"></tbody>
+      </table>
+    </div></div>
+  </section>
 
-      const hash = await sha256(pw);
+  <div class="fbr" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+    <button class="btn bp" onclick="saveData()">Save All</button>
+    <button class="btn ba" onclick="exportCSV()">Export CSV</button>
+    <button class="btn bgh" onclick="window.print()">Print / PDF</button>
+    <button class="btn br" onclick="resetDay()">Reset Date</button>
+  </div>
+</main>
+</div>
+</div>
 
-      if (hash === CORRECT_HASH) {
-        btnIcon.className = 'fa-solid fa-circle-check';
-        btnText.textContent = 'Access granted!';
-        btn.style.background = 'linear-gradient(to right, #059669, #047857)';
+<!-- ADMIN MODAL -->
+<div class="overlay" id="admMod">
+  <div class="modal" style="max-width:540px">
+    <div class="mhdr"><h3>Admin Panel</h3><button class="btn bgh bsm" onclick="closeAdm()">&#10005; Close</button></div>
+    <div style="font-size:12px;font-weight:600;color:var(--bl);margin-bottom:9px">Add New Item</div>
+    <div class="admfg">
+      <div class="admr2">
+        <div class="fld"><label>Type</label><select id="aTyp"><option value="server">Server</option><option value="interface">Interface</option><option value="special">Special Check</option></select></div>
+        <div class="fld"><label>IP / Category</label><input type="text" id="aIP" placeholder="172.19.x.x"></div>
+      </div>
+      <div class="fld"><label>Name</label><input type="text" id="aNm" placeholder="Interface or check name"></div>
+      <div class="fld"><label>Path / Details</label><input type="text" id="aPth" placeholder="Executable path or URL"></div>
+      <div class="fld"><label>Custom Request (optional)</label><textarea id="aRq" placeholder="Leave blank for default"></textarea></div>
+      <div class="fld"><label>Custom Resolution (optional)</label><textarea id="aRs" placeholder="Leave blank for default"></textarea></div>
+      <button class="btn bg" onclick="admAdd()">Add Item</button>
+    </div>
+    <div style="font-size:12px;font-weight:600;color:var(--bl);margin:14px 0 8px">Custom Items</div>
+    <div id="admLst" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto"></div>
+  </div>
+</div>
 
-        setTimeout(() => {
-          // Hide login, show portal
-          const overlay = document.getElementById('loginOverlay');
-          gsap.to(overlay, {
-            opacity: 0, scale: 0.97, duration: 0.4, ease: 'power2.in',
-            onComplete: () => {
-              overlay.style.display = 'none';
-              const portal = document.getElementById('portalContent');
-              portal.classList.add('visible');
-              gsap.fromTo(portal,
-                { opacity: 0, y: 16 },
-                { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
-              );
-              updateShareLink();
-            }
-          });
-        }, 600);
-      } else {
-        // Wrong password
-        errMsg.style.display = 'flex';
-        document.getElementById('pwInput').classList.add('error');
-        setTimeout(() => document.getElementById('pwInput').classList.remove('error'), 600);
-        btn.disabled = false;
-        btnIcon.className = 'fa-solid fa-rocket';
-        btnText.textContent = 'Unlock Portal';
-        btn.style.background = '';
-        document.getElementById('pwInput').focus();
-        document.getElementById('pwInput').select();
-      }
-    }
+<!-- SHORTCUTS MODAL -->
+<div class="overlay" id="scMod">
+  <div class="modal" style="max-width:460px">
+    <div class="mhdr"><h3 style="color:var(--pu)">Keyboard Shortcuts</h3><button class="btn bgh bsm" onclick="document.getElementById('scMod').classList.remove('open')">&#10005;</button></div>
+    <div class="scrow"><span>Save data</span><span><kbd class="kbd">Ctrl</kbd><kbd class="kbd">S</kbd></span></div>
+    <div class="scrow"><span>Focus search</span><span><kbd class="kbd">Ctrl</kbd><kbd class="kbd">F</kbd></span></div>
+    <div class="scrow"><span>Copy full report</span><span><kbd class="kbd">Ctrl</kbd><kbd class="kbd">R</kbd></span></div>
+    <div class="scrow"><span>Export CSV</span><span><kbd class="kbd">Ctrl</kbd><kbd class="kbd">E</kbd></span></div>
+    <div class="scrow"><span>Servers tab</span><span><kbd class="kbd">Alt</kbd><kbd class="kbd">1</kbd></span></div>
+    <div class="scrow"><span>Interfaces tab</span><span><kbd class="kbd">Alt</kbd><kbd class="kbd">2</kbd></span></div>
+    <div class="scrow"><span>Special tab</span><span><kbd class="kbd">Alt</kbd><kbd class="kbd">3</kbd></span></div>
+    <div class="scrow"><span>Show All</span><span><kbd class="kbd">Alt</kbd><kbd class="kbd">4</kbd></span></div>
+    <div class="scrow"><span>Toggle theme</span><span><kbd class="kbd">Alt</kbd><kbd class="kbd">T</kbd></span></div>
+    <div class="scrow"><span>Toggle Notes</span><span><kbd class="kbd">Alt</kbd><kbd class="kbd">N</kbd></span></div>
+    <div class="scrow"><span>AI Summary</span><span><kbd class="kbd">Alt</kbd><kbd class="kbd">A</kbd></span></div>
+    <div class="scrow"><span>Close modals</span><span><kbd class="kbd">Esc</kbd></span></div>
+  </div>
+</div>
 
-    // Enter key on password field
-    document.getElementById('pwInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter') doLogin();
-      document.getElementById('errMsg').style.display = 'none';
+<div class="tc" id="tc"></div>
+<script>
+/* ======= DATA ======= */
+var SRV=[
+  "172.19.8.32","172.19.241.4","172.19.241.6","172.19.241.10","172.19.241.15",
+  "172.19.241.21","172.19.241.14","172.19.243.7","172.19.243.9","172.19.243.11",
+  "172.19.238.13","172.19.8.150","172.19.238.14","172.19.238.12","172.19.238.15",
+  "172.19.241.30","172.19.241.36","172.19.241.24","172.19.241.45","172.19.14.199",
+  "172.19.8.20","172.19.241.37","172.19.58.110","172.19.113.50","172.19.8.48"
+];
+var IFC=[
+  ["172.19.241.24","AHM Sysmax2","E:\\Sysmax\\Sysmax AHM\\ASPLTCPserver.exe"],
+  ["172.19.241.21","AHM Sysmax1","C:\\Sysmex AHM\\ASPLTCPserver.exe"],
+  ["172.19.241.24","AHQ Sysmax XN 1000","E:\\Sysmax\\Sysmax AHQ XN 1000\\HL7Communicator.exe"],
+  ["172.19.241.24","AHQ Sysmax","E:\\Sysmax\\Sysmax AHQ\\HL7Communicator.exe"],
+  ["172.19.241.24","ACD Sysmax","E:\\Sysmax\\Sysmax Cedar\\HL7Communicator.exe"],
+  ["172.19.8.32","GRBS (iSTAT)","D:\\POCT\\iSTATserver.exe"],
+  ["172.19.8.32","ECG Server (MUSE)","D:\\8.85\\MUSE\\HL7Communicator.exe"],
+  ["172.19.8.32","Beckman Coulter","D:\\8.85\\Coulter\\HL7Communicator.exe"],
+  ["172.19.8.32","Vitals Monitoring","D:\\Test\\GEVs.exe | D:\\Test\\Client"],
+  ["172.19.8.32","POCT (Point of Care)","D:\\POCT\\iSTATServer.exe"],
+  ["172.19.241.24","Cobas Infinity 2","E:\\P\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\HL7Communicator.exe"],
+  ["172.19.8.32","iStat","D:\\8.85\\iState\\iSTATServer.exe"],
+  ["172.19.8.32","Ward Vitals","D:\\Test\\Client\\VsCommunicatorClient.exe"],
+  ["172.19.8.32","Muse ECG","D:\\8.85\\MUSE\\VsCommunicatorClient.exe"],
+  ["172.19.8.32","AHSJ OrthoVision","D:\\8.85\\SHJ-OrthoVision\\Ortho Vision"],
+  ["172.19.238.13","Moksha to HIS","F:\\Padam\\TCPIP\\NEw\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug"],
+  ["172.19.241.4 & 172.19.238.13","Moksha Order Interface","241.4: E:\\MOKSHA\\ASPL TCPIP CLient.MOKSHA | 238.13: C:\\Users\\KeyAzurSrv\\OneDrive\\Aster Hospital Oman\\ASPL TCPIP CLient\\bin\\Debug"],
+  ["172.19.241.14","Print Server","net stop PowerBIReportServer | net start PowerBIReportServer"],
+  ["172.19.241.24","Ortho Vision","E:\\Ortho\\HL7Communicator.exe"],
+  ["172.19.241.30","Birthday Automation","F:\\PatientPortal_1\\PatientPortal\\Content\\img\\WishAs | Run: C:\\Users\\KeyAzurSrv\\source\\repos\\xCopy\\xCopy\\bin\\Debug\\net6.0-windows\\xCopy.exe"],
+  ["172.19.241.37","SMS & NABIDH Services","SMS: http://localhost:801/pcr/smsx?Auto=1 | NABIDH PROD: http://localhost:809/HIE/default?xCall=PROD"],
+  ["172.19.241.24","Urised AHM","E:\\Urised AHM\\Mac"],
+  ["172.19.241.24","Urised AHQ","E:\\Ahq Urised\\aspl interface\\urised\\Mac"],
+  ["172.19.241.24","Radio Meter","E:\\RadioMeter\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\"],
+  ["172.19.241.36","PDMS","C:\\PDMS\\VsCommunicatorClient"],
+  ["172.19.241.30","Patient Monitor Deepu","F:\\GE-Monitor\\GEVs"],
+  ["172.19.238.13","Mindray","F:\\Padam\\P\\ASPL TCPIP CLient - Copy"],
+  ["172.19.8.32","GRBS","D:\\8.85\\MUSE\\Client\\VsCommunicatorClient"],
+  ["172.19.241.24","Urised AHSO","E:\\AHSO Urised\\aspl interface"],
+  ["172.19.241.24","MyAster HL7 Service","Windows Service: myAster HL7"],
+  ["172.19.243.7 / 172.19.243.9","Pharmacy Auto Submission","172.19.238.13 - IIS - Edge Browser"]
+];
+var SPL=[
+  ["Display","Token Display Check","AHM Token Displays - all units",
+   "Kindly check all the AHM Token displays are working fine and Token details are correctly reflecting.",
+   "Checked all the token displays; they are working fine."],
+  ["Display","Ward Display Check","AHM Ward Displays - all wards",
+   "Kindly check that all AHM ward displays are working properly and that patient details are reflecting correctly.",
+   "Checked all the ward displays; they are working fine and patient details are reflecting correctly."]
+];
+
+/* ======= CONSTANTS ======= */
+var PANELS=["aiPan","tktPan","hoPan","ntPan","actPan","pgPan","hisPan"];
+var ST="itcc5_", CK="itcc5c_";
+var chkO=["Pending","Checked","Not Checked"];
+var finO=["Pending","Working Fine","Issue Found","Not Required"];
+var tktO=["Ticket Not Created","Ticket Created","Not Required"];
+var ynO=["Pending","Yes","No","Not Required"];
+var runO=["Pending","Running","Stopped","Not Required"];
+var aiMode="summary";
+
+/* ======= HELPERS ======= */
+function G(id){return document.getElementById(id);}
+function WD(){return G("wd").value;}
+function sKey(){return ST+WD();}
+function load(){try{return JSON.parse(localStorage.getItem(sKey()))||{};}catch(e){return {};}}
+function getC(){try{return JSON.parse(localStorage.getItem(CK))||[];}catch(e){return [];}}
+function saveC(a){localStorage.setItem(CK,JSON.stringify(a));}
+function today(){
+  var d=new Date();
+  return d.getFullYear()+"-"+(d.getMonth()<9?"0":"")+(d.getMonth()+1)+"-"+(d.getDate()<10?"0":"")+d.getDate();
+}
+function getIns(){return localStorage.getItem("itcc5_ins")||"Jobin CJ";}
+function setIns(v){
+  localStorage.setItem("itcc5_ins",v);
+  G("uNm").textContent=v||"Inspector";
+  var ini=v.trim().split(" ").map(function(w){return w[0]||"";}).join("").toUpperCase().slice(0,2)||"IT";
+  G("uAvi").textContent=ini;
+}
+function esc(v){
+  return String(v||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function mkOpts(arr,val){
+  return arr.map(function(x){
+    return "<option"+(x===val?" selected":"")+">"+esc(x)+"</option>";
+  }).join("");
+}
+function sReq(ip){return "Kindly perform the daily routine check of server "+ip+", including storage usage, performance and overall server availability.";}
+function sRes(ip){return "Daily routine check completed for server "+ip+". Storage usage, performance and server availability checked and found working fine.";}
+function iReq(nm){return "Kindly verify that the "+nm+" listener is running properly and that logs are being generated correctly as part of the daily routine check.";}
+function iRes(nm){return "Checked and verified that the "+nm+" listener is running properly and that logs are being generated correctly.";}
+function lcShow(ts){
+  if(!ts) return '<span class="lc lnv">Not checked yet</span>';
+  var now=Date.now();
+  var h=(now-ts)/3600000;
+  var d=new Date(ts);
+  var day=("0"+d.getDate()).slice(-2);
+  var mon=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
+  var yr=d.getFullYear();
+  var hr=("0"+d.getHours()).slice(-2);
+  var mn=("0"+d.getMinutes()).slice(-2);
+  var sc=("0"+d.getSeconds()).slice(-2);
+  var dt=day+"-"+mon+"-"+yr;
+  var tm=hr+":"+mn+":"+sc;
+  var full=dt+" "+tm;
+  if(h<24) return '<span class="lc lok">'+full+'</span>';
+  if(h<48) return '<span class="lc lyd">'+full+'</span>';
+  return '<span class="lc lov">'+full+'</span>';
+}
+function isOv(ts){return !ts||(Date.now()-ts)>86400000;}
+function rowC(chk,fin,run,ov){
+  if(chk==="Checked"&&(fin==="Working Fine"||fin==="Not Required")) return "rdn";
+  if(fin==="Issue Found"||run==="Stopped") return "ris";
+  if(ov&&chk!=="Checked") return "rov";
+  return "rpn";
+}
+
+/* ======= RENDER ======= */
+function render(){
+  var saved=load();
+  var custom=getC();
+  var ifaces=IFC.concat(custom.filter(function(c){return c.type==="interface";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
+  var specs=SPL.concat(custom.filter(function(c){return c.type==="special";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
+
+  /* SERVERS */
+  var sTb=G("sTb"); sTb.innerHTML="";
+  SRV.forEach(function(ip,i){
+    var r=saved["s"+i]||{};
+    var req=r.req||sReq(ip);
+    var res=r.res||sRes(ip);
+    var ts=r.ts||null;
+    var ov=isOv(ts);
+    var rc=rowC(r.chk,r.fin,r.run,ov);
+    var row=document.createElement("tr");
+    row.className=rc;
+    row.setAttribute("data-idx","s"+i);
+    row.innerHTML=
+      '<td class="cnum">'+(i+1)+'</td>'+
+      '<td class="cip">'+esc(ip)+'</td>'+
+      '<td><select data-f="chk">'+mkOpts(chkO,r.chk||"Pending")+'</select></td>'+
+      '<td><select data-f="fin">'+mkOpts(finO,r.fin||"Pending")+'</select></td>'+
+      '<td><select data-f="tkt">'+mkOpts(tktO,r.tkt||"Ticket Not Created")+'</select></td>'+
+      '<td><input type="text" data-f="tno" value="'+esc(r.tno||"")+'" placeholder="Ticket #"></td>'+
+      '<td><input type="text" data-f="ins" value="'+esc(r.ins||getIns())+'" placeholder="Name"></td>'+
+      '<td>'+lcShow(ts)+'</td>'+
+      '<td><textarea data-f="sto" placeholder="Storage / notes">'+esc(r.sto||"")+'</textarea></td>'+
+      '<td><div class="cpath" title="'+esc(res)+'">'+esc(res).substring(0,70)+'...</div>'+
+        '<input type="hidden" data-f="req" value="'+esc(req)+'">'+
+        '<input type="hidden" data-f="res" value="'+esc(res)+'"></td>'+
+      '<td><div class="astk">'+
+        '<button class="btn bgh bxs" onclick="cpItem(\'s\','+i+',\'req\')">Req</button>'+
+        '<button class="btn bg bxs" onclick="cpItem(\'s\','+i+',\'res\')">Res</button>'+
+        '<button class="btn ba bxs" onclick="cpItem(\'s\','+i+',\'full\')">Full</button>'+
+      '</div></td>';
+    sTb.appendChild(row);
+  });
+
+  /* INTERFACES */
+  var iTb=G("iTb"); iTb.innerHTML="";
+  ifaces.forEach(function(it,i){
+    var r=saved["i"+i]||{};
+    var req=r.req||(it[3]||iReq(it[1]));
+    var res=r.res||(it[4]||iRes(it[1]));
+    var ts=r.ts||null;
+    var ov=isOv(ts);
+    var rc=rowC(r.chk,r.fin,r.run,ov);
+    var row=document.createElement("tr");
+    row.className=rc;
+    row.setAttribute("data-idx","i"+i);
+    row.innerHTML=
+      '<td class="cnum">'+(i+1)+'</td>'+
+      '<td class="cip">'+esc(it[0])+'</td>'+
+      '<td class="cnm">'+esc(it[1])+'</td>'+
+      '<td><div class="cpath" title="'+esc(it[2])+'">'+esc(it[2])+'</div></td>'+
+      '<td><select data-f="chk">'+mkOpts(chkO,r.chk||"Pending")+'</select></td>'+
+      '<td><select data-f="run">'+mkOpts(runO,r.run||"Pending")+'</select></td>'+
+      '<td><select data-f="log">'+mkOpts(ynO,r.log||"Pending")+'</select></td>'+
+      '<td><select data-f="fin">'+mkOpts(finO,r.fin||"Pending")+'</select></td>'+
+      '<td><select data-f="tkt">'+mkOpts(tktO,r.tkt||"Ticket Not Created")+'</select></td>'+
+      '<td><input type="text" data-f="tno" value="'+esc(r.tno||"")+'" placeholder="Ticket #"></td>'+
+      '<td><input type="text" data-f="ins" value="'+esc(r.ins||getIns())+'" placeholder="Name"></td>'+
+      '<td>'+lcShow(ts)+'</td>'+
+      '<td><div class="astk">'+
+        '<button class="btn bgh bxs" onclick="cpPath('+i+')">Path</button>'+
+        '<button class="btn bgh bxs" onclick="cpItem(\'i\','+i+',\'req\')">Req</button>'+
+        '<button class="btn bg bxs" onclick="cpItem(\'i\','+i+',\'res\')">Res</button>'+
+        '<button class="btn ba bxs" onclick="cpItem(\'i\','+i+',\'full\')">Full</button>'+
+      '</div></td>';
+    iTb.appendChild(row);
+  });
+
+  /* SPECIALS */
+  var spTb=G("spTb"); spTb.innerHTML="";
+  specs.forEach(function(it,i){
+    var r=saved["sp"+i]||{};
+    var req=r.req||it[3];
+    var res=r.res||it[4];
+    var ts=r.ts||null;
+    var ov=isOv(ts);
+    var rc=rowC(r.chk,r.fin,r.run,ov);
+    var row=document.createElement("tr");
+    row.className=rc;
+    row.setAttribute("data-idx","sp"+i);
+    row.innerHTML=
+      '<td class="cnum">'+(i+1)+'</td>'+
+      '<td class="cip" style="color:var(--pu)">'+esc(it[0])+'</td>'+
+      '<td class="cnm">'+esc(it[1])+'</td>'+
+      '<td><div class="cpath" title="'+esc(it[2])+'">'+esc(it[2])+'</div></td>'+
+      '<td><select data-f="chk">'+mkOpts(chkO,r.chk||"Pending")+'</select></td>'+
+      '<td><select data-f="run">'+mkOpts(runO,r.run||"Pending")+'</select></td>'+
+      '<td><select data-f="log">'+mkOpts(ynO,r.log||"Pending")+'</select></td>'+
+      '<td><select data-f="fin">'+mkOpts(finO,r.fin||"Pending")+'</select></td>'+
+      '<td><select data-f="tkt">'+mkOpts(tktO,r.tkt||"Ticket Not Created")+'</select></td>'+
+      '<td><input type="text" data-f="tno" value="'+esc(r.tno||"")+'" placeholder="Ticket #"></td>'+
+      '<td><input type="text" data-f="ins" value="'+esc(r.ins||getIns())+'" placeholder="Name"></td>'+
+      '<td>'+lcShow(ts)+'</td>'+
+      '<td><div class="astk">'+
+        '<button class="btn bgh bxs" onclick="cpItem(\'sp\','+i+',\'req\')">Req</button>'+
+        '<button class="btn bg bxs" onclick="cpItem(\'sp\','+i+',\'res\')">Res</button>'+
+        '<button class="btn ba bxs" onclick="cpItem(\'sp\','+i+',\'full\')">Full</button>'+
+      '</div></td>';
+    spTb.appendChild(row);
+  });
+
+  /* Badges */
+  var custom=getC();
+  var iN=IFC.length+custom.filter(function(c){return c.type==="interface";}).length;
+  var spN=SPL.length+custom.filter(function(c){return c.type==="special";}).length;
+  G("sBg").textContent=SRV.length+" servers";
+  G("iBg").textContent=iN+" interfaces";
+  G("spBg").textContent=spN+" items";
+  G("nb1c").textContent=SRV.length;
+  G("nb2c").textContent=iN;
+  G("nb3c").textContent=spN;
+
+  applyF();
+  updateKPI();
+  updColors();
+}
+
+/* ======= COLLECT ======= */
+function collect(){
+  var data=load();
+  document.querySelectorAll("tbody tr[data-idx]").forEach(function(tr){
+    var idx=tr.getAttribute("data-idx");
+    if(!data[idx]) data[idx]={};
+    tr.querySelectorAll("[data-f]").forEach(function(el){
+      data[idx][el.getAttribute("data-f")]=el.value;
     });
+  });
+  return data;
+}
 
-    // ─── Sign out ───
-    function logout() {
-      const portal = document.getElementById('portalContent');
-      const overlay = document.getElementById('loginOverlay');
-      gsap.to(portal, {
-        opacity: 0, duration: 0.3, ease: 'power2.in',
-        onComplete: () => {
-          portal.classList.remove('visible');
-          overlay.style.display = 'flex';
-          document.getElementById('pwInput').value = '';
-          document.getElementById('btnText').textContent = 'Unlock Portal';
-          document.getElementById('btnIcon').className = 'fa-solid fa-rocket';
-          document.getElementById('loginBtn').disabled = false;
-          document.getElementById('loginBtn').style.background = '';
-          gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.35 });
-        }
-      });
+/* ======= KPI ======= */
+function updateKPI(){
+  var saved=load();
+  var custom=getC();
+  var sN=SRV.length;
+  var iN=IFC.length+custom.filter(function(c){return c.type==="interface";}).length;
+  var spN=SPL.length+custom.filter(function(c){return c.type==="special";}).length;
+  var total=sN+iN+spN;
+  var sDn=0,sIs=0,sPn=0,iDn=0,iIs=0,iPn=0,spDn=0,spIs=0,spPn=0,tks=0,ov=0;
+  for(var i=0;i<sN;i++){
+    var r=saved["s"+i]||{};
+    if(r.fin==="Working Fine")sDn++; else if(r.fin==="Issue Found"||r.run==="Stopped")sIs++; else sPn++;
+    if(r.tkt==="Ticket Created")tks++;
+    if(isOv(r.ts)&&r.chk!=="Checked")ov++;
+  }
+  for(var i=0;i<iN;i++){
+    var r=saved["i"+i]||{};
+    if(r.fin==="Working Fine")iDn++; else if(r.fin==="Issue Found"||r.run==="Stopped")iIs++; else iPn++;
+    if(r.tkt==="Ticket Created")tks++;
+    if(isOv(r.ts)&&r.chk!=="Checked")ov++;
+  }
+  for(var i=0;i<spN;i++){
+    var r=saved["sp"+i]||{};
+    if(r.fin==="Working Fine")spDn++; else if(r.fin==="Issue Found"||r.run==="Stopped")spIs++; else spPn++;
+    if(r.tkt==="Ticket Created")tks++;
+    if(isOv(r.ts)&&r.chk!=="Checked")ov++;
+  }
+  var done=sDn+iDn+spDn, issue=sIs+iIs+spIs;
+  var pct=total?Math.round(done/total*100):0;
+  G("kTot").textContent=total;
+  G("kDn").textContent=done; G("kDnB").style.width=pct+"%";
+  G("kIs").textContent=issue; G("kIsB").style.width=(total?Math.round(issue/total*100):0)+"%";
+  G("kTk").textContent=tks; G("kTkB").style.width=(total?Math.round(tks/total*100):0)+"%";
+  G("kOv").textContent=ov;
+  G("kPct").textContent=pct+"%"; G("kPctB").style.width=pct+"%";
+  /* Server cat */
+  G("csBg").textContent=sN+" total"; G("csDn").textContent=sDn; G("csIs").textContent=sIs; G("csPn").textContent=sPn;
+  var sp=sN?Math.round(sDn/sN*100):0; G("csBr").style.width=sp+"%"; G("csPct").textContent=sp+"% complete ("+sDn+"/"+sN+")";
+  /* Iface cat */
+  G("ciBg").textContent=iN+" total"; G("ciDn").textContent=iDn; G("ciIs").textContent=iIs; G("ciPn").textContent=iPn;
+  var ip=iN?Math.round(iDn/iN*100):0; G("ciBr").style.width=ip+"%"; G("ciPct").textContent=ip+"% complete ("+iDn+"/"+iN+")";
+  /* Special cat */
+  G("cpBg").textContent=spN+" total"; G("cpDn").textContent=spDn; G("cpIs").textContent=spIs; G("cpPn").textContent=spPn;
+  var pp=spN?Math.round(spDn/spN*100):0; G("cpBr").style.width=pp+"%"; G("cpPct").textContent=pp+"% complete ("+spDn+"/"+spN+")";
+  /* Overdue alert */
+  var oa=G("ovAlert");
+  if(ov>0){oa.style.display="flex";G("ovCnt").textContent=ov;}else oa.style.display="none";
+  if(pct===100&&window._lp!==100)celebrate();
+  window._lp=pct;
+  updateStreak();
+}
+
+/* ======= ROW COLORS ======= */
+function updColors(){
+  var saved=load();
+  document.querySelectorAll("tbody tr[data-idx]").forEach(function(tr){
+    var idx=tr.getAttribute("data-idx");
+    var r=saved[idx]||{};
+    var chk=tr.querySelector("[data-f='chk']");
+    var fin=tr.querySelector("[data-f='fin']");
+    var run=tr.querySelector("[data-f='run']");
+    var chkVal=chk?chk.value:"";
+    var finVal=fin?fin.value:"";
+    var runVal=run?run.value:"";
+    /* Use the live select values for colour, but saved.ts for overdue */
+    tr.className=rowC(chkVal,finVal,runVal,isOv(r.ts));
+  });
+}
+
+/* ======= FILTER ======= */
+function applyF(){
+  var q=G("srch").value.toLowerCase().trim();
+  var f=G("flt").value;
+  var saved=load();
+  document.querySelectorAll("tbody tr[data-idx]").forEach(function(tr){
+    var txt=tr.innerText.toLowerCase();
+    var vals=Array.from(tr.querySelectorAll("input,select,textarea")).map(function(x){return x.value;}).join(" ").toLowerCase();
+    var all=txt+" "+vals;
+    var mq=!q||all.indexOf(q)>-1;
+    var mf=true;
+    if(f==="__over__"){
+      var idx=tr.getAttribute("data-idx"); var r=saved[idx]||{};
+      var cv=tr.querySelector("[data-f='chk']");
+      mf=isOv(r.ts)&&(!cv||cv.value!=="Checked");
+    } else if(f){mf=vals.indexOf(f.toLowerCase())>-1;}
+    tr.style.display=(mq&&mf)?"":"none";
+  });
+}
+
+/* ======= SAVE ======= */
+function saveData(){
+  localStorage.setItem(sKey(),JSON.stringify(collect()));
+  updateKPI(); updColors(); renderHist();
+  toast("Saved for "+WD(),"s");
+  logAct("Data saved for "+WD(),"abl");
+}
+
+/* ======= AUTO-SAVE ======= */
+document.addEventListener("change",function(e){
+  var tb=e.target.closest("tbody"); if(!tb) return;
+  var tr=e.target.closest("tr[data-idx]"); if(!tr) return;
+  var f=e.target.getAttribute("data-f");
+  var val=e.target.value;
+  var idx=tr.getAttribute("data-idx");
+  var nm=tr.querySelector(".cnm,.cip"); nm=nm?nm.textContent:idx;
+
+  if(f==="fin"&&val==="Working Fine"){
+    var cv=tr.querySelector("[data-f='chk']"); if(cv&&cv.value!=="Checked") cv.value="Checked";
+  }
+  if(f==="run"&&val==="Running"){
+    var cv=tr.querySelector("[data-f='chk']"); if(cv&&cv.value!=="Checked") cv.value="Checked";
+  }
+  if(f==="chk"&&val==="Checked"){
+    var saved=load(); if(!saved[idx]) saved[idx]={};
+    var nowTs=Date.now();
+    saved[idx].ts=nowTs;
+    var iv=tr.querySelector("[data-f='ins']");
+    if(iv&&!iv.value) iv.value=getIns();
+    tr.querySelectorAll("[data-f]").forEach(function(el){saved[idx][el.getAttribute("data-f")]=el.value;});
+    localStorage.setItem(sKey(),JSON.stringify(saved));
+    /* Update last-checked cell immediately without full re-render */
+    var cells=tr.querySelectorAll("td");
+    /* Server table: last-checked is td[7]; Interface/Special: td[11] */
+    var lcIdx=(idx.indexOf("s")===0&&idx.indexOf("sp")<0)?7:11;
+    if(cells[lcIdx]) cells[lcIdx].innerHTML=lcShow(nowTs);
+    logAct(nm+" marked Checked","agn");
+  }
+  /* Also stamp timestamp when fin set to Working Fine */
+  if(f==="fin"&&val==="Working Fine"){
+    var saved2=load(); if(!saved2[idx]) saved2[idx]={};
+    if(!saved2[idx].ts){ saved2[idx].ts=Date.now(); localStorage.setItem(sKey(),JSON.stringify(saved2));
+      var cells2=tr.querySelectorAll("td");
+      var lcIdx2=(idx.indexOf("s")===0&&idx.indexOf("sp")<0)?7:11;
+      if(cells2[lcIdx2]) cells2[lcIdx2].innerHTML=lcShow(saved2[idx].ts);
     }
+  }
+  if(f==="fin"&&val==="Issue Found") logAct(nm+" - Issue Found","ard");
+  if(f==="tkt"&&val==="Ticket Created") logAct("Ticket created for "+nm,"aam");
 
-    // ─── Portal functions (same as original) ───
-    function buildPacsUrl() {
-      let accession = document.getElementById('accessionNumber').value.trim();
-      let facility = document.getElementById('facilityId').value.trim();
-      if (!accession) accession = '2402609';
-      if (!facility) facility = '9';
-      const params = new URLSearchParams({ redirect: 'true', accessionNumber: accession, environment: 'External', debug: 'false', facilityId: facility });
-      return `${PACS_BASE_URL}?${params.toString()}`;
+  var d=collect(); localStorage.setItem(sKey(),JSON.stringify(d));
+  updateKPI(); updColors();
+});
+
+/* ======= COPY ======= */
+function cpTxt(t){
+  navigator.clipboard.writeText(t).then(function(){toast("Copied to clipboard","s");});
+}
+function cpPath(i){
+  var custom=getC().filter(function(c){return c.type==="interface";});
+  var all=IFC.concat(custom.map(function(c){return [c.ip,c.nm,c.path];}));
+  cpTxt(all[i]?all[i][2]:"");
+}
+function cpItem(type,idx,mode){
+  var pfx=type==="s"?"s":(type==="i"?"i":"sp");
+  var tr=document.querySelector("tr[data-idx='"+pfx+idx+"']"); if(!tr) return;
+  var r={}; tr.querySelectorAll("[data-f]").forEach(function(el){r[el.getAttribute("data-f")]=el.value;});
+  var ip="",nm="",path="";
+  if(type==="s"){ip=SRV[idx];nm="Server "+ip;}
+  else if(type==="i"){
+    var custom=getC().filter(function(c){return c.type==="interface";});
+    var all=IFC.concat(custom.map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
+    ip=all[idx]?all[idx][0]:""; nm=all[idx]?all[idx][1]:""; path=all[idx]?all[idx][2]:"";
+  } else {
+    var custom=getC().filter(function(c){return c.type==="special";});
+    var all=SPL.concat(custom.map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
+    ip=all[idx]?all[idx][0]:""; nm=all[idx]?all[idx][1]:""; path=all[idx]?all[idx][2]:"";
+  }
+  var req=r.req||(type==="s"?sReq(ip):iReq(nm));
+  var res=r.res||(type==="s"?sRes(ip):iRes(nm));
+  var txt="";
+  if(mode==="req") txt=req;
+  else if(mode==="res") txt=res;
+  else {
+    txt="Date        : "+WD()+"\nInspector   : "+(r.ins||getIns()||"N/A")+"\nServer IP   : "+ip+"\n";
+    if(type!=="s") txt+="Name        : "+nm+"\n";
+    txt+="Checked     : "+(r.chk||"Pending")+"\nStatus      : "+(r.fin||"Pending")+"\n";
+    if(type!=="s") txt+="Running     : "+(r.run||"Pending")+"\nLogs        : "+(r.log||"Pending")+"\n";
+    txt+="Ticket      : "+(r.tkt||"Ticket Not Created")+"\nTicket No   : "+(r.tno||"-")+"\n";
+    if(path) txt+="Path        : "+path+"\n";
+    txt+="\nREQUEST:\n"+req+"\n\nRESOLUTION:\n"+res;
+  }
+  cpTxt(txt.trim());
+}
+
+/* ======= MARK ALL FINE ======= */
+function markFine(sec){
+  var tbId=sec==="s"?"sTb":(sec==="i"?"iTb":"spTb");
+  var rows=document.querySelectorAll("#"+tbId+" tr[data-idx]");
+  var visible=[]; rows.forEach(function(r){if(r.style.display!=="none")visible.push(r);});
+  var ts=Date.now(); var saved=load(); var ins=getIns();
+  visible.forEach(function(tr){
+    function sf(f,v){var el=tr.querySelector("[data-f='"+f+"']");if(el)el.value=v;}
+    sf("chk","Checked"); sf("fin","Working Fine"); sf("tkt","Ticket Created");
+    if(sec!=="s"){sf("run","Running");sf("log","Yes");}
+    if(ins)sf("ins",ins);
+    var idx=tr.getAttribute("data-idx");
+    if(!saved[idx])saved[idx]={}; saved[idx].ts=ts;
+  });
+  localStorage.setItem(sKey(),JSON.stringify(saved));
+  saveData(); render();
+  toast("Marked "+visible.length+" items as Working Fine","s");
+  logAct("Bulk: "+visible.length+" "+sec+" items marked fine","agn");
+  /* render() already re-builds rows with correct timestamps */
+}
+
+/* ======= TOGGLE DONE ======= */
+function togDone(tbId){
+  document.querySelectorAll("#"+tbId+" tr.rdn").forEach(function(tr){
+    tr.style.display=tr.style.display==="none"?"":"none";
+  });
+}
+
+/* ======= TAB SWITCHING ======= */
+function showTab(tab,btn){
+  /* Close all tool panels when switching tabs */
+  PANELS.forEach(function(pid){var pel=G(pid);if(pel)pel.classList.remove("open");});
+  document.querySelectorAll(".nbtn[id^='nb']").forEach(function(b){b.classList.remove("active");});
+  if(btn) btn.classList.add("active");
+  G("secS").style.display=(tab==="server"||tab==="all")?"":"none";
+  G("secI").style.display=(tab==="iface"||tab==="all")?"":"none";
+  G("secSp").style.display=(tab==="special"||tab==="all")?"":"none";
+  /* Scroll content to top so the table is visible from top */
+  setTimeout(function(){
+    var content=document.querySelector(".content");
+    if(content) content.scrollTop=0;
+    window.scrollTo({top:0,behavior:"smooth"});
+  },30);
+}
+
+/* ======= COPY REPORT ======= */
+function copyRpt(){
+  var saved=collect();
+  var custom=getC();
+  var ifaces=IFC.concat(custom.filter(function(c){return c.type==="interface";}).map(function(c){return [c.ip,c.nm,c.path];}));
+  var specs=SPL.concat(custom.filter(function(c){return c.type==="special";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
+  var ln="=".repeat(52); var r=ln+"\n  IT COMMAND CENTER - DAILY CHECKLIST\n  Date: "+WD()+" | Inspector: "+(getIns()||"N/A")+"\n"+ln+"\n\nSERVER CHECK\n"+"-".repeat(52)+"\n";
+  SRV.forEach(function(ip,i){var d=saved["s"+i]||{};r+=(i+1)+". "+ip+" | Checked: "+(d.chk||"Pending")+" | Status: "+(d.fin||"Pending")+" | Ticket: "+(d.tkt||"Ticket Not Created")+" | No: "+(d.tno||"-")+"\n   Resolution: "+(d.res||sRes(ip))+"\n\n";});
+  r+="\nINTERFACE CHECK\n"+"-".repeat(52)+"\n";
+  ifaces.forEach(function(it,i){var d=saved["i"+i]||{};r+=(i+1)+". "+it[1]+" ("+it[0]+") | Checked: "+(d.chk||"Pending")+" | Running: "+(d.run||"Pending")+" | Status: "+(d.fin||"Pending")+" | Ticket: "+(d.tkt||"Ticket Not Created")+"\n   Resolution: "+(d.res||iRes(it[1]))+"\n\n";});
+  r+="\nSPECIAL CHECKS\n"+"-".repeat(52)+"\n";
+  specs.forEach(function(it,i){var d=saved["sp"+i]||{};r+=(i+1)+". "+it[1]+" | Checked: "+(d.chk||"Pending")+" | Status: "+(d.fin||"Pending")+" | Ticket: "+(d.tkt||"Ticket Not Created")+"\n   Resolution: "+(d.res||it[4])+"\n\n";});
+  cpTxt(r);
+}
+
+/* ======= EXPORT CSV ======= */
+function exportCSV(){
+  var saved=collect();
+  var custom=getC();
+  var ifaces=IFC.concat(custom.filter(function(c){return c.type==="interface";}).map(function(c){return [c.ip,c.nm,c.path];}));
+  var specs=SPL.concat(custom.filter(function(c){return c.type==="special";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
+  var rows=[["Date","Type","No","Server IP","Name","Path","Checked","Running","Logs","Status","Ticket","Ticket No","Inspector","Last Checked","Storage","Request","Resolution"]];
+  SRV.forEach(function(ip,i){var d=saved["s"+i]||{};rows.push([WD(),"Server",i+1,ip,"Server Check","",d.chk||"Pending","","",d.fin||"Pending",d.tkt||"Ticket Not Created",d.tno||"",d.ins||"",d.ts?new Date(d.ts).toLocaleString():"",d.sto||"",d.req||sReq(ip),d.res||sRes(ip)]);});
+  ifaces.forEach(function(it,i){var d=saved["i"+i]||{};rows.push([WD(),"Interface",i+1,it[0],it[1],it[2],d.chk||"Pending",d.run||"Pending",d.log||"Pending",d.fin||"Pending",d.tkt||"Ticket Not Created",d.tno||"",d.ins||"",d.ts?new Date(d.ts).toLocaleString():"","",d.req||iReq(it[1]),d.res||iRes(it[1])]);});
+  specs.forEach(function(it,i){var d=saved["sp"+i]||{};rows.push([WD(),"Special",i+1,it[0],it[1],it[2],d.chk||"Pending",d.run||"Pending",d.log||"Pending",d.fin||"Pending",d.tkt||"Ticket Not Created",d.tno||"",d.ins||"","","",d.req||it[3],d.res||it[4]]);});
+  var csv=rows.map(function(row){return row.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(",");}).join("\n");
+  var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+  a.download="IT_Checklist_"+WD()+".csv"; a.click();
+  toast("CSV exported","s");
+}
+
+/* ======= RESET ======= */
+function resetDay(){
+  if(confirm("Clear saved data for "+WD()+"?")){localStorage.removeItem(sKey());render();toast("Reset complete","i");}
+}
+
+/* ======= HISTORY ======= */
+function getDates(){
+  var dates=[];
+  for(var i=0;i<localStorage.length;i++){
+    var k=localStorage.key(i);
+    if(k&&k.indexOf(ST)===0&&k.indexOf("_c")<0&&k.indexOf("_ins")<0&&k.indexOf("_th")<0&&k.indexOf("_act")<0&&k.indexOf("_nt")<0)
+      dates.push(k.replace(ST,""));
+  }
+  return dates.sort().reverse();
+}
+function renderHist(){
+  var el=G("hisGrid"); if(!el) return;
+  var dates=getDates();
+  if(!dates.length){el.innerHTML='<div style="color:var(--mu);font-size:12px">No saved history yet.</div>';return;}
+  el.innerHTML=dates.map(function(d){
+    return '<div class="hchip"><span onclick="openDate(\''+d+'\')" style="flex:1">'+d+'</span><span class="hdel" onclick="delDate(\''+d+'\')">x</span></div>';
+  }).join("");
+}
+function openDate(d){G("wd").value=d;render();toggleP("hisPan");}
+function delDate(d){if(confirm("Delete data for "+d+"?")){localStorage.removeItem(ST+d);renderHist();toast("Deleted "+d,"i");}}
+
+/* ======= NOTES ======= */
+function nKey(){return "itcc5_nt_"+WD();}
+function getNt(){try{return JSON.parse(localStorage.getItem(nKey()))||[];}catch(e){return [];}}
+function saveNt(a){localStorage.setItem(nKey(),JSON.stringify(a));}
+function addNote(){
+  var inp=G("ntInp"); var txt=inp.value.trim(); if(!txt) return;
+  var notes=getNt();
+  notes.unshift({t:txt,time:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}),au:getIns()||"?"});
+  saveNt(notes); inp.value=""; renderNotes();
+  logAct("Note: "+txt.substring(0,40),"aam"); toast("Note saved","s");
+}
+function delNote(i){var n=getNt();n.splice(i,1);saveNt(n);renderNotes();}
+function clearNotes(){if(confirm("Clear all notes for "+WD()+"?")){saveNt([]);renderNotes();}}
+function renderNotes(){
+  var el=G("ntList"); if(!el) return;
+  var n=getNt();
+  if(!n.length){el.innerHTML='<div style="color:var(--mu);font-size:11.5px;padding:8px 0">No notes yet.</div>';return;}
+  el.innerHTML=n.map(function(x,i){
+    return '<div class="nitem"><div style="flex:1"><div class="ntxt">'+esc(x.t)+'</div><div class="nmeta">'+esc(x.time)+" - "+esc(x.au)+'</div></div><button class="btn br bxs" onclick="delNote('+i+')">x</button></div>';
+  }).join("");
+}
+
+/* ======= ACTIVITY ======= */
+function aKey(){return "itcc5_act_"+WD();}
+function getAct(){try{return JSON.parse(localStorage.getItem(aKey()))||[];}catch(e){return [];}}
+function logAct(msg,cls){
+  var log=getAct();
+  log.unshift({msg:msg,cls:cls||"abl",time:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"})});
+  if(log.length>200)log.splice(200);
+  localStorage.setItem(aKey(),JSON.stringify(log));
+  renderAct();
+}
+function renderAct(){
+  var el=G("actLog"); if(!el) return;
+  var log=getAct();
+  if(!log.length){el.innerHTML='<div style="color:var(--mu);font-size:11.5px;text-align:center;padding:16px">No activity logged yet.</div>';return;}
+  el.innerHTML=log.map(function(a){
+    return '<div class="alogit"><div class="adot '+esc(a.cls||"abl")+'"></div><span class="atm">'+esc(a.time)+'</span><span>'+esc(a.msg)+'</span></div>';
+  }).join("");
+}
+function clearAct(){if(confirm("Clear activity log?")){localStorage.removeItem(aKey());renderAct();}}
+
+/* ======= TICKET GEN ======= */
+function genTkt(){
+  var saved=collect();
+  var custom=getC();
+  var ifaces=IFC.concat(custom.filter(function(c){return c.type==="interface";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
+  var specs=SPL.concat(custom.filter(function(c){return c.type==="special";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
+  var issues=[];
+  SRV.forEach(function(ip,i){var r=saved["s"+i]||{};if(r.fin==="Issue Found"||(r.chk==="Checked"&&r.tkt==="Ticket Not Created"))issues.push({label:"Server: "+ip,req:r.req||sReq(ip),res:r.res||sRes(ip),tno:r.tno||"-"});});
+  ifaces.forEach(function(it,i){var r=saved["i"+i]||{};if(r.fin==="Issue Found"||(r.chk==="Checked"&&r.tkt==="Ticket Not Created"))issues.push({label:"Interface: "+it[1]+" ("+it[0]+")",req:r.req||iReq(it[1]),res:r.res||iRes(it[1]),tno:r.tno||"-"});});
+  specs.forEach(function(it,i){var r=saved["sp"+i]||{};if(r.fin==="Issue Found"||(r.chk==="Checked"&&r.tkt==="Ticket Not Created"))issues.push({label:"Check: "+it[1],req:r.req||it[3],res:r.res||it[4],tno:r.tno||"-"});});
+  var el=G("tktOut"); if(!el) return;
+  if(!issues.length){el.textContent="All checked items are working fine - no pending tickets.";return;}
+  var out="COMBINED DAILY TICKET\nDate: "+WD()+" | Inspector: "+(getIns()||"N/A")+"\n"+"=".repeat(48)+"\n\n";
+  issues.forEach(function(x,i){out+="["+(i+1)+"] "+x.label+"\nTicket No : "+x.tno+"\nRequest   : "+x.req+"\nResolution: "+x.res+"\n"+"-".repeat(48)+"\n";});
+  el.textContent=out;
+}
+
+/* ======= HANDOVER ======= */
+function genHO(){
+  var saved=collect();
+  var custom=getC();
+  var ifaces=IFC.concat(custom.filter(function(c){return c.type==="interface";}).map(function(c){return [c.ip,c.nm,c.path];}));
+  var sN=SRV.length,iN=ifaces.length,spN=SPL.length;
+  var sDn=SRV.filter(function(_,i){return saved["s"+i]&&saved["s"+i].fin==="Working Fine";}).length;
+  var iDn=ifaces.filter(function(_,i){return saved["i"+i]&&saved["i"+i].fin==="Working Fine";}).length;
+  var spDn=SPL.filter(function(_,i){return saved["sp"+i]&&saved["sp"+i].fin==="Working Fine";}).length;
+  var issues=[];
+  SRV.forEach(function(ip,i){if(saved["s"+i]&&saved["s"+i].fin==="Issue Found")issues.push("Server "+ip+" - Ticket: "+(saved["s"+i].tno||"N/A"));});
+  ifaces.forEach(function(it,i){if(saved["i"+i]&&saved["i"+i].fin==="Issue Found")issues.push("Interface "+it[1]+" ("+it[0]+") - Ticket: "+(saved["i"+i].tno||"N/A"));});
+  var out="=".repeat(50)+"\n  SHIFT HANDOVER REPORT\n"+"=".repeat(50)+"\n";
+  out+="Date         : "+WD()+"\nTime         : "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+"\n";
+  out+="Outgoing     : "+(G("hoO").value||getIns()||"N/A")+"\nIncoming     : "+(G("hoI").value||"N/A")+"\n";
+  out+="-".repeat(50)+"\nCOMPLETION SUMMARY\n";
+  out+="  Servers      : "+sDn+"/"+sN+" ("+(sN?Math.round(sDn/sN*100):0)+"%)\n";
+  out+="  Interfaces   : "+iDn+"/"+iN+" ("+(iN?Math.round(iDn/iN*100):0)+"%)\n";
+  out+="  Spec. Checks : "+spDn+"/"+spN+" ("+(spN?Math.round(spDn/spN*100):0)+"%)\n";
+  out+="-".repeat(50)+"\nISSUES ("+issues.length+")\n";
+  out+=issues.length?issues.map(function(x){return "  * "+x;}).join("\n"):"  All systems normal - no issues found.";
+  out+="\n"+"-".repeat(50)+"\nISSUES ENCOUNTERED:\n"+(G("hoIs").value||"  None")+"\n\nPENDING ACTIONS:\n"+(G("hoPn").value||"  None")+"\n\nSPECIAL NOTES:\n"+(G("hoNt").value||"  None")+"\n"+"=".repeat(50);
+  G("hoOut").textContent=out;
+  logAct("Handover report generated","abl");
+}
+
+/* ======= PING ======= */
+function runPing(){
+  var grid=G("pgGrid"); grid.innerHTML="";
+  var custom=getC();
+  var allIPs=[];
+  var seen={};
+  SRV.forEach(function(ip){if(!seen[ip]&&/^\d+\.\d+\.\d+\.\d+$/.test(ip)){seen[ip]=1;allIPs.push(ip);}});
+  IFC.forEach(function(it){var ip=it[0].split(/[& \/]/)[0].trim();if(ip&&!seen[ip]&&/^\d+\.\d+\.\d+\.\d+$/.test(ip)){seen[ip]=1;allIPs.push(ip);}});
+  allIPs.forEach(function(ip){
+    var div=document.createElement("div"); div.className="pgcard";
+    div.id="pc_"+ip.replace(/\./g,"_");
+    div.innerHTML='<span class="pgip">'+esc(ip)+'</span><span class="pgst pschk">Checking...</span>';
+    grid.appendChild(div);
+  });
+  var idx=0;
+  function checkNext(){
+    if(idx>=allIPs.length){toast("Connectivity check complete","s");return;}
+    var ip=allIPs[idx++];
+    var card=G("pc_"+ip.replace(/\./g,"_"));
+    if(!card){checkNext();return;}
+    var badge=card.querySelector(".pgst");
+    var ctrl=new AbortController();
+    var timer=setTimeout(function(){ctrl.abort();},3000);
+    fetch("http://"+ip,{method:"HEAD",signal:ctrl.signal,mode:"no-cors"})
+      .then(function(){clearTimeout(timer);badge.className="pgst psok";badge.textContent="Reachable";setTimeout(checkNext,80);})
+      .catch(function(e){clearTimeout(timer);if(e.name==="AbortError"){badge.className="pgst psfail";badge.textContent="Timeout";}else{badge.className="pgst psok";badge.textContent="Responded";}setTimeout(checkNext,80);});
+  }
+  checkNext();
+}
+
+/* ======= AI SUMMARY ======= */
+function setAIMode(mode,el){
+  aiMode=mode;
+  document.querySelectorAll(".aichip").forEach(function(c){c.classList.remove("active");});
+  el.classList.add("active");
+}
+function runAI(){
+  var saved=collect();
+  var custom=getC();
+  var sN=SRV.length;
+  var iN=IFC.length+custom.filter(function(c){return c.type==="interface";}).length;
+  var spN=SPL.length+custom.filter(function(c){return c.type==="special";}).length;
+  var total=sN+iN+spN;
+  var sDn=SRV.filter(function(_,i){return saved["s"+i]&&saved["s"+i].fin==="Working Fine";}).length;
+  var iDn=IFC.filter(function(_,i){return saved["i"+i]&&saved["i"+i].fin==="Working Fine";}).length;
+  var spDn=SPL.filter(function(_,i){return saved["sp"+i]&&saved["sp"+i].fin==="Working Fine";}).length;
+  var done=sDn+iDn+spDn;
+  var pct=total?Math.round(done/total*100):0;
+  var sIss=SRV.filter(function(_,i){return saved["s"+i]&&saved["s"+i].fin==="Issue Found";}).map(function(_,i){return SRV[i];});
+  var iIss=IFC.filter(function(_,i){return saved["i"+i]&&saved["i"+i].fin==="Issue Found";}).map(function(it){return it[1];});
+  var pend=SRV.filter(function(_,i){return !saved["s"+i]||saved["s"+i].chk==="Pending";}).length +
+           IFC.filter(function(_,i){return !saved["i"+i]||saved["i"+i].chk==="Pending";}).length;
+  var ctx="Date: "+WD()+" | Inspector: "+(getIns()||"N/A")+"\nServers: "+sDn+"/"+sN+" | Interfaces: "+iDn+"/"+iN+" | Special: "+spDn+"/"+spN+"\nTotal Progress: "+pct+"% ("+done+"/"+total+")\nServer Issues: "+(sIss.length?sIss.join(", "):"None")+"\nInterface Issues: "+(iIss.length?iIss.join(", "):"None")+"\nPending Items: "+pend;
+  var prompts={
+    summary:"You are an IT monitoring assistant. Analyse this daily checklist data and provide a concise professional summary in 5-6 bullet points covering overall status, completed items, issues, and what is pending. Be direct and professional.\n\nChecklist Data:\n"+ctx,
+    issues:"You are an IT monitoring assistant. Analyse the checklist data and provide detailed issue analysis. For each issue, explain potential impact, urgency, and recommended action. If no issues, confirm systems are healthy.\n\nChecklist Data:\n"+ctx,
+    ticket:"You are an IT service desk assistant. Draft a professional ticket summary for all items needing attention, suitable for ManageEngine ServiceDesk Plus.\n\nChecklist Data:\n"+ctx,
+    handover:"You are an IT shift coordinator. Write a professional shift briefing for the incoming shift based on this checklist data.\n\nChecklist Data:\n"+ctx,
+    recommend:"You are an IT operations analyst. Provide 4-5 actionable recommendations to improve monitoring efficiency based on this checklist data.\n\nChecklist Data:\n"+ctx
+  };
+  var out=G("aiOut");
+  out.textContent="Generating AI analysis...";
+  out.classList.add("typing");
+  fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompts[aiMode]||prompts.summary}]})
+  }).then(function(r){return r.json();}).then(function(data){
+    out.classList.remove("typing");
+    if(data.content&&data.content[0]&&data.content[0].text){
+      out.textContent=data.content[0].text;
+      logAct("AI "+aiMode+" analysis generated","abl");
+    } else {
+      out.textContent=fallbackAI(pct,done,total,sIss,iIss,pend);
     }
+  }).catch(function(){
+    out.classList.remove("typing");
+    out.textContent=fallbackAI(pct,done,total,sIss,iIss,pend);
+  });
+}
+function fallbackAI(pct,done,total,sIss,iIss,pend){
+  var status=pct===100?"EXCELLENT":pct>=75?"GOOD PROGRESS":pct>=50?"IN PROGRESS":"NEEDS ATTENTION";
+  var out="DAILY CHECKLIST ANALYSIS - "+WD()+"\nInspector: "+(getIns()||"N/A")+"\n\n";
+  out+=status+" - "+pct+"% Complete ("+done+"/"+total+" items)\n\n";
+  out+="Completed: "+done+" items checked and verified\n";
+  out+=(sIss.length?"Server Issues: "+sIss.join(", "):"All servers: No issues found")+"\n";
+  out+=(iIss.length?"Interface Issues: "+iIss.join(", "):"All interfaces: No issues found")+"\n";
+  out+="Pending: "+pend+" items still need to be checked\n\n";
+  out+=pct===100?"Outstanding work! All systems verified and fully operational.":pct>=75?"Good progress. Focus on completing the "+pend+" remaining items.":"Attention needed. Priority: complete all pending checks.";
+  return out;
+}
 
-    function updateShareLink() {
-      const shareField = document.getElementById('shareURL');
-      if (shareField) shareField.value = buildPacsUrl();
-    }
+/* ======= STREAK ======= */
+function updateStreak(){
+  var dates=getDates(); if(!dates.length) return;
+  var streak=0,best=1,run=1,totPct=0;
+  var sorted=dates.slice().sort();
+  for(var i=1;i<sorted.length;i++){
+    var diff=(new Date(sorted[i])-new Date(sorted[i-1]))/86400000;
+    if(diff===1){run++;if(run>best)best=run;}else run=1;
+  }
+  var td=new Date();
+  for(var j=0;j<365;j++){
+    var d=new Date(td); d.setDate(td.getDate()-j);
+    var iso=d.getFullYear()+"-"+(d.getMonth()<9?"0":"")+(d.getMonth()+1)+"-"+(d.getDate()<10?"0":"")+d.getDate();
+    if(dates.indexOf(iso)>-1)streak++;else break;
+  }
+  best=Math.max(best,streak);
+  dates.forEach(function(d){
+    try{var data=JSON.parse(localStorage.getItem(ST+d))||{};var vals=Object.values(data);if(!vals.length)return;totPct+=Math.round(vals.filter(function(r){return r.fin==="Working Fine";}).length/vals.length*100);}catch(e){}
+  });
+  G("skD").textContent=streak; G("skB").textContent=best; G("skT").textContent=dates.length;
+  G("skA").textContent=dates.length?Math.round(totPct/dates.length)+"%":"0%";
+}
 
-    function copyShareLink() {
-      const urlInput = document.getElementById('shareURL');
-      if (!urlInput.value) return;
-      navigator.clipboard.writeText(urlInput.value).then(() => {
-        const n = document.getElementById('copyNotification');
-        n.innerHTML = '<span class="text-emerald-700 bg-emerald-50 px-4 py-1.5 rounded-full text-xs shadow-sm inline-flex items-center gap-2 toast-slide"><i class="fa-regular fa-check-circle"></i> Link copied to clipboard</span>';
-        setTimeout(() => { if (n) n.innerHTML = ''; }, 2500);
-      });
-    }
+/* ======= CONFETTI ======= */
+function celebrate(){
+  var colors=["#38bdf8","#22c55e","#f59e0b","#a78bfa","#2dd4bf","#ef4444"];
+  for(var i=0;i<55;i++){
+    var el=document.createElement("div"); el.className="cf";
+    var c=colors[Math.floor(Math.random()*colors.length)];
+    var w=6+Math.random()*7; var h=6+Math.random()*7;
+    var br=Math.random()>.5?"50%":"2px";
+    el.style.cssText="left:"+Math.random()*100+"vw;top:-20px;background:"+c+";width:"+w+"px;height:"+h+"px;border-radius:"+br+";animation-delay:"+Math.random()*.8+"s;animation-duration:"+(2+Math.random()*1.5)+"s";
+    document.body.appendChild(el);
+    setTimeout(function(){el.remove();},4000);
+  }
+  toast("100% Complete! All systems verified!","s");
+}
 
-    function loadPACSStudy() {
-      const accessionVal = document.getElementById('accessionNumber').value.trim();
-      if (!accessionVal) return;
-      const targetUrl = buildPacsUrl();
-      const iframe = document.getElementById('pacsFrame');
-      const loader = document.getElementById('loadingOverlay');
-      gsap.to(iframe, { duration: 0.2, opacity: 0.6, ease: 'power1.in' });
-      loader.classList.remove('hidden');
-      setTimeout(() => {
-        iframe.src = targetUrl;
-        iframe.onload = () => {
-          gsap.to(iframe, { duration: 0.5, opacity: 1, ease: 'backOut(0.3)' });
-          loader.classList.add('hidden');
-          updateShareLink();
-        };
-        setTimeout(() => {
-          if (loader && !loader.classList.contains('hidden')) {
-            loader.classList.add('hidden');
-            gsap.to(iframe, { duration: 0.3, opacity: 1 });
-          }
-        }, 5000);
-      }, 200);
-      updateShareLink();
-    }
+/* ======= TOAST ======= */
+function toast(msg,type){
+  var el=document.createElement("div");
+  el.className="toast tst-"+(type||"i");
+  el.textContent=msg;
+  G("tc").appendChild(el);
+  setTimeout(function(){el.style.animation="tOut .28s ease forwards";setTimeout(function(){el.remove();},280);},2800);
+}
 
-    document.addEventListener('keypress', e => {
-      const acc = document.getElementById('accessionNumber');
-      const fac = document.getElementById('facilityId');
-      if (e.key === 'Enter' && (document.activeElement === acc || document.activeElement === fac)) {
-        e.preventDefault();
-        loadPACSStudy();
+/* ======= PANEL TOGGLE ======= */
+function toggleP(id){
+  var el=G(id);
+  var wasOpen=el.classList.contains("open");
+  /* Close ALL panels first */
+  PANELS.forEach(function(pid){
+    var pel=G(pid);
+    if(pel) pel.classList.remove("open");
+  });
+  /* If it was closed, open it and scroll to top of content */
+  if(!wasOpen){
+    el.classList.add("open");
+    /* Scroll the panel into view at the top of the content area */
+    setTimeout(function(){
+      el.scrollIntoView({behavior:"smooth",block:"start"});
+      /* Also scroll content area up so panel is visible near top */
+      var content=document.querySelector(".content");
+      if(content){
+        var panelTop=el.offsetTop - content.offsetTop - 10;
+        content.scrollTop=panelTop;
       }
-    });
+    },60);
+  }
+}
 
-    const accessionInput = document.getElementById('accessionNumber');
-    const facilityInput = document.getElementById('facilityId');
-    if (accessionInput) accessionInput.addEventListener('input', updateShareLink);
-    if (facilityInput) facilityInput.addEventListener('input', updateShareLink);
+/* ======= THEME ======= */
+function toggleTheme(){
+  document.body.classList.toggle("lt");
+  localStorage.setItem("itcc5_th",document.body.classList.contains("lt")?"l":"d");
+}
 
-    window.addEventListener('DOMContentLoaded', () => {
-      gsap.fromTo('#loginOverlay .login-frame',
-        { y: 24, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.55, ease: 'power2.out' }
-      );
-    });
-  </script>
+/* ======= ADMIN ======= */
+function openAdm(){G("admMod").classList.add("open");renderAdm();}
+function closeAdm(){G("admMod").classList.remove("open");}
+G("admMod").addEventListener("click",function(e){if(e.target===G("admMod"))closeAdm();});
+function admAdd(){
+  var type=G("aTyp").value,ip=G("aIP").value.trim(),nm=G("aNm").value.trim();
+  var path=G("aPth").value.trim(),req=G("aRq").value.trim(),res=G("aRs").value.trim();
+  if(!nm){toast("Name required","e");return;}
+  var c=getC(); c.push({type:type,ip:ip,nm:nm,path:path,req:req,res:res});
+  saveC(c); renderAdm(); render();
+  toast("Added: "+nm,"s");
+  ["aIP","aNm","aPth","aRq","aRs"].forEach(function(id){G(id).value="";});
+}
+function admDel(i){
+  var c=getC();
+  if(confirm('Delete "'+c[i].nm+'"?')){c.splice(i,1);saveC(c);renderAdm();render();toast("Removed","i");}
+}
+function renderAdm(){
+  var c=getC(); var el=G("admLst"); if(!el) return;
+  if(!c.length){el.innerHTML='<div style="color:var(--mu);font-size:11.5px">No custom items yet.</div>';return;}
+  el.innerHTML=c.map(function(x,i){
+    return '<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(56,189,248,.04);border:1px solid var(--b1);border-radius:7px;padding:7px 10px;font-size:11.5px">'+
+      '<div><b>'+esc(x.nm)+'</b> <span style="color:var(--mu)">'+esc(x.ip)+'</span></div>'+
+      '<button class="btn br bxs" onclick="admDel('+i+')">x</button></div>';
+  }).join("");
+}
+
+/* ======= USER DROP ======= */
+function toggleUD(){G("udrop").classList.toggle("open");}
+document.addEventListener("click",function(e){
+  if(!e.target.closest(".user-btn")&&!e.target.closest("#udrop"))G("udrop").classList.remove("open");
+});
+
+/* ======= SHORTCUTS ======= */
+function openSC(){G("scMod").classList.add("open");}
+document.querySelectorAll(".overlay").forEach(function(o){
+  o.addEventListener("click",function(e){if(e.target===o)o.classList.remove("open");});
+});
+document.addEventListener("keydown",function(e){
+  var ty=["INPUT","TEXTAREA","SELECT"].indexOf(e.target.tagName)>-1;
+  if(e.ctrlKey&&e.key==="s"){e.preventDefault();saveData();}
+  if(e.ctrlKey&&e.key==="f"){e.preventDefault();G("srch").focus();}
+  if(e.ctrlKey&&e.key==="r"&&!ty){e.preventDefault();copyRpt();}
+  if(e.ctrlKey&&e.key==="e"){e.preventDefault();exportCSV();}
+  if(e.altKey&&e.key==="1"){e.preventDefault();showTab("server",G("nb1"));}
+  if(e.altKey&&e.key==="2"){e.preventDefault();showTab("iface",G("nb2"));}
+  if(e.altKey&&e.key==="3"){e.preventDefault();showTab("special",G("nb3"));}
+  if(e.altKey&&e.key==="4"){e.preventDefault();showTab("all",G("nb4"));}
+  if(e.altKey&&e.key==="t"){e.preventDefault();toggleTheme();}
+  if(e.altKey&&e.key==="n"){e.preventDefault();toggleP("ntPan");renderNotes();}
+  if(e.altKey&&e.key==="a"){e.preventDefault();toggleP("aiPan");}
+  if(e.key==="Escape"){
+    document.querySelectorAll(".overlay.open,.udrop.open").forEach(function(el){el.classList.remove("open");});
+  }
+});
+
+/* ======= CLOCK ======= */
+function tick(){
+  var n=new Date();
+  G("clk").textContent=n.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  G("clkd").textContent=n.toLocaleDateString([],{weekday:"short",year:"numeric",month:"short",day:"numeric"});
+}
+setInterval(tick,1000); tick();
+setInterval(function(){updColors();updateKPI();},300000);
+
+/* ======= SEARCH/FILTER EVENTS ======= */
+G("srch").addEventListener("input",applyF);
+G("flt").addEventListener("change",applyF);
+G("wd").addEventListener("change",function(){render();renderNotes();renderAct();});
+
+/* ======= INIT ======= */
+G("wd").value=today();
+/* Set default inspector if none saved yet */
+if(!localStorage.getItem("itcc5_ins")) localStorage.setItem("itcc5_ins","Jobin CJ");
+var si=getIns();
+G("insInp").value=si; setIns(si);
+G("hoO").value=si;
+if(localStorage.getItem("itcc5_th")==="l") document.body.classList.add("lt");
+render();
+renderNotes();
+renderAct();
+updateStreak();
+</script>
 </body>
 </html>
