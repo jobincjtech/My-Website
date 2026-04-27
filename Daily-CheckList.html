@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CJ Server $ Interface — Daily Checklist</title>
+<title>IT Command Center — Daily Checklist</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════
@@ -954,6 +954,124 @@ tr.row-overdue { animation: pulse-amber 3s ease infinite; }
 /* ═══════════════════════════════════════════
    PRINT
 ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   CATEGORY BREAKDOWN CARDS
+═══════════════════════════════════════════ */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.cat-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.cat-card:hover { border-color: var(--border2); transform: translateY(-1px); }
+
+.cat-card-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+}
+
+.cat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.cat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.cat-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.cat-badge-blue   { color: var(--blue);   background: rgba(56,189,248,.1);  border: 1px solid rgba(56,189,248,.22); }
+.cat-badge-teal   { color: var(--teal);   background: rgba(45,212,191,.1);  border: 1px solid rgba(45,212,191,.22); }
+.cat-badge-purple { color: var(--purple); background: rgba(167,139,250,.1); border: 1px solid rgba(167,139,250,.22); }
+
+.cat-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.cat-stat {
+  text-align: center;
+  border-radius: 10px;
+  padding: 10px 4px;
+}
+
+.cat-stat-green  { background: rgba(34,197,94,.07);   border: 1px solid rgba(34,197,94,.18); }
+.cat-stat-red    { background: rgba(239,68,68,.07);   border: 1px solid rgba(239,68,68,.18); }
+.cat-stat-muted  { background: rgba(100,116,139,.07); border: 1px solid rgba(100,116,139,.18); }
+
+.cat-stat-num {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.cat-stat-green .cat-stat-num  { color: var(--green); }
+.cat-stat-red   .cat-stat-num  { color: var(--red); }
+.cat-stat-muted .cat-stat-num  { color: var(--muted); }
+
+.cat-stat-label {
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  letter-spacing: .5px;
+}
+
+.cat-bar-wrap {
+  height: 4px;
+  background: rgba(255,255,255,.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cat-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+  width: 0%;
+}
+
+.cat-pct {
+  margin-top: 5px;
+  font-size: 10px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  text-align: right;
+}
+
+@media (max-width: 900px) { .cat-grid { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .cat-grid { grid-template-columns: 1fr; } }
+
 @media print {
   .topbar, .control-bar, .tabs, .action-stack, .footer-bar,
   .ticket-panel, .history-panel, .admin-overlay, .toast-container,
@@ -997,7 +1115,7 @@ tr.row-overdue { animation: pulse-amber 3s ease infinite; }
     <div class="logo">
       <div class="logo-icon">⚡</div>
       <div>
-        <div class="logo-text">IT Command Center</div>
+        <div class="logo-text">Server $ Interface</div>
         <div class="logo-sub">Daily Monitoring Checklist</div>
       </div>
     </div>
@@ -1061,23 +1179,17 @@ tr.row-overdue { animation: pulse-amber 3s ease infinite; }
     </div>
   </div>
 
-  <!-- KPI CARDS -->
+  <!-- KPI ROW 1: Overall Summary -->
   <div class="kpi-grid">
     <div class="kpi kpi-blue">
-      <div class="kpi-icon">🖥️</div>
-      <div class="kpi-label">Total Servers</div>
-      <div class="kpi-value" id="kpiServers">0</div>
-      <div class="kpi-sub">Monitored today</div>
-    </div>
-    <div class="kpi kpi-teal">
-      <div class="kpi-icon">🔌</div>
-      <div class="kpi-label">Interfaces</div>
-      <div class="kpi-value" id="kpiInterfaces">0</div>
-      <div class="kpi-sub">Active pipelines</div>
+      <div class="kpi-icon">📋</div>
+      <div class="kpi-label">Total Items</div>
+      <div class="kpi-value" id="kpiTotal">0</div>
+      <div class="kpi-sub">All categories</div>
     </div>
     <div class="kpi kpi-green">
       <div class="kpi-icon">✅</div>
-      <div class="kpi-label">Completed</div>
+      <div class="kpi-label">Completed Today</div>
       <div class="kpi-value" id="kpiDone">0</div>
       <div class="kpi-bar"><div class="kpi-bar-fill" id="kpiDoneBar" style="width:0%"></div></div>
     </div>
@@ -1099,6 +1211,92 @@ tr.row-overdue { animation: pulse-amber 3s ease infinite; }
       <div class="kpi-value" id="kpiOverdue">0</div>
       <div class="kpi-sub">Needs attention</div>
     </div>
+    <div class="kpi kpi-teal">
+      <div class="kpi-icon">📊</div>
+      <div class="kpi-label">Overall Progress</div>
+      <div class="kpi-value" id="kpiPercent">0%</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpiPercentBar" style="width:0%;background:var(--teal)"></div></div>
+    </div>
+  </div>
+
+  <!-- KPI ROW 2: Per-Category Breakdown -->
+  <div class="cat-grid">
+
+    <!-- SERVERS -->
+    <div class="cat-card">
+      <div class="cat-card-top" style="background:linear-gradient(90deg,var(--blue2),var(--cyan));"></div>
+      <div class="cat-card-header">
+        <div class="cat-card-title"><span>🖥️</span> Servers</div>
+        <span class="cat-badge cat-badge-blue" id="catServerTotal">0 total</span>
+      </div>
+      <div class="cat-stats">
+        <div class="cat-stat cat-stat-green">
+          <div class="cat-stat-num" id="catServerDone">0</div>
+          <div class="cat-stat-label">DONE</div>
+        </div>
+        <div class="cat-stat cat-stat-red">
+          <div class="cat-stat-num" id="catServerIssue">0</div>
+          <div class="cat-stat-label">ISSUE</div>
+        </div>
+        <div class="cat-stat cat-stat-muted">
+          <div class="cat-stat-num" id="catServerPending">0</div>
+          <div class="cat-stat-label">PENDING</div>
+        </div>
+      </div>
+      <div class="cat-bar-wrap"><div class="cat-bar" id="catServerBar" style="background:linear-gradient(90deg,var(--green2),var(--green));width:0%"></div></div>
+      <div class="cat-pct" id="catServerPct">0% complete</div>
+    </div>
+
+    <!-- INTERFACES -->
+    <div class="cat-card">
+      <div class="cat-card-top" style="background:linear-gradient(90deg,var(--teal),var(--cyan));"></div>
+      <div class="cat-card-header">
+        <div class="cat-card-title"><span>🔌</span> Interfaces</div>
+        <span class="cat-badge cat-badge-teal" id="catIfaceTotal">0 total</span>
+      </div>
+      <div class="cat-stats">
+        <div class="cat-stat cat-stat-green">
+          <div class="cat-stat-num" id="catIfaceDone">0</div>
+          <div class="cat-stat-label">DONE</div>
+        </div>
+        <div class="cat-stat cat-stat-red">
+          <div class="cat-stat-num" id="catIfaceIssue">0</div>
+          <div class="cat-stat-label">ISSUE</div>
+        </div>
+        <div class="cat-stat cat-stat-muted">
+          <div class="cat-stat-num" id="catIfacePending">0</div>
+          <div class="cat-stat-label">PENDING</div>
+        </div>
+      </div>
+      <div class="cat-bar-wrap"><div class="cat-bar" id="catIfaceBar" style="background:linear-gradient(90deg,var(--teal),var(--cyan));width:0%"></div></div>
+      <div class="cat-pct" id="catIfacePct">0% complete</div>
+    </div>
+
+    <!-- SPECIAL CHECKS -->
+    <div class="cat-card">
+      <div class="cat-card-top" style="background:linear-gradient(90deg,var(--purple),var(--blue2));"></div>
+      <div class="cat-card-header">
+        <div class="cat-card-title"><span>🔷</span> Special Checks</div>
+        <span class="cat-badge cat-badge-purple" id="catSpecialTotal">0 total</span>
+      </div>
+      <div class="cat-stats">
+        <div class="cat-stat cat-stat-green">
+          <div class="cat-stat-num" id="catSpecialDone">0</div>
+          <div class="cat-stat-label">DONE</div>
+        </div>
+        <div class="cat-stat cat-stat-red">
+          <div class="cat-stat-num" id="catSpecialIssue">0</div>
+          <div class="cat-stat-label">ISSUE</div>
+        </div>
+        <div class="cat-stat cat-stat-muted">
+          <div class="cat-stat-num" id="catSpecialPending">0</div>
+          <div class="cat-stat-label">PENDING</div>
+        </div>
+      </div>
+      <div class="cat-bar-wrap"><div class="cat-bar" id="catSpecialBar" style="background:linear-gradient(90deg,var(--purple),var(--blue2));width:0%"></div></div>
+      <div class="cat-pct" id="catSpecialPct">0% complete</div>
+    </div>
+
   </div>
 
   <!-- OVERDUE ALERT -->
@@ -1716,45 +1914,100 @@ document.addEventListener('input', e => {
 ═══════════════════════════════════════════ */
 function updateKPIs() {
   const saved = loadSaved();
-  const total = BASE_SERVERS.length + BASE_INTERFACES.length + BASE_SPECIAL.length + getCustomItems().length;
+  const custom = getCustomItems();
 
-  let done=0, issue=0, ticket=0, overdue=0;
+  const sTotal  = BASE_SERVERS.length;
+  const iTotal  = BASE_INTERFACES.length + custom.filter(c=>c.type==='interface').length;
+  const spTotal = BASE_SPECIAL.length    + custom.filter(c=>c.type==='special').length;
+  const total   = sTotal + iTotal + spTotal;
 
-  Object.values(saved).forEach(r => {
-    if (r.fine === 'Working Fine') done++;
-    if (r.fine === 'Issue Found' || r.running === 'Stopped') issue++;
+  /* Per-category counters */
+  let sDone=0, sIssue=0, sPending=0;
+  let iDone=0, iIssue=0, iPending=0;
+  let spDone=0, spIssue=0, spPending=0;
+  let ticket=0, overdue=0;
+
+  for (let i = 0; i < sTotal; i++) {
+    const r = saved['s_'+i] || {};
+    if (r.fine === 'Working Fine') sDone++;
+    else if (r.fine === 'Issue Found' || r.running === 'Stopped') sIssue++;
+    else sPending++;
     if (r.ticketCreated === 'Ticket Created') ticket++;
     if (isOverdue(r.lastCheckedTs) && r.checked !== 'Checked') overdue++;
-  });
+  }
 
-  /* Items not yet in saved are automatically overdue */
-  const savedCount = Object.keys(saved).length;
-  overdue += Math.max(0, total - savedCount);
+  for (let i = 0; i < iTotal; i++) {
+    const r = saved['i_'+i] || {};
+    if (r.fine === 'Working Fine') iDone++;
+    else if (r.fine === 'Issue Found' || r.running === 'Stopped') iIssue++;
+    else iPending++;
+    if (r.ticketCreated === 'Ticket Created') ticket++;
+    if (isOverdue(r.lastCheckedTs) && r.checked !== 'Checked') overdue++;
+  }
 
-  const totalItems = BASE_SERVERS.length + BASE_INTERFACES.length + BASE_SPECIAL.length;
+  for (let i = 0; i < spTotal; i++) {
+    const r = saved['sp_'+i] || {};
+    if (r.fine === 'Working Fine') spDone++;
+    else if (r.fine === 'Issue Found' || r.running === 'Stopped') spIssue++;
+    else spPending++;
+    if (r.ticketCreated === 'Ticket Created') ticket++;
+    if (isOverdue(r.lastCheckedTs) && r.checked !== 'Checked') overdue++;
+  }
 
-  document.getElementById('kpiServers').textContent    = BASE_SERVERS.length;
-  document.getElementById('kpiInterfaces').textContent = BASE_INTERFACES.length;
-  document.getElementById('kpiDone').textContent       = done;
-  document.getElementById('kpiIssue').textContent      = issue;
-  document.getElementById('kpiTickets').textContent    = ticket;
-  document.getElementById('kpiOverdue').textContent    = overdue;
+  const done = sDone + iDone + spDone;
+  const issue = sIssue + iIssue + spIssue;
 
-  const pct = total ? Math.round(done/total*100) : 0;
-  const ipct = total ? Math.round(issue/total*100) : 0;
-  const tpct = total ? Math.round(ticket/total*100) : 0;
+  /* ── Overall KPIs ── */
+  document.getElementById('kpiTotal').textContent   = total;
+  document.getElementById('kpiDone').textContent    = done;
+  document.getElementById('kpiIssue').textContent   = issue;
+  document.getElementById('kpiTickets').textContent = ticket;
+  document.getElementById('kpiOverdue').textContent = overdue;
 
-  document.getElementById('kpiDoneBar').style.width    = pct + '%';
-  document.getElementById('kpiIssueBar').style.width   = ipct + '%';
-  document.getElementById('kpiTicketsBar').style.width = tpct + '%';
+  const pct  = total ? Math.round(done/total*100)   : 0;
+  const ipct = total ? Math.round(issue/total*100)   : 0;
+  const tpct = total ? Math.round(ticket/total*100)  : 0;
 
-  /* Overdue alert */
-  const alert = document.getElementById('overdueAlert');
+  document.getElementById('kpiDoneBar').style.width     = pct  + '%';
+  document.getElementById('kpiIssueBar').style.width    = ipct + '%';
+  document.getElementById('kpiTicketsBar').style.width  = tpct + '%';
+  document.getElementById('kpiPercent').textContent     = pct  + '%';
+  document.getElementById('kpiPercentBar').style.width  = pct  + '%';
+
+  /* ── Per-Category: Servers ── */
+  const sPct = sTotal ? Math.round(sDone/sTotal*100) : 0;
+  document.getElementById('catServerTotal').textContent   = sTotal   + ' total';
+  document.getElementById('catServerDone').textContent    = sDone;
+  document.getElementById('catServerIssue').textContent   = sIssue;
+  document.getElementById('catServerPending').textContent = sPending;
+  document.getElementById('catServerBar').style.width     = sPct + '%';
+  document.getElementById('catServerPct').textContent     = sPct + '% complete (' + sDone + '/' + sTotal + ')';
+
+  /* ── Per-Category: Interfaces ── */
+  const iPct = iTotal ? Math.round(iDone/iTotal*100) : 0;
+  document.getElementById('catIfaceTotal').textContent   = iTotal   + ' total';
+  document.getElementById('catIfaceDone').textContent    = iDone;
+  document.getElementById('catIfaceIssue').textContent   = iIssue;
+  document.getElementById('catIfacePending').textContent = iPending;
+  document.getElementById('catIfaceBar').style.width     = iPct + '%';
+  document.getElementById('catIfacePct').textContent     = iPct + '% complete (' + iDone + '/' + iTotal + ')';
+
+  /* ── Per-Category: Special Checks ── */
+  const spPct = spTotal ? Math.round(spDone/spTotal*100) : 0;
+  document.getElementById('catSpecialTotal').textContent   = spTotal   + ' total';
+  document.getElementById('catSpecialDone').textContent    = spDone;
+  document.getElementById('catSpecialIssue').textContent   = spIssue;
+  document.getElementById('catSpecialPending').textContent = spPending;
+  document.getElementById('catSpecialBar').style.width     = spPct + '%';
+  document.getElementById('catSpecialPct').textContent     = spPct + '% complete (' + spDone + '/' + spTotal + ')';
+
+  /* ── Overdue alert ── */
+  const alertEl = document.getElementById('overdueAlert');
   if (overdue > 0) {
-    alert.style.display = 'flex';
+    alertEl.style.display = 'flex';
     document.getElementById('overdueAlertText').textContent = overdue;
   } else {
-    alert.style.display = 'none';
+    alertEl.style.display = 'none';
   }
 }
 
