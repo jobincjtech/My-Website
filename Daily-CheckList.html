@@ -3,1007 +3,2231 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Server & Interface Checklist</title>
-
+<title>CJ Server $ Interface — Daily Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#07111f;
-  --panel:#0d1b2e;
-  --line:#263f5e;
-  --text:#eef7ff;
-  --muted:#9fb2c7;
-  --blue:#38bdf8;
-  --green:#22c55e;
-  --amber:#f59e0b;
-  --red:#ef4444;
-  --purple:#a78bfa;
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --bg:          #050c18;
+  --bg2:         #07111f;
+  --panel:       rgba(11,22,40,0.92);
+  --panel2:      rgba(6,14,26,0.96);
+  --border:      rgba(56,189,248,0.12);
+  --border2:     rgba(56,189,248,0.22);
+  --text:        #e8f4ff;
+  --muted:       #6b8aaa;
+  --dim:         #3a5472;
+  --blue:        #38bdf8;
+  --blue2:       #0ea5e9;
+  --green:       #22c55e;
+  --green2:      #16a34a;
+  --amber:       #f59e0b;
+  --amber2:      #d97706;
+  --red:         #ef4444;
+  --red2:        #dc2626;
+  --purple:      #a78bfa;
+  --teal:        #2dd4bf;
+  --cyan:        #67e8f9;
+  --glow-blue:   0 0 24px rgba(56,189,248,.28);
+  --glow-green:  0 0 24px rgba(34,197,94,.28);
+  --glow-red:    0 0 24px rgba(239,68,68,.28);
+  --glow-amber:  0 0 20px rgba(245,158,11,.25);
+  --radius:      14px;
+  --radius-sm:   8px;
+  --radius-lg:   20px;
+  --font-mono:   'JetBrains Mono', monospace;
+  --font-main:   'Sora', sans-serif;
+  --transition:  all 0.2s cubic-bezier(.4,0,.2,1);
 }
 
-*{box-sizing:border-box}
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body{
-  margin:0;
-  font-family:Segoe UI,Arial,sans-serif;
-  color:var(--text);
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated background grid */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(56,189,248,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,.03) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
   background:
-    radial-gradient(circle at top left,rgba(56,189,248,.18),transparent 34%),
-    radial-gradient(circle at top right,rgba(34,197,94,.12),transparent 30%),
-    linear-gradient(135deg,#040a13,#08111f 45%,#020617);
+    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(56,189,248,.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 35% at 80% 5%, rgba(34,197,94,.06) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 50% 100%, rgba(167,139,250,.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
 }
 
-.header{
-  padding:16px 20px;
-  border-bottom:1px solid var(--line);
-  background:rgba(2,6,23,.90);
-  backdrop-filter:blur(14px);
-  position:sticky;
-  top:0;
-  z-index:10;
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: #1e3a55; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--blue2); }
+
+/* ═══════════════════════════════════════════
+   LAYOUT WRAPPER
+═══════════════════════════════════════════ */
+.app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ═══════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(5,12,24,.96);
+  border-bottom: 1px solid var(--border2);
+  backdrop-filter: blur(20px);
+  padding: 0 24px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-h1{
-  margin:0;
-  font-size:23px;
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-.sub{
-  color:var(--muted);
-  font-size:13px;
-  margin-top:5px;
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.container{
-  max-width:1500px;
-  margin:auto;
-  padding:14px;
+.logo-icon {
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, var(--blue2), var(--teal));
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: var(--glow-blue);
+  flex-shrink: 0;
 }
 
-.toolbar{
-  display:grid;
-  grid-template-columns:160px 1fr 155px repeat(4,120px);
-  gap:8px;
-  margin-bottom:12px;
+.logo-text {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -.3px;
+  color: var(--text);
 }
 
-input,select,textarea{
-  width:100%;
-  border:1px solid #314a68;
-  background:#071827;
-  color:var(--text);
-  border-radius:10px;
-  padding:7px;
-  font-size:12px;
+.logo-sub {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  letter-spacing: .5px;
+  text-transform: uppercase;
 }
 
-td input,
-td select{
-  height:34px;
-  padding:5px 8px;
+.topbar-divider {
+  width: 1px;
+  height: 30px;
+  background: var(--border2);
 }
 
-textarea{
-  height:38px;
-  min-height:38px;
-  max-height:90px;
-  resize:vertical;
-  line-height:1.25;
+.live-clock {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--cyan);
+  letter-spacing: .5px;
 }
 
-button{
-  border:0;
-  border-radius:10px;
-  padding:8px 9px;
-  font-weight:700;
-  cursor:pointer;
-  color:#04111f;
-  background:var(--blue);
-  font-size:12px;
+.live-date-label {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: var(--font-mono);
 }
 
-.btn-green{background:var(--green)}
-.btn-amber{background:var(--amber)}
-.btn-red{background:var(--red);color:white}
-.btn-purple{background:var(--purple)}
-
-.cards{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:10px;
-  margin-bottom:12px;
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.card{
-  background:linear-gradient(145deg,rgba(16,29,47,.95),rgba(7,24,39,.95));
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:12px;
-  box-shadow:0 12px 28px rgba(0,0,0,.22);
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(56,189,248,.07);
+  border: 1px solid var(--border2);
+  border-radius: 40px;
+  padding: 4px 14px 4px 8px;
+  cursor: pointer;
 }
 
-.card .label{
-  color:var(--muted);
-  font-size:12px;
+.user-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue2), var(--purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
 }
 
-.card .num{
-  font-size:24px;
-  font-weight:800;
-  margin-top:2px;
+.user-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
 }
 
-.note{
-  background:rgba(56,189,248,.10);
-  border:1px solid rgba(56,189,248,.28);
-  border-radius:14px;
-  padding:10px 12px;
-  color:#dff6ff;
-  margin-bottom:12px;
-  font-size:13px;
+/* ═══════════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════════ */
+.main { padding: 20px 24px 40px; flex: 1; }
+
+/* ═══════════════════════════════════════════
+   CONTROL BAR
+═══════════════════════════════════════════ */
+.control-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  backdrop-filter: blur(10px);
 }
 
-.tabs{
-  display:flex;
-  gap:8px;
-  margin-bottom:10px;
-  flex-wrap:wrap;
+.ctrl-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.tab{
-  color:var(--text);
-  background:#10233b;
-  border:1px solid var(--line);
+.ctrl-label {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  white-space: nowrap;
 }
 
-.tab.active{
-  background:var(--blue);
-  color:#03101d;
+.ctrl-sep {
+  width: 1px;
+  height: 28px;
+  background: var(--border2);
+  flex-shrink: 0;
 }
 
-.section-head{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  align-items:center;
-  margin:16px 0 8px;
-  flex-wrap:wrap;
+/* ═══════════════════════════════════════════
+   FORM ELEMENTS
+═══════════════════════════════════════════ */
+input[type="date"],
+input[type="text"],
+input[type="search"],
+select,
+textarea {
+  font-family: var(--font-main);
+  font-size: 12px;
+  background: rgba(5,14,28,.9);
+  border: 1px solid rgba(56,189,248,.18);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 7px 11px;
+  outline: none;
+  transition: var(--transition);
 }
 
-h2{
-  margin:0;
-  font-size:18px;
+input[type="date"]:focus,
+input[type="text"]:focus,
+input[type="search"]:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--blue2);
+  box-shadow: 0 0 0 2px rgba(56,189,248,.12);
 }
 
-.table-frame{
-  width:100%;
-  border:1px solid var(--line);
-  border-radius:18px;
-  background:rgba(9,20,34,.94);
-  box-shadow:0 16px 34px rgba(0,0,0,.22);
-  overflow:hidden;
+input[type="date"] { width: 145px; }
+input[type="search"] { width: 220px; }
+select { cursor: pointer; }
+select option { background: #07111f; }
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn {
+  font-family: var(--font-main);
+  font-size: 11.5px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 7px 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: var(--transition);
+  white-space: nowrap;
+  letter-spacing: .1px;
 }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  table-layout:fixed;
+.btn:active { transform: scale(.97); }
+
+.btn-primary { background: var(--blue2); color: #020e1c; }
+.btn-primary:hover { background: var(--blue); box-shadow: var(--glow-blue); }
+
+.btn-success { background: var(--green2); color: #f0fff4; }
+.btn-success:hover { background: var(--green); box-shadow: var(--glow-green); }
+
+.btn-warning { background: var(--amber2); color: #1a0800; }
+.btn-warning:hover { background: var(--amber); box-shadow: var(--glow-amber); }
+
+.btn-danger { background: rgba(239,68,68,.15); color: var(--red); border: 1px solid rgba(239,68,68,.3); }
+.btn-danger:hover { background: var(--red2); color: #fff; box-shadow: var(--glow-red); }
+
+.btn-ghost { background: rgba(56,189,248,.08); color: var(--blue); border: 1px solid var(--border2); }
+.btn-ghost:hover { background: rgba(56,189,248,.16); }
+
+.btn-purple { background: rgba(167,139,250,.15); color: var(--purple); border: 1px solid rgba(167,139,250,.3); }
+.btn-purple:hover { background: var(--purple); color: #1a0030; }
+
+.btn-sm { padding: 5px 10px; font-size: 10.5px; border-radius: 7px; }
+.btn-xs { padding: 3px 7px; font-size: 10px; border-radius: 6px; }
+
+/* ═══════════════════════════════════════════
+   KPI CARDS
+═══════════════════════════════════════════ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-th,td{
-  border-bottom:1px solid #1d334d;
-  padding:7px;
-  vertical-align:middle;
-  font-size:12px;
-  overflow:hidden;
+.kpi {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
 }
 
-th{
-  background:#112846;
-  color:#e3f7ff;
-  text-align:left;
-  font-size:11px;
-  position:sticky;
-  top:0;
-  z-index:3;
+.kpi::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
 }
 
-/* Completed Row */
-tr.done-row td{
-  background:linear-gradient(90deg,rgba(15,118,110,.58),rgba(20,83,45,.22)) !important;
-  border-bottom-color:rgba(34,197,94,.55);
+.kpi.kpi-blue::before { background: linear-gradient(90deg, var(--blue2), var(--cyan)); }
+.kpi.kpi-green::before { background: linear-gradient(90deg, var(--green2), var(--teal)); }
+.kpi.kpi-amber::before { background: linear-gradient(90deg, var(--amber2), var(--amber)); }
+.kpi.kpi-red::before { background: linear-gradient(90deg, var(--red2), var(--red)); }
+.kpi.kpi-purple::before { background: linear-gradient(90deg, var(--purple), var(--blue)); }
+.kpi.kpi-teal::before { background: linear-gradient(90deg, var(--teal), var(--cyan)); }
+
+.kpi:hover { border-color: var(--border2); transform: translateY(-1px); }
+
+.kpi-icon { font-size: 18px; margin-bottom: 6px; }
+.kpi-label { font-size: 10px; color: var(--muted); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .5px; }
+.kpi-value { font-size: 28px; font-weight: 800; line-height: 1; margin-top: 3px; letter-spacing: -1px; }
+.kpi.kpi-blue .kpi-value { color: var(--blue); }
+.kpi.kpi-green .kpi-value { color: var(--green); }
+.kpi.kpi-amber .kpi-value { color: var(--amber); }
+.kpi.kpi-red .kpi-value { color: var(--red); }
+.kpi.kpi-purple .kpi-value { color: var(--purple); }
+.kpi.kpi-teal .kpi-value { color: var(--teal); }
+.kpi-sub { font-size: 10px; color: var(--muted); margin-top: 4px; font-family: var(--font-mono); }
+
+/* Progress bar inside KPI */
+.kpi-bar { margin-top: 8px; height: 3px; background: rgba(255,255,255,.07); border-radius: 3px; overflow: hidden; }
+.kpi-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+.kpi.kpi-green .kpi-bar-fill { background: var(--green); }
+.kpi.kpi-red .kpi-bar-fill { background: var(--red); }
+.kpi.kpi-amber .kpi-bar-fill { background: var(--amber); }
+
+/* ═══════════════════════════════════════════
+   ALERT BANNER
+═══════════════════════════════════════════ */
+.alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(245,158,11,.08);
+  border: 1px solid rgba(245,158,11,.25);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-size: 12.5px;
+  color: #fde68a;
 }
 
-/* Issue Row */
-tr.issue-row td{
-  background:linear-gradient(90deg,rgba(127,29,29,.45),rgba(69,10,10,.20)) !important;
-  border-bottom-color:rgba(239,68,68,.48);
+.alert-banner.alert-info {
+  background: rgba(56,189,248,.06);
+  border-color: rgba(56,189,248,.2);
+  color: #bae6fd;
 }
 
-/* Pending Row */
-tr.pending-row td{
-  background:rgba(245,158,11,.045);
+/* ═══════════════════════════════════════════
+   SECTION HEADER
+═══════════════════════════════════════════ */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-tr.done-row td:first-child{
-  border-left:5px solid #22c55e;
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-tr.issue-row td:first-child{
-  border-left:5px solid #ef4444;
+.section-title h2 {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -.3px;
 }
 
-tr.pending-row td:first-child{
-  border-left:5px solid rgba(245,158,11,.55);
+.section-badge {
+  background: rgba(56,189,248,.1);
+  border: 1px solid var(--border2);
+  color: var(--blue);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 2px 9px;
+  border-radius: 20px;
 }
 
-.ip{
-  font-weight:800;
-  color:#dff6ff;
-  white-space:nowrap;
+.section-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.compactText{
-  font-size:11px;
-  line-height:1.25;
-  color:#bcd3ea;
-  max-height:34px;
-  overflow:hidden;
-  text-overflow:ellipsis;
+/* ═══════════════════════════════════════════
+   TABLE WRAPPER
+═══════════════════════════════════════════ */
+.table-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--panel2);
+  box-shadow: 0 20px 50px rgba(0,0,0,.35);
+  margin-bottom: 24px;
 }
 
-.compactText:hover{
-  max-height:none;
-  background:#071827;
-  border-radius:8px;
-  padding:5px;
+.table-scroll { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  min-width: 900px;
 }
 
-.actionStack{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  align-items:stretch;
+thead th {
+  background: rgba(8,18,34,.98);
+  color: var(--muted);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  padding: 10px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border2);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  white-space: nowrap;
 }
 
-.actionStack button{
-  width:100%;
-  height:28px;
-  font-size:11px;
-  border-radius:8px;
-  padding:5px;
+tbody td {
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(30,51,77,.5);
+  vertical-align: middle;
+  font-size: 12px;
+  overflow: hidden;
 }
 
-/* Table column width - Server */
-.server-table col:nth-child(1){width:3%}
-.server-table col:nth-child(2){width:10%}
-.server-table col:nth-child(3){width:9%}
-.server-table col:nth-child(4){width:10%}
-.server-table col:nth-child(5){width:10%}
-.server-table col:nth-child(6){width:9%}
-.server-table col:nth-child(7){width:17%}
-.server-table col:nth-child(8){width:14%}
-.server-table col:nth-child(9){width:11%}
-.server-table col:nth-child(10){width:7%}
+tbody tr { transition: background .15s; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: rgba(56,189,248,.025); }
 
-/* Table column width - Interface */
-.interface-table col:nth-child(1){width:3%}
-.interface-table col:nth-child(2){width:8%}
-.interface-table col:nth-child(3){width:10%}
-.interface-table col:nth-child(4){width:13%}
-.interface-table col:nth-child(5){width:7%}
-.interface-table col:nth-child(6){width:8%}
-.interface-table col:nth-child(7){width:7%}
-.interface-table col:nth-child(8){width:9%}
-.interface-table col:nth-child(9){width:9%}
-.interface-table col:nth-child(10){width:8%}
-.interface-table col:nth-child(11){width:10%}
-.interface-table col:nth-child(12){width:8%}
+/* Status row colors */
+tbody tr.row-done td {
+  background: linear-gradient(90deg, rgba(22,163,74,.12), rgba(6,78,59,.06));
+  border-bottom-color: rgba(34,197,94,.2);
+}
+tbody tr.row-done td:first-child { border-left: 3px solid var(--green); }
 
-.historyBox{
-  display:none;
-  margin-top:14px;
+tbody tr.row-issue td {
+  background: linear-gradient(90deg, rgba(185,28,28,.1), rgba(127,29,29,.05));
+  border-bottom-color: rgba(239,68,68,.2);
+}
+tbody tr.row-issue td:first-child { border-left: 3px solid var(--red); }
+
+tbody tr.row-overdue td {
+  background: linear-gradient(90deg, rgba(180,83,9,.12), rgba(120,53,15,.05));
+  border-bottom-color: rgba(245,158,11,.2);
+}
+tbody tr.row-overdue td:first-child { border-left: 3px solid var(--amber); }
+
+tbody tr.row-pending td:first-child { border-left: 3px solid var(--dim); }
+
+/* ═══════════════════════════════════════════
+   TABLE CELLS
+═══════════════════════════════════════════ */
+.cell-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
 }
 
-.historyList{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:8px;
+.cell-ip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cyan);
+  white-space: nowrap;
 }
 
-.historyItem{
-  background:#0c1b2d;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:10px;
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  align-items:center;
-  font-size:13px;
+.cell-name {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text);
 }
 
-.footer-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin:16px 0;
+.cell-path {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--muted);
+  line-height: 1.3;
+  max-height: 36px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: help;
 }
 
-@media(max-width:1050px){
-  .toolbar{grid-template-columns:1fr 1fr}
-  .cards{grid-template-columns:1fr 1fr}
-  table{min-width:1000px}
-  .table-frame{overflow:auto}
-  .header{position:relative}
+.cell-path:hover {
+  max-height: none;
+  background: rgba(0,0,0,.4);
+  border-radius: 6px;
+  padding: 4px;
 }
 
-@media(max-width:700px){
-  .toolbar,.cards{grid-template-columns:1fr}
-  .container{padding:8px}
+/* Status badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-@media print{
-  .header,.toolbar,.tabs,.footer-actions,.actionStack,.no-print,.historyBox{display:none!important}
-  body{background:#fff;color:#000}
-  .card,.table-frame,.note{
-    box-shadow:none;
-    border:1px solid #999;
-    background:#fff;
-    color:#000;
-  }
-  input,select,textarea{
-    border:0;
-    background:#fff;
-    color:#000;
-  }
-  .compactText{
-    max-height:none;
-    color:#000;
-  }
+.badge-done    { background: rgba(34,197,94,.15); color: var(--green); border: 1px solid rgba(34,197,94,.3); }
+.badge-issue   { background: rgba(239,68,68,.15); color: var(--red);   border: 1px solid rgba(239,68,68,.3); }
+.badge-pending { background: rgba(100,116,139,.1); color: var(--muted); border: 1px solid rgba(100,116,139,.2); }
+.badge-overdue { background: rgba(245,158,11,.15); color: var(--amber); border: 1px solid rgba(245,158,11,.3); }
+
+/* Table select */
+td select,
+td input[type="text"] {
+  height: 30px;
+  width: 100%;
+  background: rgba(5,14,28,.8);
+  border: 1px solid rgba(56,189,248,.12);
+  color: var(--text);
+  border-radius: 7px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-family: var(--font-main);
+  cursor: pointer;
+  outline: none;
+  transition: var(--transition);
+}
+
+td select:focus,
+td input[type="text"]:focus {
+  border-color: var(--blue2);
+  box-shadow: 0 0 0 2px rgba(56,189,248,.1);
+}
+
+td textarea {
+  width: 100%;
+  min-height: 32px;
+  max-height: 80px;
+  background: rgba(5,14,28,.8);
+  border: 1px solid rgba(56,189,248,.12);
+  color: var(--text);
+  border-radius: 7px;
+  padding: 5px 8px;
+  font-size: 11px;
+  font-family: var(--font-main);
+  resize: vertical;
+  outline: none;
+  transition: var(--transition);
+  line-height: 1.3;
+}
+
+td textarea:focus { border-color: var(--blue2); }
+
+/* Action stack */
+.action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Last checked cell */
+.last-checked {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.lc-today { color: var(--green); }
+.lc-yesterday { color: var(--amber); }
+.lc-overdue { color: var(--red); }
+.lc-never { color: var(--muted); }
+
+/* Inspector input */
+td input.inspector-input {
+  height: 28px;
+  font-size: 10.5px;
+}
+
+/* ═══════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════ */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 14px;
+  background: rgba(5,12,24,.7);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px;
+  width: fit-content;
+}
+
+.tab-btn {
+  font-family: var(--font-main);
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 7px 18px;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--muted);
+  background: transparent;
+}
+
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active {
+  background: var(--blue2);
+  color: #020e1c;
+  box-shadow: 0 2px 12px rgba(14,165,233,.35);
+}
+
+/* ═══════════════════════════════════════════
+   QUICK TICKET PANEL
+═══════════════════════════════════════════ */
+.ticket-panel {
+  background: var(--panel);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  display: none;
+}
+
+.ticket-panel.open { display: block; }
+
+.ticket-panel h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--blue);
+}
+
+.ticket-output {
+  background: rgba(0,0,0,.4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  white-space: pre-wrap;
+  min-height: 80px;
+  max-height: 260px;
+  overflow-y: auto;
+  margin-top: 10px;
+  line-height: 1.55;
+}
+
+/* ═══════════════════════════════════════════
+   HISTORY PANEL
+═══════════════════════════════════════════ */
+.history-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  display: none;
+}
+
+.history-panel.open { display: block; }
+
+.history-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.history-chip {
+  background: rgba(56,189,248,.07);
+  border: 1px solid var(--border2);
+  border-radius: 40px;
+  padding: 5px 16px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-chip:hover { background: rgba(56,189,248,.15); }
+
+.history-chip .del-btn {
+  color: var(--red);
+  font-size: 11px;
+  cursor: pointer;
+  opacity: .6;
+}
+
+.history-chip .del-btn:hover { opacity: 1; }
+
+/* ═══════════════════════════════════════════
+   ADMIN PANEL
+═══════════════════════════════════════════ */
+.admin-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 500;
+  backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-overlay.open { display: flex; }
+
+.admin-modal {
+  background: linear-gradient(145deg, #091627, #040c18);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  max-width: 540px;
+  width: 95%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.admin-modal h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  color: var(--purple);
+}
+
+.admin-form-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.form-field label {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 5px;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+}
+
+.form-field textarea { min-height: 60px; resize: vertical; }
+
+/* ═══════════════════════════════════════════
+   COLUMN WIDTHS — SERVER TABLE
+═══════════════════════════════════════════ */
+.server-table col:nth-child(1)  { width: 3%; }
+.server-table col:nth-child(2)  { width: 10%; }
+.server-table col:nth-child(3)  { width: 8%; }
+.server-table col:nth-child(4)  { width: 9%; }
+.server-table col:nth-child(5)  { width: 9%; }
+.server-table col:nth-child(6)  { width: 7%; }
+.server-table col:nth-child(7)  { width: 8%; }
+.server-table col:nth-child(8)  { width: 9%; }
+.server-table col:nth-child(9)  { width: 11%; }
+.server-table col:nth-child(10) { width: 10%; }
+.server-table col:nth-child(11) { width: 8%; }
+.server-table col:nth-child(12) { width: 8%; }
+
+/* ═══════════════════════════════════════════
+   COLUMN WIDTHS — INTERFACE TABLE
+═══════════════════════════════════════════ */
+.iface-table col:nth-child(1)  { width: 3%; }
+.iface-table col:nth-child(2)  { width: 9%; }
+.iface-table col:nth-child(3)  { width: 9%; }
+.iface-table col:nth-child(4)  { width: 11%; }
+.iface-table col:nth-child(5)  { width: 7%; }
+.iface-table col:nth-child(6)  { width: 7%; }
+.iface-table col:nth-child(7)  { width: 7%; }
+.iface-table col:nth-child(8)  { width: 7%; }
+.iface-table col:nth-child(9)  { width: 7%; }
+.iface-table col:nth-child(10) { width: 8%; }
+.iface-table col:nth-child(11) { width: 8%; }
+.iface-table col:nth-child(12) { width: 9%; }
+.iface-table col:nth-child(13) { width: 8%; }
+
+/* ═══════════════════════════════════════════
+   USER PANEL
+═══════════════════════════════════════════ */
+.user-panel {
+  display: none;
+  position: absolute;
+  top: 66px;
+  right: 24px;
+  background: #071522;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  z-index: 200;
+  min-width: 220px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.4);
+}
+
+.user-panel.open { display: block; }
+
+.user-panel-label { font-size: 10px; color: var(--muted); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase; }
+
+.user-panel input {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   SEARCH HIGHLIGHT
+═══════════════════════════════════════════ */
+.hl { background: rgba(245,158,11,.3); border-radius: 2px; padding: 0 1px; }
+
+/* ═══════════════════════════════════════════
+   PULSE ANIMATION (overdue)
+═══════════════════════════════════════════ */
+@keyframes pulse-amber {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,.3); }
+  50%       { box-shadow: 0 0 0 5px rgba(245,158,11,.0); }
+}
+
+tr.row-overdue { animation: pulse-amber 3s ease infinite; }
+
+/* ═══════════════════════════════════════════
+   FOOTER ACTIONS
+═══════════════════════════════════════════ */
+.footer-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 6px;
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  background: #0a1e35;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  font-size: 12.5px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
+  animation: slideIn .25s ease forwards;
+  max-width: 300px;
+}
+
+.toast.toast-success { border-color: rgba(34,197,94,.4); }
+.toast.toast-error   { border-color: rgba(239,68,68,.4); }
+.toast.toast-info    { border-color: rgba(56,189,248,.4); }
+
+@keyframes slideIn {
+  from { transform: translateX(60px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateX(30px); }
+}
+
+/* ═══════════════════════════════════════════
+   PRINT
+═══════════════════════════════════════════ */
+@media print {
+  .topbar, .control-bar, .tabs, .action-stack, .footer-bar,
+  .ticket-panel, .history-panel, .admin-overlay, .toast-container,
+  .user-panel, .no-print { display: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+  .kpi { border: 1px solid #ccc; background: #f9f9f9 !important; }
+  .kpi-value { color: #000 !important; }
+  .table-wrap { box-shadow: none; border: 1px solid #ccc; }
+  thead th { background: #eee !important; color: #333 !important; }
+  tbody td { border-color: #ddd !important; }
+  body::before, body::after { display: none; }
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 1200px) {
+  .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .main { padding: 14px; }
+  .topbar { padding: 0 14px; }
+}
+
+@media (max-width: 600px) {
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .control-bar { flex-direction: column; align-items: flex-start; }
+  input[type="search"] { width: 100%; }
+  .tabs { width: 100%; justify-content: space-between; }
 }
 </style>
 </head>
-
 <body>
+<div class="app">
 
-<div class="header">
-  <h1>Daily Server & Interface Checklist</h1>
-  <div class="sub">Daily reset by date. Completed rows turn dark green when Checked + Ticket Created.</div>
+<!-- ─────────────── TOPBAR ─────────────── -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">IT Command Center</div>
+        <div class="logo-sub">Daily Monitoring Checklist</div>
+      </div>
+    </div>
+    <div class="topbar-divider"></div>
+    <div>
+      <div class="live-clock" id="liveClock">00:00:00</div>
+      <div class="live-date-label" id="liveDate">—</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="user-badge no-print" onclick="toggleUserPanel()">
+      <div class="user-avatar" id="avatarInitials">IT</div>
+      <div class="user-name" id="userNameDisplay">Inspector</div>
+    </div>
+  </div>
+</header>
+
+<!-- User Panel -->
+<div class="user-panel" id="userPanel">
+  <div class="user-panel-label">Inspector Name</div>
+  <input type="text" id="inspectorInput" placeholder="Enter your name…" oninput="setInspector(this.value)">
+  <div style="font-size:11px;color:var(--muted);margin-top:4px;">Changes apply to all new completions.</div>
 </div>
 
-<div class="container">
+<!-- ─────────────── MAIN ─────────────── -->
+<main class="main">
 
-  <div class="toolbar no-print">
-    <input type="date" id="workDate">
-    <input type="text" id="searchBox" placeholder="Search IP / interface / ticket / path">
-    <select id="filterBox">
-      <option value="">All Items</option>
-      <option value="Working Fine">Working Fine</option>
-      <option value="Issue Found">Issue Found</option>
-      <option value="Pending">Pending</option>
-      <option value="Ticket Created">Ticket Created</option>
-      <option value="Ticket Not Created">Ticket Not Created</option>
-    </select>
-    <button class="btn-green" onclick="saveData()">Save</button>
-    <button class="btn-amber" onclick="copyReport()">Copy Report</button>
-    <button class="btn-purple" onclick="exportCSV()">Export CSV</button>
-    <button onclick="toggleHistory()">History</button>
+  <!-- CONTROL BAR -->
+  <div class="control-bar no-print">
+    <div class="ctrl-group">
+      <div class="ctrl-label">Date</div>
+      <input type="date" id="workDate">
+    </div>
+    <div class="ctrl-sep"></div>
+    <div class="ctrl-group">
+      <div class="ctrl-label">Search</div>
+      <input type="search" id="searchBox" placeholder="IP · name · ticket · path…" oninput="applyFilters()">
+    </div>
+    <div class="ctrl-group">
+      <div class="ctrl-label">Filter</div>
+      <select id="filterBox" onchange="applyFilters()">
+        <option value="">All Items</option>
+        <option value="Working Fine">✅ Working Fine</option>
+        <option value="Issue Found">❌ Issue Found</option>
+        <option value="Pending">🕒 Pending</option>
+        <option value="Ticket Created">🎫 Ticket Created</option>
+        <option value="Ticket Not Created">📋 No Ticket</option>
+        <option value="overdue">⚠️ Overdue (&gt;24h)</option>
+      </select>
+    </div>
+    <div class="ctrl-sep"></div>
+    <div class="ctrl-group">
+      <button class="btn btn-primary" onclick="saveData()">💾 Save</button>
+      <button class="btn btn-success" onclick="copyReport()">📋 Copy Report</button>
+      <button class="btn btn-warning no-print" onclick="exportCSV()">📊 Export CSV</button>
+      <button class="btn btn-ghost no-print" onclick="toggleTicketPanel()">🎫 Quick Ticket</button>
+      <button class="btn btn-ghost no-print" onclick="toggleHistory()">🕒 History</button>
+      <button class="btn btn-purple no-print" onclick="openAdmin()">⚙️ Admin</button>
+      <button class="btn btn-ghost no-print" onclick="window.print()">🖨️ Print</button>
+      <button class="btn btn-danger no-print" onclick="resetToday()">🗑️ Reset</button>
+    </div>
   </div>
 
-  <div class="cards">
-    <div class="card"><div class="label">Servers</div><div class="num" id="serverCount">0</div></div>
-    <div class="card"><div class="label">Interfaces</div><div class="num" id="interfaceCount">0</div></div>
-    <div class="card"><div class="label">Working Fine</div><div class="num" id="fineCount">0</div></div>
-    <div class="card"><div class="label">Ticket Created</div><div class="num" id="ticketCount">0</div></div>
-    <div class="card"><div class="label">Issue / Pending</div><div class="num" id="issueCount">0</div></div>
+  <!-- KPI CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi kpi-blue">
+      <div class="kpi-icon">🖥️</div>
+      <div class="kpi-label">Total Servers</div>
+      <div class="kpi-value" id="kpiServers">0</div>
+      <div class="kpi-sub">Monitored today</div>
+    </div>
+    <div class="kpi kpi-teal">
+      <div class="kpi-icon">🔌</div>
+      <div class="kpi-label">Interfaces</div>
+      <div class="kpi-value" id="kpiInterfaces">0</div>
+      <div class="kpi-sub">Active pipelines</div>
+    </div>
+    <div class="kpi kpi-green">
+      <div class="kpi-icon">✅</div>
+      <div class="kpi-label">Completed</div>
+      <div class="kpi-value" id="kpiDone">0</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpiDoneBar" style="width:0%"></div></div>
+    </div>
+    <div class="kpi kpi-red">
+      <div class="kpi-icon">❌</div>
+      <div class="kpi-label">Issues / Pending</div>
+      <div class="kpi-value" id="kpiIssue">0</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpiIssueBar" style="width:0%"></div></div>
+    </div>
+    <div class="kpi kpi-amber">
+      <div class="kpi-icon">🎫</div>
+      <div class="kpi-label">Tickets Created</div>
+      <div class="kpi-value" id="kpiTickets">0</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" id="kpiTicketsBar" style="width:0%"></div></div>
+    </div>
+    <div class="kpi kpi-purple">
+      <div class="kpi-icon">⚠️</div>
+      <div class="kpi-label">Overdue (&gt;24h)</div>
+      <div class="kpi-value" id="kpiOverdue">0</div>
+      <div class="kpi-sub">Needs attention</div>
+    </div>
   </div>
 
-  <div class="note">
-    Every day opens as a fresh checklist. Previous dates are available from <b>History</b>. Use <b>Path</b>, <b>Request</b>, <b>Resolution</b>, or <b>Full</b> to copy ticket content.
+  <!-- OVERDUE ALERT -->
+  <div class="alert-banner" id="overdueAlert" style="display:none">
+    ⚠️ <strong>Attention:</strong> <span id="overdueAlertText"></span> items have not been checked in over 24 hours.
   </div>
 
-  <div id="historyBox" class="historyBox no-print">
-    <h2>Saved Dates</h2>
-    <div id="historyList" class="historyList"></div>
+  <!-- HISTORY -->
+  <div class="history-panel" id="historyPanel">
+    <h3>📁 Saved History</h3>
+    <div class="history-grid" id="historyGrid"></div>
   </div>
 
+  <!-- QUICK TICKET PANEL -->
+  <div class="ticket-panel" id="ticketPanel">
+    <h3>🎫 Quick Ticket Generator</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+      <div style="font-size:12px;color:var(--muted);">Select items with <strong style="color:var(--text)">Issue Found</strong> or <strong style="color:var(--text)">Ticket Not Created</strong> to generate a combined ticket.</div>
+      <button class="btn btn-primary btn-sm" onclick="generateCombinedTicket()">⚡ Generate Combined Ticket</button>
+      <button class="btn btn-success btn-sm" onclick="copyCombinedTicket()">📋 Copy Ticket</button>
+    </div>
+    <div class="ticket-output" id="ticketOutput">Combined ticket will appear here…</div>
+  </div>
+
+  <!-- TABS -->
   <div class="tabs no-print">
-    <button class="tab active" onclick="showTab('server',this)">Server Checklist</button>
-    <button class="tab" onclick="showTab('interface',this)">Interface Checklist</button>
-    <button class="tab" onclick="showTab('all',this)">Show Both</button>
+    <button class="tab-btn active" onclick="showTab('server',this)">🖥️ Servers</button>
+    <button class="tab-btn" onclick="showTab('interface',this)">🔌 Interfaces</button>
+    <button class="tab-btn" onclick="showTab('special',this)">🔷 Special Checks</button>
+    <button class="tab-btn" onclick="showTab('all',this)">📋 Show All</button>
   </div>
 
+  <!-- ═══ SERVER TABLE ═══ -->
   <section id="serverSection">
-    <div class="section-head">
-      <h2>Server Check</h2>
-      <button class="btn-green no-print" onclick="markAllServersFine()">Mark All Servers Working Fine</button>
+    <div class="section-header">
+      <div class="section-title">
+        <h2>🖥️ Server Check</h2>
+        <span class="section-badge" id="serverBadge">0 servers</span>
+      </div>
+      <div class="section-actions">
+        <button class="btn btn-success btn-sm no-print" onclick="markAllFine('server')">✅ Mark All Fine</button>
+        <button class="btn btn-ghost btn-sm no-print" onclick="collapseAll('server')">🔼 Collapse Checked</button>
+      </div>
     </div>
 
-    <div class="table-frame">
-      <table id="serverTable" class="server-table">
-        <colgroup>
-          <col><col><col><col><col><col><col><col><col><col>
-        </colgroup>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Server IP</th>
-            <th>Checked?</th>
-            <th>Working Fine?</th>
-            <th>Ticket Created?</th>
-            <th>Ticket No</th>
-            <th>Storage / Status</th>
-            <th>Request</th>
-            <th>Resolution</th>
-            <th>Copy</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table class="server-table">
+          <colgroup><col><col><col><col><col><col><col><col><col><col><col><col></colgroup>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Server IP</th>
+              <th>Checked?</th>
+              <th>Status</th>
+              <th>Ticket</th>
+              <th>Ticket No</th>
+              <th>Inspector</th>
+              <th>Last Checked</th>
+              <th>Storage / Notes</th>
+              <th>Resolution</th>
+              <th>Visibility</th>
+              <th>Copy</th>
+            </tr>
+          </thead>
+          <tbody id="serverTbody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
+  <!-- ═══ INTERFACE TABLE ═══ -->
   <section id="interfaceSection" style="display:none">
-    <div class="section-head">
-      <h2>Interface Check</h2>
-      <button class="btn-green no-print" onclick="markAllInterfacesFine()">Mark All Interfaces Working Fine</button>
+    <div class="section-header">
+      <div class="section-title">
+        <h2>🔌 Interface Check</h2>
+        <span class="section-badge" id="ifaceBadge">0 interfaces</span>
+      </div>
+      <div class="section-actions">
+        <button class="btn btn-success btn-sm no-print" onclick="markAllFine('interface')">✅ Mark All Fine</button>
+      </div>
     </div>
 
-    <div class="table-frame">
-      <table id="interfaceTable" class="interface-table">
-        <colgroup>
-          <col><col><col><col><col><col><col><col><col><col><col><col>
-        </colgroup>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Server IP</th>
-            <th>Interface</th>
-            <th>Path / Details</th>
-            <th>Checked?</th>
-            <th>Running?</th>
-            <th>Logs?</th>
-            <th>Working Fine?</th>
-            <th>Ticket Created?</th>
-            <th>Ticket No</th>
-            <th>Resolution</th>
-            <th>Copy</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table class="iface-table">
+          <colgroup><col><col><col><col><col><col><col><col><col><col><col><col><col></colgroup>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Server IP</th>
+              <th>Interface</th>
+              <th>Path / Details</th>
+              <th>Checked?</th>
+              <th>Running?</th>
+              <th>Logs?</th>
+              <th>Status</th>
+              <th>Ticket</th>
+              <th>Ticket No</th>
+              <th>Inspector</th>
+              <th>Last Checked</th>
+              <th>Copy</th>
+            </tr>
+          </thead>
+          <tbody id="ifaceTbody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
-  <div class="footer-actions no-print">
-    <button onclick="window.print()">Print / Save PDF</button>
-    <button class="btn-red" onclick="resetToday()">Reset Selected Date</button>
+  <!-- ═══ SPECIAL CHECKS TABLE ═══ -->
+  <section id="specialSection" style="display:none">
+    <div class="section-header">
+      <div class="section-title">
+        <h2>🔷 Special Checks</h2>
+        <span class="section-badge" id="specialBadge">0 items</span>
+      </div>
+      <div class="section-actions">
+        <button class="btn btn-success btn-sm no-print" onclick="markAllFine('special')">✅ Mark All Fine</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table class="iface-table">
+          <colgroup><col><col><col><col><col><col><col><col><col><col><col><col><col></colgroup>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Category</th>
+              <th>Check Name</th>
+              <th>Details</th>
+              <th>Checked?</th>
+              <th>Running?</th>
+              <th>Logs?</th>
+              <th>Status</th>
+              <th>Ticket</th>
+              <th>Ticket No</th>
+              <th>Inspector</th>
+              <th>Last Checked</th>
+              <th>Copy</th>
+            </tr>
+          </thead>
+          <tbody id="specialTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER ACTIONS -->
+  <div class="footer-bar no-print" style="margin-top:14px;">
+    <button class="btn btn-primary" onclick="saveData()">💾 Save All</button>
+    <button class="btn btn-warning" onclick="exportCSV()">📊 Export CSV</button>
+    <button class="btn btn-ghost" onclick="window.print()">🖨️ Print / PDF</button>
+    <button class="btn btn-danger" onclick="resetToday()">🗑️ Reset Selected Date</button>
   </div>
 
+</main>
 </div>
+
+<!-- ADMIN MODAL -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+      <h3>⚙️ Admin Panel</h3>
+      <button class="btn btn-ghost btn-sm" onclick="closeAdmin()">✕ Close</button>
+    </div>
+
+    <div style="margin-bottom:18px;">
+      <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:10px;">Add New Checklist Item</div>
+      <div class="admin-form-grid">
+        <div class="form-row">
+          <div class="form-field">
+            <label>Type</label>
+            <select id="adminType">
+              <option value="server">Server</option>
+              <option value="interface">Interface</option>
+              <option value="special">Special Check</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Server IP / Category</label>
+            <input type="text" id="adminIP" placeholder="172.19.x.x or category">
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Name / Description</label>
+          <input type="text" id="adminName" placeholder="Interface or check name">
+        </div>
+        <div class="form-field">
+          <label>Path / Details</label>
+          <input type="text" id="adminPath" placeholder="Executable path, URL, or details">
+        </div>
+        <div class="form-field">
+          <label>Custom Request Text (optional)</label>
+          <textarea id="adminRequest" placeholder="Leave blank to use default template"></textarea>
+        </div>
+        <div class="form-field">
+          <label>Custom Resolution Text (optional)</label>
+          <textarea id="adminResolution" placeholder="Leave blank to use default template"></textarea>
+        </div>
+        <button class="btn btn-success" onclick="adminAddItem()">➕ Add Item</button>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:10px;">Manage Custom Items</div>
+    <div id="adminItemList" style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
 
 <script>
-const STORE_PREFIX="dailyChecklistFinal_";
-
-const servers=[
-"172.19.8.32",
-"172.19.241.4",
-"172.19.241.6",
-"172.19.241.10",
-"172.19.241.15",
-"172.19.241.21",
-"172.19.241.14",
-"172.19.243.7",
-"172.19.243.9",
-"172.19.243.11",
-"172.19.238.13",
-"172.19.8.150",
-"172.19.238.14",
-"172.19.238.12",
-"172.19.238.15",
-"172.19.241.30",
-"172.19.241.36",
-"172.19.241.24",
-"172.19.241.45",
-"172.19.14.199",
-"172.19.8.20",
-"172.19.241.37",
-"172.19.58.110",
-"172.19.113.50",
-"172.19.8.48"
+/* ═══════════════════════════════════════════
+   DATA — SERVERS
+═══════════════════════════════════════════ */
+const BASE_SERVERS = [
+  "172.19.8.32","172.19.241.4","172.19.241.6","172.19.241.10","172.19.241.15",
+  "172.19.241.21","172.19.241.14","172.19.243.7","172.19.243.9","172.19.243.11",
+  "172.19.238.13","172.19.8.150","172.19.238.14","172.19.238.12","172.19.238.15",
+  "172.19.241.30","172.19.241.36","172.19.241.24","172.19.241.45","172.19.14.199",
+  "172.19.8.20","172.19.241.37","172.19.58.110","172.19.113.50","172.19.8.48"
 ];
 
-const interfaces=[
-["172.19.241.24","AHM Sysmax2","E:\\Sysmax\\Sysmax AHM\\ASPLTCPserver.exe"],
-["172.19.241.21","AHM Sysmax1","C:\\Sysmex AHM\\ASPLTCPserver.exe"],
-["172.19.241.24","AHQ Sysmax XN 1000","E:\\Sysmax\\Sysmax AHQ XN 1000\\HL7Communicator.exe"],
-["172.19.241.24","AHQ Sysmax","E:\\Sysmax\\Sysmax AHQ\\HL7Communicator.exe"],
-["172.19.241.24","ACD Sysmax","E:\\Sysmax\\Sysmax Cedar\\HL7Communicator.exe"],
-["172.19.8.32","GRBS (iSTAT)","D:\\POCT\\iSTATserver.exe"],
-["172.19.8.32","ECG Server (MUSE)","D:\\8.85\\MUSE\\HL7Communicator.exe"],
-["172.19.8.32","Beckman Coulter","D:\\8.85\\Coulter\\HL7Communicator.exe"],
-["172.19.8.32","Vitals Monitoring","D:\\Test\\GEVs.exe | D:\\Test\\Client"],
-["172.19.8.32","POCT (Point of Care)","D:\\POCT\\iSTATServer.exe"],
-["172.19.241.24","Cobas Infinity 2","E:\\P\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\HL7Communicator.exe | Old 8.32: C:\\P\\Code\\Infinity\\Debug\\HL7Communicator.exe"],
-["172.19.8.32","iStat","D:\\8.85\\iState\\iSTATServer.exe"],
-["172.19.8.32","Ward Vitals","D:\\Test\\Client\\VsCommunicatorClient.exe"],
-["172.19.8.32","Muse ECG","D:\\8.85\\MUSE\\VsCommunicatorClient.exe"],
-["172.19.8.32","AHSJ OrthoVision","D:/8.85/SHJ-OrthoVision/Ortho Vision"],
-["172.19.238.13","Moksha to HIS","F:\\Padam\\TCPIP\\NEw\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug"],
-["172.19.241.4 & 172.19.238.13","Moksha Order Interface","241.4: E:\\MOKSHA\\ASPL TCPIP CLient.MOKSHA | 238.13: C:\\Users\\KeyAzurSrv\\OneDrive\\Aster Hospital Oman\\ASPL TCPIP CLient\\bin\\Debug"],
-["172.19.241.14","Print Server","net stop PowerBIReportServer | net start PowerBIReportServer"],
-["172.19.241.24","Ortho Vision","E:\\Ortho\\HL7Communicator.exe"],
-["172.19.241.30","Birthday Automation","New: F:\\PatientPortal_1\\PatientPortal\\Content\\img\\WishAs | Wish: D:\\PatientPortal_1\\PatientPortal\\Content\\img\\WishAs | Birthday: Z:\\ | Run: C:\\Users\\KeyAzurSrv\\source\\repos\\xCopy\\xCopy\\bin\\Debug\\net6.0-windows\\xCopy.exe"],
-["172.19.241.37","SMS & NABIDH Services","SMS: http://localhost:801/pcr/smsx?Auto=1 | NABIDH PROD: http://localhost:809/HIE/default?xCall=PROD | NABIDH: http://localhost:980/HIE/default"],
-["172.19.241.24","Urised AHM","E:\\Urised AHM\\Mac"],
-["172.19.241.24","Urised AHQ","E:\\Ahq Urised\\aspl interface\\urised\\Mac"],
-["172.19.241.24","Radio Meter","E:\\RadioMeter\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\"],
-["172.19.241.36","PDMS","C:\\PDMS\\VsCommunicatorClient"],
-["172.19.241.30","Patient Monitor Deepu","F:\\GE-Monitor\\GEVs"],
-["172.19.238.13","Mindray","F:\\Padam\\P\\ASPL TCPIP CLient - Copy"],
-["172.19.8.32","GRBS","D:\\8.85\\MUSE\\Client\\VsCommunicatorClient"],
-["172.19.241.24","Urised AHSO","E:\\AHSO Urised\\aspl interface"],
-["172.19.241.24","MyAster HL7 Service","Windows Service: myAster HL7"],
-["172.19.243.7 / 172.19.243.9","Pharmacy Auto Submission","172.19.238.13 - IIS - Edge Browser"]
+/* ═══════════════════════════════════════════
+   DATA — INTERFACES [ip, name, path, customReq?, customRes?]
+═══════════════════════════════════════════ */
+const BASE_INTERFACES = [
+  ["172.19.241.24","AHM Sysmax2","E:\\Sysmax\\Sysmax AHM\\ASPLTCPserver.exe"],
+  ["172.19.241.21","AHM Sysmax1","C:\\Sysmex AHM\\ASPLTCPserver.exe"],
+  ["172.19.241.24","AHQ Sysmax XN 1000","E:\\Sysmax\\Sysmax AHQ XN 1000\\HL7Communicator.exe"],
+  ["172.19.241.24","AHQ Sysmax","E:\\Sysmax\\Sysmax AHQ\\HL7Communicator.exe"],
+  ["172.19.241.24","ACD Sysmax","E:\\Sysmax\\Sysmax Cedar\\HL7Communicator.exe"],
+  ["172.19.8.32","GRBS (iSTAT)","D:\\POCT\\iSTATserver.exe"],
+  ["172.19.8.32","ECG Server (MUSE)","D:\\8.85\\MUSE\\HL7Communicator.exe"],
+  ["172.19.8.32","Beckman Coulter","D:\\8.85\\Coulter\\HL7Communicator.exe"],
+  ["172.19.8.32","Vitals Monitoring","D:\\Test\\GEVs.exe | D:\\Test\\Client"],
+  ["172.19.8.32","POCT (Point of Care)","D:\\POCT\\iSTATServer.exe"],
+  ["172.19.241.24","Cobas Infinity 2","E:\\P\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\HL7Communicator.exe | Old 8.32: C:\\P\\Code\\Infinity\\Debug\\HL7Communicator.exe"],
+  ["172.19.8.32","iStat","D:\\8.85\\iState\\iSTATServer.exe"],
+  ["172.19.8.32","Ward Vitals","D:\\Test\\Client\\VsCommunicatorClient.exe"],
+  ["172.19.8.32","Muse ECG","D:\\8.85\\MUSE\\VsCommunicatorClient.exe"],
+  ["172.19.8.32","AHSJ OrthoVision","D:/8.85/SHJ-OrthoVision/Ortho Vision"],
+  ["172.19.238.13","Moksha to HIS","F:\\Padam\\TCPIP\\NEw\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug"],
+  ["172.19.241.4 & 172.19.238.13","Moksha Order Interface","241.4: E:\\MOKSHA\\ASPL TCPIP CLient.MOKSHA | 238.13: C:\\Users\\KeyAzurSrv\\OneDrive\\Aster Hospital Oman\\ASPL TCPIP CLient\\bin\\Debug"],
+  ["172.19.241.14","Print Server","net stop PowerBIReportServer | net start PowerBIReportServer"],
+  ["172.19.241.24","Ortho Vision","E:\\Ortho\\HL7Communicator.exe"],
+  ["172.19.241.30","Birthday Automation","New: F:\\PatientPortal_1\\PatientPortal\\Content\\img\\WishAs | Wish: D:\\PatientPortal_1\\PatientPortal\\Content\\img\\WishAs | Birthday: Z:\\ | Run: C:\\Users\\KeyAzurSrv\\source\\repos\\xCopy\\xCopy\\bin\\Debug\\net6.0-windows\\xCopy.exe"],
+  ["172.19.241.37","SMS & NABIDH Services","SMS: http://localhost:801/pcr/smsx?Auto=1 | NABIDH PROD: http://localhost:809/HIE/default?xCall=PROD | NABIDH: http://localhost:980/HIE/default"],
+  ["172.19.241.24","Urised AHM","E:\\Urised AHM\\Mac"],
+  ["172.19.241.24","Urised AHQ","E:\\Ahq Urised\\aspl interface\\urised\\Mac"],
+  ["172.19.241.24","Radio Meter","E:\\RadioMeter\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\"],
+  ["172.19.241.36","PDMS","C:\\PDMS\\VsCommunicatorClient"],
+  ["172.19.241.30","Patient Monitor Deepu","F:\\GE-Monitor\\GEVs"],
+  ["172.19.238.13","Mindray","F:\\Padam\\P\\ASPL TCPIP CLient - Copy"],
+  ["172.19.8.32","GRBS","D:\\8.85\\MUSE\\Client\\VsCommunicatorClient"],
+  ["172.19.241.24","Urised AHSO","E:\\AHSO Urised\\aspl interface"],
+  ["172.19.241.24","MyAster HL7 Service","Windows Service: myAster HL7"],
+  ["172.19.243.7 / 172.19.243.9","Pharmacy Auto Submission","172.19.238.13 - IIS - Edge Browser"]
 ];
 
-const checkedOpt=["Pending","Checked","Not Checked"];
-const fineOpt=["Pending","Working Fine","Issue Found","Not Required"];
-const ticketOpt=["Ticket Not Created","Ticket Created","Not Required"];
-const yesNoOpt=["Pending","Yes","No","Not Required"];
-const runOpt=["Pending","Running","Stopped","Not Required"];
+/* ═══════════════════════════════════════════
+   DATA — SPECIAL CHECKS [category, name, details, customReq, customRes]
+═══════════════════════════════════════════ */
+const BASE_SPECIAL = [
+  ["Display","Token Display Check","AHM Token Displays — all units",
+   "Kindly check all the AHM Token displays are working fine and Token details are correctly reflecting.",
+   "Checked all the token displays; they are working fine."],
+  ["Display","Ward Display Check","AHM Ward Displays — all wards",
+   "Kindly check that all AHM ward displays are working properly and that patient details are reflecting correctly.",
+   "Checked all the ward displays; they are working fine and patient details are reflecting correctly."]
+];
 
-function todayISO(){
-  const d=new Date();
-  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,'0')+"-"+String(d.getDate()).padStart(2,'0');
+/* ═══════════════════════════════════════════
+   CONSTANTS & HELPERS
+═══════════════════════════════════════════ */
+const STORE   = "itcc_v3_";
+const CUSTOM  = "itcc_custom_";
+
+const checkedOpts   = ["Pending","Checked","Not Checked"];
+const fineOpts      = ["Pending","Working Fine","Issue Found","Not Required"];
+const ticketOpts    = ["Ticket Not Created","Ticket Created","Not Required"];
+const yesNoOpts     = ["Pending","Yes","No","Not Required"];
+const runOpts       = ["Pending","Running","Stopped","Not Required"];
+
+const workDate = document.getElementById('workDate');
+const searchBox = document.getElementById('searchBox');
+const filterBox = document.getElementById('filterBox');
+
+function todayISO() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 
-function key(){
-  return STORE_PREFIX+workDate.value;
+function storeKey() { return STORE + workDate.value; }
+
+function loadSaved() {
+  try { return JSON.parse(localStorage.getItem(storeKey())) || {}; } catch(e) { return {}; }
 }
 
-function opts(arr,val){
-  return arr.map(x=>`<option ${x===val?'selected':''}>${x}</option>`).join("");
+function getCustomItems() {
+  try { return JSON.parse(localStorage.getItem(CUSTOM)) || []; } catch(e) { return []; }
 }
 
-function safeValue(v){
-  return String(v || "").replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+function saveCustomItems(arr) { localStorage.setItem(CUSTOM, JSON.stringify(arr)); }
+
+function opts(arr, val) {
+  return arr.map(x => `<option ${x === val ? 'selected' : ''}>${esc(x)}</option>`).join('');
 }
 
-function loadSaved(){
-  try{
-    return JSON.parse(localStorage.getItem(key())) || {};
-  }catch(e){
-    return {};
-  }
+function esc(v) {
+  return String(v||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-function saveData(){
-  localStorage.setItem(key(),JSON.stringify(collect()));
-  updateSummary();
-  updateRowColors();
-  renderHistory();
-  alert("Saved for "+workDate.value);
+function getInspector() {
+  return localStorage.getItem('itcc_inspector') || '';
 }
 
-function serverRequest(ip){
+function setInspector(v) {
+  localStorage.setItem('itcc_inspector', v);
+  document.getElementById('userNameDisplay').textContent = v || 'Inspector';
+  const initials = v.trim().split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2) || 'IT';
+  document.getElementById('avatarInitials').textContent = initials;
+}
+
+/* ═══════════════════════════════════════════
+   TEMPLATE GENERATORS
+═══════════════════════════════════════════ */
+function serverRequest(ip) {
   return `Kindly perform the daily routine check of server ${ip}, including storage usage, performance and overall server availability.`;
 }
-
-function serverResolution(ip){
+function serverResolution(ip) {
   return `Daily routine check completed for server ${ip}. Storage usage, performance and server availability checked and found working fine.`;
 }
-
-function interfaceRequest(name,ip){
-  return `Kindly perform the daily routine check of ${name} interface on server ${ip}. Please verify the service/application is running, logs are updating, and data is correctly reflecting into HIS.`;
+function ifaceRequest(name, ip) {
+  return `Kindly verify that the ${name} listener is running properly and that logs are being generated correctly as part of the daily routine check.`;
+}
+function ifaceResolution(name, ip, path) {
+  return `Checked and verified that the ${name} listener is running properly and that logs are being generated correctly.`;
 }
 
-function interfaceResolution(name,ip,path){
-  return `${name} interface check completed on server ${ip}. Service/application is running fine, logs checked in the configured folder/application path, and data reflection into HIS verified. Path/Details: ${path}`;
+/* ═══════════════════════════════════════════
+   LAST CHECKED DISPLAY
+═══════════════════════════════════════════ */
+function lastCheckedDisplay(ts) {
+  if (!ts) return '<span class="last-checked lc-never">Never</span>';
+  const now = Date.now();
+  const diff = now - ts;
+  const hrs = diff / 3600000;
+  const d = new Date(ts);
+  const fmt = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  if (hrs < 2)  return `<span class="last-checked lc-today">✅ Today ${d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>`;
+  if (hrs < 24) return `<span class="last-checked lc-today">Today ${d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>`;
+  if (hrs < 48) return `<span class="last-checked lc-yesterday">🕒 Yesterday</span>`;
+  return `<span class="last-checked lc-overdue">⚠️ ${fmt}</span>`;
 }
 
-function render(){
-  const saved=loadSaved();
+function isOverdue(ts) {
+  if (!ts) return true;
+  return (Date.now() - ts) > 86400000;
+}
 
-  serverTable.querySelector("tbody").innerHTML="";
-  interfaceTable.querySelector("tbody").innerHTML="";
+/* ═══════════════════════════════════════════
+   RENDER TABLES
+═══════════════════════════════════════════ */
+function render() {
+  const saved = loadSaved();
+  const custom = getCustomItems();
 
-  servers.forEach((ip,i)=>{
-    const r=saved["s_"+i]||{};
-    const req=r.request || serverRequest(ip);
-    const res=r.resolution || serverResolution(ip);
+  /* Build combined lists */
+  const servers    = BASE_SERVERS;
+  const interfaces = BASE_INTERFACES.concat(custom.filter(c=>c.type==='interface').map(c=>[c.ip,c.name,c.path,c.req,c.res]));
+  const specials   = BASE_SPECIAL.concat(custom.filter(c=>c.type==='special').map(c=>[c.ip,c.name,c.path,c.req,c.res]));
 
-    serverTable.querySelector("tbody").insertAdjacentHTML("beforeend",`
-      <tr>
-        <td>${i+1}</td>
-        <td class="ip">${ip}</td>
-        <td><select data-field="checked">${opts(checkedOpt,r.checked||"Pending")}</select></td>
-        <td><select data-field="fine">${opts(fineOpt,r.fine||"Pending")}</select></td>
-        <td><select data-field="ticketCreated">${opts(ticketOpt,r.ticketCreated||"Ticket Not Created")}</select></td>
-        <td><input data-field="ticketNo" value="${safeValue(r.ticketNo)}" placeholder="Ticket No"></td>
-        <td><textarea data-field="storage" placeholder="Storage checked / reachable">${safeValue(r.storage)}</textarea></td>
+  /* SERVER TABLE */
+  const sBody = document.getElementById('serverTbody');
+  sBody.innerHTML = '';
+
+  servers.forEach((ip, i) => {
+    const r = saved['s_'+i] || {};
+    const req  = r.request    || serverRequest(ip);
+    const res  = r.resolution || serverResolution(ip);
+    const ts   = r.lastCheckedTs || null;
+    const over = isOverdue(ts);
+    const rowCls = rowClass(r.checked, r.fine, r.running, over);
+
+    sBody.insertAdjacentHTML('beforeend', `
+      <tr class="${rowCls}" data-idx="s_${i}">
+        <td class="cell-num">${i+1}</td>
+        <td class="cell-ip">${esc(ip)}</td>
+        <td><select data-field="checked">${opts(checkedOpts, r.checked||'Pending')}</select></td>
+        <td><select data-field="fine">${opts(fineOpts, r.fine||'Pending')}</select></td>
+        <td><select data-field="ticketCreated">${opts(ticketOpts, r.ticketCreated||'Ticket Not Created')}</select></td>
+        <td><input type="text" data-field="ticketNo" value="${esc(r.ticketNo||'')}" placeholder="Ticket #" style="height:30px;"></td>
+        <td><input type="text" class="inspector-input" data-field="inspector" value="${esc(r.inspector||getInspector())}" placeholder="Name"></td>
+        <td>${lastCheckedDisplay(ts)}</td>
+        <td><textarea data-field="storage" placeholder="Storage / notes">${esc(r.storage||'')}</textarea></td>
         <td>
-          <div class="compactText">${safeValue(req)}</div>
-          <input type="hidden" data-field="request" value="${safeValue(req)}">
+          <div class="cell-path" title="${esc(res)}">${esc(res).slice(0,80)}…</div>
+          <input type="hidden" data-field="request" value="${esc(req)}">
+          <input type="hidden" data-field="resolution" value="${esc(res)}">
         </td>
+        <td><select data-field="visible" style="height:30px;">
+          <option ${(r.visible||'show')==='show'?'selected':''}>show</option>
+          <option ${r.visible==='hide'?'selected':''}>hide</option>
+        </select></td>
         <td>
-          <div class="compactText">${safeValue(res)}</div>
-          <input type="hidden" data-field="resolution" value="${safeValue(res)}">
-        </td>
-        <td>
-          <div class="actionStack">
-            <button onclick="copyRow('server',${i},'request')">Request</button>
-            <button class="btn-green" onclick="copyRow('server',${i},'resolution')">Resolution</button>
-            <button class="btn-amber" onclick="copyRow('server',${i},'full')">Full</button>
+          <div class="action-stack">
+            <button class="btn btn-ghost btn-xs" onclick="copyItem('server',${i},'request')">📥 Req</button>
+            <button class="btn btn-success btn-xs" onclick="copyItem('server',${i},'resolution')">✅ Res</button>
+            <button class="btn btn-warning btn-xs" onclick="copyItem('server',${i},'full')">📋 Full</button>
           </div>
         </td>
-      </tr>
-    `);
+      </tr>`);
   });
 
-  interfaces.forEach((it,i)=>{
-    const r=saved["i_"+i]||{};
-    const req=r.request || interfaceRequest(it[1],it[0]);
-    const res=r.resolution || interfaceResolution(it[1],it[0],it[2]);
+  /* INTERFACE TABLE */
+  const iBody = document.getElementById('ifaceTbody');
+  iBody.innerHTML = '';
 
-    interfaceTable.querySelector("tbody").insertAdjacentHTML("beforeend",`
-      <tr>
-        <td>${i+1}</td>
-        <td class="ip">${it[0]}</td>
-        <td><b>${safeValue(it[1])}</b></td>
-        <td><div class="compactText" title="${safeValue(it[2])}">${safeValue(it[2])}</div></td>
-        <td><select data-field="checked">${opts(checkedOpt,r.checked||"Pending")}</select></td>
-        <td><select data-field="running">${opts(runOpt,r.running||"Pending")}</select></td>
-        <td><select data-field="logs">${opts(yesNoOpt,r.logs||"Pending")}</select></td>
-        <td><select data-field="fine">${opts(fineOpt,r.fine||"Pending")}</select></td>
-        <td><select data-field="ticketCreated">${opts(ticketOpt,r.ticketCreated||"Ticket Not Created")}</select></td>
-        <td><input data-field="ticketNo" value="${safeValue(r.ticketNo)}" placeholder="Ticket No"></td>
+  interfaces.forEach((it, i) => {
+    const r = saved['i_'+i] || {};
+    const req  = r.request    || (it[3] ? it[3] : ifaceRequest(it[1], it[0]));
+    const res  = r.resolution || (it[4] ? it[4] : ifaceResolution(it[1], it[0], it[2]));
+    const ts   = r.lastCheckedTs || null;
+    const over = isOverdue(ts);
+    const rowCls = rowClass(r.checked, r.fine, r.running, over);
+
+    iBody.insertAdjacentHTML('beforeend', `
+      <tr class="${rowCls}" data-idx="i_${i}">
+        <td class="cell-num">${i+1}</td>
+        <td class="cell-ip">${esc(it[0])}</td>
+        <td class="cell-name">${esc(it[1])}</td>
+        <td><div class="cell-path" title="${esc(it[2])}">${esc(it[2])}</div></td>
+        <td><select data-field="checked">${opts(checkedOpts, r.checked||'Pending')}</select></td>
+        <td><select data-field="running">${opts(runOpts, r.running||'Pending')}</select></td>
+        <td><select data-field="logs">${opts(yesNoOpts, r.logs||'Pending')}</select></td>
+        <td><select data-field="fine">${opts(fineOpts, r.fine||'Pending')}</select></td>
+        <td><select data-field="ticketCreated">${opts(ticketOpts, r.ticketCreated||'Ticket Not Created')}</select></td>
+        <td><input type="text" data-field="ticketNo" value="${esc(r.ticketNo||'')}" placeholder="Ticket #" style="height:30px;"></td>
+        <td><input type="text" class="inspector-input" data-field="inspector" value="${esc(r.inspector||getInspector())}" placeholder="Name"></td>
+        <td>${lastCheckedDisplay(ts)}</td>
         <td>
-          <div class="compactText">${safeValue(res)}</div>
-          <input type="hidden" data-field="resolution" value="${safeValue(res)}">
-          <input type="hidden" data-field="request" value="${safeValue(req)}">
-        </td>
-        <td>
-          <div class="actionStack">
-            <button onclick="copyPath(${i})">Path</button>
-            <button onclick="copyRow('interface',${i},'request')">Request</button>
-            <button class="btn-green" onclick="copyRow('interface',${i},'resolution')">Resolution</button>
-            <button class="btn-amber" onclick="copyRow('interface',${i},'full')">Full</button>
+          <input type="hidden" data-field="request" value="${esc(req)}">
+          <input type="hidden" data-field="resolution" value="${esc(res)}">
+          <div class="action-stack">
+            <button class="btn btn-ghost btn-xs" onclick="copyPath(${i})">📁 Path</button>
+            <button class="btn btn-ghost btn-xs" onclick="copyItem('interface',${i},'request')">📥 Req</button>
+            <button class="btn btn-success btn-xs" onclick="copyItem('interface',${i},'resolution')">✅ Res</button>
+            <button class="btn btn-warning btn-xs" onclick="copyItem('interface',${i},'full')">📋 Full</button>
           </div>
         </td>
-      </tr>
-    `);
+      </tr>`);
   });
+
+  /* SPECIAL TABLE */
+  const spBody = document.getElementById('specialTbody');
+  spBody.innerHTML = '';
+
+  specials.forEach((it, i) => {
+    const r = saved['sp_'+i] || {};
+    const req  = r.request    || it[3];
+    const res  = r.resolution || it[4];
+    const ts   = r.lastCheckedTs || null;
+    const over = isOverdue(ts);
+    const rowCls = rowClass(r.checked, r.fine, r.running, over);
+
+    spBody.insertAdjacentHTML('beforeend', `
+      <tr class="${rowCls}" data-idx="sp_${i}">
+        <td class="cell-num">${i+1}</td>
+        <td class="cell-ip" style="color:var(--purple)">${esc(it[0])}</td>
+        <td class="cell-name">${esc(it[1])}</td>
+        <td><div class="cell-path" title="${esc(it[2])}">${esc(it[2])}</div></td>
+        <td><select data-field="checked">${opts(checkedOpts, r.checked||'Pending')}</select></td>
+        <td><select data-field="running">${opts(runOpts, r.running||'Pending')}</select></td>
+        <td><select data-field="logs">${opts(yesNoOpts, r.logs||'Pending')}</select></td>
+        <td><select data-field="fine">${opts(fineOpts, r.fine||'Pending')}</select></td>
+        <td><select data-field="ticketCreated">${opts(ticketOpts, r.ticketCreated||'Ticket Not Created')}</select></td>
+        <td><input type="text" data-field="ticketNo" value="${esc(r.ticketNo||'')}" placeholder="Ticket #" style="height:30px;"></td>
+        <td><input type="text" class="inspector-input" data-field="inspector" value="${esc(r.inspector||getInspector())}" placeholder="Name"></td>
+        <td>${lastCheckedDisplay(ts)}</td>
+        <td>
+          <input type="hidden" data-field="request" value="${esc(req)}">
+          <input type="hidden" data-field="resolution" value="${esc(res)}">
+          <div class="action-stack">
+            <button class="btn btn-ghost btn-xs" onclick="copyItem('special',${i},'request')">📥 Req</button>
+            <button class="btn btn-success btn-xs" onclick="copyItem('special',${i},'resolution')">✅ Res</button>
+            <button class="btn btn-warning btn-xs" onclick="copyItem('special',${i},'full')">📋 Full</button>
+          </div>
+        </td>
+      </tr>`);
+  });
+
+  /* Update badges */
+  document.getElementById('serverBadge').textContent    = servers.length + ' servers';
+  document.getElementById('ifaceBadge').textContent     = interfaces.length + ' interfaces';
+  document.getElementById('specialBadge').textContent   = specials.length + ' items';
 
   applyFilters();
-  updateSummary();
+  updateKPIs();
   updateRowColors();
-  renderHistory();
 }
 
-function collect(){
-  const data={};
+/* ═══════════════════════════════════════════
+   ROW CLASS
+═══════════════════════════════════════════ */
+function rowClass(checked, fine, running, overdue) {
+  if (checked === 'Checked' && fine === 'Working Fine') return 'row-done';
+  if (fine === 'Issue Found' || running === 'Stopped')  return 'row-issue';
+  if (overdue && checked !== 'Checked')                 return 'row-overdue';
+  return 'row-pending';
+}
 
-  document.querySelectorAll("#serverTable tbody tr").forEach((tr,i)=>{
-    data["s_"+i]={};
-    tr.querySelectorAll("[data-field]").forEach(el=>{
-      data["s_"+i][el.dataset.field]=el.value;
+/* ═══════════════════════════════════════════
+   UPDATE ROW COLORS (after change)
+═══════════════════════════════════════════ */
+function updateRowColors() {
+  document.querySelectorAll('tbody tr').forEach(tr => {
+    const checked = tr.querySelector('[data-field="checked"]')?.value;
+    const fine    = tr.querySelector('[data-field="fine"]')?.value;
+    const running = tr.querySelector('[data-field="running"]')?.value;
+    const ts      = getRowTs(tr);
+    const over    = isOverdue(ts);
+    tr.className  = rowClass(checked, fine, running, over);
+  });
+}
+
+function getRowTs(tr) {
+  const idx  = tr.dataset.idx;
+  const saved = loadSaved();
+  return saved[idx]?.lastCheckedTs || null;
+}
+
+/* ═══════════════════════════════════════════
+   COLLECT ALL DATA
+═══════════════════════════════════════════ */
+function collect() {
+  const data = loadSaved();
+  document.querySelectorAll('tbody tr[data-idx]').forEach(tr => {
+    const idx = tr.dataset.idx;
+    if (!data[idx]) data[idx] = {};
+    tr.querySelectorAll('[data-field]').forEach(el => {
+      data[idx][el.dataset.field] = el.value;
     });
   });
-
-  document.querySelectorAll("#interfaceTable tbody tr").forEach((tr,i)=>{
-    data["i_"+i]={};
-    tr.querySelectorAll("[data-field]").forEach(el=>{
-      data["i_"+i][el.dataset.field]=el.value;
-    });
-  });
-
   return data;
 }
 
-function getRow(type,index){
-  const tr=document.querySelectorAll(type==="server" ? "#serverTable tbody tr" : "#interfaceTable tbody tr")[index];
-  const r={};
-  tr.querySelectorAll("[data-field]").forEach(el=>{
-    r[el.dataset.field]=el.value;
+/* ═══════════════════════════════════════════
+   SAVE
+═══════════════════════════════════════════ */
+function saveData() {
+  localStorage.setItem(storeKey(), JSON.stringify(collect()));
+  updateKPIs();
+  updateRowColors();
+  renderHistory();
+  toast('✅ Saved for ' + workDate.value, 'success');
+}
+
+/* ═══════════════════════════════════════════
+   AUTO-SAVE ON INPUT
+═══════════════════════════════════════════ */
+document.addEventListener('input', e => {
+  if (!e.target.matches('input,select,textarea')) return;
+  if (!e.target.closest('tbody')) return;
+
+  const tr  = e.target.closest('tr');
+  const idx = tr?.dataset.idx;
+  if (!idx) return;
+
+  const field = e.target.dataset.field;
+
+  /* Auto-check when marked fine */
+  if (field === 'fine' && e.target.value === 'Working Fine') {
+    const checked = tr.querySelector('[data-field="checked"]');
+    if (checked && checked.value !== 'Checked') checked.value = 'Checked';
+  }
+  if (field === 'running' && e.target.value === 'Running') {
+    const checked = tr.querySelector('[data-field="checked"]');
+    if (checked && checked.value !== 'Checked') checked.value = 'Checked';
+  }
+
+  /* Stamp timestamp when marked checked */
+  if (field === 'checked' && e.target.value === 'Checked') {
+    const saved = loadSaved();
+    if (!saved[idx]) saved[idx] = {};
+    saved[idx].lastCheckedTs = Date.now();
+    /* Also stamp inspector if empty */
+    const inspector = tr.querySelector('[data-field="inspector"]');
+    if (inspector && !inspector.value) inspector.value = getInspector();
+    saved[idx].inspector = inspector?.value || '';
+
+    /* Merge rest of fields */
+    tr.querySelectorAll('[data-field]').forEach(el => {
+      saved[idx][el.dataset.field] = el.value;
+    });
+
+    localStorage.setItem(storeKey(), JSON.stringify(saved));
+    /* Refresh last-checked cell */
+    const lcCell = tr.querySelectorAll('td')[field === 'checked' ? 7 : 11];
+    if (lcCell) lcCell.innerHTML = lastCheckedDisplay(saved[idx].lastCheckedTs);
+  }
+
+  /* Auto-save */
+  const data = collect();
+  localStorage.setItem(storeKey(), JSON.stringify(data));
+  updateKPIs();
+  updateRowColors();
+  renderHistory();
+});
+
+/* ═══════════════════════════════════════════
+   UPDATE KPIs
+═══════════════════════════════════════════ */
+function updateKPIs() {
+  const saved = loadSaved();
+  const total = BASE_SERVERS.length + BASE_INTERFACES.length + BASE_SPECIAL.length + getCustomItems().length;
+
+  let done=0, issue=0, ticket=0, overdue=0;
+
+  Object.values(saved).forEach(r => {
+    if (r.fine === 'Working Fine') done++;
+    if (r.fine === 'Issue Found' || r.running === 'Stopped') issue++;
+    if (r.ticketCreated === 'Ticket Created') ticket++;
+    if (isOverdue(r.lastCheckedTs) && r.checked !== 'Checked') overdue++;
   });
+
+  /* Items not yet in saved are automatically overdue */
+  const savedCount = Object.keys(saved).length;
+  overdue += Math.max(0, total - savedCount);
+
+  const totalItems = BASE_SERVERS.length + BASE_INTERFACES.length + BASE_SPECIAL.length;
+
+  document.getElementById('kpiServers').textContent    = BASE_SERVERS.length;
+  document.getElementById('kpiInterfaces').textContent = BASE_INTERFACES.length;
+  document.getElementById('kpiDone').textContent       = done;
+  document.getElementById('kpiIssue').textContent      = issue;
+  document.getElementById('kpiTickets').textContent    = ticket;
+  document.getElementById('kpiOverdue').textContent    = overdue;
+
+  const pct = total ? Math.round(done/total*100) : 0;
+  const ipct = total ? Math.round(issue/total*100) : 0;
+  const tpct = total ? Math.round(ticket/total*100) : 0;
+
+  document.getElementById('kpiDoneBar').style.width    = pct + '%';
+  document.getElementById('kpiIssueBar').style.width   = ipct + '%';
+  document.getElementById('kpiTicketsBar').style.width = tpct + '%';
+
+  /* Overdue alert */
+  const alert = document.getElementById('overdueAlert');
+  if (overdue > 0) {
+    alert.style.display = 'flex';
+    document.getElementById('overdueAlertText').textContent = overdue;
+  } else {
+    alert.style.display = 'none';
+  }
+}
+
+/* ═══════════════════════════════════════════
+   FILTERS & SEARCH
+═══════════════════════════════════════════ */
+function applyFilters() {
+  const q  = searchBox.value.toLowerCase().trim();
+  const f  = filterBox.value;
+
+  document.querySelectorAll('tbody tr[data-idx]').forEach(tr => {
+    const text   = tr.innerText.toLowerCase();
+    const vals   = Array.from(tr.querySelectorAll('input,select,textarea')).map(x=>x.value).join(' ').toLowerCase();
+    const combined = text + ' ' + vals;
+
+    let matchQ = !q || combined.includes(q);
+
+    let matchF = true;
+    if (f === 'overdue') {
+      const ts  = getRowTs(tr);
+      const chk = tr.querySelector('[data-field="checked"]')?.value;
+      matchF = isOverdue(ts) && chk !== 'Checked';
+    } else if (f) {
+      matchF = vals.includes(f.toLowerCase());
+    }
+
+    /* Visibility */
+    const vis = tr.querySelector('[data-field="visible"]')?.value;
+    const hidden = vis === 'hide';
+
+    tr.style.display = (matchQ && matchF && !hidden) ? '' : 'none';
+  });
+}
+
+/* ═══════════════════════════════════════════
+   COPY HELPERS
+═══════════════════════════════════════════ */
+function copyText(t) {
+  navigator.clipboard.writeText(t).then(() => toast('📋 Copied to clipboard', 'info'));
+}
+
+function copyPath(i) {
+  copyText(BASE_INTERFACES[i]?.[2] || '');
+}
+
+function getRowData(type, index) {
+  const prefix = type === 'server' ? 's_' : (type === 'interface' ? 'i_' : 'sp_');
+  const tr = document.querySelector(`tr[data-idx="${prefix}${index}"]`);
+  if (!tr) return {};
+  const r = {};
+  tr.querySelectorAll('[data-field]').forEach(el => r[el.dataset.field] = el.value);
   return r;
 }
 
-function copyText(t){
-  navigator.clipboard.writeText(t).then(()=>alert("Copied."));
-}
+function copyItem(type, index, mode) {
+  const r = getRowData(type, index);
 
-function copyPath(i){
-  copyText(interfaces[i][2]);
-}
-
-function copyRow(type,index,mode){
-  const r=getRow(type,index);
-  let text="";
-
-  if(type==="server"){
-    const ip=servers[index];
-
-    if(mode==="request"){
-      text=r.request || serverRequest(ip);
-    }
-
-    if(mode==="resolution"){
-      text=r.resolution || serverResolution(ip);
-    }
-
-    if(mode==="full"){
-      text=`Date: ${workDate.value}
-Server: ${ip}
-Ticket Created: ${r.ticketCreated || "Ticket Not Created"}
-Ticket No: ${r.ticketNo || "-"}
-
-Request:
-${r.request || serverRequest(ip)}
-
-Resolution:
-${r.resolution || serverResolution(ip)}
-
-Checked: ${r.checked || "Pending"}
-Working Fine: ${r.fine || "Pending"}
-Storage / Status: ${r.storage || "-"}`;
-    }
-  }else{
-    const it=interfaces[index];
-
-    if(mode==="request"){
-      text=r.request || interfaceRequest(it[1],it[0]);
-    }
-
-    if(mode==="resolution"){
-      text=r.resolution || interfaceResolution(it[1],it[0],it[2]);
-    }
-
-    if(mode==="full"){
-      text=`Date: ${workDate.value}
-Server: ${it[0]}
-Interface: ${it[1]}
-Ticket Created: ${r.ticketCreated || "Ticket Not Created"}
-Ticket No: ${r.ticketNo || "-"}
-
-Request:
-${r.request || interfaceRequest(it[1],it[0])}
-
-Resolution:
-${r.resolution || interfaceResolution(it[1],it[0],it[2])}
-
-Path/Details:
-${it[2]}
-
-Checked: ${r.checked || "Pending"}
-Running: ${r.running || "Pending"}
-Logs Checked: ${r.logs || "Pending"}
-Working Fine: ${r.fine || "Pending"}`;
-    }
+  let ip='', name='', path='';
+  if (type === 'server') {
+    ip = BASE_SERVERS[index];
+    name = 'Server ' + ip;
+  } else if (type === 'interface') {
+    const custom = getCustomItems().filter(c=>c.type==='interface');
+    const all = [...BASE_INTERFACES, ...custom.map(c=>[c.ip,c.name,c.path,c.req,c.res])];
+    ip   = all[index]?.[0] || '';
+    name = all[index]?.[1] || '';
+    path = all[index]?.[2] || '';
+  } else {
+    const custom = getCustomItems().filter(c=>c.type==='special');
+    const all = [...BASE_SPECIAL, ...custom.map(c=>[c.ip,c.name,c.path,c.req,c.res])];
+    ip   = all[index]?.[0] || '';
+    name = all[index]?.[1] || '';
+    path = all[index]?.[2] || '';
   }
 
-  copyText(text);
+  const req = r.request || (type === 'server' ? serverRequest(ip) : ifaceRequest(name, ip));
+  const res = r.resolution || (type === 'server' ? serverResolution(ip) : ifaceResolution(name, ip, path));
+
+  let text = '';
+
+  if (mode === 'request')    { text = req; }
+  if (mode === 'resolution') { text = res; }
+  if (mode === 'full') {
+    text =
+`Date        : ${workDate.value}
+Inspector   : ${r.inspector || getInspector() || 'N/A'}
+Server IP   : ${ip}
+${type !== 'server' ? 'Interface   : ' + name + '\n' : ''}Checked     : ${r.checked || 'Pending'}
+Status      : ${r.fine || 'Pending'}
+${type !== 'server' ? 'Running     : ' + (r.running||'Pending') + '\nLogs        : ' + (r.logs||'Pending') + '\n' : ''}Ticket      : ${r.ticketCreated || 'Ticket Not Created'}
+Ticket No   : ${r.ticketNo || '-'}
+${path ? 'Path/Details: ' + path + '\n' : ''}
+REQUEST:
+${req}
+
+RESOLUTION:
+${res}`;
+  }
+
+  copyText(text.trim());
 }
 
-function updateRowColors(){
-  document.querySelectorAll("tbody tr").forEach(tr=>{
-    const checked=tr.querySelector('[data-field="checked"]')?.value;
-    const ticket=tr.querySelector('[data-field="ticketCreated"]')?.value;
-    const fine=tr.querySelector('[data-field="fine"]')?.value;
-    const running=tr.querySelector('[data-field="running"]')?.value;
+/* ═══════════════════════════════════════════
+   MARK ALL FINE
+═══════════════════════════════════════════ */
+function markAllFine(section) {
+  const prefix = section === 'server' ? '#serverTbody' : (section === 'interface' ? '#ifaceTbody' : '#specialTbody');
+  const rows = document.querySelectorAll(prefix + ' tr[data-idx]:not([style*="display: none"])');
+  const ts = Date.now();
+  const inspector = getInspector();
 
-    tr.classList.remove("done-row","issue-row","pending-row");
-
-    if(checked==="Checked" && ticket==="Ticket Created"){
-      tr.classList.add("done-row");
-    }else if(fine==="Issue Found" || running==="Stopped"){
-      tr.classList.add("issue-row");
-    }else{
-      tr.classList.add("pending-row");
+  rows.forEach(tr => {
+    const setField = (f, v) => { const el = tr.querySelector(`[data-field="${f}"]`); if(el) el.value=v; };
+    setField('checked', 'Checked');
+    setField('fine', 'Working Fine');
+    setField('ticketCreated', 'Ticket Created');
+    if (section !== 'server') {
+      setField('running', 'Running');
+      setField('logs', 'Yes');
     }
-  });
-}
+    if (inspector) setField('inspector', inspector);
 
-function updateSummary(){
-  const data=collect();
-  let fine=0,ticket=0,issue=0;
-
-  Object.values(data).forEach(r=>{
-    if(r.fine==="Working Fine") fine++;
-    if(r.ticketCreated==="Ticket Created") ticket++;
-    if(r.fine==="Issue Found" || r.checked==="Pending" || r.running==="Stopped") issue++;
-  });
-
-  serverCount.innerText=servers.length;
-  interfaceCount.innerText=interfaces.length;
-  fineCount.innerText=fine;
-  ticketCount.innerText=ticket;
-  issueCount.innerText=issue;
-}
-
-function applyFilters(){
-  const q=searchBox.value.toLowerCase();
-  const f=filterBox.value;
-
-  document.querySelectorAll("tbody tr").forEach(tr=>{
-    const text=tr.innerText.toLowerCase()+" "+Array.from(tr.querySelectorAll("input,select,textarea")).map(x=>x.value).join(" ").toLowerCase();
-    const values=Array.from(tr.querySelectorAll("input,select,textarea")).map(x=>x.value);
-    tr.style.display=(!q || text.includes(q)) && (!f || values.includes(f)) ? "" : "none";
-  });
-}
-
-function markAllServersFine(){
-  document.querySelectorAll("#serverTable tbody tr").forEach(tr=>{
-    tr.querySelector('[data-field="checked"]').value="Checked";
-    tr.querySelector('[data-field="fine"]').value="Working Fine";
-    tr.querySelector('[data-field="ticketCreated"]').value="Ticket Created";
+    /* Stamp ts in storage */
+    const idx = tr.dataset.idx;
+    const saved = loadSaved();
+    if (!saved[idx]) saved[idx] = {};
+    saved[idx].lastCheckedTs = ts;
+    localStorage.setItem(storeKey(), JSON.stringify(saved));
   });
 
   saveData();
+  render();
+  toast(`✅ Marked ${rows.length} items as Working Fine`, 'success');
 }
 
-function markAllInterfacesFine(){
-  document.querySelectorAll("#interfaceTable tbody tr").forEach(tr=>{
-    tr.querySelector('[data-field="checked"]').value="Checked";
-    tr.querySelector('[data-field="running"]').value="Running";
-    tr.querySelector('[data-field="logs"]').value="Yes";
-    tr.querySelector('[data-field="fine"]').value="Working Fine";
-    tr.querySelector('[data-field="ticketCreated"]').value="Ticket Created";
+/* ═══════════════════════════════════════════
+   COLLAPSE CHECKED
+═══════════════════════════════════════════ */
+function collapseAll(section) {
+  const prefix = section === 'server' ? '#serverTbody' : '#ifaceTbody';
+  document.querySelectorAll(prefix + ' tr.row-done').forEach(tr => {
+    tr.style.display = tr.style.display === 'none' ? '' : 'none';
+  });
+}
+
+/* ═══════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════ */
+function showTab(tab, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.getElementById('serverSection').style.display    = (tab==='server'    || tab==='all') ? '' : 'none';
+  document.getElementById('interfaceSection').style.display = (tab==='interface' || tab==='all') ? '' : 'none';
+  document.getElementById('specialSection').style.display   = (tab==='special'   || tab==='all') ? '' : 'none';
+}
+
+/* ═══════════════════════════════════════════
+   COPY FULL REPORT
+═══════════════════════════════════════════ */
+function copyReport() {
+  const saved = collect();
+  const custom = getCustomItems();
+  const interfaces = BASE_INTERFACES.concat(custom.filter(c=>c.type==='interface').map(c=>[c.ip,c.name,c.path,c.req,c.res]));
+  const specials   = BASE_SPECIAL.concat(custom.filter(c=>c.type==='special').map(c=>[c.ip,c.name,c.path,c.req,c.res]));
+
+  let report = `═══════════════════════════════════════\n`;
+  report += `  IT COMMAND CENTER — DAILY CHECKLIST\n`;
+  report += `  Date      : ${workDate.value}\n`;
+  report += `  Inspector : ${getInspector() || 'N/A'}\n`;
+  report += `═══════════════════════════════════════\n\n`;
+
+  report += `SERVER CHECK\n${'─'.repeat(60)}\n`;
+  BASE_SERVERS.forEach((ip, i) => {
+    const r = saved['s_'+i] || {};
+    report += `${String(i+1).padStart(2,'0')}. ${ip}\n`;
+    report += `    Checked: ${r.checked||'Pending'} | Status: ${r.fine||'Pending'} | Ticket: ${r.ticketCreated||'Ticket Not Created'} | Ticket No: ${r.ticketNo||'-'}\n`;
+    if (r.storage) report += `    Storage/Notes: ${r.storage}\n`;
+    report += `    Resolution: ${r.resolution || serverResolution(ip)}\n\n`;
   });
 
-  saveData();
-}
-
-function showTab(tab,btn){
-  document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-
-  serverSection.style.display=(tab==="server" || tab==="all") ? "" : "none";
-  interfaceSection.style.display=(tab==="interface" || tab==="all") ? "" : "none";
-}
-
-function copyReport(){
-  const data=collect();
-  let report=`Daily Server & Interface Checklist - ${workDate.value}\n\nSERVER CHECK\n`;
-
-  servers.forEach((ip,i)=>{
-    const r=data["s_"+i] || {};
-    report+=`${i+1}. ${ip} | Checked: ${r.checked || "Pending"} | Working Fine: ${r.fine || "Pending"} | Ticket: ${r.ticketCreated || "Ticket Not Created"} | Ticket No: ${r.ticketNo || "-"} | Storage/Status: ${r.storage || "-"}\nResolution: ${r.resolution || serverResolution(ip)}\n\n`;
+  report += `\nINTERFACE CHECK\n${'─'.repeat(60)}\n`;
+  interfaces.forEach((it, i) => {
+    const r = saved['i_'+i] || {};
+    report += `${String(i+1).padStart(2,'0')}. ${it[1]} (${it[0]})\n`;
+    report += `    Checked: ${r.checked||'Pending'} | Running: ${r.running||'Pending'} | Logs: ${r.logs||'Pending'} | Status: ${r.fine||'Pending'}\n`;
+    report += `    Ticket: ${r.ticketCreated||'Ticket Not Created'} | Ticket No: ${r.ticketNo||'-'}\n`;
+    report += `    Resolution: ${r.resolution||ifaceResolution(it[1],it[0],it[2])}\n\n`;
   });
 
-  report+=`\nINTERFACE CHECK\n`;
-
-  interfaces.forEach((it,i)=>{
-    const r=data["i_"+i] || {};
-    report+=`${i+1}. ${it[1]} (${it[0]}) | Checked: ${r.checked || "Pending"} | Running: ${r.running || "Pending"} | Logs: ${r.logs || "Pending"} | Working Fine: ${r.fine || "Pending"} | Ticket: ${r.ticketCreated || "Ticket Not Created"} | Ticket No: ${r.ticketNo || "-"}\nPath: ${it[2]}\nResolution: ${r.resolution || interfaceResolution(it[1],it[0],it[2])}\n\n`;
+  report += `\nSPECIAL CHECKS\n${'─'.repeat(60)}\n`;
+  specials.forEach((it, i) => {
+    const r = saved['sp_'+i] || {};
+    report += `${String(i+1).padStart(2,'0')}. ${it[1]} (${it[0]})\n`;
+    report += `    Checked: ${r.checked||'Pending'} | Status: ${r.fine||'Pending'} | Ticket: ${r.ticketCreated||'Ticket Not Created'}\n`;
+    report += `    Resolution: ${r.resolution||it[4]}\n\n`;
   });
 
   copyText(report);
 }
 
-function exportCSV(){
-  const data=collect();
-
-  const rows=[
-    ["Date","Type","No","Server IP","Name","Path","Checked","Running","Logs","Working Fine","Ticket Created","Ticket No","Storage/Status","Request","Resolution"]
-  ];
-
-  servers.forEach((ip,i)=>{
-    const r=data["s_"+i] || {};
-    rows.push([
-      workDate.value,
-      "Server",
-      i+1,
-      ip,
-      "Server Check",
-      "",
-      r.checked || "Pending",
-      "",
-      "",
-      r.fine || "Pending",
-      r.ticketCreated || "Ticket Not Created",
-      r.ticketNo || "",
-      r.storage || "",
-      r.request || serverRequest(ip),
-      r.resolution || serverResolution(ip)
-    ]);
-  });
-
-  interfaces.forEach((it,i)=>{
-    const r=data["i_"+i] || {};
-    rows.push([
-      workDate.value,
-      "Interface",
-      i+1,
-      it[0],
-      it[1],
-      it[2],
-      r.checked || "Pending",
-      r.running || "Pending",
-      r.logs || "Pending",
-      r.fine || "Pending",
-      r.ticketCreated || "Ticket Not Created",
-      r.ticketNo || "",
-      "",
-      r.request || interfaceRequest(it[1],it[0]),
-      r.resolution || interfaceResolution(it[1],it[0],it[2])
-    ]);
-  });
-
-  const csv=rows.map(row=>row.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n");
-  const blob=new Blob([csv],{type:"text/csv"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download=`Daily_Checklist_${workDate.value}.csv`;
-  a.click();
+/* ═══════════════════════════════════════════
+   QUICK TICKET GENERATOR
+═══════════════════════════════════════════ */
+function toggleTicketPanel() {
+  document.getElementById('ticketPanel').classList.toggle('open');
+  generateCombinedTicket();
 }
 
-function resetToday(){
-  if(confirm("Clear saved data for selected date only?")){
-    localStorage.removeItem(key());
+function generateCombinedTicket() {
+  const saved = collect();
+  const custom = getCustomItems();
+  const interfaces = BASE_INTERFACES.concat(custom.filter(c=>c.type==='interface').map(c=>[c.ip,c.name,c.path]));
+  const specials   = BASE_SPECIAL.concat(custom.filter(c=>c.type==='special').map(c=>[c.ip,c.name,c.path,c.req,c.res]));
+
+  const issues = [];
+
+  BASE_SERVERS.forEach((ip, i) => {
+    const r = saved['s_'+i] || {};
+    if (r.fine === 'Issue Found' || r.ticketCreated === 'Ticket Not Created' && r.checked === 'Checked') {
+      issues.push({ label: `Server: ${ip}`, req: r.request||serverRequest(ip), res: r.resolution||serverResolution(ip), ticket: r.ticketNo||'-' });
+    }
+  });
+
+  interfaces.forEach((it, i) => {
+    const r = saved['i_'+i] || {};
+    if (r.fine === 'Issue Found' || (r.ticketCreated === 'Ticket Not Created' && r.checked === 'Checked')) {
+      issues.push({ label: `Interface: ${it[1]} (${it[0]})`, req: r.request||ifaceRequest(it[1],it[0]), res: r.resolution||ifaceResolution(it[1],it[0],it[2]), ticket: r.ticketNo||'-' });
+    }
+  });
+
+  specials.forEach((it, i) => {
+    const r = saved['sp_'+i] || {};
+    if (r.fine === 'Issue Found' || (r.ticketCreated === 'Ticket Not Created' && r.checked === 'Checked')) {
+      issues.push({ label: `Check: ${it[1]}`, req: r.request||it[3], res: r.resolution||it[4], ticket: r.ticketNo||'-' });
+    }
+  });
+
+  if (!issues.length) {
+    document.getElementById('ticketOutput').textContent = '✅ No pending tickets — all checked items are working fine!';
+    return;
+  }
+
+  let out = `COMBINED DAILY TICKET\nDate: ${workDate.value} | Inspector: ${getInspector()||'N/A'}\n${'═'.repeat(50)}\n\n`;
+
+  issues.forEach((x, i) => {
+    out += `[${i+1}] ${x.label}\n`;
+    out += `Ticket No : ${x.ticket}\n`;
+    out += `Request   : ${x.req}\n`;
+    out += `Resolution: ${x.res}\n`;
+    out += `${'─'.repeat(50)}\n`;
+  });
+
+  document.getElementById('ticketOutput').textContent = out;
+}
+
+function copyCombinedTicket() {
+  copyText(document.getElementById('ticketOutput').textContent);
+}
+
+/* ═══════════════════════════════════════════
+   EXPORT CSV
+═══════════════════════════════════════════ */
+function exportCSV() {
+  const saved = collect();
+  const custom = getCustomItems();
+  const interfaces = BASE_INTERFACES.concat(custom.filter(c=>c.type==='interface').map(c=>[c.ip,c.name,c.path]));
+  const specials   = BASE_SPECIAL.concat(custom.filter(c=>c.type==='special').map(c=>[c.ip,c.name,c.path,c.req,c.res]));
+
+  const rows = [
+    ["Date","Type","No","Server IP","Name","Path","Checked","Running","Logs","Status","Ticket Created","Ticket No","Inspector","Last Checked","Storage/Notes","Request","Resolution"]
+  ];
+
+  BASE_SERVERS.forEach((ip, i) => {
+    const r = saved['s_'+i] || {};
+    rows.push([workDate.value,"Server",i+1,ip,"Server Check","",r.checked||"Pending","","",r.fine||"Pending",r.ticketCreated||"Ticket Not Created",r.ticketNo||"",r.inspector||"",r.lastCheckedTs ? new Date(r.lastCheckedTs).toLocaleString() : "",r.storage||"",r.request||serverRequest(ip),r.resolution||serverResolution(ip)]);
+  });
+
+  interfaces.forEach((it, i) => {
+    const r = saved['i_'+i] || {};
+    rows.push([workDate.value,"Interface",i+1,it[0],it[1],it[2],r.checked||"Pending",r.running||"Pending",r.logs||"Pending",r.fine||"Pending",r.ticketCreated||"Ticket Not Created",r.ticketNo||"",r.inspector||"",r.lastCheckedTs ? new Date(r.lastCheckedTs).toLocaleString() : "","",r.request||ifaceRequest(it[1],it[0]),r.resolution||ifaceResolution(it[1],it[0],it[2])]);
+  });
+
+  specials.forEach((it, i) => {
+    const r = saved['sp_'+i] || {};
+    rows.push([workDate.value,"Special",i+1,it[0],it[1],it[2],r.checked||"Pending",r.running||"Pending",r.logs||"Pending",r.fine||"Pending",r.ticketCreated||"Ticket Not Created",r.ticketNo||"",r.inspector||"",r.lastCheckedTs ? new Date(r.lastCheckedTs).toLocaleString() : "","",r.request||it[3],r.resolution||it[4]]);
+  });
+
+  const csv = rows.map(row => row.map(v => `"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `IT_Checklist_${workDate.value}.csv`;
+  a.click();
+  toast('📊 CSV exported', 'success');
+}
+
+/* ═══════════════════════════════════════════
+   RESET
+═══════════════════════════════════════════ */
+function resetToday() {
+  if (confirm(`Clear all saved data for ${workDate.value}?`)) {
+    localStorage.removeItem(storeKey());
     render();
+    toast('🗑️ Reset complete for ' + workDate.value, 'info');
   }
 }
 
-function toggleHistory(){
-  historyBox.style.display=historyBox.style.display==="block" ? "none" : "block";
+/* ═══════════════════════════════════════════
+   HISTORY
+═══════════════════════════════════════════ */
+function toggleHistory() {
+  const panel = document.getElementById('historyPanel');
+  panel.classList.toggle('open');
   renderHistory();
 }
 
-function getSavedDates(){
-  const dates=[];
-  for(let i=0;i<localStorage.length;i++){
-    const k=localStorage.key(i);
-    if(k && k.startsWith(STORE_PREFIX)){
-      dates.push(k.replace(STORE_PREFIX,""));
-    }
+function getSavedDates() {
+  const dates = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith(STORE)) dates.push(k.replace(STORE, ''));
   }
   return dates.sort().reverse();
 }
 
-function renderHistory(){
-  const dates=getSavedDates();
+function renderHistory() {
+  const grid = document.getElementById('historyGrid');
+  const dates = getSavedDates();
+  if (!dates.length) { grid.innerHTML = '<div style="color:var(--muted);font-size:12px;">No saved history yet.</div>'; return; }
 
-  historyList.innerHTML=dates.length ? "" : "<div class='historyItem'>No saved history found</div>";
-
-  dates.forEach(d=>{
-    historyList.insertAdjacentHTML("beforeend",`
-      <div class="historyItem">
-        <span>${d}</span>
-        <button onclick="openDate('${d}')">Open</button>
-      </div>
-    `);
-  });
+  grid.innerHTML = dates.map(d => `
+    <div class="history-chip">
+      <span onclick="openDate('${d}')" style="cursor:pointer;flex:1;">📅 ${d}</span>
+      <span class="del-btn" onclick="deleteDate('${d}')" title="Delete">✕</span>
+    </div>`).join('');
 }
 
-function openDate(d){
-  workDate.value=d;
+function openDate(d) {
+  workDate.value = d;
   render();
-  historyBox.style.display="none";
+  document.getElementById('historyPanel').classList.remove('open');
 }
 
-workDate.value=todayISO();
-workDate.addEventListener("change",render);
-searchBox.addEventListener("input",applyFilters);
-filterBox.addEventListener("change",applyFilters);
-
-document.addEventListener("input",e=>{
-  if(e.target.matches("input,select,textarea")){
-    if(e.target.dataset.field==="fine" && e.target.value==="Working Fine"){
-      const tr=e.target.closest("tr");
-      const checked=tr.querySelector('[data-field="checked"]');
-      if(checked) checked.value="Checked";
-    }
-
-    localStorage.setItem(key(),JSON.stringify(collect()));
-    updateSummary();
-    updateRowColors();
+function deleteDate(d) {
+  if (confirm(`Delete saved data for ${d}?`)) {
+    localStorage.removeItem(STORE + d);
     renderHistory();
+    toast('🗑️ Deleted ' + d, 'info');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   ADMIN PANEL
+═══════════════════════════════════════════ */
+function openAdmin() {
+  document.getElementById('adminOverlay').classList.add('open');
+  renderAdminList();
+}
+
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('open');
+}
+
+document.getElementById('adminOverlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeAdmin();
+});
+
+function adminAddItem() {
+  const type = document.getElementById('adminType').value;
+  const ip   = document.getElementById('adminIP').value.trim();
+  const name = document.getElementById('adminName').value.trim();
+  const path = document.getElementById('adminPath').value.trim();
+  const req  = document.getElementById('adminRequest').value.trim();
+  const res  = document.getElementById('adminResolution').value.trim();
+
+  if (!name) { toast('⚠️ Name is required', 'error'); return; }
+
+  const custom = getCustomItems();
+  custom.push({type, ip, name, path, req: req||'', res: res||'', enabled: true});
+  saveCustomItems(custom);
+  renderAdminList();
+  render();
+  toast('➕ Item added: ' + name, 'success');
+
+  ['adminIP','adminName','adminPath','adminRequest','adminResolution'].forEach(id => document.getElementById(id).value = '');
+}
+
+function adminDeleteItem(i) {
+  const custom = getCustomItems();
+  if (confirm('Delete "' + custom[i]?.name + '"?')) {
+    custom.splice(i,1);
+    saveCustomItems(custom);
+    renderAdminList();
+    render();
+    toast('🗑️ Item removed', 'info');
+  }
+}
+
+function renderAdminList() {
+  const custom = getCustomItems();
+  const el = document.getElementById('adminItemList');
+  if (!custom.length) { el.innerHTML = '<div style="color:var(--muted);font-size:12px;">No custom items yet.</div>'; return; }
+
+  el.innerHTML = custom.map((c,i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(56,189,248,.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;">
+      <div>
+        <span style="color:var(--muted);font-size:10px;font-family:var(--font-mono);text-transform:uppercase;">${c.type}</span>
+        <span style="color:var(--text);font-weight:600;margin-left:8px;">${esc(c.name)}</span>
+        <span style="color:var(--muted);margin-left:6px;">${esc(c.ip)}</span>
+      </div>
+      <button class="btn btn-danger btn-xs" onclick="adminDeleteItem(${i})">✕</button>
+    </div>`).join('');
+}
+
+/* ═══════════════════════════════════════════
+   USER PANEL
+═══════════════════════════════════════════ */
+function toggleUserPanel() {
+  document.getElementById('userPanel').classList.toggle('open');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.user-badge') && !e.target.closest('#userPanel')) {
+    document.getElementById('userPanel').classList.remove('open');
   }
 });
 
+/* ═══════════════════════════════════════════
+   LIVE CLOCK
+═══════════════════════════════════════════ */
+function updateClock() {
+  const now = new Date();
+  document.getElementById('liveClock').textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('liveDate').textContent  = now.toLocaleDateString([], {weekday:'short',year:'numeric',month:'short',day:'numeric'});
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+/* Auto-refresh row colors every 5 min (for overdue detection) */
+setInterval(() => { updateRowColors(); updateKPIs(); }, 300000);
+
+/* ═══════════════════════════════════════════
+   TOAST NOTIFICATIONS
+═══════════════════════════════════════════ */
+function toast(msg, type='info') {
+  const icons = { success:'✅', error:'❌', info:'ℹ️' };
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.innerHTML = `<span>${icons[type]||''}</span><span>${msg}</span>`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => {
+    el.style.animation = 'fadeOut .3s ease forwards';
+    setTimeout(() => el.remove(), 300);
+  }, 2800);
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+workDate.value = todayISO();
+workDate.addEventListener('change', render);
+searchBox.addEventListener('input', applyFilters);
+
+/* Load inspector */
+const savedInspector = getInspector();
+if (savedInspector) {
+  document.getElementById('inspectorInput').value = savedInspector;
+  setInspector(savedInspector);
+}
+
 render();
 </script>
-
 </body>
 </html>
