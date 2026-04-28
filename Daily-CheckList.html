@@ -221,6 +221,19 @@ tr.rov{animation:pulse-ov 2.5s ease infinite}
 tr.rpn td:first-child{border-left:4px solid rgba(42,74,100,.6)!important}
 tr.rpn td{border-bottom:1px solid rgba(20,40,65,.5)!important}
 
+/* TICKET CREATED — NOT YET CHECKED (purple/violet) */
+tr.rtc td{
+  background:linear-gradient(90deg,rgba(124,58,237,.22) 0%,rgba(76,29,149,.12) 100%);
+  border-bottom:1px solid rgba(167,139,250,.28)!important;
+}
+tr.rtc td:first-child{border-left:4px solid #a78bfa!important}
+tr.rtc .cip,tr.rtc .cnm{color:#c4b5fd!important}
+@keyframes pulse-rtc{
+  0%,100%{box-shadow:inset 4px 0 0 rgba(167,139,250,.8)}
+  50%{box-shadow:inset 4px 0 0 rgba(167,139,250,.2)}
+}
+tr.rtc{animation:pulse-rtc 2s ease infinite}
+
 .cnum{font-family:var(--mono);font-size:9.5px;color:var(--mu);text-align:center}
 .cip{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--cy);white-space:nowrap}
 .cnm{font-weight:600;font-size:11.5px}
@@ -456,6 +469,7 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
         <option value="Ticket Created">Ticket Created</option>
         <option value="Ticket Not Created">No Ticket</option>
         <option value="__over__">Overdue</option>
+        <option value="__tknc__">Ticket Created - Not Checked</option>
       </select>
     </div>
     <div class="tbsep"></div>
@@ -469,7 +483,7 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
     <div class="kpi kbl"><div class="kico">&#128203;</div><div class="klbl">Total Items</div><div class="kval" id="kTot">0</div><div class="ksub">All categories</div></div>
     <div class="kpi kgn"><div class="kico">&#10003;</div><div class="klbl">Completed</div><div class="kval" id="kDn">0</div><div class="kbar"><div class="kbarf kgn" id="kDnB" style="width:0%"></div></div></div>
     <div class="kpi krd"><div class="kico">&#10007;</div><div class="klbl">Issues Found</div><div class="kval" id="kIs">0</div><div class="kbar"><div class="kbarf krd" id="kIsB" style="width:0%"></div></div></div>
-    <div class="kpi kam"><div class="kico">&#127915;</div><div class="klbl">Tickets Created</div><div class="kval" id="kTk">0</div><div class="kbar"><div class="kbarf kam" id="kTkB" style="width:0%"></div></div></div>
+    <div class="kpi kam"><div class="kico">&#127915;</div><div class="klbl">Tickets Created</div><div class="kval" id="kTk">0</div><div class="kbar"><div class="kbarf kam" id="kTkB" style="width:0%"></div></div><div class="ksub" style="margin-top:5px;color:#c4b5fd;font-weight:600"><span id="kTkNc">0</span> not checked yet</div></div>
     <div class="kpi kpu"><div class="kico">&#9888;</div><div class="klbl">Overdue &gt;24h</div><div class="kval" id="kOv">0</div><div class="ksub">Needs attention</div></div>
     <div class="kpi ktl"><div class="kico">&#128202;</div><div class="klbl">Progress</div><div class="kval" id="kPct">0%</div><div class="kbar"><div class="kbarf ktl" id="kPctB" style="width:0%"></div></div></div>
   </div>
@@ -526,6 +540,16 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
   <!-- OVERDUE ALERT -->
   <div class="alrt awarn" id="ovAlert" style="display:none">
     &#9888; <strong>Attention:</strong> <span id="ovCnt">0</span> items not checked in over 24 hours.
+  </div>
+
+  <!-- COLOUR LEGEND -->
+  <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;background:var(--panel);border:1px solid var(--b1);border-radius:var(--r);padding:8px 14px">
+    <span style="font-size:9.5px;color:var(--mu);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;margin-right:4px">Row Status:</span>
+    <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:#22c55e;flex-shrink:0"></span>Checked &amp; Working Fine</span>
+    <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:#a78bfa;flex-shrink:0"></span>Ticket Created — Not Checked Yet</span>
+    <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:#ef4444;flex-shrink:0"></span>Issue Found / Stopped</span>
+    <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:#f59e0b;flex-shrink:0"></span>Overdue (&gt;24h)</span>
+    <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(42,74,100,.8);flex-shrink:0"></span>Pending</span>
   </div>
 
   <!-- AI PANEL -->
@@ -842,10 +866,16 @@ function lcShow(ts){
   return '<span class="lc lov">'+full+'</span>';
 }
 function isOv(ts){return !ts||(Date.now()-ts)>86400000;}
-function rowC(chk,fin,run,ov){
+function rowC(chk,fin,run,ov,tkt){
+  /* Checked + fine = green done */
   if(chk==="Checked"&&(fin==="Working Fine"||fin==="Not Required")) return "rdn";
+  /* Issue / stopped = red */
   if(fin==="Issue Found"||run==="Stopped") return "ris";
+  /* Ticket created but NOT yet checked = purple (the key new state) */
+  if(tkt==="Ticket Created"&&chk!=="Checked") return "rtc";
+  /* Overdue (not checked in >24h) = amber pulse */
   if(ov&&chk!=="Checked") return "rov";
+  /* Default pending = subtle */
   return "rpn";
 }
 
@@ -864,7 +894,7 @@ function render(){
     var res=r.res||sRes(ip);
     var ts=r.ts||null;
     var ov=isOv(ts);
-    var rc=rowC(r.chk,r.fin,r.run,ov);
+    var rc=rowC(r.chk,r.fin,r.run,ov,r.tkt);
     var row=document.createElement("tr");
     row.className=rc;
     row.setAttribute("data-idx","s"+i);
@@ -897,7 +927,7 @@ function render(){
     var res=r.res||(it[4]||iRes(it[1]));
     var ts=r.ts||null;
     var ov=isOv(ts);
-    var rc=rowC(r.chk,r.fin,r.run,ov);
+    var rc=rowC(r.chk,r.fin,r.run,ov,r.tkt);
     var row=document.createElement("tr");
     row.className=rc;
     row.setAttribute("data-idx","i"+i);
@@ -931,7 +961,7 @@ function render(){
     var res=r.res||it[4];
     var ts=r.ts||null;
     var ov=isOv(ts);
-    var rc=rowC(r.chk,r.fin,r.run,ov);
+    var rc=rowC(r.chk,r.fin,r.run,ov,r.tkt);
     var row=document.createElement("tr");
     row.className=rc;
     row.setAttribute("data-idx","sp"+i);
@@ -1032,6 +1062,13 @@ function updateKPI(){
   /* Overdue alert */
   var oa=G("ovAlert");
   if(ov>0){oa.style.display="flex";G("ovCnt").textContent=ov;}else oa.style.display="none";
+  /* Count ticket-created-not-checked (rtc state) */
+  var tknc=0;
+  for(var i=0;i<sN;i++){var r2=saved["s"+i]||{};if(r2.tkt==="Ticket Created"&&r2.chk!=="Checked")tknc++;}
+  for(var i=0;i<iN;i++){var r2=saved["i"+i]||{};if(r2.tkt==="Ticket Created"&&r2.chk!=="Checked")tknc++;}
+  for(var i=0;i<spN;i++){var r2=saved["sp"+i]||{};if(r2.tkt==="Ticket Created"&&r2.chk!=="Checked")tknc++;}
+  if(G("kTkNc")) G("kTkNc").textContent=tknc;
+
   if(pct===100&&window._lp!==100)celebrate();
   window._lp=pct;
   updateStreak();
@@ -1049,8 +1086,10 @@ function updColors(){
     var chkVal=chk?chk.value:"";
     var finVal=fin?fin.value:"";
     var runVal=run?run.value:"";
-    /* Use the live select values for colour, but saved.ts for overdue */
-    tr.className=rowC(chkVal,finVal,runVal,isOv(r.ts));
+    var tkt=tr.querySelector("[data-f='tkt']");
+    var tktVal=tkt?tkt.value:"";
+    /* Use live select values for colour, but saved.ts for overdue */
+    tr.className=rowC(chkVal,finVal,runVal,isOv(r.ts),tktVal);
   });
 }
 
@@ -1069,6 +1108,11 @@ function applyF(){
       var idx=tr.getAttribute("data-idx"); var r=saved[idx]||{};
       var cv=tr.querySelector("[data-f='chk']");
       mf=isOv(r.ts)&&(!cv||cv.value!=="Checked");
+    } else if(f==="__tknc__"){
+      /* Ticket Created but not yet Checked */
+      var cv2=tr.querySelector("[data-f='chk']");
+      var tv2=tr.querySelector("[data-f='tkt']");
+      mf=(tv2&&tv2.value==="Ticket Created")&&(cv2&&cv2.value!=="Checked");
     } else if(f){mf=vals.indexOf(f.toLowerCase())>-1;}
     tr.style.display=(mq&&mf)?"":"none";
   });
