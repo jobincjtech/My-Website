@@ -340,6 +340,44 @@ td textarea{width:100%;min-height:30px;max-height:70px;font-size:10.5px;
   padding:12px 15px;z-index:300;min-width:210px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
 .udrop.open{display:block}
 
+/* DATE RANGE PANEL */
+.drpanel{background:var(--panel);border:1px solid var(--b2);border-radius:var(--rl);
+  padding:18px 20px;margin-bottom:14px;display:none}
+.drpanel.open{display:block}
+.dr-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.dr-controls input[type=date]{width:140px;height:34px}
+.dr-summary{margin-bottom:14px}
+.dr-summary-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+.dr-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.dr-kpi{background:rgba(0,0,0,.25);border:1px solid var(--b1);border-radius:10px;padding:10px 12px;text-align:center}
+.dr-kpi-val{font-size:22px;font-weight:800;font-family:var(--mono);letter-spacing:-1px;line-height:1}
+.dr-kpi-lbl{font-size:9px;color:var(--mu);font-family:var(--mono);text-transform:uppercase;margin-top:3px}
+.dr-table-wrap{border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;max-height:420px;overflow-y:auto}
+.dr-table{width:100%;border-collapse:collapse;min-width:700px}
+.dr-table thead th{background:rgba(3,9,18,.98);color:var(--mu);font-size:9.5px;font-family:var(--mono);
+  text-transform:uppercase;letter-spacing:.4px;padding:8px 10px;text-align:left;
+  border-bottom:1px solid var(--b2);white-space:nowrap;position:sticky;top:0}
+.dr-table tbody td{padding:7px 10px;border-bottom:1px solid rgba(20,40,65,.5);font-size:11.5px;vertical-align:middle}
+.dr-table tbody tr:last-child td{border-bottom:none}
+.dr-table tbody tr:hover td{background:rgba(56,189,248,.03)}
+.dr-date-cell{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--cy);white-space:nowrap}
+.dr-bar-wrap{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-top:3px;min-width:60px}
+.dr-bar-fill{height:100%;border-radius:3px;transition:width .4s ease;background:linear-gradient(90deg,var(--gn2),var(--gn))}
+.dr-pct{font-size:10px;font-family:var(--mono);color:var(--gn);font-weight:600}
+.dr-badge{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600}
+.drb-gn{background:rgba(34,197,94,.15);color:var(--gn);border:1px solid rgba(34,197,94,.25)}
+.drb-rd{background:rgba(239,68,68,.15);color:var(--rd);border:1px solid rgba(239,68,68,.25)}
+.drb-am{background:rgba(245,158,11,.15);color:var(--am);border:1px solid rgba(245,158,11,.25)}
+.drb-mu{background:rgba(90,122,150,.1);color:var(--mu);border:1px solid rgba(90,122,150,.2)}
+.drb-pu{background:rgba(167,139,250,.15);color:var(--pu);border:1px solid rgba(167,139,250,.25)}
+.dr-empty{color:var(--mu);font-size:12px;text-align:center;padding:28px;font-style:italic}
+.dr-detail-area{margin-top:14px;border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
+.dr-detail-hdr{background:rgba(3,9,18,.8);padding:8px 12px;font-size:11px;font-weight:600;
+  display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--b1)}
+.dr-detail-body{padding:12px;font-family:var(--mono);font-size:10.5px;line-height:1.7;
+  color:var(--tx);white-space:pre-wrap;max-height:280px;overflow-y:auto;
+  background:rgba(0,0,0,.3)}
+
 /* HIST */
 .hgrid{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
 .hchip{background:rgba(56,189,248,.06);border:1px solid var(--b2);border-radius:30px;
@@ -438,6 +476,7 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
   <button class="nbtn" onclick="toggleP('actPan');renderAct()"><span class="ni">&#128203;</span> Activity Log</button>
   <button class="nbtn" onclick="toggleP('pgPan')"><span class="ni">&#127955;</span> Ping Check</button>
   <button class="nbtn" onclick="toggleP('hisPan');renderHist()"><span class="ni">&#128336;</span> History</button>
+  <button class="nbtn" onclick="openDateRange()"><span class="ni">&#128197;</span> Date Range</button>
   <div class="ssep"></div>
   <div class="slbl">Actions</div>
   <button class="nbtn" onclick="saveData()"><span class="ni">&#128190;</span> Save</button>
@@ -450,10 +489,15 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
 
 <main class="content">
   <div class="toolbar">
-    <div style="display:flex;align-items:center;gap:7px">
-      <span class="tblbl">Date</span>
-      <input type="date" id="wd">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <span class="tblbl">From</span>
+      <input type="date" id="wd" style="width:136px" title="From date">
+      <span class="tblbl">To</span>
+      <input type="date" id="wdTo" style="width:136px" title="To date (leave same as From for single day)">
+      <button class="btn bp bsm" onclick="applyDateRange()" title="Apply date range">&#9654;</button>
+      <button class="btn bgh bsm" onclick="setToday()" title="Jump to today">Today</button>
     </div>
+    <div style="font-size:9.5px;color:var(--mu);font-family:var(--mono);white-space:nowrap" id="drLbl"></div>
     <div class="tbsep"></div>
     <div style="display:flex;align-items:center;gap:7px">
       <span class="tblbl">Search</span>
@@ -550,6 +594,59 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
     <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:#ef4444;flex-shrink:0"></span>Issue Found / Stopped</span>
     <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:#f59e0b;flex-shrink:0"></span>Overdue (&gt;24h)</span>
     <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(42,74,100,.8);flex-shrink:0"></span>Pending</span>
+  </div>
+
+  <!-- DATE RANGE PANEL -->
+  <div class="drpanel" id="drPan">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <h3 style="font-size:13.5px;font-weight:700;color:var(--tl);margin:0">&#128197; Date Range Report</h3>
+      <button class="btn bgh bsm" onclick="toggleP('drPan')">&#10005;</button>
+    </div>
+    <div class="dr-controls">
+      <span class="tblbl">From</span>
+      <input type="date" id="drFrom">
+      <span class="tblbl">To</span>
+      <input type="date" id="drTo">
+      <button class="btn bp bsm" onclick="runDateRange()">&#9654; Generate Report</button>
+      <button class="btn bg bsm" onclick="drExportCSV()">&#128202; Export CSV</button>
+      <button class="btn bgh bsm" onclick="drCopyReport()">&#128203; Copy Report</button>
+      <button class="btn ba bsm" onclick="drSetThisWeek()">This Week</button>
+      <button class="btn bgh bsm" onclick="drSetThisMonth()">This Month</button>
+      <button class="btn bgh bsm" onclick="drSetLast7()">Last 7 Days</button>
+    </div>
+    <!-- Summary KPIs -->
+    <div class="dr-kpis" id="drKpis" style="display:none">
+      <div class="dr-kpi"><div class="dr-kpi-val" id="drTotDays" style="color:var(--bl)">0</div><div class="dr-kpi-lbl">Days Found</div></div>
+      <div class="dr-kpi"><div class="dr-kpi-val" id="drTotChecked" style="color:var(--gn)">0</div><div class="dr-kpi-lbl">Total Checked</div></div>
+      <div class="dr-kpi"><div class="dr-kpi-val" id="drTotIssues" style="color:var(--rd)">0</div><div class="dr-kpi-lbl">Total Issues</div></div>
+      <div class="dr-kpi"><div class="dr-kpi-val" id="drTotTickets" style="color:var(--am)">0</div><div class="dr-kpi-lbl">Tickets Created</div></div>
+      <div class="dr-kpi"><div class="dr-kpi-val" id="drAvgPct" style="color:var(--tl)">0%</div><div class="dr-kpi-lbl">Avg Completion</div></div>
+    </div>
+    <!-- Per-day summary table -->
+    <div id="drTableWrap" style="display:none">
+      <div style="font-size:11px;color:var(--mu);margin-bottom:8px;font-family:var(--mono)">Click any row to see full detail for that day.</div>
+      <div class="dr-table-wrap">
+        <table class="dr-table">
+          <thead><tr>
+            <th>Date</th><th>Day</th><th>Servers Checked</th><th>Interfaces Checked</th><th>Special Checked</th>
+            <th>Total Done</th><th>Issues</th><th>Tickets</th><th>Progress</th><th>Inspector</th>
+          </tr></thead>
+          <tbody id="drTbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Detail area for selected day -->
+    <div class="dr-detail-area" id="drDetail" style="display:none">
+      <div class="dr-detail-hdr">
+        <span id="drDetailTitle">Detail</span>
+        <div style="display:flex;gap:7px">
+          <button class="btn bgh bxs" onclick="drCopyDay()">&#128203; Copy</button>
+          <button class="btn br bxs" onclick="G('drDetail').style.display='none'">&#10005;</button>
+        </div>
+      </div>
+      <div class="dr-detail-body" id="drDetailBody"></div>
+    </div>
+    <div id="drEmpty" class="dr-empty" style="display:none">No saved data found for the selected date range. Try a different range or save some checklist data first.</div>
   </div>
 
   <!-- AI PANEL -->
@@ -757,184 +854,147 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
 
 <div class="tc" id="tc"></div>
 <script>
-/* ======= DATA ======= */
-var SRV=[
-  "172.19.8.32","172.19.241.4","172.19.241.6","172.19.241.10","172.19.241.15",
-  "172.19.241.21","172.19.241.14","172.19.243.7","172.19.243.9","172.19.243.11",
-  "172.19.238.13","172.19.8.150","172.19.238.14","172.19.238.12","172.19.238.15",
-  "172.19.241.30","172.19.241.36","172.19.241.24","172.19.241.45","172.19.14.199",
-  "172.19.8.20","172.19.241.37","172.19.58.110","172.19.113.50","172.19.8.48"
-];
+/* ===== DATA ===== */
+var SRV=["172.19.8.32","172.19.241.4","172.19.241.6","172.19.241.10","172.19.241.15","172.19.241.21","172.19.241.14","172.19.243.7","172.19.243.9","172.19.243.11","172.19.238.13","172.19.8.150","172.19.238.14","172.19.238.12","172.19.238.15","172.19.241.30","172.19.241.36","172.19.241.24","172.19.241.45","172.19.14.199","172.19.8.20","172.19.241.37","172.19.58.110","172.19.113.50","172.19.8.48"];
 var IFC=[
-  ["172.19.241.24","AHM Sysmax2","E:\\Sysmax\\Sysmax AHM\\ASPLTCPserver.exe"],
-  ["172.19.241.21","AHM Sysmax1","C:\\Sysmex AHM\\ASPLTCPserver.exe"],
-  ["172.19.241.24","AHQ Sysmax XN 1000","E:\\Sysmax\\Sysmax AHQ XN 1000\\HL7Communicator.exe"],
-  ["172.19.241.24","AHQ Sysmax","E:\\Sysmax\\Sysmax AHQ\\HL7Communicator.exe"],
-  ["172.19.241.24","ACD Sysmax","E:\\Sysmax\\Sysmax Cedar\\HL7Communicator.exe"],
-  ["172.19.8.32","GRBS (iSTAT)","D:\\POCT\\iSTATserver.exe"],
-  ["172.19.8.32","ECG Server (MUSE)","D:\\8.85\\MUSE\\HL7Communicator.exe"],
-  ["172.19.8.32","Beckman Coulter","D:\\8.85\\Coulter\\HL7Communicator.exe"],
-  ["172.19.8.32","Vitals Monitoring","D:\\Test\\GEVs.exe | D:\\Test\\Client"],
-  ["172.19.8.32","POCT (Point of Care)","D:\\POCT\\iSTATServer.exe"],
-  ["172.19.241.24","Cobas Infinity 2","E:\\P\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\HL7Communicator.exe"],
-  ["172.19.8.32","iStat","D:\\8.85\\iState\\iSTATServer.exe"],
-  ["172.19.8.32","Ward Vitals","D:\\Test\\Client\\VsCommunicatorClient.exe"],
-  ["172.19.8.32","Muse ECG","D:\\8.85\\MUSE\\VsCommunicatorClient.exe"],
-  ["172.19.8.32","AHSJ OrthoVision","D:\\8.85\\SHJ-OrthoVision\\Ortho Vision"],
-  ["172.19.238.13","Moksha to HIS","F:\\Padam\\TCPIP\\NEw\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug"],
-  ["172.19.241.4 & 172.19.238.13","Moksha Order Interface","241.4: E:\\MOKSHA\\ASPL TCPIP CLient.MOKSHA | 238.13: C:\\Users\\KeyAzurSrv\\OneDrive\\Aster Hospital Oman\\ASPL TCPIP CLient\\bin\\Debug"],
-  ["172.19.241.14","Print Server","net stop PowerBIReportServer | net start PowerBIReportServer"],
-  ["172.19.241.24","Ortho Vision","E:\\Ortho\\HL7Communicator.exe"],
-  ["172.19.241.30","Birthday Automation","F:\\PatientPortal_1\\PatientPortal\\Content\\img\\WishAs | Run: C:\\Users\\KeyAzurSrv\\source\\repos\\xCopy\\xCopy\\bin\\Debug\\net6.0-windows\\xCopy.exe"],
-  ["172.19.241.37","SMS & NABIDH Services","SMS: http://localhost:801/pcr/smsx?Auto=1 | NABIDH PROD: http://localhost:809/HIE/default?xCall=PROD"],
-  ["172.19.241.24","Urised AHM","E:\\Urised AHM\\Mac"],
-  ["172.19.241.24","Urised AHQ","E:\\Ahq Urised\\aspl interface\\urised\\Mac"],
-  ["172.19.241.24","Radio Meter","E:\\RadioMeter\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\"],
-  ["172.19.241.36","PDMS","C:\\PDMS\\VsCommunicatorClient"],
-  ["172.19.241.30","Patient Monitor Deepu","F:\\GE-Monitor\\GEVs"],
-  ["172.19.238.13","Mindray","F:\\Padam\\P\\ASPL TCPIP CLient - Copy"],
-  ["172.19.8.32","GRBS","D:\\8.85\\MUSE\\Client\\VsCommunicatorClient"],
-  ["172.19.241.24","Urised AHSO","E:\\AHSO Urised\\aspl interface"],
-  ["172.19.241.24","MyAster HL7 Service","Windows Service: myAster HL7"],
-  ["172.19.243.7 / 172.19.243.9","Pharmacy Auto Submission","172.19.238.13 - IIS - Edge Browser"]
+["172.19.241.24","AHM Sysmax2","E:\\Sysmax\\Sysmax AHM\\ASPLTCPserver.exe"],
+["172.19.241.21","AHM Sysmax1","C:\\Sysmex AHM\\ASPLTCPserver.exe"],
+["172.19.241.24","AHQ Sysmax XN 1000","E:\\Sysmax\\Sysmax AHQ XN 1000\\HL7Communicator.exe"],
+["172.19.241.24","AHQ Sysmax","E:\\Sysmax\\Sysmax AHQ\\HL7Communicator.exe"],
+["172.19.241.24","ACD Sysmax","E:\\Sysmax\\Sysmax Cedar\\HL7Communicator.exe"],
+["172.19.8.32","GRBS (iSTAT)","D:\\POCT\\iSTATserver.exe"],
+["172.19.8.32","ECG Server (MUSE)","D:\\8.85\\MUSE\\HL7Communicator.exe"],
+["172.19.8.32","Beckman Coulter","D:\\8.85\\Coulter\\HL7Communicator.exe"],
+["172.19.8.32","Vitals Monitoring","D:\\Test\\GEVs.exe"],
+["172.19.8.32","POCT (Point of Care)","D:\\POCT\\iSTATServer.exe"],
+["172.19.241.24","Cobas Infinity 2","E:\\P\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\HL7Communicator.exe"],
+["172.19.8.32","iStat","D:\\8.85\\iState\\iSTATServer.exe"],
+["172.19.8.32","Ward Vitals","D:\\Test\\Client\\VsCommunicatorClient.exe"],
+["172.19.8.32","Muse ECG","D:\\8.85\\MUSE\\VsCommunicatorClient.exe"],
+["172.19.8.32","AHSJ OrthoVision","D:\\8.85\\SHJ-OrthoVision\\Ortho Vision"],
+["172.19.238.13","Moksha to HIS","F:\\Padam\\TCPIP\\NEw\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug"],
+["172.19.241.4 & 172.19.238.13","Moksha Order Interface","241.4: E:\\MOKSHA\\ASPL TCPIP CLient.MOKSHA"],
+["172.19.241.14","Print Server","net stop PowerBIReportServer | net start PowerBIReportServer"],
+["172.19.241.24","Ortho Vision","E:\\Ortho\\HL7Communicator.exe"],
+["172.19.241.30","Birthday Automation","F:\\PatientPortal_1\\PatientPortal\\Content\\img\\WishAs"],
+["172.19.241.37","SMS & NABIDH Services","SMS: http://localhost:801/pcr/smsx?Auto=1"],
+["172.19.241.24","Urised AHM","E:\\Urised AHM\\Mac"],
+["172.19.241.24","Urised AHQ","E:\\Ahq Urised\\aspl interface\\urised\\Mac"],
+["172.19.241.24","Radio Meter","E:\\RadioMeter\\ASPL TCPIP COMMUNICATOR-Server\\bin\\Debug\\"],
+["172.19.241.36","PDMS","C:\\PDMS\\VsCommunicatorClient"],
+["172.19.241.30","Patient Monitor Deepu","F:\\GE-Monitor\\GEVs"],
+["172.19.238.13","Mindray","F:\\Padam\\P\\ASPL TCPIP CLient - Copy"],
+["172.19.8.32","GRBS","D:\\8.85\\MUSE\\Client\\VsCommunicatorClient"],
+["172.19.241.24","Urised AHSO","E:\\AHSO Urised\\aspl interface"],
+["172.19.241.24","MyAster HL7 Service","Windows Service: myAster HL7"],
+["172.19.243.7 / 172.19.243.9","Pharmacy Auto Submission","172.19.238.13 - IIS - Edge Browser"]
 ];
 var SPL=[
-  ["Display","Token Display Check","AHM Token Displays - all units",
-   "Kindly check all the AHM Token displays are working fine and Token details are correctly reflecting.",
-   "Checked all the token displays; they are working fine."],
-  ["Display","Ward Display Check","AHM Ward Displays - all wards",
-   "Kindly check that all AHM ward displays are working properly and that patient details are reflecting correctly.",
-   "Checked all the ward displays; they are working fine and patient details are reflecting correctly."]
+["Display","Token Display Check","AHM Token Displays - all units","Kindly check all the AHM Token displays are working fine and Token details are correctly reflecting.","Checked all the token displays; they are working fine."],
+["Display","Ward Display Check","AHM Ward Displays - all wards","Kindly check that all AHM ward displays are working properly and that patient details are reflecting correctly.","Checked all the ward displays; they are working fine and patient details are reflecting correctly."]
 ];
-
-/* ======= CONSTANTS ======= */
-var PANELS=["aiPan","tktPan","hoPan","ntPan","actPan","pgPan","hisPan"];
-var ST="itcc5_", CK="itcc5c_";
+var PANELS=["aiPan","tktPan","hoPan","ntPan","actPan","pgPan","hisPan","drPan"];
+var ST="itcc5_",CK="itcc5c_";
 var chkO=["Pending","Checked","Not Checked"];
 var finO=["Pending","Working Fine","Issue Found","Not Required"];
 var tktO=["Ticket Not Created","Ticket Created","Not Required"];
 var ynO=["Pending","Yes","No","Not Required"];
 var runO=["Pending","Running","Stopped","Not Required"];
 var aiMode="summary";
-
-/* ======= HELPERS ======= */
 function G(id){return document.getElementById(id);}
 function WD(){return G("wd").value;}
+function WDTo(){var el=G("wdTo");return (el&&el.value)?el.value:WD();}
 function sKey(){return ST+WD();}
 function load(){try{return JSON.parse(localStorage.getItem(sKey()))||{};}catch(e){return {};}}
+/* loadRange: merge data from all dates in the From-To range.
+   Later dates overwrite earlier ones so the most recent status wins per item.
+   If no range, falls back to single date. */
+function loadRange(){
+  var from=WD(),to=WDTo();
+  if(!from)return {};
+  if(from===to)return load();
+  var dates=getDates().filter(function(d){return d>=from&&d<=to;}).sort();
+  if(!dates.length)return {};
+  var merged={};
+  dates.forEach(function(d){
+    var data;try{data=JSON.parse(localStorage.getItem(ST+d))||{};}catch(e){data={};}
+    /* Merge: keep the entry with the latest timestamp per item */
+    Object.keys(data).forEach(function(k){
+      if(!merged[k]||((data[k].ts||0)>(merged[k].ts||0))){merged[k]=data[k];}
+    });
+  });
+  return merged;
+}
 function getC(){try{return JSON.parse(localStorage.getItem(CK))||[];}catch(e){return [];}}
 function saveC(a){localStorage.setItem(CK,JSON.stringify(a));}
-function today(){
-  var d=new Date();
-  return d.getFullYear()+"-"+(d.getMonth()<9?"0":"")+(d.getMonth()+1)+"-"+(d.getDate()<10?"0":"")+d.getDate();
-}
+function today(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()<9?"0":"")+(d.getMonth()+1)+"-"+(d.getDate()<10?"0":"")+d.getDate();}
 function getIns(){return localStorage.getItem("itcc5_ins")||"Jobin CJ";}
-function setIns(v){
-  localStorage.setItem("itcc5_ins",v);
-  G("uNm").textContent=v||"Inspector";
-  var ini=v.trim().split(" ").map(function(w){return w[0]||"";}).join("").toUpperCase().slice(0,2)||"IT";
-  G("uAvi").textContent=ini;
-}
-function esc(v){
-  return String(v||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-}
-function mkOpts(arr,val){
-  return arr.map(function(x){
-    return "<option"+(x===val?" selected":"")+">"+esc(x)+"</option>";
-  }).join("");
-}
+function setIns(v){localStorage.setItem("itcc5_ins",v);G("uNm").textContent=v||"Inspector";var ini=v.trim().split(" ").map(function(w){return w[0]||"";}).join("").toUpperCase().slice(0,2)||"IT";G("uAvi").textContent=ini;}
+function esc(v){return String(v||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function mkOpts(arr,val){return arr.map(function(x){return "<option"+(x===val?" selected":"")+">"+esc(x)+"</option>";}).join("");}
 function sReq(ip){return "Kindly perform the daily routine check of server "+ip+", including storage usage, performance and overall server availability.";}
 function sRes(ip){return "Daily routine check completed for server "+ip+". Storage usage, performance and server availability checked and found working fine.";}
 function iReq(nm){return "Kindly verify that the "+nm+" listener is running properly and that logs are being generated correctly as part of the daily routine check.";}
 function iRes(nm){return "Checked and verified that the "+nm+" listener is running properly and that logs are being generated correctly.";}
 function lcShow(ts){
-  if(!ts) return '<span class="lc lnv">Not checked yet</span>';
-  var now=Date.now();
-  var h=(now-ts)/3600000;
+  if(!ts)return '<span class="lc lnv">Not checked yet</span>';
   var d=new Date(ts);
   var day=("0"+d.getDate()).slice(-2);
   var mon=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
-  var yr=d.getFullYear();
-  var hr=("0"+d.getHours()).slice(-2);
-  var mn=("0"+d.getMinutes()).slice(-2);
-  var sc=("0"+d.getSeconds()).slice(-2);
-  var dt=day+"-"+mon+"-"+yr;
-  var tm=hr+":"+mn+":"+sc;
-  var full=dt+" "+tm;
-  if(h<24) return '<span class="lc lok">'+full+'</span>';
-  if(h<48) return '<span class="lc lyd">'+full+'</span>';
+  var full=day+"-"+mon+"-"+d.getFullYear()+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)+":"+("0"+d.getSeconds()).slice(-2);
+  var h=(Date.now()-ts)/3600000;
+  if(h<24)return '<span class="lc lok">'+full+'</span>';
+  if(h<48)return '<span class="lc lyd">'+full+'</span>';
   return '<span class="lc lov">'+full+'</span>';
 }
 function isOv(ts){return !ts||(Date.now()-ts)>86400000;}
 function rowC(chk,fin,run,ov,tkt){
-  /* Checked + fine = green done */
-  if(chk==="Checked"&&(fin==="Working Fine"||fin==="Not Required")) return "rdn";
-  /* Issue / stopped = red */
-  if(fin==="Issue Found"||run==="Stopped") return "ris";
-  /* Ticket created but NOT yet checked = purple (the key new state) */
-  if(tkt==="Ticket Created"&&chk!=="Checked") return "rtc";
-  /* Overdue (not checked in >24h) = amber pulse */
-  if(ov&&chk!=="Checked") return "rov";
-  /* Default pending = subtle */
+  if(chk==="Checked"&&(fin==="Working Fine"||fin==="Not Required"))return "rdn";
+  if(fin==="Issue Found"||run==="Stopped")return "ris";
+  if(tkt==="Ticket Created"&&chk!=="Checked")return "rtc";
+  if(ov&&chk!=="Checked")return "rov";
   return "rpn";
 }
-
-/* ======= RENDER ======= */
+function fmtDate(d){return d.getFullYear()+"-"+(d.getMonth()<9?"0":"")+(d.getMonth()+1)+"-"+(d.getDate()<10?"0":"")+d.getDate();}
+function dayName(iso){return ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][new Date(iso+"T00:00:00").getDay()];}
+/* RENDER */
 function render(){
-  var saved=load();
+  var saved=loadRange();
   var custom=getC();
   var ifaces=IFC.concat(custom.filter(function(c){return c.type==="interface";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
   var specs=SPL.concat(custom.filter(function(c){return c.type==="special";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
-
-  /* SERVERS */
-  var sTb=G("sTb"); sTb.innerHTML="";
+  var sTb=G("sTb");sTb.innerHTML="";
   SRV.forEach(function(ip,i){
     var r=saved["s"+i]||{};
-    var req=r.req||sReq(ip);
-    var res=r.res||sRes(ip);
-    var ts=r.ts||null;
-    var ov=isOv(ts);
-    var rc=rowC(r.chk,r.fin,r.run,ov,r.tkt);
+    var req=r.req||sReq(ip);var res=r.res||sRes(ip);var ts=r.ts||null;
     var row=document.createElement("tr");
-    row.className=rc;
+    row.className=rowC(r.chk,r.fin,r.run,isOv(ts),r.tkt);
     row.setAttribute("data-idx","s"+i);
-    row.innerHTML=
-      '<td class="cnum">'+(i+1)+'</td>'+
-      '<td class="cip">'+esc(ip)+'</td>'+
+    row.innerHTML='<td class="cnum">'+(i+1)+'</td><td class="cip">'+esc(ip)+'</td>'+
       '<td><select data-f="chk">'+mkOpts(chkO,r.chk||"Pending")+'</select></td>'+
       '<td><select data-f="fin">'+mkOpts(finO,r.fin||"Pending")+'</select></td>'+
       '<td><select data-f="tkt">'+mkOpts(tktO,r.tkt||"Ticket Not Created")+'</select></td>'+
       '<td><input type="text" data-f="tno" value="'+esc(r.tno||"")+'" placeholder="Ticket #"></td>'+
       '<td><input type="text" data-f="ins" value="'+esc(r.ins||getIns())+'" placeholder="Name"></td>'+
-      '<td>'+lcShow(ts)+'</td>'+
+      '<td id="lc_s'+i+'">'+lcShow(ts)+'</td>'+
       '<td><textarea data-f="sto" placeholder="Storage / notes">'+esc(r.sto||"")+'</textarea></td>'+
       '<td><div class="cpath" title="'+esc(res)+'">'+esc(res).substring(0,70)+'...</div>'+
-        '<input type="hidden" data-f="req" value="'+esc(req)+'">'+
-        '<input type="hidden" data-f="res" value="'+esc(res)+'"></td>'+
+      '<input type="hidden" data-f="req" value="'+esc(req)+'"><input type="hidden" data-f="res" value="'+esc(res)+'"></td>'+
       '<td><div class="astk">'+
-        '<button class="btn bgh bxs" onclick="cpItem(\'s\','+i+',\'req\')">Req</button>'+
-        '<button class="btn bg bxs" onclick="cpItem(\'s\','+i+',\'res\')">Res</button>'+
-        '<button class="btn ba bxs" onclick="cpItem(\'s\','+i+',\'full\')">Full</button>'+
+      '<button class="btn bgh bxs" onclick="cpItem(\'s\','+i+',\'req\')">Req</button>'+
+      '<button class="btn bg bxs" onclick="cpItem(\'s\','+i+',\'res\')">Res</button>'+
+      '<button class="btn ba bxs" onclick="cpItem(\'s\','+i+',\'full\')">Full</button>'+
       '</div></td>';
     sTb.appendChild(row);
   });
-
-  /* INTERFACES */
-  var iTb=G("iTb"); iTb.innerHTML="";
+  var iTb=G("iTb");iTb.innerHTML="";
   ifaces.forEach(function(it,i){
     var r=saved["i"+i]||{};
-    var req=r.req||(it[3]||iReq(it[1]));
-    var res=r.res||(it[4]||iRes(it[1]));
-    var ts=r.ts||null;
-    var ov=isOv(ts);
-    var rc=rowC(r.chk,r.fin,r.run,ov,r.tkt);
+    var req=r.req||(it[3]?it[3]:iReq(it[1]));var res=r.res||(it[4]?it[4]:iRes(it[1]));var ts=r.ts||null;
     var row=document.createElement("tr");
-    row.className=rc;
+    row.className=rowC(r.chk,r.fin,r.run,isOv(ts),r.tkt);
     row.setAttribute("data-idx","i"+i);
-    row.innerHTML=
-      '<td class="cnum">'+(i+1)+'</td>'+
-      '<td class="cip">'+esc(it[0])+'</td>'+
-      '<td class="cnm">'+esc(it[1])+'</td>'+
+    row.innerHTML='<td class="cnum">'+(i+1)+'</td><td class="cip">'+esc(it[0])+'</td><td class="cnm">'+esc(it[1])+'</td>'+
       '<td><div class="cpath" title="'+esc(it[2])+'">'+esc(it[2])+'</div></td>'+
       '<td><select data-f="chk">'+mkOpts(chkO,r.chk||"Pending")+'</select></td>'+
       '<td><select data-f="run">'+mkOpts(runO,r.run||"Pending")+'</select></td>'+
@@ -943,32 +1003,24 @@ function render(){
       '<td><select data-f="tkt">'+mkOpts(tktO,r.tkt||"Ticket Not Created")+'</select></td>'+
       '<td><input type="text" data-f="tno" value="'+esc(r.tno||"")+'" placeholder="Ticket #"></td>'+
       '<td><input type="text" data-f="ins" value="'+esc(r.ins||getIns())+'" placeholder="Name"></td>'+
-      '<td>'+lcShow(ts)+'</td>'+
-      '<td><div class="astk">'+
-        '<button class="btn bgh bxs" onclick="cpPath('+i+')">Path</button>'+
-        '<button class="btn bgh bxs" onclick="cpItem(\'i\','+i+',\'req\')">Req</button>'+
-        '<button class="btn bg bxs" onclick="cpItem(\'i\','+i+',\'res\')">Res</button>'+
-        '<button class="btn ba bxs" onclick="cpItem(\'i\','+i+',\'full\')">Full</button>'+
+      '<td id="lc_i'+i+'">'+lcShow(ts)+'</td>'+
+      '<td><input type="hidden" data-f="req" value="'+esc(req)+'"><input type="hidden" data-f="res" value="'+esc(res)+'">'+
+      '<div class="astk">'+
+      '<button class="btn bgh bxs" onclick="cpPath('+i+')">Path</button>'+
+      '<button class="btn bgh bxs" onclick="cpItem(\'i\','+i+',\'req\')">Req</button>'+
+      '<button class="btn bg bxs" onclick="cpItem(\'i\','+i+',\'res\')">Res</button>'+
+      '<button class="btn ba bxs" onclick="cpItem(\'i\','+i+',\'full\')">Full</button>'+
       '</div></td>';
     iTb.appendChild(row);
   });
-
-  /* SPECIALS */
-  var spTb=G("spTb"); spTb.innerHTML="";
+  var spTb=G("spTb");spTb.innerHTML="";
   specs.forEach(function(it,i){
     var r=saved["sp"+i]||{};
-    var req=r.req||it[3];
-    var res=r.res||it[4];
-    var ts=r.ts||null;
-    var ov=isOv(ts);
-    var rc=rowC(r.chk,r.fin,r.run,ov,r.tkt);
+    var req=r.req||it[3];var res=r.res||it[4];var ts=r.ts||null;
     var row=document.createElement("tr");
-    row.className=rc;
+    row.className=rowC(r.chk,r.fin,r.run,isOv(ts),r.tkt);
     row.setAttribute("data-idx","sp"+i);
-    row.innerHTML=
-      '<td class="cnum">'+(i+1)+'</td>'+
-      '<td class="cip" style="color:var(--pu)">'+esc(it[0])+'</td>'+
-      '<td class="cnm">'+esc(it[1])+'</td>'+
+    row.innerHTML='<td class="cnum">'+(i+1)+'</td><td class="cip" style="color:var(--pu)">'+esc(it[0])+'</td><td class="cnm">'+esc(it[1])+'</td>'+
       '<td><div class="cpath" title="'+esc(it[2])+'">'+esc(it[2])+'</div></td>'+
       '<td><select data-f="chk">'+mkOpts(chkO,r.chk||"Pending")+'</select></td>'+
       '<td><select data-f="run">'+mkOpts(runO,r.run||"Pending")+'</select></td>'+
@@ -977,652 +1029,358 @@ function render(){
       '<td><select data-f="tkt">'+mkOpts(tktO,r.tkt||"Ticket Not Created")+'</select></td>'+
       '<td><input type="text" data-f="tno" value="'+esc(r.tno||"")+'" placeholder="Ticket #"></td>'+
       '<td><input type="text" data-f="ins" value="'+esc(r.ins||getIns())+'" placeholder="Name"></td>'+
-      '<td>'+lcShow(ts)+'</td>'+
-      '<td><div class="astk">'+
-        '<button class="btn bgh bxs" onclick="cpItem(\'sp\','+i+',\'req\')">Req</button>'+
-        '<button class="btn bg bxs" onclick="cpItem(\'sp\','+i+',\'res\')">Res</button>'+
-        '<button class="btn ba bxs" onclick="cpItem(\'sp\','+i+',\'full\')">Full</button>'+
+      '<td id="lc_sp'+i+'">'+lcShow(ts)+'</td>'+
+      '<td><input type="hidden" data-f="req" value="'+esc(req)+'"><input type="hidden" data-f="res" value="'+esc(res)+'">'+
+      '<div class="astk">'+
+      '<button class="btn bgh bxs" onclick="cpItem(\'sp\','+i+',\'req\')">Req</button>'+
+      '<button class="btn bg bxs" onclick="cpItem(\'sp\','+i+',\'res\')">Res</button>'+
+      '<button class="btn ba bxs" onclick="cpItem(\'sp\','+i+',\'full\')">Full</button>'+
       '</div></td>';
     spTb.appendChild(row);
   });
-
-  /* Badges */
-  var custom=getC();
   var iN=IFC.length+custom.filter(function(c){return c.type==="interface";}).length;
   var spN=SPL.length+custom.filter(function(c){return c.type==="special";}).length;
-  G("sBg").textContent=SRV.length+" servers";
-  G("iBg").textContent=iN+" interfaces";
-  G("spBg").textContent=spN+" items";
-  G("nb1c").textContent=SRV.length;
-  G("nb2c").textContent=iN;
-  G("nb3c").textContent=spN;
-
-  applyF();
-  updateKPI();
-  updColors();
+  G("sBg").textContent=SRV.length+" servers";G("iBg").textContent=iN+" interfaces";G("spBg").textContent=spN+" items";
+  G("nb1c").textContent=SRV.length;G("nb2c").textContent=iN;G("nb3c").textContent=spN;
+  applyF();updateKPI();updColors();
 }
-
-/* ======= COLLECT ======= */
 function collect(){
   var data=load();
   document.querySelectorAll("tbody tr[data-idx]").forEach(function(tr){
-    var idx=tr.getAttribute("data-idx");
-    if(!data[idx]) data[idx]={};
-    tr.querySelectorAll("[data-f]").forEach(function(el){
-      data[idx][el.getAttribute("data-f")]=el.value;
-    });
+    var idx=tr.getAttribute("data-idx");if(!data[idx])data[idx]={};
+    tr.querySelectorAll("[data-f]").forEach(function(el){data[idx][el.getAttribute("data-f")]=el.value;});
   });
   return data;
 }
-
-/* ======= KPI ======= */
 function updateKPI(){
-  var saved=load();
-  var custom=getC();
-  var sN=SRV.length;
-  var iN=IFC.length+custom.filter(function(c){return c.type==="interface";}).length;
+  var saved=loadRange();var custom=getC();
+  var sN=SRV.length,iN=IFC.length+custom.filter(function(c){return c.type==="interface";}).length;
   var spN=SPL.length+custom.filter(function(c){return c.type==="special";}).length;
   var total=sN+iN+spN;
-  var sDn=0,sIs=0,sPn=0,iDn=0,iIs=0,iPn=0,spDn=0,spIs=0,spPn=0,tks=0,ov=0;
-  for(var i=0;i<sN;i++){
-    var r=saved["s"+i]||{};
-    if(r.fin==="Working Fine")sDn++; else if(r.fin==="Issue Found"||r.run==="Stopped")sIs++; else sPn++;
-    if(r.tkt==="Ticket Created")tks++;
-    if(isOv(r.ts)&&r.chk!=="Checked")ov++;
-  }
-  for(var i=0;i<iN;i++){
-    var r=saved["i"+i]||{};
-    if(r.fin==="Working Fine")iDn++; else if(r.fin==="Issue Found"||r.run==="Stopped")iIs++; else iPn++;
-    if(r.tkt==="Ticket Created")tks++;
-    if(isOv(r.ts)&&r.chk!=="Checked")ov++;
-  }
-  for(var i=0;i<spN;i++){
-    var r=saved["sp"+i]||{};
-    if(r.fin==="Working Fine")spDn++; else if(r.fin==="Issue Found"||r.run==="Stopped")spIs++; else spPn++;
-    if(r.tkt==="Ticket Created")tks++;
-    if(isOv(r.ts)&&r.chk!=="Checked")ov++;
-  }
-  var done=sDn+iDn+spDn, issue=sIs+iIs+spIs;
-  var pct=total?Math.round(done/total*100):0;
-  G("kTot").textContent=total;
-  G("kDn").textContent=done; G("kDnB").style.width=pct+"%";
-  G("kIs").textContent=issue; G("kIsB").style.width=(total?Math.round(issue/total*100):0)+"%";
-  G("kTk").textContent=tks; G("kTkB").style.width=(total?Math.round(tks/total*100):0)+"%";
-  G("kOv").textContent=ov;
-  G("kPct").textContent=pct+"%"; G("kPctB").style.width=pct+"%";
-  /* Server cat */
-  G("csBg").textContent=sN+" total"; G("csDn").textContent=sDn; G("csIs").textContent=sIs; G("csPn").textContent=sPn;
-  var sp=sN?Math.round(sDn/sN*100):0; G("csBr").style.width=sp+"%"; G("csPct").textContent=sp+"% complete ("+sDn+"/"+sN+")";
-  /* Iface cat */
-  G("ciBg").textContent=iN+" total"; G("ciDn").textContent=iDn; G("ciIs").textContent=iIs; G("ciPn").textContent=iPn;
-  var ip=iN?Math.round(iDn/iN*100):0; G("ciBr").style.width=ip+"%"; G("ciPct").textContent=ip+"% complete ("+iDn+"/"+iN+")";
-  /* Special cat */
-  G("cpBg").textContent=spN+" total"; G("cpDn").textContent=spDn; G("cpIs").textContent=spIs; G("cpPn").textContent=spPn;
-  var pp=spN?Math.round(spDn/spN*100):0; G("cpBr").style.width=pp+"%"; G("cpPct").textContent=pp+"% complete ("+spDn+"/"+spN+")";
-  /* Overdue alert */
-  var oa=G("ovAlert");
-  if(ov>0){oa.style.display="flex";G("ovCnt").textContent=ov;}else oa.style.display="none";
-  /* Count ticket-created-not-checked (rtc state) */
-  var tknc=0;
-  for(var i=0;i<sN;i++){var r2=saved["s"+i]||{};if(r2.tkt==="Ticket Created"&&r2.chk!=="Checked")tknc++;}
-  for(var i=0;i<iN;i++){var r2=saved["i"+i]||{};if(r2.tkt==="Ticket Created"&&r2.chk!=="Checked")tknc++;}
-  for(var i=0;i<spN;i++){var r2=saved["sp"+i]||{};if(r2.tkt==="Ticket Created"&&r2.chk!=="Checked")tknc++;}
-  if(G("kTkNc")) G("kTkNc").textContent=tknc;
-
-  if(pct===100&&window._lp!==100)celebrate();
-  window._lp=pct;
-  updateStreak();
+  var sDn=0,sIs=0,sPn=0,iDn=0,iIs=0,iPn=0,spDn=0,spIs=0,spPn=0,tks=0,ov=0,tknc=0;
+  var i,r;
+  for(i=0;i<sN;i++){r=saved["s"+i]||{};if(r.fin==="Working Fine")sDn++;else if(r.fin==="Issue Found"||r.run==="Stopped")sIs++;else sPn++;if(r.tkt==="Ticket Created")tks++;if(isOv(r.ts)&&r.chk!=="Checked")ov++;if(r.tkt==="Ticket Created"&&r.chk!=="Checked")tknc++;}
+  for(i=0;i<iN;i++){r=saved["i"+i]||{};if(r.fin==="Working Fine")iDn++;else if(r.fin==="Issue Found"||r.run==="Stopped")iIs++;else iPn++;if(r.tkt==="Ticket Created")tks++;if(isOv(r.ts)&&r.chk!=="Checked")ov++;if(r.tkt==="Ticket Created"&&r.chk!=="Checked")tknc++;}
+  for(i=0;i<spN;i++){r=saved["sp"+i]||{};if(r.fin==="Working Fine")spDn++;else if(r.fin==="Issue Found"||r.run==="Stopped")spIs++;else spPn++;if(r.tkt==="Ticket Created")tks++;if(isOv(r.ts)&&r.chk!=="Checked")ov++;if(r.tkt==="Ticket Created"&&r.chk!=="Checked")tknc++;}
+  var done=sDn+iDn+spDn,issue=sIs+iIs+spIs,pct=total?Math.round(done/total*100):0;
+  G("kTot").textContent=total;G("kDn").textContent=done;G("kDnB").style.width=pct+"%";
+  G("kIs").textContent=issue;G("kIsB").style.width=(total?Math.round(issue/total*100):0)+"%";
+  G("kTk").textContent=tks;G("kTkB").style.width=(total?Math.round(tks/total*100):0)+"%";
+  G("kOv").textContent=ov;G("kPct").textContent=pct+"%";G("kPctB").style.width=pct+"%";
+  if(G("kTkNc"))G("kTkNc").textContent=tknc;
+  G("csBg").textContent=sN+" total";G("csDn").textContent=sDn;G("csIs").textContent=sIs;G("csPn").textContent=sPn;
+  var s2=sN?Math.round(sDn/sN*100):0;G("csBr").style.width=s2+"%";G("csPct").textContent=s2+"% complete ("+sDn+"/"+sN+")";
+  G("ciBg").textContent=iN+" total";G("ciDn").textContent=iDn;G("ciIs").textContent=iIs;G("ciPn").textContent=iPn;
+  var i2=iN?Math.round(iDn/iN*100):0;G("ciBr").style.width=i2+"%";G("ciPct").textContent=i2+"% complete ("+iDn+"/"+iN+")";
+  G("cpBg").textContent=spN+" total";G("cpDn").textContent=spDn;G("cpIs").textContent=spIs;G("cpPn").textContent=spPn;
+  var p2=spN?Math.round(spDn/spN*100):0;G("cpBr").style.width=p2+"%";G("cpPct").textContent=p2+"% complete ("+spDn+"/"+spN+")";
+  var oa=G("ovAlert");if(ov>0){oa.style.display="flex";G("ovCnt").textContent=ov;}else oa.style.display="none";
+  if(pct===100&&window._lp!==100)celebrate();window._lp=pct;updateStreak();
 }
-
-/* ======= ROW COLORS ======= */
 function updColors(){
-  var saved=load();
+  var saved=loadRange();
   document.querySelectorAll("tbody tr[data-idx]").forEach(function(tr){
-    var idx=tr.getAttribute("data-idx");
-    var r=saved[idx]||{};
-    var chk=tr.querySelector("[data-f='chk']");
-    var fin=tr.querySelector("[data-f='fin']");
-    var run=tr.querySelector("[data-f='run']");
-    var chkVal=chk?chk.value:"";
-    var finVal=fin?fin.value:"";
-    var runVal=run?run.value:"";
-    var tkt=tr.querySelector("[data-f='tkt']");
-    var tktVal=tkt?tkt.value:"";
-    /* Use live select values for colour, but saved.ts for overdue */
-    tr.className=rowC(chkVal,finVal,runVal,isOv(r.ts),tktVal);
+    var idx=tr.getAttribute("data-idx");var r=saved[idx]||{};
+    var chk=tr.querySelector("[data-f='chk']"),fin=tr.querySelector("[data-f='fin']"),run=tr.querySelector("[data-f='run']"),tkt=tr.querySelector("[data-f='tkt']");
+    tr.className=rowC(chk?chk.value:"",fin?fin.value:"",run?run.value:"",isOv(r.ts),tkt?tkt.value:"");
   });
 }
-
-/* ======= FILTER ======= */
 function applyF(){
-  var q=G("srch").value.toLowerCase().trim();
-  var f=G("flt").value;
-  var saved=load();
+  var q=G("srch").value.toLowerCase().trim(),f=G("flt").value,saved=loadRange();
   document.querySelectorAll("tbody tr[data-idx]").forEach(function(tr){
     var txt=tr.innerText.toLowerCase();
     var vals=Array.from(tr.querySelectorAll("input,select,textarea")).map(function(x){return x.value;}).join(" ").toLowerCase();
-    var all=txt+" "+vals;
-    var mq=!q||all.indexOf(q)>-1;
-    var mf=true;
-    if(f==="__over__"){
-      var idx=tr.getAttribute("data-idx"); var r=saved[idx]||{};
-      var cv=tr.querySelector("[data-f='chk']");
-      mf=isOv(r.ts)&&(!cv||cv.value!=="Checked");
-    } else if(f==="__tknc__"){
-      /* Ticket Created but not yet Checked */
-      var cv2=tr.querySelector("[data-f='chk']");
-      var tv2=tr.querySelector("[data-f='tkt']");
-      mf=(tv2&&tv2.value==="Ticket Created")&&(cv2&&cv2.value!=="Checked");
-    } else if(f){mf=vals.indexOf(f.toLowerCase())>-1;}
+    var mq=!q||(txt+" "+vals).indexOf(q)>-1,mf=true;
+    if(f==="__over__"){var r2=saved[tr.getAttribute("data-idx")]||{};var cv=tr.querySelector("[data-f='chk']");mf=isOv(r2.ts)&&(!cv||cv.value!=="Checked");}
+    else if(f==="__tknc__"){var cv2=tr.querySelector("[data-f='chk']");var tv=tr.querySelector("[data-f='tkt']");mf=(tv&&tv.value==="Ticket Created")&&(cv2&&cv2.value!=="Checked");}
+    else if(f){mf=vals.indexOf(f.toLowerCase())>-1;}
     tr.style.display=(mq&&mf)?"":"none";
   });
 }
-
-/* ======= SAVE ======= */
-function saveData(){
-  localStorage.setItem(sKey(),JSON.stringify(collect()));
-  updateKPI(); updColors(); renderHist();
-  toast("Saved for "+WD(),"s");
-  logAct("Data saved for "+WD(),"abl");
-}
-
-/* ======= AUTO-SAVE ======= */
+function saveData(){localStorage.setItem(sKey(),JSON.stringify(collect()));updateKPI();updColors();renderHist();toast("Saved for "+WD(),"s");logAct("Data saved for "+WD(),"abl");}
 document.addEventListener("change",function(e){
-  var tb=e.target.closest("tbody"); if(!tb) return;
-  var tr=e.target.closest("tr[data-idx]"); if(!tr) return;
-  var f=e.target.getAttribute("data-f");
-  var val=e.target.value;
-  var idx=tr.getAttribute("data-idx");
-  var nm=tr.querySelector(".cnm,.cip"); nm=nm?nm.textContent:idx;
-
-  if(f==="fin"&&val==="Working Fine"){
-    var cv=tr.querySelector("[data-f='chk']"); if(cv&&cv.value!=="Checked") cv.value="Checked";
-  }
-  if(f==="run"&&val==="Running"){
-    var cv=tr.querySelector("[data-f='chk']"); if(cv&&cv.value!=="Checked") cv.value="Checked";
-  }
+  var tb=e.target.closest("tbody");if(!tb)return;
+  var tr=e.target.closest("tr[data-idx]");if(!tr)return;
+  var f=e.target.getAttribute("data-f"),val=e.target.value,idx=tr.getAttribute("data-idx");
+  var nm=tr.querySelector(".cnm,.cip");nm=nm?nm.textContent:idx;
+  if(f==="fin"&&val==="Working Fine"){var cv=tr.querySelector("[data-f='chk']");if(cv&&cv.value!=="Checked")cv.value="Checked";}
+  if(f==="run"&&val==="Running"){var cv2=tr.querySelector("[data-f='chk']");if(cv2&&cv2.value!=="Checked")cv2.value="Checked";}
   if(f==="chk"&&val==="Checked"){
-    var saved=load(); if(!saved[idx]) saved[idx]={};
-    var nowTs=Date.now();
-    saved[idx].ts=nowTs;
-    var iv=tr.querySelector("[data-f='ins']");
-    if(iv&&!iv.value) iv.value=getIns();
-    tr.querySelectorAll("[data-f]").forEach(function(el){saved[idx][el.getAttribute("data-f")]=el.value;});
-    localStorage.setItem(sKey(),JSON.stringify(saved));
-    /* Update last-checked cell immediately without full re-render */
-    var cells=tr.querySelectorAll("td");
-    /* Server table: last-checked is td[7]; Interface/Special: td[11] */
-    var lcIdx=(idx.indexOf("s")===0&&idx.indexOf("sp")<0)?7:11;
-    if(cells[lcIdx]) cells[lcIdx].innerHTML=lcShow(nowTs);
+    var sv=load();if(!sv[idx])sv[idx]={};var ts=Date.now();sv[idx].ts=ts;
+    var iv=tr.querySelector("[data-f='ins']");if(iv&&!iv.value)iv.value=getIns();
+    tr.querySelectorAll("[data-f]").forEach(function(el){sv[idx][el.getAttribute("data-f")]=el.value;});
+    localStorage.setItem(sKey(),JSON.stringify(sv));
+    var lcEl=G("lc_"+idx);if(lcEl)lcEl.innerHTML=lcShow(ts);
     logAct(nm+" marked Checked","agn");
   }
-  /* Also stamp timestamp when fin set to Working Fine */
-  if(f==="fin"&&val==="Working Fine"){
-    var saved2=load(); if(!saved2[idx]) saved2[idx]={};
-    if(!saved2[idx].ts){ saved2[idx].ts=Date.now(); localStorage.setItem(sKey(),JSON.stringify(saved2));
-      var cells2=tr.querySelectorAll("td");
-      var lcIdx2=(idx.indexOf("s")===0&&idx.indexOf("sp")<0)?7:11;
-      if(cells2[lcIdx2]) cells2[lcIdx2].innerHTML=lcShow(saved2[idx].ts);
-    }
-  }
-  if(f==="fin"&&val==="Issue Found") logAct(nm+" - Issue Found","ard");
-  if(f==="tkt"&&val==="Ticket Created") logAct("Ticket created for "+nm,"aam");
-
-  var d=collect(); localStorage.setItem(sKey(),JSON.stringify(d));
-  updateKPI(); updColors();
+  if(f==="fin"&&val==="Working Fine"){var sv2=load();if(!sv2[idx])sv2[idx]={};if(!sv2[idx].ts){sv2[idx].ts=Date.now();localStorage.setItem(sKey(),JSON.stringify(sv2));var lcEl2=G("lc_"+idx);if(lcEl2)lcEl2.innerHTML=lcShow(sv2[idx].ts);}}
+  if(f==="fin"&&val==="Issue Found")logAct(nm+" - Issue Found","ard");
+  if(f==="tkt"&&val==="Ticket Created")logAct("Ticket created for "+nm,"aam");
+  localStorage.setItem(sKey(),JSON.stringify(collect()));updateKPI();updColors();
 });
-
-/* ======= COPY ======= */
-function cpTxt(t){
-  navigator.clipboard.writeText(t).then(function(){toast("Copied to clipboard","s");});
-}
-function cpPath(i){
-  var custom=getC().filter(function(c){return c.type==="interface";});
-  var all=IFC.concat(custom.map(function(c){return [c.ip,c.nm,c.path];}));
-  cpTxt(all[i]?all[i][2]:"");
-}
+function cpTxt(t){navigator.clipboard.writeText(t).then(function(){toast("Copied to clipboard","s");});}
+function cpPath(i){var cu=getC().filter(function(c){return c.type==="interface";});var al=IFC.concat(cu.map(function(c){return [c.ip,c.nm,c.path];}));cpTxt(al[i]?al[i][2]:"");}
 function cpItem(type,idx,mode){
   var pfx=type==="s"?"s":(type==="i"?"i":"sp");
-  var tr=document.querySelector("tr[data-idx='"+pfx+idx+"']"); if(!tr) return;
-  var r={}; tr.querySelectorAll("[data-f]").forEach(function(el){r[el.getAttribute("data-f")]=el.value;});
-  var ip="",nm="",path="";
+  var tr=document.querySelector("tr[data-idx='"+pfx+idx+"']");if(!tr)return;
+  var r={};tr.querySelectorAll("[data-f]").forEach(function(el){r[el.getAttribute("data-f")]=el.value;});
+  var ip="",nm="",path="",spRq="",spRs="";
   if(type==="s"){ip=SRV[idx];nm="Server "+ip;}
-  else if(type==="i"){
-    var custom=getC().filter(function(c){return c.type==="interface";});
-    var all=IFC.concat(custom.map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
-    ip=all[idx]?all[idx][0]:""; nm=all[idx]?all[idx][1]:""; path=all[idx]?all[idx][2]:"";
-  } else {
-    var custom=getC().filter(function(c){return c.type==="special";});
-    var all=SPL.concat(custom.map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
-    ip=all[idx]?all[idx][0]:""; nm=all[idx]?all[idx][1]:""; path=all[idx]?all[idx][2]:"";
-    /* For special items: fallback req/res come from the data array, NOT iReq/iRes */
-    var spReqFb=all[idx]?all[idx][3]:"";
-    var spResFb=all[idx]?all[idx][4]:"";
-  }
-  /* Determine fallback req/res correctly per type */
-  var req, res;
-  if(type==="s"){
-    req=r.req||sReq(ip);
-    res=r.res||sRes(ip);
-  } else if(type==="i"){
-    req=r.req||iReq(nm);
-    res=r.res||iRes(nm);
-  } else {
-    /* Special: use the stored custom text from SPL array, never iReq/iRes */
-    /* spReqFb may be "" for custom admin items with no text entered — that's fine, show blank */
-    req=(r.req&&r.req.length)?r.req:(spReqFb&&spReqFb.length?spReqFb:"[No request text defined for this check]");
-    res=(r.res&&r.res.length)?r.res:(spResFb&&spResFb.length?spResFb:"[No resolution text defined for this check]");
-  }
+  else if(type==="i"){var cu=getC().filter(function(c){return c.type==="interface";});var al=IFC.concat(cu.map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));ip=al[idx]?al[idx][0]:"";nm=al[idx]?al[idx][1]:"";path=al[idx]?al[idx][2]:"";}
+  else{var cu2=getC().filter(function(c){return c.type==="special";});var al2=SPL.concat(cu2.map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));ip=al2[idx]?al2[idx][0]:"";nm=al2[idx]?al2[idx][1]:"";path=al2[idx]?al2[idx][2]:"";spRq=al2[idx]?al2[idx][3]:"";spRs=al2[idx]?al2[idx][4]:"";}
+  var req,res;
+  if(type==="s"){req=r.req||sReq(ip);res=r.res||sRes(ip);}
+  else if(type==="i"){req=r.req||iReq(nm);res=r.res||iRes(nm);}
+  else{req=(r.req&&r.req.length)?r.req:(spRq.length?spRq:"[No request text defined]");res=(r.res&&r.res.length)?r.res:(spRs.length?spRs:"[No resolution text defined]");}
   var txt="";
-  if(mode==="req") txt=req;
-  else if(mode==="res") txt=res;
-  else {
-    txt="Date        : "+WD()+"\nInspector   : "+(r.ins||getIns()||"N/A")+"\nServer IP   : "+ip+"\n";
-    if(type!=="s") txt+="Name        : "+nm+"\n";
-    txt+="Checked     : "+(r.chk||"Pending")+"\nStatus      : "+(r.fin||"Pending")+"\n";
-    if(type!=="s") txt+="Running     : "+(r.run||"Pending")+"\nLogs        : "+(r.log||"Pending")+"\n";
-    txt+="Ticket      : "+(r.tkt||"Ticket Not Created")+"\nTicket No   : "+(r.tno||"-")+"\n";
-    if(path) txt+="Path        : "+path+"\n";
-    txt+="\nREQUEST:\n"+req+"\n\nRESOLUTION:\n"+res;
-  }
+  if(mode==="req")txt=req;
+  else if(mode==="res")txt=res;
+  else{txt="Date        : "+WD()+"\nInspector   : "+(r.ins||getIns()||"N/A")+"\nServer IP   : "+ip+"\n";if(type!=="s")txt+="Name        : "+nm+"\n";txt+="Checked     : "+(r.chk||"Pending")+"\nStatus      : "+(r.fin||"Pending")+"\n";if(type!=="s")txt+="Running     : "+(r.run||"Pending")+"\nLogs        : "+(r.log||"Pending")+"\n";txt+="Ticket      : "+(r.tkt||"Ticket Not Created")+"\nTicket No   : "+(r.tno||"-")+"\n";if(path)txt+="Path        : "+path+"\n";txt+="\nREQUEST:\n"+req+"\n\nRESOLUTION:\n"+res;}
   cpTxt(txt.trim());
 }
-
-/* ======= MARK ALL FINE ======= */
 function markFine(sec){
   var tbId=sec==="s"?"sTb":(sec==="i"?"iTb":"spTb");
-  var rows=document.querySelectorAll("#"+tbId+" tr[data-idx]");
-  var visible=[]; rows.forEach(function(r){if(r.style.display!=="none")visible.push(r);});
-  var ts=Date.now(); var saved=load(); var ins=getIns();
+  var visible=[];document.querySelectorAll("#"+tbId+" tr[data-idx]").forEach(function(r){if(r.style.display!=="none")visible.push(r);});
+  var ts=Date.now();var saved=load();var ins=getIns();
   visible.forEach(function(tr){
     function sf(f,v){var el=tr.querySelector("[data-f='"+f+"']");if(el)el.value=v;}
-    sf("chk","Checked"); sf("fin","Working Fine"); sf("tkt","Ticket Created");
+    sf("chk","Checked");sf("fin","Working Fine");sf("tkt","Ticket Created");
     if(sec!=="s"){sf("run","Running");sf("log","Yes");}
     if(ins)sf("ins",ins);
-    var idx=tr.getAttribute("data-idx");
-    if(!saved[idx])saved[idx]={}; saved[idx].ts=ts;
+    var idx=tr.getAttribute("data-idx");if(!saved[idx])saved[idx]={};saved[idx].ts=ts;
   });
-  localStorage.setItem(sKey(),JSON.stringify(saved));
-  saveData(); render();
-  toast("Marked "+visible.length+" items as Working Fine","s");
-  logAct("Bulk: "+visible.length+" "+sec+" items marked fine","agn");
-  /* render() already re-builds rows with correct timestamps */
+  localStorage.setItem(sKey(),JSON.stringify(saved));saveData();render();
+  toast("Marked "+visible.length+" items as Working Fine","s");logAct("Bulk: "+visible.length+" "+sec+" items marked fine","agn");
 }
-
-/* ======= TOGGLE DONE ======= */
-function togDone(tbId){
-  document.querySelectorAll("#"+tbId+" tr.rdn").forEach(function(tr){
-    tr.style.display=tr.style.display==="none"?"":"none";
-  });
-}
-
-/* ======= TAB SWITCHING ======= */
+function togDone(tbId){document.querySelectorAll("#"+tbId+" tr.rdn").forEach(function(tr){tr.style.display=tr.style.display==="none"?"":"none";});}
 function showTab(tab,btn){
-  /* Close all tool panels when switching tabs */
-  PANELS.forEach(function(pid){var pel=G(pid);if(pel)pel.classList.remove("open");});
+  PANELS.forEach(function(pid){var p=G(pid);if(p)p.classList.remove("open");});
   document.querySelectorAll(".nbtn[id^='nb']").forEach(function(b){b.classList.remove("active");});
-  if(btn) btn.classList.add("active");
+  if(btn)btn.classList.add("active");
   G("secS").style.display=(tab==="server"||tab==="all")?"":"none";
   G("secI").style.display=(tab==="iface"||tab==="all")?"":"none";
   G("secSp").style.display=(tab==="special"||tab==="all")?"":"none";
-  /* Scroll content to top so the table is visible from top */
-  setTimeout(function(){
-    var content=document.querySelector(".content");
-    if(content) content.scrollTop=0;
-    window.scrollTo({top:0,behavior:"smooth"});
-  },30);
+  setTimeout(function(){window.scrollTo({top:0,behavior:"smooth"});},30);
 }
-
-/* ======= COPY REPORT ======= */
+function toggleP(id){
+  var el=G(id);if(!el)return;
+  var was=el.classList.contains("open");
+  PANELS.forEach(function(pid){var p=G(pid);if(p)p.classList.remove("open");});
+  if(!was){el.classList.add("open");setTimeout(function(){el.scrollIntoView({behavior:"smooth",block:"start"});},60);}
+}
 function copyRpt(){
-  var saved=collect();
-  var custom=getC();
+  var saved=collect();var custom=getC();
   var ifaces=IFC.concat(custom.filter(function(c){return c.type==="interface";}).map(function(c){return [c.ip,c.nm,c.path];}));
   var specs=SPL.concat(custom.filter(function(c){return c.type==="special";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
-  var ln="=".repeat(52); var r=ln+"\n  IT COMMAND CENTER - DAILY CHECKLIST\n  Date: "+WD()+" | Inspector: "+(getIns()||"N/A")+"\n"+ln+"\n\nSERVER CHECK\n"+"-".repeat(52)+"\n";
-  SRV.forEach(function(ip,i){var d=saved["s"+i]||{};r+=(i+1)+". "+ip+" | Checked: "+(d.chk||"Pending")+" | Status: "+(d.fin||"Pending")+" | Ticket: "+(d.tkt||"Ticket Not Created")+" | No: "+(d.tno||"-")+"\n   Resolution: "+(d.res||sRes(ip))+"\n\n";});
-  r+="\nINTERFACE CHECK\n"+"-".repeat(52)+"\n";
-  ifaces.forEach(function(it,i){var d=saved["i"+i]||{};r+=(i+1)+". "+it[1]+" ("+it[0]+") | Checked: "+(d.chk||"Pending")+" | Running: "+(d.run||"Pending")+" | Status: "+(d.fin||"Pending")+" | Ticket: "+(d.tkt||"Ticket Not Created")+"\n   Resolution: "+(d.res||iRes(it[1]))+"\n\n";});
-  r+="\nSPECIAL CHECKS\n"+"-".repeat(52)+"\n";
-  specs.forEach(function(it,i){var d=saved["sp"+i]||{};r+=(i+1)+". "+it[1]+" | Checked: "+(d.chk||"Pending")+" | Status: "+(d.fin||"Pending")+" | Ticket: "+(d.tkt||"Ticket Not Created")+"\n   Resolution: "+(d.res||it[4])+"\n\n";});
-  cpTxt(r);
+  var ln="=".repeat(52);
+  var rpt=ln+"\n  IT COMMAND CENTER - DAILY CHECKLIST\n  Date: "+WD()+" | Inspector: "+(getIns()||"N/A")+"\n"+ln+"\n\nSERVER CHECK\n"+"-".repeat(52)+"\n";
+  SRV.forEach(function(ip,i){var d=saved["s"+i]||{};rpt+=(i+1)+". "+ip+" | Checked: "+(d.chk||"Pending")+" | Status: "+(d.fin||"Pending")+" | Ticket: "+(d.tkt||"Ticket Not Created")+" | No: "+(d.tno||"-")+"\n   Resolution: "+(d.res||sRes(ip))+"\n\n";});
+  rpt+="\nINTERFACE CHECK\n"+"-".repeat(52)+"\n";
+  ifaces.forEach(function(it,i){var d=saved["i"+i]||{};rpt+=(i+1)+". "+it[1]+" ("+it[0]+") | Checked: "+(d.chk||"Pending")+" | Running: "+(d.run||"Pending")+" | Status: "+(d.fin||"Pending")+" | Ticket: "+(d.tkt||"Ticket Not Created")+"\n   Resolution: "+(d.res||iRes(it[1]))+"\n\n";});
+  rpt+="\nSPECIAL CHECKS\n"+"-".repeat(52)+"\n";
+  specs.forEach(function(it,i){var d=saved["sp"+i]||{};rpt+=(i+1)+". "+it[1]+" | Checked: "+(d.chk||"Pending")+" | Status: "+(d.fin||"Pending")+" | Ticket: "+(d.tkt||"Ticket Not Created")+"\n   Resolution: "+(d.res||it[4])+"\n\n";});
+  cpTxt(rpt);
 }
-
-/* ======= EXPORT CSV ======= */
 function exportCSV(){
-  var saved=collect();
-  var custom=getC();
+  var saved=collect();var custom=getC();
   var ifaces=IFC.concat(custom.filter(function(c){return c.type==="interface";}).map(function(c){return [c.ip,c.nm,c.path];}));
   var specs=SPL.concat(custom.filter(function(c){return c.type==="special";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
   var rows=[["Date","Type","No","Server IP","Name","Path","Checked","Running","Logs","Status","Ticket","Ticket No","Inspector","Last Checked","Storage","Request","Resolution"]];
-  SRV.forEach(function(ip,i){var d=saved["s"+i]||{};rows.push([WD(),"Server",i+1,ip,"Server Check","",d.chk||"Pending","","",d.fin||"Pending",d.tkt||"Ticket Not Created",d.tno||"",d.ins||"",d.ts?new Date(d.ts).toLocaleString():"",d.sto||"",d.req||sReq(ip),d.res||sRes(ip)]);});
-  ifaces.forEach(function(it,i){var d=saved["i"+i]||{};rows.push([WD(),"Interface",i+1,it[0],it[1],it[2],d.chk||"Pending",d.run||"Pending",d.log||"Pending",d.fin||"Pending",d.tkt||"Ticket Not Created",d.tno||"",d.ins||"",d.ts?new Date(d.ts).toLocaleString():"","",d.req||iReq(it[1]),d.res||iRes(it[1])]);});
-  specs.forEach(function(it,i){var d=saved["sp"+i]||{};rows.push([WD(),"Special",i+1,it[0],it[1],it[2],d.chk||"Pending",d.run||"Pending",d.log||"Pending",d.fin||"Pending",d.tkt||"Ticket Not Created",d.tno||"",d.ins||"","","",d.req||it[3],d.res||it[4]]);});
+  SRV.forEach(function(ip,i){var d=saved["s"+i]||{};rows.push([WD(),"Server",i+1,ip,"","",d.chk||"","","",d.fin||"",d.tkt||"",d.tno||"",d.ins||"",d.ts?new Date(d.ts).toLocaleString():"",d.sto||"",d.req||sReq(ip),d.res||sRes(ip)]);});
+  ifaces.forEach(function(it,i){var d=saved["i"+i]||{};rows.push([WD(),"Interface",i+1,it[0],it[1],it[2],d.chk||"",d.run||"",d.log||"",d.fin||"",d.tkt||"",d.tno||"",d.ins||"",d.ts?new Date(d.ts).toLocaleString():"","",d.req||iReq(it[1]),d.res||iRes(it[1])]);});
+  specs.forEach(function(it,i){var d=saved["sp"+i]||{};rows.push([WD(),"Special",i+1,it[0],it[1],it[2],d.chk||"",d.run||"",d.log||"",d.fin||"",d.tkt||"",d.tno||"",d.ins||"","","",d.req||it[3]||"",d.res||it[4]||""]);});
   var csv=rows.map(function(row){return row.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(",");}).join("\n");
-  var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
-  a.download="IT_Checklist_"+WD()+".csv"; a.click();
-  toast("CSV exported","s");
+  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="IT_Checklist_"+WD()+".csv";a.click();toast("CSV exported","s");
 }
-
-/* ======= RESET ======= */
-function resetDay(){
-  if(confirm("Clear saved data for "+WD()+"?")){localStorage.removeItem(sKey());render();toast("Reset complete","i");}
-}
-
-/* ======= HISTORY ======= */
+function resetDay(){if(confirm("Clear saved data for "+WD()+"?")){localStorage.removeItem(sKey());render();toast("Reset complete","i");}}
 function getDates(){
   var dates=[];
-  for(var i=0;i<localStorage.length;i++){
-    var k=localStorage.key(i);
-    if(k&&k.indexOf(ST)===0&&k.indexOf("_c")<0&&k.indexOf("_ins")<0&&k.indexOf("_th")<0&&k.indexOf("_act")<0&&k.indexOf("_nt")<0)
-      dates.push(k.replace(ST,""));
-  }
+  for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf(ST)===0&&k.indexOf("_c")<0&&k.indexOf("_ins")<0&&k.indexOf("_th")<0&&k.indexOf("_act")<0&&k.indexOf("_nt")<0)dates.push(k.replace(ST,""));}
   return dates.sort().reverse();
 }
-function renderHist(){
-  var el=G("hisGrid"); if(!el) return;
-  var dates=getDates();
-  if(!dates.length){el.innerHTML='<div style="color:var(--mu);font-size:12px">No saved history yet.</div>';return;}
-  el.innerHTML=dates.map(function(d){
-    return '<div class="hchip"><span onclick="openDate(\''+d+'\')" style="flex:1">'+d+'</span><span class="hdel" onclick="delDate(\''+d+'\')">x</span></div>';
-  }).join("");
-}
+function renderHist(){var el=G("hisGrid");if(!el)return;var dates=getDates();if(!dates.length){el.innerHTML='<div style="color:var(--mu);font-size:12px">No saved history yet.</div>';return;}el.innerHTML=dates.map(function(d){return '<div class="hchip"><span onclick="openDate(\''+d+'\')" style="flex:1">'+d+'</span><span class="hdel" onclick="delDate(\''+d+'\')">x</span></div>';}).join("");}
 function openDate(d){G("wd").value=d;render();toggleP("hisPan");}
 function delDate(d){if(confirm("Delete data for "+d+"?")){localStorage.removeItem(ST+d);renderHist();toast("Deleted "+d,"i");}}
-
-/* ======= NOTES ======= */
 function nKey(){return "itcc5_nt_"+WD();}
 function getNt(){try{return JSON.parse(localStorage.getItem(nKey()))||[];}catch(e){return [];}}
 function saveNt(a){localStorage.setItem(nKey(),JSON.stringify(a));}
-function addNote(){
-  var inp=G("ntInp"); var txt=inp.value.trim(); if(!txt) return;
-  var notes=getNt();
-  notes.unshift({t:txt,time:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}),au:getIns()||"?"});
-  saveNt(notes); inp.value=""; renderNotes();
-  logAct("Note: "+txt.substring(0,40),"aam"); toast("Note saved","s");
-}
+function addNote(){var inp=G("ntInp");var txt=inp.value.trim();if(!txt)return;var n=getNt();n.unshift({t:txt,time:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}),au:getIns()||"?"});saveNt(n);inp.value="";renderNotes();logAct("Note: "+txt.substring(0,40),"aam");toast("Note saved","s");}
 function delNote(i){var n=getNt();n.splice(i,1);saveNt(n);renderNotes();}
 function clearNotes(){if(confirm("Clear all notes for "+WD()+"?")){saveNt([]);renderNotes();}}
-function renderNotes(){
-  var el=G("ntList"); if(!el) return;
-  var n=getNt();
-  if(!n.length){el.innerHTML='<div style="color:var(--mu);font-size:11.5px;padding:8px 0">No notes yet.</div>';return;}
-  el.innerHTML=n.map(function(x,i){
-    return '<div class="nitem"><div style="flex:1"><div class="ntxt">'+esc(x.t)+'</div><div class="nmeta">'+esc(x.time)+" - "+esc(x.au)+'</div></div><button class="btn br bxs" onclick="delNote('+i+')">x</button></div>';
-  }).join("");
-}
-
-/* ======= ACTIVITY ======= */
+function renderNotes(){var el=G("ntList");if(!el)return;var n=getNt();if(!n.length){el.innerHTML='<div style="color:var(--mu);font-size:11.5px;padding:8px 0">No notes yet.</div>';return;}el.innerHTML=n.map(function(x,i){return '<div class="nitem"><div style="flex:1"><div class="ntxt">'+esc(x.t)+'</div><div class="nmeta">'+esc(x.time)+" - "+esc(x.au)+'</div></div><button class="btn br bxs" onclick="delNote('+i+')">x</button></div>';}).join("");}
 function aKey(){return "itcc5_act_"+WD();}
 function getAct(){try{return JSON.parse(localStorage.getItem(aKey()))||[];}catch(e){return [];}}
-function logAct(msg,cls){
-  var log=getAct();
-  log.unshift({msg:msg,cls:cls||"abl",time:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"})});
-  if(log.length>200)log.splice(200);
-  localStorage.setItem(aKey(),JSON.stringify(log));
-  renderAct();
-}
-function renderAct(){
-  var el=G("actLog"); if(!el) return;
-  var log=getAct();
-  if(!log.length){el.innerHTML='<div style="color:var(--mu);font-size:11.5px;text-align:center;padding:16px">No activity logged yet.</div>';return;}
-  el.innerHTML=log.map(function(a){
-    return '<div class="alogit"><div class="adot '+esc(a.cls||"abl")+'"></div><span class="atm">'+esc(a.time)+'</span><span>'+esc(a.msg)+'</span></div>';
-  }).join("");
-}
+function logAct(msg,cls){var log=getAct();log.unshift({msg:msg,cls:cls||"abl",time:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"})});if(log.length>200)log.splice(200);localStorage.setItem(aKey(),JSON.stringify(log));renderAct();}
+function renderAct(){var el=G("actLog");if(!el)return;var log=getAct();if(!log.length){el.innerHTML='<div style="color:var(--mu);font-size:11.5px;text-align:center;padding:16px">No activity logged yet.</div>';return;}el.innerHTML=log.map(function(a){return '<div class="alogit"><div class="adot '+esc(a.cls||"abl")+'"></div><span class="atm">'+esc(a.time)+'</span><span>'+esc(a.msg)+'</span></div>';}).join("");}
 function clearAct(){if(confirm("Clear activity log?")){localStorage.removeItem(aKey());renderAct();}}
-
-/* ======= TICKET GEN ======= */
 function genTkt(){
-  var saved=collect();
-  var custom=getC();
+  var saved=collect();var custom=getC();
   var ifaces=IFC.concat(custom.filter(function(c){return c.type==="interface";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
   var specs=SPL.concat(custom.filter(function(c){return c.type==="special";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
   var issues=[];
   SRV.forEach(function(ip,i){var r=saved["s"+i]||{};if(r.fin==="Issue Found"||(r.chk==="Checked"&&r.tkt==="Ticket Not Created"))issues.push({label:"Server: "+ip,req:r.req||sReq(ip),res:r.res||sRes(ip),tno:r.tno||"-"});});
   ifaces.forEach(function(it,i){var r=saved["i"+i]||{};if(r.fin==="Issue Found"||(r.chk==="Checked"&&r.tkt==="Ticket Not Created"))issues.push({label:"Interface: "+it[1]+" ("+it[0]+")",req:r.req||iReq(it[1]),res:r.res||iRes(it[1]),tno:r.tno||"-"});});
-  specs.forEach(function(it,i){var r=saved["sp"+i]||{};if(r.fin==="Issue Found"||(r.chk==="Checked"&&r.tkt==="Ticket Not Created"))issues.push({label:"Check: "+it[1],req:r.req||it[3],res:r.res||it[4],tno:r.tno||"-"});});
-  var el=G("tktOut"); if(!el) return;
+  specs.forEach(function(it,i){var r=saved["sp"+i]||{};if(r.fin==="Issue Found"||(r.chk==="Checked"&&r.tkt==="Ticket Not Created"))issues.push({label:"Check: "+it[1],req:r.req||it[3]||"",res:r.res||it[4]||"",tno:r.tno||"-"});});
+  var el=G("tktOut");if(!el)return;
   if(!issues.length){el.textContent="All checked items are working fine - no pending tickets.";return;}
   var out="COMBINED DAILY TICKET\nDate: "+WD()+" | Inspector: "+(getIns()||"N/A")+"\n"+"=".repeat(48)+"\n\n";
-  issues.forEach(function(x,i){out+="["+(i+1)+"] "+x.label+"\nTicket No : "+x.tno+"\nRequest   : "+x.req+"\nResolution: "+x.res+"\n"+"-".repeat(48)+"\n";});
+  issues.forEach(function(x,i2){out+="["+(i2+1)+"] "+x.label+"\nTicket No : "+x.tno+"\nRequest   : "+x.req+"\nResolution: "+x.res+"\n"+"-".repeat(48)+"\n";});
   el.textContent=out;
 }
-
-/* ======= HANDOVER ======= */
 function genHO(){
-  var saved=collect();
-  var custom=getC();
+  var saved=collect();var custom=getC();
   var ifaces=IFC.concat(custom.filter(function(c){return c.type==="interface";}).map(function(c){return [c.ip,c.nm,c.path];}));
   var sN=SRV.length,iN=ifaces.length,spN=SPL.length;
-  var sDn=SRV.filter(function(_,i){return saved["s"+i]&&saved["s"+i].fin==="Working Fine";}).length;
-  var iDn=ifaces.filter(function(_,i){return saved["i"+i]&&saved["i"+i].fin==="Working Fine";}).length;
-  var spDn=SPL.filter(function(_,i){return saved["sp"+i]&&saved["sp"+i].fin==="Working Fine";}).length;
+  var sDn=SRV.filter(function(x,i){return saved["s"+i]&&saved["s"+i].fin==="Working Fine";}).length;
+  var iDn=ifaces.filter(function(x,i){return saved["i"+i]&&saved["i"+i].fin==="Working Fine";}).length;
+  var spDn=SPL.filter(function(x,i){return saved["sp"+i]&&saved["sp"+i].fin==="Working Fine";}).length;
   var issues=[];
   SRV.forEach(function(ip,i){if(saved["s"+i]&&saved["s"+i].fin==="Issue Found")issues.push("Server "+ip+" - Ticket: "+(saved["s"+i].tno||"N/A"));});
   ifaces.forEach(function(it,i){if(saved["i"+i]&&saved["i"+i].fin==="Issue Found")issues.push("Interface "+it[1]+" ("+it[0]+") - Ticket: "+(saved["i"+i].tno||"N/A"));});
-  var out="=".repeat(50)+"\n  SHIFT HANDOVER REPORT\n"+"=".repeat(50)+"\n";
-  out+="Date         : "+WD()+"\nTime         : "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+"\n";
-  out+="Outgoing     : "+(G("hoO").value||getIns()||"N/A")+"\nIncoming     : "+(G("hoI").value||"N/A")+"\n";
-  out+="-".repeat(50)+"\nCOMPLETION SUMMARY\n";
-  out+="  Servers      : "+sDn+"/"+sN+" ("+(sN?Math.round(sDn/sN*100):0)+"%)\n";
-  out+="  Interfaces   : "+iDn+"/"+iN+" ("+(iN?Math.round(iDn/iN*100):0)+"%)\n";
-  out+="  Spec. Checks : "+spDn+"/"+spN+" ("+(spN?Math.round(spDn/spN*100):0)+"%)\n";
-  out+="-".repeat(50)+"\nISSUES ("+issues.length+")\n";
-  out+=issues.length?issues.map(function(x){return "  * "+x;}).join("\n"):"  All systems normal - no issues found.";
-  out+="\n"+"-".repeat(50)+"\nISSUES ENCOUNTERED:\n"+(G("hoIs").value||"  None")+"\n\nPENDING ACTIONS:\n"+(G("hoPn").value||"  None")+"\n\nSPECIAL NOTES:\n"+(G("hoNt").value||"  None")+"\n"+"=".repeat(50);
-  G("hoOut").textContent=out;
-  logAct("Handover report generated","abl");
+  var out="=".repeat(50)+"\n  SHIFT HANDOVER REPORT\n"+"=".repeat(50)+"\nDate         : "+WD()+"\nTime         : "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})+"\nOutgoing     : "+(G("hoO").value||getIns()||"N/A")+"\nIncoming     : "+(G("hoI").value||"N/A")+"\n"+"-".repeat(50)+"\nCOMPLETION SUMMARY\n  Servers      : "+sDn+"/"+sN+" ("+(sN?Math.round(sDn/sN*100):0)+"%)\n  Interfaces   : "+iDn+"/"+iN+" ("+(iN?Math.round(iDn/iN*100):0)+"%)\n  Spec. Checks : "+spDn+"/"+spN+" ("+(spN?Math.round(spDn/spN*100):0)+"%)\n"+"-".repeat(50)+"\nISSUES ("+issues.length+")\n"+(issues.length?issues.map(function(x){return "  * "+x;}).join("\n"):"  All systems normal - no issues found.")+"\n"+"-".repeat(50)+"\nISSUES ENCOUNTERED:\n"+(G("hoIs").value||"  None")+"\n\nPENDING ACTIONS:\n"+(G("hoPn").value||"  None")+"\n\nSPECIAL NOTES:\n"+(G("hoNt").value||"  None")+"\n"+"=".repeat(50);
+  G("hoOut").textContent=out;logAct("Handover report generated","abl");
 }
-
-/* ======= PING ======= */
 function runPing(){
-  var grid=G("pgGrid"); grid.innerHTML="";
-  var custom=getC();
-  var allIPs=[];
-  var seen={};
+  var grid=G("pgGrid");grid.innerHTML="";
+  var allIPs=[];var seen={};
   SRV.forEach(function(ip){if(!seen[ip]&&/^\d+\.\d+\.\d+\.\d+$/.test(ip)){seen[ip]=1;allIPs.push(ip);}});
   IFC.forEach(function(it){var ip=it[0].split(/[& \/]/)[0].trim();if(ip&&!seen[ip]&&/^\d+\.\d+\.\d+\.\d+$/.test(ip)){seen[ip]=1;allIPs.push(ip);}});
-  allIPs.forEach(function(ip){
-    var div=document.createElement("div"); div.className="pgcard";
-    div.id="pc_"+ip.replace(/\./g,"_");
-    div.innerHTML='<span class="pgip">'+esc(ip)+'</span><span class="pgst pschk">Checking...</span>';
-    grid.appendChild(div);
-  });
-  var idx=0;
-  function checkNext(){
-    if(idx>=allIPs.length){toast("Connectivity check complete","s");return;}
-    var ip=allIPs[idx++];
-    var card=G("pc_"+ip.replace(/\./g,"_"));
-    if(!card){checkNext();return;}
-    var badge=card.querySelector(".pgst");
-    var ctrl=new AbortController();
-    var timer=setTimeout(function(){ctrl.abort();},3000);
-    fetch("http://"+ip,{method:"HEAD",signal:ctrl.signal,mode:"no-cors"})
-      .then(function(){clearTimeout(timer);badge.className="pgst psok";badge.textContent="Reachable";setTimeout(checkNext,80);})
-      .catch(function(e){clearTimeout(timer);if(e.name==="AbortError"){badge.className="pgst psfail";badge.textContent="Timeout";}else{badge.className="pgst psok";badge.textContent="Responded";}setTimeout(checkNext,80);});
-  }
+  allIPs.forEach(function(ip){var div=document.createElement("div");div.className="pgcard";div.id="pc_"+ip.replace(/\./g,"_");div.innerHTML='<span class="pgip">'+esc(ip)+'</span><span class="pgst pschk">Checking...</span>';grid.appendChild(div);});
+  var pidx=0;
+  function checkNext(){if(pidx>=allIPs.length){toast("Connectivity check complete","s");return;}var ip=allIPs[pidx++];var card=G("pc_"+ip.replace(/\./g,"_"));if(!card){checkNext();return;}var badge=card.querySelector(".pgst");var ctrl=new AbortController();var timer=setTimeout(function(){ctrl.abort();},3000);fetch("http://"+ip,{method:"HEAD",signal:ctrl.signal,mode:"no-cors"}).then(function(){clearTimeout(timer);badge.className="pgst psok";badge.textContent="Reachable";setTimeout(checkNext,80);}).catch(function(e){clearTimeout(timer);if(e.name==="AbortError"){badge.className="pgst psfail";badge.textContent="Timeout";}else{badge.className="pgst psok";badge.textContent="Responded";}setTimeout(checkNext,80);});}
   checkNext();
 }
-
-/* ======= AI SUMMARY ======= */
-function setAIMode(mode,el){
-  aiMode=mode;
-  document.querySelectorAll(".aichip").forEach(function(c){c.classList.remove("active");});
-  el.classList.add("active");
-}
+function setAIMode(mode,el){aiMode=mode;document.querySelectorAll(".aichip").forEach(function(c){c.classList.remove("act");});el.classList.add("act");}
 function runAI(){
-  var saved=collect();
+  var saved=collect();var custom=getC();
+  var sN=SRV.length,iN=IFC.length+custom.filter(function(c){return c.type==="interface";}).length;
+  var spN=SPL.length+custom.filter(function(c){return c.type==="special";}).length,total=sN+iN+spN;
+  var sDn=SRV.filter(function(x,i){return saved["s"+i]&&saved["s"+i].fin==="Working Fine";}).length;
+  var iDn=IFC.filter(function(x,i){return saved["i"+i]&&saved["i"+i].fin==="Working Fine";}).length;
+  var spDn=SPL.filter(function(x,i){return saved["sp"+i]&&saved["sp"+i].fin==="Working Fine";}).length;
+  var done=sDn+iDn+spDn,pct=total?Math.round(done/total*100):0;
+  var sIss=SRV.filter(function(x,i){return saved["s"+i]&&saved["s"+i].fin==="Issue Found";}).map(function(x,i){return SRV[i];});
+  var iIss=IFC.filter(function(x,i){return saved["i"+i]&&saved["i"+i].fin==="Issue Found";}).map(function(it){return it[1];});
+  var pend=SRV.filter(function(x,i){return !saved["s"+i]||saved["s"+i].chk==="Pending";}).length+IFC.filter(function(x,i){return !saved["i"+i]||saved["i"+i].chk==="Pending";}).length;
+  var ctx="Date: "+WD()+" | Inspector: "+(getIns()||"N/A")+"\nServers: "+sDn+"/"+sN+" | Interfaces: "+iDn+"/"+iN+" | Special: "+spDn+"/"+spN+"\nTotal: "+pct+"% ("+done+"/"+total+")\nServer Issues: "+(sIss.length?sIss.join(", "):"None")+"\nInterface Issues: "+(iIss.length?iIss.join(", "):"None")+"\nPending: "+pend;
+  var prompts={summary:"Analyse this IT daily checklist and give a concise 5-6 bullet professional summary.\n\n"+ctx,issues:"Analyse this IT checklist data and give detailed issue analysis with recommended actions.\n\n"+ctx,ticket:"Draft a professional ManageEngine ServiceDesk Plus ticket summary for items needing attention.\n\n"+ctx,handover:"Write a professional IT shift briefing for the incoming shift.\n\n"+ctx,recommend:"Give 4-5 actionable recommendations to improve this IT monitoring process.\n\n"+ctx};
+  var out=G("aiOut");out.textContent="Generating AI analysis...";
+  fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompts[aiMode]||prompts.summary}]})})
+    .then(function(r){return r.json();})
+    .then(function(data){if(data.content&&data.content[0]&&data.content[0].text){out.textContent=data.content[0].text;logAct("AI "+aiMode+" generated","abl");}else out.textContent=fbAI(pct,done,total,sIss,iIss,pend);})
+    .catch(function(){out.textContent=fbAI(pct,done,total,sIss,iIss,pend);});
+}
+function fbAI(pct,done,total,sIss,iIss,pend){var st=pct===100?"EXCELLENT":pct>=75?"GOOD PROGRESS":pct>=50?"IN PROGRESS":"NEEDS ATTENTION";return "DAILY CHECKLIST ANALYSIS - "+WD()+"\nInspector: "+(getIns()||"N/A")+"\n\n"+st+" - "+pct+"% Complete ("+done+"/"+total+")\n\nCompleted: "+done+" items\n"+(sIss.length?"Server Issues: "+sIss.join(", "):"All servers: No issues")+"\n"+(iIss.length?"Interface Issues: "+iIss.join(", "):"All interfaces: No issues")+"\nPending: "+pend+" items\n\n"+(pct===100?"Outstanding! All systems verified.":pct>=75?"Good progress. Complete "+pend+" remaining.":"Attention needed. Complete all pending checks.");}
+/* DATE RANGE */
+function openDateRange(){PANELS.forEach(function(pid){var p=G(pid);if(p)p.classList.remove("open");});G("drPan").classList.add("open");if(!G("drFrom").value||!G("drTo").value)drLast7();setTimeout(function(){G("drPan").scrollIntoView({behavior:"smooth",block:"start"});},60);}
+function drLast7(){var t=new Date();var f=new Date(t);f.setDate(t.getDate()-6);G("drFrom").value=fmtDate(f);G("drTo").value=fmtDate(t);}
+function drWeek(){var t=new Date();var day=t.getDay();var mon=new Date(t);mon.setDate(t.getDate()-(day===0?6:day-1));var sun=new Date(mon);sun.setDate(mon.getDate()+6);G("drFrom").value=fmtDate(mon);G("drTo").value=fmtDate(sun);}
+function drMonth(){var t=new Date();G("drFrom").value=fmtDate(new Date(t.getFullYear(),t.getMonth(),1));G("drTo").value=fmtDate(new Date(t.getFullYear(),t.getMonth()+1,0));}
+function drStats(date){
+  var data;try{data=JSON.parse(localStorage.getItem(ST+date))||{};}catch(e){data={};}
+  var custom=getC();var sN=SRV.length,iN=IFC.length+custom.filter(function(c){return c.type==="interface";}).length,spN=SPL.length+custom.filter(function(c){return c.type==="special";}).length;
+  var sDn=0,sIs=0,iDn=0,iIs=0,spDn=0,spIs=0,tks=0,ins2="";var i2,r2;
+  for(i2=0;i2<sN;i2++){r2=data["s"+i2]||{};if(r2.fin==="Working Fine")sDn++;else if(r2.fin==="Issue Found"||r2.run==="Stopped")sIs++;if(r2.tkt==="Ticket Created")tks++;if(!ins2&&r2.ins)ins2=r2.ins;}
+  for(i2=0;i2<iN;i2++){r2=data["i"+i2]||{};if(r2.fin==="Working Fine")iDn++;else if(r2.fin==="Issue Found"||r2.run==="Stopped")iIs++;if(r2.tkt==="Ticket Created")tks++;if(!ins2&&r2.ins)ins2=r2.ins;}
+  for(i2=0;i2<spN;i2++){r2=data["sp"+i2]||{};if(r2.fin==="Working Fine")spDn++;else if(r2.fin==="Issue Found"||r2.run==="Stopped")spIs++;if(r2.tkt==="Ticket Created")tks++;if(!ins2&&r2.ins)ins2=r2.ins;}
+  var done2=sDn+iDn+spDn,issue2=sIs+iIs+spIs,total2=sN+iN+spN,pct2=total2?Math.round(done2/total2*100):0;
+  return {date:date,sN:sN,iN:iN,spN:spN,total:total2,sDn:sDn,iDn:iDn,spDn:spDn,done:done2,issue:issue2,tks:tks,pct:pct2,ins:ins2,raw:data};
+}
+function runDateRange(){
+  var from=G("drFrom").value,to=G("drTo").value;
+  if(!from||!to){toast("Select both From and To dates","e");return;}
+  if(from>to){toast("From must be before To","e");return;}
+  var dates=getDates().filter(function(d){return d>=from&&d<=to;}).sort();
+  G("drEmpty").style.display="none";G("drKpis").style.display="none";G("drTableWrap").style.display="none";G("drDetail").style.display="none";
+  if(!dates.length){G("drEmpty").style.display="block";return;}
+  var allS=dates.map(function(d){return drStats(d);});
+  var totDn=0,totIs=0,totTk=0,totPct=0;
+  allS.forEach(function(s){totDn+=s.done;totIs+=s.issue;totTk+=s.tks;totPct+=s.pct;});
+  G("drTotDays").textContent=allS.length;G("drTotChecked").textContent=totDn;G("drTotIssues").textContent=totIs;G("drTotTickets").textContent=totTk;
+  G("drAvgPct").textContent=allS.length?Math.round(totPct/allS.length)+"%":"0%";
+  G("drKpis").style.display="grid";
+  var tbody=G("drTbody");tbody.innerHTML="";
+  allS.forEach(function(s){
+    var row=document.createElement("tr");row.style.cursor="pointer";
+    row.onclick=(function(ss){return function(){showDayDetail(ss);};})(s);
+    row.innerHTML='<td class="dr-date">'+s.date+'</td>'+
+      '<td style="color:var(--mu);font-size:10.5px">'+dayName(s.date)+'</td>'+
+      '<td style="text-align:center"><span class="dr-bdg '+(s.sDn>0?"dr-gn":"dr-mu")+'">'+s.sDn+'/'+s.sN+'</span></td>'+
+      '<td style="text-align:center"><span class="dr-bdg '+(s.iDn>0?"dr-gn":"dr-mu")+'">'+s.iDn+'/'+s.iN+'</span></td>'+
+      '<td style="text-align:center"><span class="dr-bdg '+(s.spDn>0?"dr-gn":"dr-mu")+'">'+s.spDn+'/'+s.spN+'</span></td>'+
+      '<td style="text-align:center;font-weight:700">'+s.done+'/'+s.total+'</td>'+
+      '<td style="text-align:center"><span class="dr-bdg '+(s.issue>0?"dr-rd":"dr-gn")+'">'+s.issue+'</span></td>'+
+      '<td style="text-align:center"><span class="dr-bdg '+(s.tks>0?"dr-am":"dr-mu")+'">'+s.tks+'</span></td>'+
+      '<td><div style="display:flex;align-items:center;gap:6px"><div class="dr-bw" style="flex:1"><div class="dr-bf" style="width:'+s.pct+'%;background:'+(s.pct===100?"var(--gn)":s.pct>=50?"var(--am)":"var(--rd)")+'"></div></div><span style="font-size:10px;font-family:var(--mono);color:'+(s.pct===100?"var(--gn)":s.pct>=50?"var(--am)":"var(--rd)")+'">'+s.pct+'%</span></div></td>'+
+      '<td style="font-size:10.5px;color:var(--mu)">'+esc(s.ins||"-")+'</td>';
+    tbody.appendChild(row);
+  });
+  G("drTableWrap").style.display="block";
+  window._drS=allS;window._drFrom=from;window._drTo=to;
+}
+function showDayDetail(s){
   var custom=getC();
-  var sN=SRV.length;
-  var iN=IFC.length+custom.filter(function(c){return c.type==="interface";}).length;
-  var spN=SPL.length+custom.filter(function(c){return c.type==="special";}).length;
-  var total=sN+iN+spN;
-  var sDn=SRV.filter(function(_,i){return saved["s"+i]&&saved["s"+i].fin==="Working Fine";}).length;
-  var iDn=IFC.filter(function(_,i){return saved["i"+i]&&saved["i"+i].fin==="Working Fine";}).length;
-  var spDn=SPL.filter(function(_,i){return saved["sp"+i]&&saved["sp"+i].fin==="Working Fine";}).length;
-  var done=sDn+iDn+spDn;
-  var pct=total?Math.round(done/total*100):0;
-  var sIss=SRV.filter(function(_,i){return saved["s"+i]&&saved["s"+i].fin==="Issue Found";}).map(function(_,i){return SRV[i];});
-  var iIss=IFC.filter(function(_,i){return saved["i"+i]&&saved["i"+i].fin==="Issue Found";}).map(function(it){return it[1];});
-  var pend=SRV.filter(function(_,i){return !saved["s"+i]||saved["s"+i].chk==="Pending";}).length +
-           IFC.filter(function(_,i){return !saved["i"+i]||saved["i"+i].chk==="Pending";}).length;
-  var ctx="Date: "+WD()+" | Inspector: "+(getIns()||"N/A")+"\nServers: "+sDn+"/"+sN+" | Interfaces: "+iDn+"/"+iN+" | Special: "+spDn+"/"+spN+"\nTotal Progress: "+pct+"% ("+done+"/"+total+")\nServer Issues: "+(sIss.length?sIss.join(", "):"None")+"\nInterface Issues: "+(iIss.length?iIss.join(", "):"None")+"\nPending Items: "+pend;
-  var prompts={
-    summary:"You are an IT monitoring assistant. Analyse this daily checklist data and provide a concise professional summary in 5-6 bullet points covering overall status, completed items, issues, and what is pending. Be direct and professional.\n\nChecklist Data:\n"+ctx,
-    issues:"You are an IT monitoring assistant. Analyse the checklist data and provide detailed issue analysis. For each issue, explain potential impact, urgency, and recommended action. If no issues, confirm systems are healthy.\n\nChecklist Data:\n"+ctx,
-    ticket:"You are an IT service desk assistant. Draft a professional ticket summary for all items needing attention, suitable for ManageEngine ServiceDesk Plus.\n\nChecklist Data:\n"+ctx,
-    handover:"You are an IT shift coordinator. Write a professional shift briefing for the incoming shift based on this checklist data.\n\nChecklist Data:\n"+ctx,
-    recommend:"You are an IT operations analyst. Provide 4-5 actionable recommendations to improve monitoring efficiency based on this checklist data.\n\nChecklist Data:\n"+ctx
-  };
-  var out=G("aiOut");
-  out.textContent="Generating AI analysis...";
-  out.classList.add("typing");
-  fetch("https://api.anthropic.com/v1/messages",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompts[aiMode]||prompts.summary}]})
-  }).then(function(r){return r.json();}).then(function(data){
-    out.classList.remove("typing");
-    if(data.content&&data.content[0]&&data.content[0].text){
-      out.textContent=data.content[0].text;
-      logAct("AI "+aiMode+" analysis generated","abl");
-    } else {
-      out.textContent=fallbackAI(pct,done,total,sIss,iIss,pend);
-    }
-  }).catch(function(){
-    out.classList.remove("typing");
-    out.textContent=fallbackAI(pct,done,total,sIss,iIss,pend);
+  var ifaces=IFC.concat(custom.filter(function(c){return c.type==="interface";}).map(function(c){return [c.ip,c.nm,c.path];}));
+  var specs=SPL.concat(custom.filter(function(c){return c.type==="special";}).map(function(c){return [c.ip,c.nm,c.path];}));
+  var d=s.raw,ln="-".repeat(48);
+  var txt="DATE: "+s.date+" ("+dayName(s.date)+")\nInspector  : "+(s.ins||"N/A")+"\nProgress   : "+s.pct+"% ("+s.done+"/"+s.total+")\nIssues: "+s.issue+" | Tickets: "+s.tks+"\n\nSERVER CHECK\n"+ln+"\n";
+  SRV.forEach(function(ip,i){var r=d["s"+i]||{};if(r.chk||r.fin||r.tkt)txt+=(i+1)+". "+ip+"\n   Checked: "+(r.chk||"Pending")+" | Status: "+(r.fin||"Pending")+" | Ticket: "+(r.tkt||"N/A")+(r.tno?" ("+r.tno+")":"")+(r.ts?"\n   Last Checked: "+new Date(r.ts).toLocaleString():"")+"\n";});
+  txt+="\nINTERFACE CHECK\n"+ln+"\n";
+  ifaces.forEach(function(it,i){var r=d["i"+i]||{};if(r.chk||r.fin||r.tkt)txt+=(i+1)+". "+it[1]+" ("+it[0]+")\n   Checked: "+(r.chk||"Pending")+" | Running: "+(r.run||"Pending")+" | Status: "+(r.fin||"Pending")+" | Ticket: "+(r.tkt||"N/A")+(r.tno?" ("+r.tno+")":"")+(r.ts?"\n   Last Checked: "+new Date(r.ts).toLocaleString():"")+"\n";});
+  txt+="\nSPECIAL CHECKS\n"+ln+"\n";
+  specs.forEach(function(it,i){var r=d["sp"+i]||{};if(r.chk||r.fin||r.tkt)txt+=(i+1)+". "+it[1]+"\n   Checked: "+(r.chk||"Pending")+" | Status: "+(r.fin||"Pending")+" | Ticket: "+(r.tkt||"N/A")+(r.tno?" ("+r.tno+")":"")+(r.ts?"\n   Last Checked: "+new Date(r.ts).toLocaleString():"")+"\n";});
+  G("drDetailTitle").textContent="Detail: "+s.date+" ("+dayName(s.date)+")";
+  G("drDetailBody").textContent=txt;G("drDetail").style.display="block";window._drDayTxt=txt;
+  setTimeout(function(){G("drDetail").scrollIntoView({behavior:"smooth",block:"nearest"});},60);
+}
+function drCopyDay(){if(window._drDayTxt)cpTxt(window._drDayTxt);}
+function drCopyReport(){
+  if(!window._drS||!window._drS.length){toast("Generate report first","e");return;}
+  var ln="=".repeat(52);var txt=ln+"\n  IT COMMAND CENTER - DATE RANGE REPORT\n  Period: "+window._drFrom+" to "+window._drTo+"\n  Generated: "+new Date().toLocaleString()+"\n"+ln+"\n\n";
+  var tc2=0,ti2=0,tt2=0,tp2=0;window._drS.forEach(function(s){tc2+=s.done;ti2+=s.issue;tt2+=s.tks;tp2+=s.pct;});
+  txt+="SUMMARY\n"+"-".repeat(52)+"\nDays with data  : "+window._drS.length+"\nTotal Checked   : "+tc2+"\nTotal Issues    : "+ti2+"\nTickets Created : "+tt2+"\nAvg Completion  : "+(window._drS.length?Math.round(tp2/window._drS.length):0)+"%\n\nPER DAY\n"+"-".repeat(52)+"\n";
+  window._drS.forEach(function(s){txt+=s.date+" ("+dayName(s.date)+")\n  Progress: "+s.pct+"% ("+s.done+"/"+s.total+") | Issues: "+s.issue+" | Tickets: "+s.tks+" | Inspector: "+(s.ins||"N/A")+"\n\n";});
+  cpTxt(txt);
+}
+function drExportCSV(){
+  if(!window._drS||!window._drS.length){toast("Generate report first","e");return;}
+  var custom=getC();
+  var ifaces=IFC.concat(custom.filter(function(c){return c.type==="interface";}).map(function(c){return [c.ip,c.nm,c.path];}));
+  var specs=SPL.concat(custom.filter(function(c){return c.type==="special";}).map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
+  var rows=[["Date","Day","Type","No","Server IP","Name","Checked","Running","Logs","Status","Ticket","Ticket No","Inspector","Last Checked","Storage","Request","Resolution"]];
+  window._drS.forEach(function(s){
+    var dd=s.raw;
+    SRV.forEach(function(ip,i){var r=dd["s"+i]||{};rows.push([s.date,dayName(s.date),"Server",i+1,ip,"",r.chk||"","","",r.fin||"",r.tkt||"",r.tno||"",r.ins||"",r.ts?new Date(r.ts).toLocaleString():"",r.sto||"",r.req||sReq(ip),r.res||sRes(ip)]);});
+    ifaces.forEach(function(it,i){var r=dd["i"+i]||{};rows.push([s.date,dayName(s.date),"Interface",i+1,it[0],it[1],r.chk||"",r.run||"",r.log||"",r.fin||"",r.tkt||"",r.tno||"",r.ins||"",r.ts?new Date(r.ts).toLocaleString():"","",r.req||iReq(it[1]),r.res||iRes(it[1])]);});
+    specs.forEach(function(it,i){var r=dd["sp"+i]||{};rows.push([s.date,dayName(s.date),"Special",i+1,it[0],it[1],r.chk||"",r.run||"",r.log||"",r.fin||"",r.tkt||"",r.tno||"",r.ins||"","","",r.req||it[3]||"",r.res||it[4]||""]);});
   });
+  var csv=rows.map(function(row){return row.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(",");}).join("\n");
+  var fn="IT_Range_"+window._drFrom+"_to_"+window._drTo+".csv";
+  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download=fn;a.click();toast("CSV exported: "+fn,"s");
 }
-function fallbackAI(pct,done,total,sIss,iIss,pend){
-  var status=pct===100?"EXCELLENT":pct>=75?"GOOD PROGRESS":pct>=50?"IN PROGRESS":"NEEDS ATTENTION";
-  var out="DAILY CHECKLIST ANALYSIS - "+WD()+"\nInspector: "+(getIns()||"N/A")+"\n\n";
-  out+=status+" - "+pct+"% Complete ("+done+"/"+total+" items)\n\n";
-  out+="Completed: "+done+" items checked and verified\n";
-  out+=(sIss.length?"Server Issues: "+sIss.join(", "):"All servers: No issues found")+"\n";
-  out+=(iIss.length?"Interface Issues: "+iIss.join(", "):"All interfaces: No issues found")+"\n";
-  out+="Pending: "+pend+" items still need to be checked\n\n";
-  out+=pct===100?"Outstanding work! All systems verified and fully operational.":pct>=75?"Good progress. Focus on completing the "+pend+" remaining items.":"Attention needed. Priority: complete all pending checks.";
-  return out;
-}
-
-/* ======= STREAK ======= */
 function updateStreak(){
-  var dates=getDates(); if(!dates.length) return;
-  var streak=0,best=1,run=1,totPct=0;
-  var sorted=dates.slice().sort();
-  for(var i=1;i<sorted.length;i++){
-    var diff=(new Date(sorted[i])-new Date(sorted[i-1]))/86400000;
-    if(diff===1){run++;if(run>best)best=run;}else run=1;
-  }
-  var td=new Date();
-  for(var j=0;j<365;j++){
-    var d=new Date(td); d.setDate(td.getDate()-j);
-    var iso=d.getFullYear()+"-"+(d.getMonth()<9?"0":"")+(d.getMonth()+1)+"-"+(d.getDate()<10?"0":"")+d.getDate();
-    if(dates.indexOf(iso)>-1)streak++;else break;
-  }
+  var dates=getDates();if(!dates.length)return;
+  var streak=0,best=1,run3=1,totPct=0;var sorted=dates.slice().sort();
+  for(var i=1;i<sorted.length;i++){var diff=(new Date(sorted[i])-new Date(sorted[i-1]))/86400000;if(diff===1){run3++;if(run3>best)best=run3;}else run3=1;}
+  var td=new Date();for(var j=0;j<365;j++){var dd2=new Date(td);dd2.setDate(td.getDate()-j);if(dates.indexOf(fmtDate(dd2))>-1)streak++;else break;}
   best=Math.max(best,streak);
-  dates.forEach(function(d){
-    try{var data=JSON.parse(localStorage.getItem(ST+d))||{};var vals=Object.values(data);if(!vals.length)return;totPct+=Math.round(vals.filter(function(r){return r.fin==="Working Fine";}).length/vals.length*100);}catch(e){}
-  });
-  G("skD").textContent=streak; G("skB").textContent=best; G("skT").textContent=dates.length;
+  dates.forEach(function(d){try{var data=JSON.parse(localStorage.getItem(ST+d))||{};var vals=Object.values(data);if(!vals.length)return;totPct+=Math.round(vals.filter(function(r){return r.fin==="Working Fine";}).length/vals.length*100);}catch(e){}});
+  G("skD").textContent=streak;G("skB").textContent=best;G("skT").textContent=dates.length;
   G("skA").textContent=dates.length?Math.round(totPct/dates.length)+"%":"0%";
 }
-
-/* ======= CONFETTI ======= */
-function celebrate(){
-  var colors=["#38bdf8","#22c55e","#f59e0b","#a78bfa","#2dd4bf","#ef4444"];
-  for(var i=0;i<55;i++){
-    var el=document.createElement("div"); el.className="cf";
-    var c=colors[Math.floor(Math.random()*colors.length)];
-    var w=6+Math.random()*7; var h=6+Math.random()*7;
-    var br=Math.random()>.5?"50%":"2px";
-    el.style.cssText="left:"+Math.random()*100+"vw;top:-20px;background:"+c+";width:"+w+"px;height:"+h+"px;border-radius:"+br+";animation-delay:"+Math.random()*.8+"s;animation-duration:"+(2+Math.random()*1.5)+"s";
-    document.body.appendChild(el);
-    setTimeout(function(){el.remove();},4000);
-  }
-  toast("100% Complete! All systems verified!","s");
-}
-
-/* ======= TOAST ======= */
-function toast(msg,type){
-  var el=document.createElement("div");
-  el.className="toast tst-"+(type||"i");
-  el.textContent=msg;
-  G("tc").appendChild(el);
-  setTimeout(function(){el.style.animation="tOut .28s ease forwards";setTimeout(function(){el.remove();},280);},2800);
-}
-
-/* ======= PANEL TOGGLE ======= */
-function toggleP(id){
-  var el=G(id);
-  var wasOpen=el.classList.contains("open");
-  /* Close ALL panels first */
-  PANELS.forEach(function(pid){
-    var pel=G(pid);
-    if(pel) pel.classList.remove("open");
-  });
-  /* If it was closed, open it and scroll to top of content */
-  if(!wasOpen){
-    el.classList.add("open");
-    /* Scroll the panel into view at the top of the content area */
-    setTimeout(function(){
-      el.scrollIntoView({behavior:"smooth",block:"start"});
-      /* Also scroll content area up so panel is visible near top */
-      var content=document.querySelector(".content");
-      if(content){
-        var panelTop=el.offsetTop - content.offsetTop - 10;
-        content.scrollTop=panelTop;
-      }
-    },60);
-  }
-}
-
-/* ======= THEME ======= */
-function toggleTheme(){
-  document.body.classList.toggle("lt");
-  localStorage.setItem("itcc5_th",document.body.classList.contains("lt")?"l":"d");
-}
-
-/* ======= ADMIN ======= */
+function celebrate(){var colors=["#38bdf8","#22c55e","#f59e0b","#a78bfa","#2dd4bf","#ef4444"];for(var i=0;i<55;i++){var el=document.createElement("div");el.className="cf";var c=colors[Math.floor(Math.random()*colors.length)];el.style.cssText="left:"+Math.random()*100+"vw;top:-20px;background:"+c+";width:"+(6+Math.random()*7)+"px;height:"+(6+Math.random()*7)+"px;border-radius:"+(Math.random()>.5?"50%":"2px")+";animation-delay:"+Math.random()*.8+"s;animation-duration:"+(2+Math.random()*1.5)+"s";document.body.appendChild(el);setTimeout(function(){el.remove();},4000);}toast("100% Complete! All systems verified!","s");}
+function toast(msg,type){var el=document.createElement("div");el.className="toast ts-"+(type||"i");el.textContent=msg;G("tc").appendChild(el);setTimeout(function(){el.style.animation="tOut .28s ease forwards";setTimeout(function(){el.remove();},280);},2800);}
+function toggleTheme(){document.body.classList.toggle("lt");localStorage.setItem("itcc5_th",document.body.classList.contains("lt")?"l":"d");}
 function openAdm(){G("admMod").classList.add("open");renderAdm();}
 function closeAdm(){G("admMod").classList.remove("open");}
 G("admMod").addEventListener("click",function(e){if(e.target===G("admMod"))closeAdm();});
-function admAdd(){
-  var type=G("aTyp").value,ip=G("aIP").value.trim(),nm=G("aNm").value.trim();
-  var path=G("aPth").value.trim(),req=G("aRq").value.trim(),res=G("aRs").value.trim();
-  if(!nm){toast("Name required","e");return;}
-  var c=getC(); c.push({type:type,ip:ip,nm:nm,path:path,req:req,res:res});
-  saveC(c); renderAdm(); render();
-  toast("Added: "+nm,"s");
-  ["aIP","aNm","aPth","aRq","aRs"].forEach(function(id){G(id).value="";});
-}
-function admDel(i){
-  var c=getC();
-  if(confirm('Delete "'+c[i].nm+'"?')){c.splice(i,1);saveC(c);renderAdm();render();toast("Removed","i");}
-}
-function renderAdm(){
-  var c=getC(); var el=G("admLst"); if(!el) return;
-  if(!c.length){el.innerHTML='<div style="color:var(--mu);font-size:11.5px">No custom items yet.</div>';return;}
-  el.innerHTML=c.map(function(x,i){
-    return '<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(56,189,248,.04);border:1px solid var(--b1);border-radius:7px;padding:7px 10px;font-size:11.5px">'+
-      '<div><b>'+esc(x.nm)+'</b> <span style="color:var(--mu)">'+esc(x.ip)+'</span></div>'+
-      '<button class="btn br bxs" onclick="admDel('+i+')">x</button></div>';
-  }).join("");
-}
-
-/* ======= USER DROP ======= */
+function admAdd(){var type=G("aTyp").value,ip=G("aIP").value.trim(),nm=G("aNm").value.trim(),path=G("aPth").value.trim(),req=G("aRq").value.trim(),res=G("aRs").value.trim();if(!nm){toast("Name required","e");return;}var c=getC();c.push({type:type,ip:ip,nm:nm,path:path,req:req,res:res});saveC(c);renderAdm();render();toast("Added: "+nm,"s");["aIP","aNm","aPth","aRq","aRs"].forEach(function(id){G(id).value="";});}
+function admDel(i){var c=getC();if(confirm('Delete "'+c[i].nm+'"?')){c.splice(i,1);saveC(c);renderAdm();render();toast("Removed","i");}}
+function renderAdm(){var c=getC();var el=G("admLst");if(!el)return;if(!c.length){el.innerHTML='<div style="color:var(--mu);font-size:11.5px">No custom items yet.</div>';return;}el.innerHTML=c.map(function(x,i){return '<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(56,189,248,.04);border:1px solid var(--b1);border-radius:7px;padding:7px 10px;font-size:11.5px"><div><b>'+esc(x.nm)+'</b> <span style="color:var(--mu)">'+esc(x.ip)+'</span></div><button class="btn br bxs" onclick="admDel('+i+')">x</button></div>';}).join("");}
 function toggleUD(){G("udrop").classList.toggle("open");}
-document.addEventListener("click",function(e){
-  if(!e.target.closest(".user-btn")&&!e.target.closest("#udrop"))G("udrop").classList.remove("open");
-});
-
-/* ======= SHORTCUTS ======= */
+document.addEventListener("click",function(e){if(!e.target.closest(".ubtn")&&!e.target.closest("#udrop"))G("udrop").classList.remove("open");});
 function openSC(){G("scMod").classList.add("open");}
-document.querySelectorAll(".overlay").forEach(function(o){
-  o.addEventListener("click",function(e){if(e.target===o)o.classList.remove("open");});
-});
+document.querySelectorAll(".overlay").forEach(function(o){o.addEventListener("click",function(e){if(e.target===o)o.classList.remove("open");});});
 document.addEventListener("keydown",function(e){
   var ty=["INPUT","TEXTAREA","SELECT"].indexOf(e.target.tagName)>-1;
   if(e.ctrlKey&&e.key==="s"){e.preventDefault();saveData();}
@@ -1636,33 +1394,46 @@ document.addEventListener("keydown",function(e){
   if(e.altKey&&e.key==="t"){e.preventDefault();toggleTheme();}
   if(e.altKey&&e.key==="n"){e.preventDefault();toggleP("ntPan");renderNotes();}
   if(e.altKey&&e.key==="a"){e.preventDefault();toggleP("aiPan");}
-  if(e.key==="Escape"){
-    document.querySelectorAll(".overlay.open,.udrop.open").forEach(function(el){el.classList.remove("open");});
-  }
+  if(e.key==="Escape"){document.querySelectorAll(".overlay.open,.udrop.open").forEach(function(el){el.classList.remove("open");});}
 });
-
-/* ======= CLOCK ======= */
-function tick(){
-  var n=new Date();
-  G("clk").textContent=n.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-  G("clkd").textContent=n.toLocaleDateString([],{weekday:"short",year:"numeric",month:"short",day:"numeric"});
-}
-setInterval(tick,1000); tick();
+function tick(){G("clk").textContent=new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"});G("clkd").textContent=new Date().toLocaleDateString([],{weekday:"short",year:"numeric",month:"short",day:"numeric"});}
+setInterval(tick,1000);tick();
 setInterval(function(){updColors();updateKPI();},300000);
-
-/* ======= SEARCH/FILTER EVENTS ======= */
 G("srch").addEventListener("input",applyF);
 G("flt").addEventListener("change",applyF);
-G("wd").addEventListener("change",function(){render();renderNotes();renderAct();});
-
-/* ======= INIT ======= */
+G("wd").addEventListener("change",function(){syncToDate();render();renderNotes();renderAct();});
+G("wdTo").addEventListener("change",function(){applyDateRange();});
+/* Apply the From-To range to the tables */
+function applyDateRange(){
+  var from=WD(),to=WDTo();
+  if(!from)return;
+  /* Ensure To >= From */
+  if(to&&to<from){G("wdTo").value=from;}
+  /* Update label */
+  var lbl=G("drLbl");
+  if(lbl){
+    if(!to||from===to){lbl.textContent="Showing: "+from;}
+    else{
+      var dates=getDates().filter(function(d){return d>=from&&d<=to;});
+      lbl.textContent="Range: "+from+" to "+to+" ("+dates.length+" day"+(dates.length!==1?"s":"")+" with data)";
+      lbl.style.color=dates.length>0?"var(--tl)":"var(--rd)";
+    }
+  }
+  render();renderNotes();renderAct();
+}
+function syncToDate(){
+  /* When From changes, if To is empty or behind From, sync it */
+  var from=WD(),to=WDTo();
+  if(!to||to<from)G("wdTo").value=from;
+}
+function setToday(){
+  var t=today();G("wd").value=t;G("wdTo").value=t;applyDateRange();
+}
 G("wd").value=today();
-/* Set default inspector if none saved yet */
-if(!localStorage.getItem("itcc5_ins")) localStorage.setItem("itcc5_ins","Jobin CJ");
-var si=getIns();
-G("insInp").value=si; setIns(si);
-G("hoO").value=si;
-if(localStorage.getItem("itcc5_th")==="l") document.body.classList.add("lt");
+G("wdTo").value=today();
+if(!localStorage.getItem("itcc5_ins"))localStorage.setItem("itcc5_ins","Jobin CJ");
+var si=getIns();G("insInp").value=si;setIns(si);G("hoO").value=si;
+if(localStorage.getItem("itcc5_th")==="l")document.body.classList.add("lt");
 render();
 renderNotes();
 renderAct();
