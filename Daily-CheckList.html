@@ -1195,9 +1195,24 @@ function cpItem(type,idx,mode){
     var custom=getC().filter(function(c){return c.type==="special";});
     var all=SPL.concat(custom.map(function(c){return [c.ip,c.nm,c.path,c.req,c.res];}));
     ip=all[idx]?all[idx][0]:""; nm=all[idx]?all[idx][1]:""; path=all[idx]?all[idx][2]:"";
+    /* For special items: fallback req/res come from the data array, NOT iReq/iRes */
+    var spReqFb=all[idx]?all[idx][3]:"";
+    var spResFb=all[idx]?all[idx][4]:"";
   }
-  var req=r.req||(type==="s"?sReq(ip):iReq(nm));
-  var res=r.res||(type==="s"?sRes(ip):iRes(nm));
+  /* Determine fallback req/res correctly per type */
+  var req, res;
+  if(type==="s"){
+    req=r.req||sReq(ip);
+    res=r.res||sRes(ip);
+  } else if(type==="i"){
+    req=r.req||iReq(nm);
+    res=r.res||iRes(nm);
+  } else {
+    /* Special: use the stored custom text from SPL array, never iReq/iRes */
+    /* spReqFb may be "" for custom admin items with no text entered — that's fine, show blank */
+    req=(r.req&&r.req.length)?r.req:(spReqFb&&spReqFb.length?spReqFb:"[No request text defined for this check]");
+    res=(r.res&&r.res.length)?r.res:(spResFb&&spResFb.length?spResFb:"[No resolution text defined for this check]");
+  }
   var txt="";
   if(mode==="req") txt=req;
   else if(mode==="res") txt=res;
