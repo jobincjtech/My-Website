@@ -896,24 +896,27 @@ document.addEventListener("change",function(e){
   var tr=e.target.closest("tr[data-idx]"); if(!tr)return;
   var f=e.target.getAttribute("data-f"); var val=e.target.value; var idx=tr.getAttribute("data-idx");
   var nm=tr.querySelector(".cnm,.cip"); nm=nm?nm.textContent:idx;
+  /* Auto-check when status set to Working Fine or Running */
   if(f==="fin"&&val==="Working Fine"){var cv=tr.querySelector("[data-f='chk']");if(cv&&cv.value!=="Checked")cv.value="Checked";}
   if(f==="run"&&val==="Running"){var cv2=tr.querySelector("[data-f='chk']");if(cv2&&cv2.value!=="Checked")cv2.value="Checked";}
   var td=loadToday();
-  if(!td[idx]){td[idx]={};}
-  if(f==="chk"&&val==="Checked"){
-    td[idx].ts=Date.now();
+  if(!td[idx])td[idx]={};
+  /* Stamp timestamp on ANY meaningful change */
+  var needsTs=(f==="chk"&&val==="Checked")||(f==="fin"&&val!=="Pending")||(f==="run"&&val!=="Pending")||(f==="tkt"&&val!=="Ticket Not Created");
+  if(needsTs){
+    if(!td[idx].ts)td[idx].ts=Date.now();
+    /* If explicitly checking, always refresh the timestamp */
+    if(f==="chk"&&val==="Checked")td[idx].ts=Date.now();
     var iv=tr.querySelector("[data-f='ins']"); if(iv&&!iv.value)iv.value=getIns();
     var lcEl=G("lc_"+idx); if(lcEl)lcEl.innerHTML=lcShow(td[idx].ts);
-    logAct(nm+" marked Checked","agn");
   }
-  if(f==="fin"&&val==="Working Fine"&&!td[idx].ts){
-    td[idx].ts=Date.now();
-    var lcEl2=G("lc_"+idx); if(lcEl2)lcEl2.innerHTML=lcShow(td[idx].ts);
-  }
-  td[idx][f]=val;
+  /* Save all row values to today's storage */
   tr.querySelectorAll("[data-f]").forEach(function(el){td[idx][el.getAttribute("data-f")]=el.value;});
   localStorage.setItem(saveKey(),JSON.stringify(td));
+  /* Log activity */
+  if(f==="chk"&&val==="Checked")logAct(nm+" marked Checked","agn");
   if(f==="fin"&&val==="Issue Found")logAct(nm+" - Issue Found","ard");
+  if(f==="fin"&&val==="Working Fine")logAct(nm+" - Working Fine","agn");
   if(f==="tkt"&&val==="Ticket Created")logAct("Ticket created for "+nm,"aam");
   updateKPI(); updColors();
 });
@@ -927,7 +930,7 @@ function quickDone(type,idx){
   var iv=tr.querySelector("[data-f='ins']"); if(iv&&!iv.value)iv.value=getIns();
   var td=loadToday(); var key=pfx+idx;
   if(!td[key])td[key]={};
-  td[key].ts=Date.now();
+  td[key].ts=Date.now(); /* Always stamp fresh time */
   tr.querySelectorAll("[data-f]").forEach(function(el){td[key][el.getAttribute("data-f")]=el.value;});
   localStorage.setItem(saveKey(),JSON.stringify(td));
   var lcEl=G("lc_"+key); if(lcEl)lcEl.innerHTML=lcShow(td[key].ts);
