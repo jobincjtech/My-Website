@@ -194,45 +194,31 @@ thead th{background:rgba(3,9,18,.98);color:var(--mu);font-size:9.5px;font-family
 tbody td{padding:7px 9px;border-bottom:1px solid rgba(20,40,65,.6);vertical-align:middle;font-size:11.5px;overflow:hidden}
 tbody tr:last-child td{border-bottom:none}
 tbody tr:hover td{background:rgba(56,189,248,.04)}
-tr.rdn td{
-  background:linear-gradient(90deg,rgba(22,163,74,.22) 0%,rgba(6,78,59,.15) 100%);
-  border-bottom:1px solid rgba(34,197,94,.25)!important;
-}
-tr.rdn td:first-child{border-left:4px solid #22c55e!important}
-tr.rdn .cip,tr.rdn .cnm{color:#86efac!important}
-tr.rdn{box-shadow:inset 4px 0 0 rgba(34,197,94,.6)}
-
-tr.ris td{
-  background:linear-gradient(90deg,rgba(220,38,38,.28) 0%,rgba(127,29,29,.18) 100%);
-  border-bottom:1px solid rgba(239,68,68,.3)!important;
-}
-tr.ris td:first-child{border-left:4px solid #ef4444!important}
-tr.ris .cip,tr.ris .cnm{color:#fca5a5!important}
-tr.ris{box-shadow:inset 4px 0 0 rgba(239,68,68,.7)}
-
-tr.rov td{
-  background:linear-gradient(90deg,rgba(217,119,6,.22) 0%,rgba(120,53,15,.12) 100%);
-  border-bottom:1px solid rgba(245,158,11,.25)!important;
-}
-tr.rov td:first-child{border-left:4px solid #f59e0b!important}
-@keyframes pulse-ov{0%,100%{box-shadow:inset 4px 0 0 rgba(245,158,11,.7)}50%{box-shadow:inset 4px 0 0 rgba(245,158,11,.2)}}
-tr.rov{animation:pulse-ov 2.5s ease infinite}
-
-tr.rpn td:first-child{border-left:4px solid rgba(42,74,100,.6)!important}
-tr.rpn td{border-bottom:1px solid rgba(20,40,65,.5)!important}
-
-/* TICKET CREATED — NOT YET CHECKED (purple/violet) */
-tr.rtc td{
-  background:linear-gradient(90deg,rgba(124,58,237,.22) 0%,rgba(76,29,149,.12) 100%);
-  border-bottom:1px solid rgba(167,139,250,.28)!important;
-}
-tr.rtc td:first-child{border-left:4px solid #a78bfa!important}
+/* ── GREEN: Checked & Working Fine ── */
+tr.rdn td{background:linear-gradient(90deg,rgba(22,163,74,.30) 0%,rgba(6,78,59,.14) 100%);border-bottom:1px solid rgba(34,197,94,.32)!important;}
+tr.rdn td:first-child{border-left:6px solid #22c55e!important}
+tr.rdn .cip,tr.rdn .cnm{color:#4ade80!important}
+tr.rdn{box-shadow:inset 6px 0 0 rgba(34,197,94,.55)}
+/* ── RED: Issue Found / Service Stopped ── */
+tr.ris td{background:linear-gradient(90deg,rgba(220,38,38,.34) 0%,rgba(127,29,29,.18) 100%);border-bottom:1px solid rgba(239,68,68,.38)!important;}
+tr.ris td:first-child{border-left:6px solid #ef4444!important}
+tr.ris .cip,tr.ris .cnm{color:#f87171!important}
+tr.ris{box-shadow:inset 6px 0 0 rgba(239,68,68,.65)}
+/* ── PURPLE pulsing: Ticket Created, Not Yet Checked ── */
+tr.rtc td{background:linear-gradient(90deg,rgba(124,58,237,.30) 0%,rgba(76,29,149,.14) 100%);border-bottom:1px solid rgba(167,139,250,.35)!important;}
+tr.rtc td:first-child{border-left:6px solid #a78bfa!important}
 tr.rtc .cip,tr.rtc .cnm{color:#c4b5fd!important}
-@keyframes pulse-rtc{
-  0%,100%{box-shadow:inset 4px 0 0 rgba(167,139,250,.8)}
-  50%{box-shadow:inset 4px 0 0 rgba(167,139,250,.2)}
-}
-tr.rtc{animation:pulse-rtc 2s ease infinite}
+@keyframes pulse-rtc{0%,100%{box-shadow:inset 6px 0 0 rgba(167,139,250,.9)}50%{box-shadow:inset 6px 0 0 rgba(167,139,250,.15)}}
+tr.rtc{animation:pulse-rtc 1.8s ease infinite}
+/* ── AMBER pulsing: Overdue, Not Checked >24h ── */
+tr.rov td{background:linear-gradient(90deg,rgba(217,119,6,.30) 0%,rgba(120,53,15,.14) 100%);border-bottom:1px solid rgba(245,158,11,.32)!important;}
+tr.rov td:first-child{border-left:6px solid #f59e0b!important}
+tr.rov .cip,tr.rov .cnm{color:#fbbf24!important}
+@keyframes pulse-ov{0%,100%{box-shadow:inset 6px 0 0 rgba(245,158,11,.85)}50%{box-shadow:inset 6px 0 0 rgba(245,158,11,.1)}}
+tr.rov{animation:pulse-ov 2.2s ease infinite}
+/* ── DARK BLUE: Pending, not started yet ── */
+tr.rpn td{border-bottom:1px solid rgba(20,40,65,.5)!important}
+tr.rpn td:first-child{border-left:6px solid rgba(56,189,248,.28)!important}
 
 .cnum{font-family:var(--mono);font-size:9.5px;color:var(--mu);text-align:center}
 .cip{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--cy);white-space:nowrap}
@@ -581,19 +567,46 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
     <div style="flex:1"></div>
   </div>
 
+  <!-- TODAY BANNER -->
+  <div id="todayBanner" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.2);border-radius:var(--r);padding:8px 14px;margin-bottom:10px;font-size:11.5px">
+    <span style="color:var(--tl);font-weight:700;font-size:12px">&#9889; Today</span>
+    <span id="todayDate" style="font-family:var(--mono);font-size:10.5px;color:var(--mu)"></span>
+    <span style="color:var(--mu)">|</span>
+    <span style="color:var(--gn)">&#10003; <span id="tdDn">0</span> done</span>
+    <span style="color:var(--rd)">&#10007; <span id="tdIs">0</span> issues</span>
+    <span style="color:var(--am)">&#127915; <span id="tdTk">0</span> tickets</span>
+    <span style="color:var(--pu)">&#128311; <span id="tdNc">0</span> ticket not checked</span>
+    <span style="flex:1"></span>
+    <span style="font-size:10px;color:var(--mu);font-family:var(--mono)">All edits save here automatically</span>
+  </div>
+
   <!-- OVERDUE ALERT -->
   <div class="alrt awarn" id="ovAlert" style="display:none">
     &#9888; <strong>Attention:</strong> <span id="ovCnt">0</span> items not checked in over 24 hours.
   </div>
 
   <!-- COLOUR LEGEND -->
-  <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;background:var(--panel);border:1px solid var(--b1);border-radius:var(--r);padding:8px 14px">
-    <span style="font-size:9.5px;color:var(--mu);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;margin-right:4px">Row Status:</span>
-    <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:#22c55e;flex-shrink:0"></span>Checked &amp; Working Fine</span>
-    <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:#a78bfa;flex-shrink:0"></span>Ticket Created — Not Checked Yet</span>
-    <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:#ef4444;flex-shrink:0"></span>Issue Found / Stopped</span>
-    <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:#f59e0b;flex-shrink:0"></span>Overdue (&gt;24h)</span>
-    <span style="display:flex;align-items:center;gap:5px;font-size:11px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(42,74,100,.8);flex-shrink:0"></span>Pending</span>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:stretch;margin-bottom:14px">
+    <div style="background:linear-gradient(90deg,rgba(22,163,74,.18),rgba(6,78,59,.1));border:1px solid rgba(34,197,94,.35);border-left:4px solid #22c55e;border-radius:9px;padding:7px 13px;display:flex;align-items:center;gap:8px;flex:1;min-width:160px">
+      <span style="font-size:16px">&#10003;</span>
+      <div><div style="font-size:11px;font-weight:700;color:#86efac">Checked &amp; Working Fine</div><div style="font-size:9.5px;color:var(--mu);font-family:var(--mono)">Verified — no action needed</div></div>
+    </div>
+    <div style="background:linear-gradient(90deg,rgba(124,58,237,.18),rgba(76,29,149,.1));border:1px solid rgba(167,139,250,.35);border-left:4px solid #a78bfa;border-radius:9px;padding:7px 13px;display:flex;align-items:center;gap:8px;flex:1;min-width:160px">
+      <span style="font-size:16px">&#127915;</span>
+      <div><div style="font-size:11px;font-weight:700;color:#c4b5fd">Ticket Created — Not Checked</div><div style="font-size:9.5px;color:var(--mu);font-family:var(--mono)">Ticket raised, go verify physically</div></div>
+    </div>
+    <div style="background:linear-gradient(90deg,rgba(220,38,38,.22),rgba(127,29,29,.12));border:1px solid rgba(239,68,68,.35);border-left:4px solid #ef4444;border-radius:9px;padding:7px 13px;display:flex;align-items:center;gap:8px;flex:1;min-width:160px">
+      <span style="font-size:16px">&#10007;</span>
+      <div><div style="font-size:11px;font-weight:700;color:#fca5a5">Issue Found / Stopped</div><div style="font-size:9.5px;color:var(--mu);font-family:var(--mono)">Problem detected — needs action</div></div>
+    </div>
+    <div style="background:linear-gradient(90deg,rgba(217,119,6,.18),rgba(120,53,15,.08));border:1px solid rgba(245,158,11,.35);border-left:4px solid #f59e0b;border-radius:9px;padding:7px 13px;display:flex;align-items:center;gap:8px;flex:1;min-width:160px">
+      <span style="font-size:16px">&#9888;</span>
+      <div><div style="font-size:11px;font-weight:700;color:#fde68a">Overdue — Not Checked &gt;24h</div><div style="font-size:9.5px;color:var(--mu);font-family:var(--mono)">Missed check — urgent attention</div></div>
+    </div>
+    <div style="background:rgba(20,40,65,.4);border:1px solid rgba(42,74,100,.5);border-left:4px solid rgba(56,189,248,.3);border-radius:9px;padding:7px 13px;display:flex;align-items:center;gap:8px;flex:1;min-width:160px">
+      <span style="font-size:16px">&#9711;</span>
+      <div><div style="font-size:11px;font-weight:700;color:var(--mu)">Pending — Not Started</div><div style="font-size:9.5px;color:var(--mu);font-family:var(--mono)">Awaiting check today</div></div>
+    </div>
   </div>
 
   <!-- DATE RANGE PANEL -->
@@ -905,7 +918,9 @@ function G(id){return document.getElementById(id);}
 function WD(){return G("wd").value;}
 function WDTo(){var el=G("wdTo");return (el&&el.value)?el.value:WD();}
 function sKey(){return ST+WD();}
+function saveKey(){return ST+today();}  /* always save to TODAY */
 function load(){try{return JSON.parse(localStorage.getItem(sKey()))||{};}catch(e){return {};}}
+function loadToday(){try{return JSON.parse(localStorage.getItem(saveKey()))||{};}catch(e){return {};}}
 /* loadRange: merge data from all dates in the From-To range.
    Later dates overwrite earlier ones so the most recent status wins per item.
    If no range, falls back to single date. */
@@ -1052,6 +1067,15 @@ function collect(){
   });
   return data;
 }
+function collectToday(){
+  /* Always collect into TODAY's storage bucket */
+  var data=loadToday();
+  document.querySelectorAll("tbody tr[data-idx]").forEach(function(tr){
+    var idx=tr.getAttribute("data-idx");if(!data[idx])data[idx]={};
+    tr.querySelectorAll("[data-f]").forEach(function(el){data[idx][el.getAttribute("data-f")]=el.value;});
+  });
+  return data;
+}
 function updateKPI(){
   var saved=loadRange();var custom=getC();
   var sN=SRV.length,iN=IFC.length+custom.filter(function(c){return c.type==="interface";}).length;
@@ -1076,6 +1100,25 @@ function updateKPI(){
   var p2=spN?Math.round(spDn/spN*100):0;G("cpBr").style.width=p2+"%";G("cpPct").textContent=p2+"% complete ("+spDn+"/"+spN+")";
   var oa=G("ovAlert");if(ov>0){oa.style.display="flex";G("ovCnt").textContent=ov;}else oa.style.display="none";
   if(pct===100&&window._lp!==100)celebrate();window._lp=pct;updateStreak();
+  /* Update today's summary banner */
+  updateTodayBanner();
+}
+function updateTodayBanner(){
+  var td=today();
+  var tdata;try{tdata=JSON.parse(localStorage.getItem(ST+td))||{};}catch(e){tdata={};}
+  var custom=getC();
+  var sN=SRV.length,iN=IFC.length+custom.filter(function(c){return c.type==="interface";}).length;
+  var spN=SPL.length+custom.filter(function(c){return c.type==="special";}).length;
+  var tDn=0,tIs=0,tTk=0,tNc=0;
+  var i,r;
+  for(i=0;i<sN;i++){r=tdata["s"+i]||{};if(r.fin==="Working Fine")tDn++;if(r.fin==="Issue Found"||r.run==="Stopped")tIs++;if(r.tkt==="Ticket Created")tTk++;if(r.tkt==="Ticket Created"&&r.chk!=="Checked")tNc++;}
+  for(i=0;i<iN;i++){r=tdata["i"+i]||{};if(r.fin==="Working Fine")tDn++;if(r.fin==="Issue Found"||r.run==="Stopped")tIs++;if(r.tkt==="Ticket Created")tTk++;if(r.tkt==="Ticket Created"&&r.chk!=="Checked")tNc++;}
+  for(i=0;i<spN;i++){r=tdata["sp"+i]||{};if(r.fin==="Working Fine")tDn++;if(r.fin==="Issue Found"||r.run==="Stopped")tIs++;if(r.tkt==="Ticket Created")tTk++;if(r.tkt==="Ticket Created"&&r.chk!=="Checked")tNc++;}
+  var tdEl=G("todayDate");if(tdEl)tdEl.textContent=td;
+  if(G("tdDn"))G("tdDn").textContent=tDn;
+  if(G("tdIs"))G("tdIs").textContent=tIs;
+  if(G("tdTk"))G("tdTk").textContent=tTk;
+  if(G("tdNc"))G("tdNc").textContent=tNc;
 }
 function updColors(){
   var saved=loadRange();
@@ -1097,7 +1140,7 @@ function applyF(){
     tr.style.display=(mq&&mf)?"":"none";
   });
 }
-function saveData(){localStorage.setItem(sKey(),JSON.stringify(collect()));updateKPI();updColors();renderHist();toast("Saved for "+WD(),"s");logAct("Data saved for "+WD(),"abl");}
+function saveData(){localStorage.setItem(saveKey(),JSON.stringify(collectToday()));updateKPI();updColors();renderHist();applyDateRange();toast("Saved for "+today(),"s");logAct("Data saved for "+today(),"abl");}
 document.addEventListener("change",function(e){
   var tb=e.target.closest("tbody");if(!tb)return;
   var tr=e.target.closest("tr[data-idx]");if(!tr)return;
@@ -1106,17 +1149,17 @@ document.addEventListener("change",function(e){
   if(f==="fin"&&val==="Working Fine"){var cv=tr.querySelector("[data-f='chk']");if(cv&&cv.value!=="Checked")cv.value="Checked";}
   if(f==="run"&&val==="Running"){var cv2=tr.querySelector("[data-f='chk']");if(cv2&&cv2.value!=="Checked")cv2.value="Checked";}
   if(f==="chk"&&val==="Checked"){
-    var sv=load();if(!sv[idx])sv[idx]={};var ts=Date.now();sv[idx].ts=ts;
+    var sv=loadToday();if(!sv[idx])sv[idx]={};var ts=Date.now();sv[idx].ts=ts;
     var iv=tr.querySelector("[data-f='ins']");if(iv&&!iv.value)iv.value=getIns();
     tr.querySelectorAll("[data-f]").forEach(function(el){sv[idx][el.getAttribute("data-f")]=el.value;});
-    localStorage.setItem(sKey(),JSON.stringify(sv));
+    localStorage.setItem(saveKey(),JSON.stringify(sv));
     var lcEl=G("lc_"+idx);if(lcEl)lcEl.innerHTML=lcShow(ts);
     logAct(nm+" marked Checked","agn");
   }
-  if(f==="fin"&&val==="Working Fine"){var sv2=load();if(!sv2[idx])sv2[idx]={};if(!sv2[idx].ts){sv2[idx].ts=Date.now();localStorage.setItem(sKey(),JSON.stringify(sv2));var lcEl2=G("lc_"+idx);if(lcEl2)lcEl2.innerHTML=lcShow(sv2[idx].ts);}}
+  if(f==="fin"&&val==="Working Fine"){var sv2=loadToday();if(!sv2[idx])sv2[idx]={};if(!sv2[idx].ts){sv2[idx].ts=Date.now();localStorage.setItem(saveKey(),JSON.stringify(sv2));var lcEl2=G("lc_"+idx);if(lcEl2)lcEl2.innerHTML=lcShow(sv2[idx].ts);}}
   if(f==="fin"&&val==="Issue Found")logAct(nm+" - Issue Found","ard");
   if(f==="tkt"&&val==="Ticket Created")logAct("Ticket created for "+nm,"aam");
-  localStorage.setItem(sKey(),JSON.stringify(collect()));updateKPI();updColors();
+  localStorage.setItem(saveKey(),JSON.stringify(collectToday()));updateKPI();updColors();
 });
 function cpTxt(t){navigator.clipboard.writeText(t).then(function(){toast("Copied to clipboard","s");});}
 function cpPath(i){var cu=getC().filter(function(c){return c.type==="interface";});var al=IFC.concat(cu.map(function(c){return [c.ip,c.nm,c.path];}));cpTxt(al[i]?al[i][2]:"");}
@@ -1149,7 +1192,7 @@ function markFine(sec){
     if(ins)sf("ins",ins);
     var idx=tr.getAttribute("data-idx");if(!saved[idx])saved[idx]={};saved[idx].ts=ts;
   });
-  localStorage.setItem(sKey(),JSON.stringify(saved));saveData();render();
+  localStorage.setItem(saveKey(),JSON.stringify(saved));saveData();render();
   toast("Marked "+visible.length+" items as Working Fine","s");logAct("Bulk: "+visible.length+" "+sec+" items marked fine","agn");
 }
 function togDone(tbId){document.querySelectorAll("#"+tbId+" tr.rdn").forEach(function(tr){tr.style.display=tr.style.display==="none"?"":"none";});}
@@ -1192,7 +1235,7 @@ function exportCSV(){
   var csv=rows.map(function(row){return row.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(",");}).join("\n");
   var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="IT_Checklist_"+WD()+".csv";a.click();toast("CSV exported","s");
 }
-function resetDay(){if(confirm("Clear saved data for "+WD()+"?")){localStorage.removeItem(sKey());render();toast("Reset complete","i");}}
+function resetDay(){if(confirm("Clear saved data for "+today()+"?")){localStorage.removeItem(saveKey());render();toast("Reset complete","i");}}
 function getDates(){
   var dates=[];
   for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf(ST)===0&&k.indexOf("_c")<0&&k.indexOf("_ins")<0&&k.indexOf("_th")<0&&k.indexOf("_act")<0&&k.indexOf("_nt")<0)dates.push(k.replace(ST,""));}
@@ -1412,11 +1455,12 @@ function applyDateRange(){
   /* Update label */
   var lbl=G("drLbl");
   if(lbl){
-    if(!to||from===to){lbl.textContent="Showing: "+from;}
-    else{
-      var dates=getDates().filter(function(d){return d>=from&&d<=to;});
-      lbl.textContent="Range: "+from+" to "+to+" ("+dates.length+" day"+(dates.length!==1?"s":"")+" with data)";
-      lbl.style.color=dates.length>0?"var(--tl)":"var(--rd)";
+    var td2=today();
+    if(!to||from===to){
+      lbl.innerHTML="<span style='color:var(--tl)'>&#128336; Viewing: "+from+"</span>"+(from===td2?" <span style='color:var(--gn);margin-left:6px'>&#9679; Today</span>":"")+"&nbsp;&nbsp;<span style='color:var(--mu);font-size:9px'>Saves go to: "+td2+"</span>";
+    } else {
+      var dates2=getDates().filter(function(d){return d>=from&&d<=to;});
+      lbl.innerHTML="<span style='color:"+(dates2.length>0?"var(--tl)":"var(--rd)")+"'>&#128336; Range: "+from+" &rarr; "+to+" &nbsp;("+dates2.length+" day"+(dates2.length!==1?"s":"")+" with data)</span>&nbsp;&nbsp;<span style='color:var(--mu);font-size:9px'>Saves go to: "+td2+"</span>";
     }
   }
   render();renderNotes();renderAct();
