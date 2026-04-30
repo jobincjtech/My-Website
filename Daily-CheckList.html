@@ -325,6 +325,7 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
   <div class="ssep"></div>
   <div class="slbl">Actions</div>
   <button class="nbtn" onclick="saveData()"><span class="ni">&#128190;</span> Save</button>
+  <button class="nbtn" onclick="openBackupModal()" style="color:var(--tl)"><span class="ni">&#128190;</span> Backup / Restore</button>
   <button class="nbtn" onclick="copyRpt()"><span class="ni">&#128203;</span> Copy Report</button>
   <button class="nbtn" onclick="exportCSV()"><span class="ni">&#128202;</span> Export CSV</button>
   <button class="nbtn" onclick="window.print()"><span class="ni">&#128424;</span> Print / PDF</button>
@@ -362,6 +363,7 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
     <button class="btn bg bsm" onclick="copyRpt()">Report</button>
     <button class="btn ba bsm" onclick="exportCSV()">CSV</button>
     <span id="savedLbl" style="font-size:9.5px;font-family:var(--mono)"></span>
+    <span id="backupReminderLbl" style="font-size:9.5px;font-family:var(--mono);margin-left:4px"></span>
     <span id="cloudLbl" style="font-size:9.5px;font-family:var(--mono);cursor:pointer" onclick="openSettings()" title="Cloud Sync Settings"></span>
   </div>
 
@@ -609,6 +611,69 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
 <div class="tc" id="tc"></div>
 
 <script>
+
+/* =====================================================================
+   DATA BACKUP & RESTORE
+   Export saves ALL data to a .json file on your computer.
+   Import loads it back — survives browser clears forever.
+   ===================================================================== */
+
+function exportBackup(){
+  var data={};
+  for(var i=0;i<localStorage.length;i++){
+    var k=localStorage.key(i);
+    if(k&&k.indexOf("itcc5_")===0) data[k]=localStorage.getItem(k);
+  }
+  var json=JSON.stringify(data,null,2);
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([json],{type:"application/json"}));
+  var d=new Date();
+  a.download="ITChecklist_Backup_"+d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)+".json";
+  a.click();
+  toast("Backup downloaded — save this file safely","s");
+  logAct("Data backup exported","abl");
+}
+
+function importBackup(input){
+  var file=input.files[0]; if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      var count=0;
+      Object.keys(data).forEach(function(k){
+        if(k.indexOf("itcc5_")===0){localStorage.setItem(k,data[k]);count++;}
+      });
+      render(); renderNotes(); renderAct(); updateStreak();
+      toast("Restored "+count+" records from backup","s");
+      logAct("Data restored from backup file","agn");
+    } catch(err){
+      toast("Invalid backup file","e");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function openBackupModal(){ G("backupMod").classList.add("open"); }
+function closeBackupModal(){ G("backupMod").classList.remove("open"); }
+
+/* Auto-backup reminder: if last backup was >7 days ago, show a gentle reminder */
+function checkBackupReminder(){
+  var last=parseInt(localStorage.getItem("itcc5_last_backup")||"0");
+  var daysSince=(Date.now()-last)/86400000;
+  var lbl=G("backupReminderLbl");
+  if(!lbl) return;
+  if(!last){
+    lbl.innerHTML="<span style='color:var(--am);cursor:pointer' onclick='openBackupModal()'>&#128190; No backup yet — click to backup</span>";
+  } else if(daysSince>7){
+    lbl.innerHTML="<span style='color:var(--am);cursor:pointer' onclick='openBackupModal()'>&#128190; Backup "+Math.floor(daysSince)+"d ago</span>";
+  } else {
+    var d=new Date(last);
+    lbl.innerHTML="<span style='color:var(--gn)'>&#128190; Backed up "+("0"+d.getDate()).slice(-2)+"-"+["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]+"</span>";
+  }
+}
+
+
 /* =====================================================================
    GOOGLE SHEETS SYNC
    Setup: See instructions in the Settings panel (gear icon in sidebar)
@@ -857,10 +922,10 @@ function render(){
     h+='<td><input type="hidden" data-f="req" value="'+esc(req)+'"><input type="hidden" data-f="res" value="'+esc(res)+'">';
     h+='<div class="astk">';
     h+='<button class="btn bgh bxs" onclick="cpPath('+i+')">Path</button>';
-    h+='<button class="btn bgh bxs" onclick="cpItem(\x27i\x27,'+i+',\x27req\x27)">Req</button>';
-    h+='<button class="btn bg bxs" onclick="cpItem(\x27i\x27,'+i+',\x27res\x27)">Res</button>';
-    h+='<button class="btn ba bxs" onclick="cpItem(\x27i\x27,'+i+',\x27full\x27)">Full</button>';
-    h+='<button class="btn bxs" style="background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.3);margin-top:3px" onclick="quickDone(\x27i\x27,'+i+')">&#10003; Done</button>';
+    h+='<button class="btn bgh bxs" onclick="cpItem(\'i\','+i+',\'req\')">Req</button>';
+    h+='<button class="btn bg bxs" onclick="cpItem(\'i\','+i+',\'res\')">Res</button>';
+    h+='<button class="btn ba bxs" onclick="cpItem(\'i\','+i+',\'full\')">Full</button>';
+    h+='<button class="btn bxs" style="background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.3);margin-top:3px" onclick="quickDone(\'i\','+i+')">&#10003; Done</button>';
     h+='</div></td>';
     row.innerHTML=h;
     iTb.appendChild(row);
@@ -888,10 +953,10 @@ function render(){
     h+='<td id="lc_sp'+i+'">'+lcShow(ts)+'</td>';
     h+='<td><input type="hidden" data-f="req" value="'+esc(req)+'"><input type="hidden" data-f="res" value="'+esc(res)+'">';
     h+='<div class="astk">';
-    h+='<button class="btn bgh bxs" onclick="cpItem(\x27sp\x27,'+i+',\x27req\x27)">Req</button>';
-    h+='<button class="btn bg bxs" onclick="cpItem(\x27sp\x27,'+i+',\x27res\x27)">Res</button>';
-    h+='<button class="btn ba bxs" onclick="cpItem(\x27sp\x27,'+i+',\x27full\x27)">Full</button>';
-    h+='<button class="btn bxs" style="background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.3);margin-top:3px" onclick="quickDone(\x27sp\x27,'+i+')">&#10003; Done</button>';
+    h+='<button class="btn bgh bxs" onclick="cpItem(\'sp\','+i+',\'req\')">Req</button>';
+    h+='<button class="btn bg bxs" onclick="cpItem(\'sp\','+i+',\'res\')">Res</button>';
+    h+='<button class="btn ba bxs" onclick="cpItem(\'sp\','+i+',\'full\')">Full</button>';
+    h+='<button class="btn bxs" style="background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.3);margin-top:3px" onclick="quickDone(\'sp\','+i+')">&#10003; Done</button>';
     h+='</div></td>';
     row.innerHTML=h;
     spTb.appendChild(row);
@@ -977,7 +1042,6 @@ function saveData(){
   var now=new Date(); var ts2=("0"+now.getHours()).slice(-2)+":"+("0"+now.getMinutes()).slice(-2)+":"+("0"+now.getSeconds()).slice(-2);
   var lbl=G("savedLbl"); if(lbl)lbl.innerHTML="<span style='color:var(--gn)'>&#10003; Saved "+ts2+"</span>";
   toast("Saved for "+today(),"s"); logAct("Data saved","abl");
-  sheetsSaveAll();
   updateRangeLbl();
 }
 
@@ -1009,8 +1073,6 @@ document.addEventListener("change",function(e){
   if(f==="fin"&&val==="Working Fine")logAct(nm+" - Working Fine","agn");
   if(f==="tkt"&&val==="Ticket Created")logAct("Ticket created for "+nm,"aam");
   updateKPI(); updColors();
-  /* Auto-sync to cloud every time a row changes */
-  if(sheetsConfigured()) sheetsSaveAll();
 });
 
 function quickDone(type,idx){
@@ -1147,7 +1209,7 @@ function renderHist(){
   var el=G("hisGrid"); if(!el)return;
   var dates=getDates();
   if(!dates.length){el.innerHTML='<div style="color:var(--mu);font-size:12px">No saved history yet.</div>';return;}
-  el.innerHTML=dates.map(function(d){return '<div class="hchip"><span onclick="openDate(\x27'+d+'\x27)" style="flex:1">'+d+'</span><span class="hdel" onclick="delDate(\x27'+d+'\x27)">&#10005;</span></div>';}).join("");
+  el.innerHTML=dates.map(function(d){return '<div class="hchip"><span onclick="openDate(\''+d+'\')" style="flex:1">'+d+'</span><span class="hdel" onclick="delDate(\''+d+'\')">&#10005;</span></div>';}).join("");
 }
 function openDate(d){G("wd").value=d;G("wdTo").value=d;applyRange();closePanel("hisPan");}
 function delDate(d){if(confirm("Delete data for "+d+"?")){localStorage.removeItem(ST+d);renderHist();toast("Deleted "+d,"i");}}
@@ -1408,18 +1470,57 @@ var si=getIns(); G("insInp").value=si; setIns(si); G("hoO").value=si;
 if(localStorage.getItem("itcc5_th")==="l")document.body.classList.add("lt");
 G("wd").value=today(); G("wdTo").value=today();
 updateRangeLbl();
-/* Try loading from cloud first; fall back to localStorage */
-if(sheetsConfigured()){
-  sheetsLoadAll(function(loaded){
-    render(); renderNotes(); renderAct(); updateStreak();
-    if(loaded) toast("Data loaded from Google Sheets ☁", "s");
-  });
-} else {
-  render(); renderNotes(); renderAct(); updateStreak();
-}
+render(); renderNotes(); renderAct(); updateStreak();
+</script>
+<div class="overlay" id="backupMod">
+  <div class="modal" style="max-width:500px">
+    <div class="mhdr">
+      <h3 style="color:var(--tl)">&#128190; Backup &amp; Restore Data</h3>
+      <button class="btn bgh bsm" onclick="closeBackupModal()">&#10005;</button>
+    </div>
+    <div style="display:grid;gap:14px">
+      <div style="background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.25);border-radius:10px;padding:16px">
+        <div style="font-weight:700;font-size:13px;color:var(--gn);margin-bottom:6px">&#11015; Export &mdash; Save your data</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.7;margin-bottom:12px">Downloads all checklist data as a <b>.json</b> file. Store it in Google Drive, OneDrive, or email to yourself. Do this regularly &mdash; especially before clearing your browser.</div>
+        <button class="btn bg" onclick="localStorage.setItem('itcc5_last_backup',Date.now());checkBackupReminder();exportBackup()">&#11015; Download Backup File</button>
+      </div>
+      <div style="background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.22);border-radius:10px;padding:16px">
+        <div style="font-weight:700;font-size:13px;color:var(--bl);margin-bottom:6px">&#11014; Import &mdash; Restore your data</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.7;margin-bottom:12px">Select a previously exported <b>.json</b> backup file to restore all your data instantly. Use this after clearing browser history or switching devices.</div>
+        <label class="btn bp" style="cursor:pointer">&#11014; Choose Backup File<input type="file" accept=".json" style="display:none" onchange="importBackup(this);closeBackupModal()"></label>
+      </div>
+      <div style="background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.22);border-radius:10px;padding:14px">
+        <div style="font-weight:700;font-size:13px;color:var(--pu);margin-bottom:5px">&#128161; Best practice</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.7">1. Export a backup <b>every Friday</b> &mdash; save to Google Drive or email yourself<br>2. Before clearing browser history &mdash; export first, then clear, then import<br>3. Moving to a new device &mdash; export on old device, import on new</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- SETTINGS MODAL -->
-</script><div class="overlay" id="settingsMod">
+
+<!-- BACKUP MODAL -->
+<div class="overlay" id="backupMod">
+  <div class="modal" style="max-width:500px">
+    <div class="mhdr"><h3 style="color:var(--tl)">&#128190; Backup &amp; Restore Data</h3><button class="btn bgh bsm" onclick="closeBackupModal()">&#10005;</button></div>
+    <div style="display:grid;gap:14px">
+      <div style="background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.25);border-radius:10px;padding:16px">
+        <div style="font-weight:700;font-size:13px;color:var(--gn);margin-bottom:6px">&#11015; Export &mdash; Save your data</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.7;margin-bottom:12px">Downloads all checklist data as a .json file. Store it in Google Drive, OneDrive, or email yourself. Do this before clearing your browser.</div>
+        <button class="btn bg" onclick="localStorage.setItem('itcc5_last_backup',Date.now());checkBackupReminder();exportBackup()">&#11015; Download Backup File</button>
+      </div>
+      <div style="background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.22);border-radius:10px;padding:16px">
+        <div style="font-weight:700;font-size:13px;color:var(--bl);margin-bottom:6px">&#11014; Import &mdash; Restore your data</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.7;margin-bottom:12px">Select a previously exported .json backup file to restore all your data instantly.</div>
+        <label class="btn bp" style="cursor:pointer">&#11014; Choose Backup File<input type="file" accept=".json" style="display:none" onchange="importBackup(this);closeBackupModal()"></label>
+      </div>
+      <div style="background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.22);border-radius:10px;padding:14px">
+        <div style="font-weight:700;font-size:13px;color:var(--pu);margin-bottom:5px">&#128161; Best practice</div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.7">1. Export backup every Friday<br>2. Before clearing browser &mdash; export first, then import after<br>3. New device &mdash; export on old, import on new</div>
+      </div>
+    </div>
+  </div>
+</div><div class="overlay" id="settingsMod">
   <div class="modal" style="max-width:600px">
     <div class="mhdr">
       <h3 style="color:var(--tl)">&#9729; Cloud Sync Setup (Google Sheets)</h3>
