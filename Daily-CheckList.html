@@ -329,6 +329,7 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
   <button class="nbtn" onclick="exportCSV()"><span class="ni">&#128202;</span> Export CSV</button>
   <button class="nbtn" onclick="window.print()"><span class="ni">&#128424;</span> Print / PDF</button>
   <button class="nbtn" onclick="openAdm()"><span class="ni">&#9881;</span> Admin</button>
+  <button class="nbtn" onclick="openSettings()" style="color:var(--tl)"><span class="ni">&#9729;</span> Cloud Sync</button>
   <button class="nbtn" style="color:var(--rd)" onclick="resetDay()"><span class="ni">&#128465;</span> Reset Date</button>
 </nav>
 
@@ -361,6 +362,7 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
     <button class="btn bg bsm" onclick="copyRpt()">Report</button>
     <button class="btn ba bsm" onclick="exportCSV()">CSV</button>
     <span id="savedLbl" style="font-size:9.5px;font-family:var(--mono)"></span>
+    <span id="cloudLbl" style="font-size:9.5px;font-family:var(--mono);cursor:pointer" onclick="openSettings()" title="Cloud Sync Settings"></span>
   </div>
 
   <!-- KPI ROW 1 -->
@@ -607,6 +609,93 @@ body.lt td select,body.lt td input[type=text],body.lt td textarea{background:#f0
 <div class="tc" id="tc"></div>
 
 <script>
+/* =====================================================================
+   GOOGLE SHEETS SYNC
+   Setup: See instructions in the Settings panel (gear icon in sidebar)
+   ===================================================================== */
+var SHEETS_URL = localStorage.getItem("itcc5_sheets_url") || "";
+
+function sheetsConfigured() {
+  return SHEETS_URL && SHEETS_URL.startsWith("https://");
+}
+
+/* Save ALL localStorage keys to Google Sheet */
+function sheetsSaveAll() {
+  if (!sheetsConfigured()) return;
+  var payload = {};
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (k && k.indexOf("itcc5_") === 0) {
+      payload[k] = localStorage.getItem(k);
+    }
+  }
+  fetch(SHEETS_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({action: "save", data: payload})
+  }).then(function() {
+    var lbl = G("cloudLbl");
+    if (lbl) {
+      var t = new Date();
+      lbl.innerHTML = "<span style='color:var(--gn)'>&#9729; Synced " +
+        ("0"+t.getHours()).slice(-2)+":"+("0"+t.getMinutes()).slice(-2)+":"+("0"+t.getSeconds()).slice(-2) +
+        "</span>";
+    }
+  }).catch(function() {
+    var lbl = G("cloudLbl");
+    if (lbl) lbl.innerHTML = "<span style='color:var(--rd)'>&#9729; Sync failed</span>";
+  });
+}
+
+/* Load ALL data from Google Sheet into localStorage on startup */
+function sheetsLoadAll(callback) {
+  if (!sheetsConfigured()) { if (callback) callback(false); return; }
+  var lbl = G("cloudLbl");
+  if (lbl) lbl.innerHTML = "<span style='color:var(--am)'>&#9729; Loading from cloud...</span>";
+  fetch(SHEETS_URL + "?action=load", {method: "GET", mode: "cors"})
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data && data.data) {
+        Object.keys(data.data).forEach(function(k) {
+          if (k.indexOf("itcc5_") === 0) {
+            localStorage.setItem(k, data.data[k]);
+          }
+        });
+        if (lbl) lbl.innerHTML = "<span style='color:var(--gn)'>&#9729; Cloud loaded</span>";
+        if (callback) callback(true);
+      } else {
+        if (lbl) lbl.innerHTML = "<span style='color:var(--mu)'>&#9729; No cloud data</span>";
+        if (callback) callback(false);
+      }
+    })
+    .catch(function() {
+      if (lbl) lbl.innerHTML = "<span style='color:var(--mu)'>&#9729; Offline</span>";
+      if (callback) callback(false);
+    });
+}
+
+function openSettings() {
+  G("settingsMod").classList.add("open");
+  var url = localStorage.getItem("itcc5_sheets_url") || "";
+  G("sheetsUrlInp").value = url;
+}
+function closeSettings() { G("settingsMod").classList.remove("open"); }
+function saveSettings() {
+  var url = G("sheetsUrlInp").value.trim();
+  localStorage.setItem("itcc5_sheets_url", url);
+  SHEETS_URL = url;
+  closeSettings();
+  if (url) {
+    toast("Google Sheets URL saved. Testing connection...", "i");
+    sheetsLoadAll(function(ok) {
+      if (ok) { render(); toast("Connected! Data loaded from cloud.", "s"); }
+      else toast("URL saved. Make sure your Apps Script is deployed.", "i");
+    });
+  }
+}
+
+
 var SRV=["172.19.8.32","172.19.241.4","172.19.241.6","172.19.241.10","172.19.241.15","172.19.241.21","172.19.241.14","172.19.243.7","172.19.243.9","172.19.243.11","172.19.238.13","172.19.8.150","172.19.238.14","172.19.238.12","172.19.238.15","172.19.241.30","172.19.241.36","172.19.241.24","172.19.241.45","172.19.14.199","172.19.8.20","172.19.241.37","172.19.58.110","172.19.113.50","172.19.8.48"];
 var IFC=[
 ["172.19.241.24","AHM Sysmax2","E:\\Sysmax\\Sysmax AHM\\ASPLTCPserver.exe"],
@@ -888,6 +977,7 @@ function saveData(){
   var now=new Date(); var ts2=("0"+now.getHours()).slice(-2)+":"+("0"+now.getMinutes()).slice(-2)+":"+("0"+now.getSeconds()).slice(-2);
   var lbl=G("savedLbl"); if(lbl)lbl.innerHTML="<span style='color:var(--gn)'>&#10003; Saved "+ts2+"</span>";
   toast("Saved for "+today(),"s"); logAct("Data saved","abl");
+  sheetsSaveAll();
   updateRangeLbl();
 }
 
@@ -919,6 +1009,8 @@ document.addEventListener("change",function(e){
   if(f==="fin"&&val==="Working Fine")logAct(nm+" - Working Fine","agn");
   if(f==="tkt"&&val==="Ticket Created")logAct("Ticket created for "+nm,"aam");
   updateKPI(); updColors();
+  /* Auto-sync to cloud every time a row changes */
+  if(sheetsConfigured()) sheetsSaveAll();
 });
 
 function quickDone(type,idx){
@@ -1316,10 +1408,65 @@ var si=getIns(); G("insInp").value=si; setIns(si); G("hoO").value=si;
 if(localStorage.getItem("itcc5_th")==="l")document.body.classList.add("lt");
 G("wd").value=today(); G("wdTo").value=today();
 updateRangeLbl();
-render();
-renderNotes();
-renderAct();
-updateStreak();
-</script>
+/* Try loading from cloud first; fall back to localStorage */
+if(sheetsConfigured()){
+  sheetsLoadAll(function(loaded){
+    render(); renderNotes(); renderAct(); updateStreak();
+    if(loaded) toast("Data loaded from Google Sheets ☁", "s");
+  });
+} else {
+  render(); renderNotes(); renderAct(); updateStreak();
+}
+
+<!-- SETTINGS MODAL -->
+</script><div class="overlay" id="settingsMod">
+  <div class="modal" style="max-width:600px">
+    <div class="mhdr">
+      <h3 style="color:var(--tl)">&#9729; Cloud Sync Setup (Google Sheets)</h3>
+      <button class="btn bgh bsm" onclick="closeSettings()">&#10005;</button>
+    </div>
+    <div style="background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.2);border-radius:10px;padding:14px;margin-bottom:16px;font-size:11.5px;line-height:1.8">
+      <div style="font-weight:700;color:var(--tl);margin-bottom:8px">&#128218; One-time setup (5 minutes):</div>
+      <div><b style="color:var(--bl)">Step 1:</b> Go to <a href="https://sheets.google.com" target="_blank" style="color:var(--cy)">sheets.google.com</a> and create a new spreadsheet</div>
+      <div><b style="color:var(--bl)">Step 2:</b> Click <b>Extensions &rarr; Apps Script</b></div>
+      <div><b style="color:var(--bl)">Step 3:</b> Delete existing code, paste the code below, click Save</div>
+      <div><b style="color:var(--bl)">Step 4:</b> Click <b>Deploy &rarr; New Deployment &rarr; Web App</b></div>
+      <div><b style="color:var(--bl)">Step 5:</b> Set <b>Execute as: Me</b> &nbsp;|&nbsp; <b>Who has access: Anyone</b></div>
+      <div><b style="color:var(--bl)">Step 6:</b> Click Deploy, copy the Web App URL, paste below</div>
+    </div>
+    <div style="background:rgba(0,0,0,.4);border:1px solid var(--b2);border-radius:8px;padding:12px;margin-bottom:14px;font-family:var(--mono);font-size:10px;line-height:1.7;color:var(--cy);white-space:pre-wrap;max-height:200px;overflow-y:auto" id="appsScriptCode">function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data") || SpreadsheetApp.getActiveSpreadsheet().insertSheet("Data");
+  var data = {};
+  var rows = sheet.getDataRange().getValues();
+  for (var i = 0; i < rows.length; i++) {
+    if (rows[i][0]) data[rows[i][0]] = rows[i][1];
+  }
+  return ContentService.createTextOutput(JSON.stringify({data: data})).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data") || SpreadsheetApp.getActiveSpreadsheet().insertSheet("Data");
+  var payload = JSON.parse(e.postData.contents);
+  if (payload.action === "save") {
+    sheet.clearContents();
+    var rows = Object.keys(payload.data).map(function(k) { return [k, payload.data[k]]; });
+    if (rows.length) sheet.getRange(1, 1, rows.length, 2).setValues(rows);
+  }
+  return ContentService.createTextOutput("OK");
+}</div>
+    <button class="btn bgh bsm" onclick="navigator.clipboard.writeText(G('appsScriptCode').textContent).then(function(){toast('Code copied!','s')})" style="margin-bottom:14px">&#128203; Copy Apps Script Code</button>
+    <div class="fld" style="margin-bottom:12px">
+      <label>Web App URL (from Step 6)</label>
+      <input type="text" id="sheetsUrlInp" placeholder="https://script.google.com/macros/s/YOUR_ID/exec" style="font-family:var(--mono);font-size:11px">
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn bg" onclick="saveSettings()">&#10003; Save &amp; Connect</button>
+      <button class="btn bgh" onclick="closeSettings()">Cancel</button>
+      <button class="btn br" onclick="localStorage.removeItem('itcc5_sheets_url');SHEETS_URL='';G('sheetsUrlInp').value='';toast('Disconnected','i')">Disconnect</button>
+    </div>
+    <div style="margin-top:10px;font-size:10.5px;color:var(--mu)">Your data is stored in your own Google Sheet — Anthropic and GitHub cannot access it.</div>
+  </div>
+</div>
+
 </body>
 </html>
