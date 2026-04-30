@@ -678,7 +678,7 @@ function checkBackupReminder(){
    GOOGLE SHEETS SYNC
    Setup: See instructions in the Settings panel (gear icon in sidebar)
    ===================================================================== */
-var SHEETS_URL = localStorage.getItem("itcc5_sheets_url") || "";
+var SHEETS_URL = localStorage.getItem("itcc5_sheets_url") || "https://script.google.com/macros/s/AKfycbzi9_PCW23TGnfi7AoNhDsCT_lh9wBDg3EaWVs601jYAJD33a-MLuAUMkYIGdaZrYjt3Q/exec";
 
 function sheetsConfigured() {
   return SHEETS_URL && SHEETS_URL.startsWith("https://");
