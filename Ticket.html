@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Nexus · Ticket Command</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────────────────────── */
+:root{
+  --bg:#0a0c12;
+  --surface:#0f1219;
+  --card:#141820;
+  --card2:#181f2a;
+  --border:#1e2535;
+  --border2:#252e42;
+  --tx:#e2eaf5;
+  --tx2:#8898b0;
+  --tx3:#4a5a72;
+
+  /* STATUS COLORS - the core of the new design */
+  --pending:#f59e0b;
+  --pending-bg:rgba(245,158,11,.1);
+  --pending-border:rgba(245,158,11,.25);
+
+  --progress:#3b82f6;
+  --progress-bg:rgba(59,130,246,.1);
+  --progress-border:rgba(59,130,246,.25);
+
+  --done:#10b981;
+  --done-bg:rgba(16,185,129,.1);
+  --done-border:rgba(16,185,129,.25);
+
+  --hold:#6b7280;
+  --hold-bg:rgba(107,114,128,.1);
+  --hold-border:rgba(107,114,128,.25);
+
+  /* PRIORITY COLORS */
+  --high:#ef4444;
+  --high-bg:rgba(239,68,68,.08);
+  --med:#f97316;
+  --med-bg:rgba(249,115,22,.06);
+  --low:#06b6d4;
+  --low-bg:rgba(6,182,212,.06);
+
+  --accent:#6366f1;
+  --accent2:#818cf8;
+
+  --r:10px; --r2:14px; --r3:18px;
+  --F:'Outfit',sans-serif; --M:'Fira Code',monospace;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+  --shadow2:0 8px 40px rgba(0,0,0,.6);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--F);background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;font-size:14px}
+
+/* ─── BACKGROUND ─────────────────────────────────────────────────────────── */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 5%,rgba(99,102,241,.07),transparent 55%),
+    radial-gradient(ellipse 60% 40% at 90% 95%,rgba(16,185,129,.05),transparent 55%);
+}
+.grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4;
+  background-image:linear-gradient(rgba(99,102,241,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+/* ─── LOGIN ──────────────────────────────────────────────────────────────── */
+#loginWrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9999;background:var(--bg)}
+#loginWrap.fade-out{animation:fadeOut .3s ease forwards}
+@keyframes fadeOut{to{opacity:0;transform:scale(.98)}}
+.loginCard{background:var(--card);border:1px solid var(--border2);border-radius:24px;padding:48px 40px;width:90%;max-width:420px;box-shadow:var(--shadow2);position:relative;overflow:hidden;animation:slideUp .4s cubic-bezier(.16,1,.3,1)}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.loginCard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--done),var(--pending))}
+.loginLogo{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.loginIcon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;box-shadow:0 0 30px rgba(99,102,241,.4)}
+.loginTitle{font-size:26px;font-weight:800;letter-spacing:-1px;color:var(--tx)}
+.loginTitle b{color:var(--accent2)}
+.loginTagline{font-size:11px;color:var(--tx3);letter-spacing:2px;text-transform:uppercase;margin-top:1px}
+.loginDesc{color:var(--tx2);font-size:13px;line-height:1.65;margin:24px 0 20px}
+.inputWrap{position:relative;margin-bottom:14px}
+.inputWrap i.lead{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:13px}
+.inputWrap input{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:13px 44px;font-family:var(--F);font-size:14px;color:var(--tx);outline:none;transition:.2s}
+.inputWrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+.inputWrap .eye-btn{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--tx3);cursor:pointer;font-size:13px;padding:4px}
+.loginBtn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:10px;font-family:var(--F);font-size:15px;font-weight:700;cursor:pointer;transition:.2s;letter-spacing:.3px}
+.loginBtn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(99,102,241,.35)}
+.loginBtn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.loginNote{text-align:center;font-size:11px;color:var(--tx3);margin-top:14px}
+.loginNote b{color:var(--accent2)}
+.loginError{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:10px 14px;color:#fca5a5;font-size:12px;display:none;align-items:center;gap:8px;margin-bottom:12px}
+.loginError.show{display:flex}
+
+/* ─── APP SHELL ──────────────────────────────────────────────────────────── */
+#app{display:none;min-height:100vh;position:relative;z-index:1}
+#app.show{display:flex;flex-direction:column;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ─── TOPBAR ─────────────────────────────────────────────────────────────── */
+.topbar{background:rgba(10,12,18,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.tbBrand{display:flex;align-items:center;gap:11px}
+.tbIcon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:14px}
+.tbName{font-size:18px;font-weight:800;letter-spacing:-.5px}
+.tbName b{color:var(--accent2)}
+.tbRight{display:flex;align-items:center;gap:8px}
+.tbClock{font-family:var(--M);font-size:11px;color:var(--tx2);background:var(--surface);padding:5px 11px;border-radius:6px;border:1px solid var(--border)}
+.tbStatus{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2);background:var(--surface);padding:5px 11px;border-radius:6px;border:1px solid var(--border)}
+.tbDot{width:6px;height:6px;border-radius:50%;background:var(--done);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.4)}50%{opacity:.6;box-shadow:0 0 0 4px transparent}}
+.tbDot.warn{background:var(--pending);animation:pulseWarn 1.5s ease-in-out infinite}
+@keyframes pulseWarn{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.4)}50%{box-shadow:0 0 0 4px transparent}}
+.tbDot.err{background:var(--high)}
+.icon-btn{background:none;border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-family:var(--F);font-size:12px;color:var(--tx2);cursor:pointer;display:flex;align-items:center;gap:6px;transition:.15s;white-space:nowrap}
+.icon-btn:hover{border-color:var(--border2);color:var(--tx)}
+.icon-btn.danger:hover{border-color:rgba(239,68,68,.4);color:var(--high)}
+
+/* ─── CONTENT ─────────────────────────────────────────────────────────────── */
+.content{flex:1;padding:28px 24px 48px;max-width:1520px;margin:0 auto;width:100%}
+
+/* ─── BANNER ──────────────────────────────────────────────────────────────── */
+.banner{background:linear-gradient(90deg,rgba(99,102,241,.07),rgba(16,185,129,.05));border:1px solid rgba(99,102,241,.15);border-radius:10px;padding:10px 16px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#93c5fd;gap:12px;flex-wrap:wrap}
+.banner i{color:var(--accent2)}
+.banner-btn{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--accent2);font-family:var(--F);cursor:pointer;font-weight:600;transition:.15s}
+.banner-btn:hover{background:rgba(99,102,241,.2)}
+
+/* ─── DASHBOARD ──────────────────────────────────────────────────────────── */
+.pageHead{margin-bottom:24px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.pageHead h2{font-size:28px;font-weight:800;letter-spacing:-.8px}
+.pageHead h2 span{color:var(--accent2)}
+.pageHead p{color:var(--tx2);font-size:13px;margin-top:4px;line-height:1.6}
+
+/* Overview cards */
+.ov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.ov-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:20px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;transition:.2s}
+.ov-card::after{content:'';position:absolute;right:-20px;bottom:-20px;width:80px;height:80px;border-radius:50%;opacity:.08;background:currentColor}
+.ov-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ov-num{font-family:var(--M);font-size:34px;font-weight:500;line-height:1;letter-spacing:-2px}
+.ov-lbl{font-size:11px;color:var(--tx2);text-transform:uppercase;letter-spacing:.8px;margin-top:3px}
+
+/* Module cards */
+.mod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.mod-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:26px 22px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.mod-card:hover{transform:translateY(-4px);border-color:var(--border2);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.mod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.mod-card.sky::before{background:linear-gradient(90deg,var(--accent),#06b6d4)}
+.mod-card.pink::before{background:linear-gradient(90deg,var(--high),#f97316)}
+.mod-card.grn::before{background:linear-gradient(90deg,var(--done),#34d399)}
+.mod-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.mod-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px}
+.mod-card h3{font-size:17px;font-weight:700;margin-bottom:5px}
+.mod-card p{color:var(--tx2);font-size:12.5px;line-height:1.6}
+.mod-mini-stats{display:flex;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)}
+.mms{flex:1;text-align:center}
+.mms:not(:last-child){border-right:1px solid var(--border)}
+.mms-val{font-family:var(--M);font-size:22px;font-weight:500}
+.mms-lbl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.7px;margin-top:2px}
+
+/* ─── MODULE VIEW ────────────────────────────────────────────────────────── */
+#modView{display:none}
+#modView.show{display:block;animation:fadeIn .2s ease}
+.mv-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.mv-left{display:flex;align-items:center;gap:12px}
+.back-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 15px;font-family:var(--F);font-size:13px;color:var(--tx2);cursor:pointer;display:flex;align-items:center;gap:7px;transition:.15s}
+.back-btn:hover{border-color:var(--border2);color:var(--tx)}
+.mv-title{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.mv-sub{font-size:12px;color:var(--tx2);margin-top:2px}
+.mv-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Stat boxes */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:.15s}
+.stat-box:hover{border-color:var(--border2)}
+.stat-box.active-filter{border-color:var(--accent);background:rgba(99,102,241,.06)}
+.stat-box.active-pending{border-color:var(--pending);background:var(--pending-bg)}
+.stat-box.active-progress{border-color:var(--progress);background:var(--progress-bg)}
+.stat-box.active-done{border-color:var(--done);background:var(--done-bg)}
+.sb-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.sb-val{font-family:var(--M);font-size:22px;font-weight:500;line-height:1}
+.sb-lbl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.7px;margin-top:2px}
+.sb-percent{font-size:10px;color:var(--tx3);margin-top:2px;font-family:var(--M)}
+
+/* ─── VIEW TOGGLE ────────────────────────────────────────────────────────── */
+.view-toggle{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.view-btn{background:none;border:none;padding:6px 12px;font-family:var(--F);font-size:12px;color:var(--tx3);cursor:pointer;display:flex;align-items:center;gap:6px;transition:.15s}
+.view-btn.active{background:var(--card2);color:var(--tx)}
+
+/* ─── TABLE VIEW ─────────────────────────────────────────────────────────── */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.table-controls{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--card2)}
+.search-wrap{position:relative;flex:1;max-width:320px}
+.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:12px}
+.search-wrap input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px 8px 34px;font-family:var(--F);font-size:13px;color:var(--tx);outline:none;transition:.2s}
+.search-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.search-wrap kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--border);border-radius:4px;padding:2px 6px;font-size:10px;color:var(--tx3);font-family:var(--M)}
+.tc-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tbl-select{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:7px 11px;font-family:var(--F);font-size:12px;color:var(--tx2);outline:none;cursor:pointer;transition:.15s}
+.tbl-select:focus{border-color:var(--accent)}
+.table-count{font-size:12px;color:var(--tx3);font-family:var(--M)}
+
+/* Pill filters */
+.pill-filters{display:flex;gap:6px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--border);background:var(--card)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:.15s;white-space:nowrap}
+.pill.all{background:var(--surface);border-color:var(--border);color:var(--tx2)}
+.pill.all.active{background:rgba(99,102,241,.1);border-color:rgba(99,102,241,.3);color:var(--accent2)}
+.pill.p-pending{background:var(--pending-bg);border-color:var(--pending-border);color:var(--pending)}
+.pill.p-progress{background:var(--progress-bg);border-color:var(--progress-border);color:var(--progress)}
+.pill.p-done{background:var(--done-bg);border-color:var(--done-border);color:var(--done)}
+.pill.p-high{background:var(--high-bg);border-color:rgba(239,68,68,.2);color:var(--high)}
+.pill.p-med{background:var(--med-bg);border-color:rgba(249,115,22,.2);color:var(--med)}
+.pill.p-low{background:var(--low-bg);border-color:rgba(6,182,212,.2);color:var(--low)}
+.pill .count{background:rgba(0,0,0,.25);border-radius:10px;padding:1px 7px;font-family:var(--M);font-size:10px}
+.pill:hover{opacity:.85;transform:translateY(-1px)}
+
+/* Table */
+table{width:100%;border-collapse:collapse}
+thead{background:var(--surface)}
+th{padding:10px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:0 16px;border-bottom:1px solid rgba(255,255,255,.03);font-size:13px;vertical-align:middle}
+.data-row{cursor:pointer;position:relative}
+.data-row td{padding-top:12px;padding-bottom:12px}
+.data-row:hover td{background:rgba(255,255,255,.02)}
+.data-row.priority-high{border-left:3px solid var(--high)}
+.data-row.priority-med{border-left:3px solid var(--med)}
+.data-row.priority-low{border-left:3px solid var(--low)}
+.data-row.status-pending td{background:rgba(245,158,11,.015)}
+.data-row.status-progress td{background:rgba(59,130,246,.015)}
+.data-row.status-done td{background:rgba(16,185,129,.012)}
+.det-row{display:none}
+.det-row.open{display:table-row}
+.det-row td{padding:0;background:var(--card2)}
+.det-inner{padding:20px 18px;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.det-field label{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.9px;font-weight:700;display:block;margin-bottom:4px}
+.det-field p{font-size:13px;color:var(--tx)}
+.det-full{grid-column:1/-1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px}
+.det-full label{display:block;font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.9px;font-weight:700;margin-bottom:6px}
+.det-full p{color:var(--tx2);font-size:13px;line-height:1.65}
+.det-actions{display:flex;gap:8px;align-items:center;margin-top:2px}
+.det-quick-status{display:flex;gap:6px}
+.det-quick-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;color:var(--tx3);cursor:pointer;font-family:var(--F);transition:.15s;font-weight:600}
+.det-quick-btn:hover{border-color:var(--border2);color:var(--tx)}
+.det-quick-btn.active-pending{border-color:var(--pending);color:var(--pending);background:var(--pending-bg)}
+.det-quick-btn.active-progress{border-color:var(--progress);color:var(--progress);background:var(--progress-bg)}
+.det-quick-btn.active-done{border-color:var(--done);color:var(--done);background:var(--done-bg)}
+
+/* Item title cell */
+.item-title{font-weight:600;color:var(--tx);margin-bottom:3px;line-height:1.4}
+.item-meta{font-size:11px;color:var(--tx3);display:flex;gap:10px;flex-wrap:wrap}
+.item-meta span{display:flex;align-items:center;gap:3px}
+.ticket-num{font-family:var(--M);font-size:11px;color:var(--tx3);background:var(--surface);padding:2px 7px;border-radius:5px;border:1px solid var(--border)}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;letter-spacing:.3px}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.b-pending{background:var(--pending-bg);color:var(--pending);border:1px solid var(--pending-border)}.b-pending::before{background:var(--pending)}
+.b-progress{background:var(--progress-bg);color:var(--progress);border:1px solid var(--progress-border)}.b-progress::before{background:var(--progress)}
+.b-done{background:var(--done-bg);color:var(--done);border:1px solid var(--done-border)}.b-done::before{background:var(--done)}
+.b-hold{background:var(--hold-bg);color:var(--hold);border:1px solid var(--hold-border)}.b-hold::before{background:var(--hold)}
+.b-high{background:var(--high-bg);color:var(--high);border:1px solid rgba(239,68,68,.2)}
+.b-med{background:var(--med-bg);color:var(--med);border:1px solid rgba(249,115,22,.2)}
+.b-low{background:var(--low-bg);color:var(--low);border:1px solid rgba(6,182,212,.2)}
+
+/* Aging badge */
+.age-badge{font-family:var(--M);font-size:10px;padding:3px 7px;border-radius:5px;white-space:nowrap}
+.age-fresh{background:var(--done-bg);color:var(--done)}
+.age-warn{background:var(--pending-bg);color:var(--pending)}
+.age-old{background:var(--high-bg);color:var(--high)}
+.age-done{background:var(--surface);color:var(--tx3)}
+
+/* Clickable status badge */
+.status-click{cursor:pointer;user-select:none;transition:.15s}
+.status-click:hover{transform:scale(1.05)}
+
+/* Row actions */
+.row-actions{display:flex;gap:5px;opacity:0;transition:.15s}
+.data-row:hover .row-actions{opacity:1}
+.ra-btn{background:none;border:1px solid var(--border);border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx2);font-size:12px;transition:.15s}
+.ra-btn:hover{border-color:var(--border2);color:var(--tx)}
+.ra-btn.del:hover{border-color:rgba(239,68,68,.4);color:var(--high);background:rgba(239,68,68,.05)}
+.ra-btn.edit:hover{border-color:rgba(99,102,241,.4);color:var(--accent2);background:rgba(99,102,241,.05)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:60px 20px;color:var(--tx3)}
+.empty-state i{font-size:48px;color:var(--border2);margin-bottom:14px;display:block}
+.empty-state h4{font-size:15px;font-weight:600;color:var(--tx2);margin-bottom:6px}
+.empty-state p{font-size:13px;line-height:1.6}
+
+/* ─── KANBAN ─────────────────────────────────────────────────────────────── */
+.kanban-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.kanban-col{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;display:flex;flex-direction:column}
+.kanban-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.kanban-head-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
+.kanban-dot{width:8px;height:8px;border-radius:50%}
+.kanban-count{background:var(--surface);border-radius:12px;padding:2px 8px;font-family:var(--M);font-size:11px;color:var(--tx3)}
+.kanban-body{padding:12px;flex:1;display:flex;flex-direction:column;gap:8px;min-height:200px;max-height:70vh;overflow-y:auto}
+.kanban-body::-webkit-scrollbar{width:4px}
+.kanban-body::-webkit-scrollbar-track{background:transparent}
+.kanban-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.kcard{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;cursor:pointer;transition:.15s;border-left:3px solid transparent}
+.kcard:hover{border-color:var(--border2);transform:translateX(2px)}
+.kcard.prio-high{border-left-color:var(--high)}
+.kcard.prio-med{border-left-color:var(--med)}
+.kcard.prio-low{border-left-color:var(--low)}
+.kcard-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:6px;line-height:1.4}
+.kcard-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.kcard-num{font-family:var(--M);font-size:10px;color:var(--tx3)}
+.kcard-age{font-family:var(--M);font-size:10px}
+
+/* ─── MODAL ──────────────────────────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:9000;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.show{display:flex}
+.modal-box{background:var(--card);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:560px;box-shadow:var(--shadow2);animation:modalIn .25s cubic-bezier(.16,1,.3,1)}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.modal-head{padding:22px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-size:17px;font-weight:700}
+.modal-close{background:none;border:1px solid var(--border);border-radius:7px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--tx2);font-size:13px;transition:.15s}
+.modal-close:hover{border-color:var(--border2);color:var(--tx)}
+.modal-body{padding:20px 24px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px}
+.form-group input,.form-group select,.form-group textarea{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;font-family:var(--F);font-size:13px;color:var(--tx);outline:none;transition:.2s;width:100%}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.form-group textarea{min-height:80px;resize:vertical}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.modal-err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:9px 13px;color:#fca5a5;font-size:12px;display:none;align-items:center;gap:8px;margin-bottom:14px}
+.modal-err.show{display:flex}
+
+/* ─── BUTTONS ─────────────────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:8px;font-family:var(--F);font-weight:600;cursor:pointer;transition:.2s;font-size:13px;padding:8px 16px;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 16px rgba(99,102,241,.25)}
+.btn-ghost{background:var(--card2);border:1px solid var(--border);color:var(--tx2)}
+.btn-ghost:hover{border-color:var(--border2);color:var(--tx)}
+.btn-danger{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--high)}
+.btn-danger:hover{background:rgba(239,68,68,.15)}
+.btn-sm{padding:5px 11px;font-size:12px}
+
+/* ─── TOAST ──────────────────────────────────────────────────────────────── */
+#toastArea{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:11px 16px;display:flex;align-items:center;gap:9px;font-size:13px;box-shadow:var(--shadow);pointer-events:all;animation:toastIn .25s cubic-bezier(.16,1,.3,1)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.toast.ok{border-left:3px solid var(--done)}
+.toast.er{border-left:3px solid var(--high)}
+.toast.in{border-left:3px solid var(--progress)}
+.toast-icon.ok{color:var(--done)}.toast-icon.er{color:var(--high)}.toast-icon.in{color:var(--progress)}
+
+/* ─── SAVING INDICATOR ───────────────────────────────────────────────────── */
+.save-indicator{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:7px 16px;font-size:12px;color:var(--tx2);display:none;align-items:center;gap:8px;z-index:8000;font-family:var(--M)}
+.save-indicator.show{display:flex}
+
+/* ─── UTIL ───────────────────────────────────────────────────────────────── */
+.spin{animation:spinning .7s linear infinite}
+@keyframes spinning{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--tx3)}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
+@media(max-width:1024px){.mod-grid,.ov-grid{grid-template-columns:repeat(2,1fr)}.stat-row{grid-template-columns:repeat(2,1fr)}.kanban-wrap{grid-template-columns:1fr}}
+@media(max-width:768px){.ov-grid,.mod-grid,.kanban-wrap{grid-template-columns:1fr}.content{padding:16px}.topbar{padding:0 14px;height:56px}.det-inner{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:1}}
+@media(max-width:540px){.tbClock,.tbStatus{display:none}}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<!-- LOGIN -->
+<div id="loginWrap">
+  <div class="loginCard">
+    <div class="loginLogo">
+      <div class="loginIcon"><i class="fas fa-server"></i></div>
+      <div>
+        <div class="loginTitle">IT <b>Nexus</b></div>
+        <div class="loginTagline">Ticket Command Centre</div>
+      </div>
+    </div>
+    <p class="loginDesc">Secure access to your cloud-backed IT operations dashboard. All data syncs live across devices.</p>
+    <div class="loginError" id="loginErr"><i class="fas fa-circle-exclamation"></i><span id="loginErrMsg">Incorrect password.</span></div>
+    <div class="inputWrap">
+      <i class="fas fa-lock lead"></i>
+      <input type="password" id="loginPw" placeholder="Enter password" autocomplete="current-password">
+      <button class="eye-btn" onclick="togglePw()" type="button"><i class="fas fa-eye" id="eyeIcon"></i></button>
+    </div>
+    <button class="loginBtn" id="loginBtn" onclick="doLogin()"><i class="fas fa-arrow-right-to-bracket"></i> Sign In</button>
+    <p class="loginNote"><i class="fas fa-shield-halved"></i> &nbsp;Default password: <b>jobin</b> &nbsp;·&nbsp; Cloud sync via Google Sheets</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tbBrand">
+      <div class="tbIcon"><i class="fas fa-server"></i></div>
+      <div class="tbName">IT <b>Nexus</b></div>
+    </div>
+    <div class="tbRight">
+      <div class="tbClock" id="clock">--:--:--</div>
+      <div class="tbStatus"><span class="tbDot" id="tbDot"></span><span id="syncText">Ready</span></div>
+      <button class="icon-btn" onclick="syncNow()"><i class="fas fa-rotate"></i> Sync</button>
+      <button class="icon-btn" onclick="exportBackup()"><i class="fas fa-file-export"></i> Backup</button>
+      <button class="icon-btn danger" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="banner">
+      <span><i class="fas fa-cloud"></i> &nbsp;Data saved to <strong>Google Sheets</strong> — live sync across all devices.</span>
+      <button class="banner-btn" onclick="syncNow()"><i class="fas fa-arrows-rotate"></i> Refresh</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashView">
+      <div class="pageHead">
+        <div>
+          <h2>Operations <span>Dashboard</span></h2>
+          <p>Your central hub for support tickets, pending issues, and implementation tracking.</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost" onclick="syncNow()"><i class="fas fa-rotate"></i> Sync All</button>
+        </div>
+      </div>
+
+      <div class="ov-grid">
+        <div class="ov-card" style="color:var(--pending)">
+          <div class="ov-icon" style="background:var(--pending-bg)"><i class="fas fa-hourglass-half"></i></div>
+          <div><div class="ov-num" id="ovPend" style="color:var(--pending)">0</div><div class="ov-lbl">Total Pending</div></div>
+        </div>
+        <div class="ov-card" style="color:var(--progress)">
+          <div class="ov-icon" style="background:var(--progress-bg)"><i class="fas fa-gears"></i></div>
+          <div><div class="ov-num" id="ovProg" style="color:var(--progress)">0</div><div class="ov-lbl">In Progress</div></div>
+        </div>
+        <div class="ov-card" style="color:var(--done)">
+          <div class="ov-icon" style="background:var(--done-bg)"><i class="fas fa-circle-check"></i></div>
+          <div><div class="ov-num" id="ovDone" style="color:var(--done)">0</div><div class="ov-lbl">Resolved / Done</div></div>
+        </div>
+      </div>
+
+      <div class="mod-grid">
+        <div class="mod-card sky" onclick="openModule('tickets')">
+          <div class="mod-card-head">
+            <div class="mod-icon" style="background:rgba(99,102,241,.1);color:var(--accent2)"><i class="fas fa-ticket"></i></div>
+            <i class="fas fa-arrow-up-right" style="color:var(--tx3)"></i>
+          </div>
+          <h3>Support Tickets</h3>
+          <p>Track all IT support tickets with priority, assignment, and resolution workflow.</p>
+          <div class="mod-mini-stats">
+            <div class="mms"><div class="mms-val" id="t_p" style="color:var(--pending)">0</div><div class="mms-lbl">Pending</div></div>
+            <div class="mms"><div class="mms-val" id="t_i" style="color:var(--progress)">0</div><div class="mms-lbl">Progress</div></div>
+            <div class="mms"><div class="mms-val" id="t_r" style="color:var(--done)">0</div><div class="mms-lbl">Resolved</div></div>
+          </div>
+        </div>
+        <div class="mod-card pink" onclick="openModule('issues')">
+          <div class="mod-card-head">
+            <div class="mod-icon" style="background:rgba(239,68,68,.1);color:var(--high)"><i class="fas fa-triangle-exclamation"></i></div>
+            <i class="fas fa-arrow-up-right" style="color:var(--tx3)"></i>
+          </div>
+          <h3>Pending Issues</h3>
+          <p>Focus on active issues needing follow-up. Filter, update, and track from anywhere.</p>
+          <div class="mod-mini-stats">
+            <div class="mms"><div class="mms-val" id="i_p" style="color:var(--pending)">0</div><div class="mms-lbl">Pending</div></div>
+            <div class="mms"><div class="mms-val" id="i_i" style="color:var(--progress)">0</div><div class="mms-lbl">Progress</div></div>
+            <div class="mms"><div class="mms-val" id="i_r" style="color:var(--done)">0</div><div class="mms-lbl">Resolved</div></div>
+          </div>
+        </div>
+        <div class="mod-card grn" onclick="openModule('impls')">
+          <div class="mod-card-head">
+            <div class="mod-icon" style="background:rgba(16,185,129,.1);color:var(--done)"><i class="fas fa-rocket"></i></div>
+            <i class="fas fa-arrow-up-right" style="color:var(--tx3)"></i>
+          </div>
+          <h3>Implementations</h3>
+          <p>Track feature requests and system changes from request to final completion.</p>
+          <div class="mod-mini-stats">
+            <div class="mms"><div class="mms-val" id="m_p" style="color:var(--pending)">0</div><div class="mms-lbl">Pending</div></div>
+            <div class="mms"><div class="mms-val" id="m_i" style="color:var(--progress)">0</div><div class="mms-lbl">Progress</div></div>
+            <div class="mms"><div class="mms-val" id="m_c" style="color:var(--done)">0</div><div class="mms-lbl">Done</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE VIEW -->
+    <div id="modView">
+      <div class="mv-top">
+        <div class="mv-left">
+          <button class="back-btn" onclick="closeModule()"><i class="fas fa-arrow-left"></i> Dashboard</button>
+          <div>
+            <div class="mv-title" id="mvTitle"></div>
+            <div class="mv-sub" id="mvSub"></div>
+          </div>
+        </div>
+        <div class="mv-actions" id="mvActions"></div>
+      </div>
+
+      <!-- STAT BOXES with click-to-filter -->
+      <div class="stat-row" id="statRow"></div>
+
+      <!-- VIEW TOGGLE + TABLE/KANBAN -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+        <div class="view-toggle">
+          <button class="view-btn active" id="viewBtnTable" onclick="setView('table')"><i class="fas fa-list"></i> List</button>
+          <button class="view-btn" id="viewBtnKanban" onclick="setView('kanban')"><i class="fas fa-columns"></i> Board</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="table-count" id="tableCount">—</span>
+        </div>
+      </div>
+
+      <!-- TABLE VIEW -->
+      <div id="tableView">
+        <div class="table-wrap">
+          <div class="table-controls">
+            <div class="search-wrap">
+              <i class="fas fa-magnifying-glass"></i>
+              <input id="searchInput" placeholder="Search tickets... (press /)" oninput="debounceRender()">
+              <kbd>/</kbd>
+            </div>
+            <div class="tc-right">
+              <select class="tbl-select" id="sortSelect" onchange="renderTable()">
+                <option value="status">Sort: Status</option>
+                <option value="priority">Sort: Priority</option>
+                <option value="date_desc">Sort: Newest</option>
+                <option value="date_asc">Sort: Oldest</option>
+                <option value="age">Sort: Age (oldest first)</option>
+              </select>
+              <button class="btn btn-ghost btn-sm" onclick="exportCSV()"><i class="fas fa-download"></i> CSV</button>
+              <button class="btn btn-ghost btn-sm" onclick="openClearModal()"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+          <!-- pill filters -->
+          <div class="pill-filters" id="pillFilters"></div>
+          <div id="tableBody"></div>
+        </div>
+      </div>
+
+      <!-- KANBAN VIEW -->
+      <div id="kanbanView" class="hidden">
+        <div class="kanban-wrap" id="kanbanBoard"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLEAR MODAL -->
+<div class="modal-overlay" id="clearModal">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-head">
+      <h3><i class="fas fa-trash-can" style="color:var(--high)"></i> Clear All Records</h3>
+      <button class="modal-close" onclick="closeClearModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--tx2);font-size:13px;margin-bottom:16px">This will permanently delete <strong>all records</strong> in this module from the cloud. This cannot be undone.</p>
+      <div class="form-group">
+        <label>Confirm with password</label>
+        <input type="password" id="clearPw" placeholder="Enter your password">
+      </div>
+      <div class="modal-err" id="clearErr"><i class="fas fa-circle-exclamation"></i> Incorrect password</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeClearModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmClear()"><i class="fas fa-trash-can"></i> Clear All</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="formModalTitle"><i class="fas fa-plus"></i> Add New Record</h3>
+      <button class="modal-close" onclick="closeFormModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid" id="formGrid"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeFormModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCurrentItem()"><i class="fas fa-floppy-disk"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastArea"></div>
+<div class="save-indicator" id="saveIndicator"><i class="fas fa-spinner spin"></i> <span id="saveText">Saving...</span></div>
+
+<script>
+/* ─────────────────────── CONFIG ──────────────────────────────────────────── */
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwTXgj_m0ic0HOQlfGyWEyxofvL3Y5wMcp7cQj-0A07vLRJH9Ef-7_vOe7rIWWjdFn4/exec';
+const PW_HASH = '8a4ed630c5556ab78c847b7b3a5dd6761a372b22ddff9fb4d5d5696262162c8c';
+const SESSION_KEY = 'ITNEXUS_V2_SESSION';
+const STORE_CACHE_KEY = 'ITNEXUS_V2_STORE';
+
+let CURRENT_MOD = null;
+let EDITING_ID = null;
+let CURRENT_VIEW = 'table'; // 'table' | 'kanban'
+let ACTIVE_FILTER = 'all'; // 'all' | 'pending' | 'progress' | 'done' | 'high' | 'med' | 'low'
+let STORE = { tickets: [], issues: [], impls: [] };
+let renderTimer = null;
+
+/* ─────────────────────── MODULE CONFIG ──────────────────────────────────── */
+const MODS = {
+  tickets: {
+    label: 'Support Tickets', sub: 'IT support ticket tracking', doneStatus: 'Resolved',
+    fields: [
+      ['date','Date','date',null,false],
+      ['ticketNumber','Ticket Number','text','TKT-2026-001',false],
+      ['issue','Issue Title','text','Brief issue description',true],
+      ['description','Description','textarea','Full details of the issue',true],
+      ['createdBy','Created By','text','Technician name',false],
+      ['assignedTo','Assigned To / Team','text','Assigned team or person',false],
+      ['priority','Priority','select',['High','Medium','Low'],false],
+      ['status','Status','select',['Pending','In Progress','Resolved'],false],
+      ['category','Category','select',['Hardware','Software','Network','Security','Other'],false]
+    ],
+    defaults: { priority:'Medium', status:'Pending', category:'Other' },
+    titleField: 'issue', numField: 'ticketNumber',
+    col3Label: 'Ticket #', col2Label: 'Issue'
+  },
+  issues: {
+    label: 'Pending Issues', sub: 'Active issue tracking & follow-up', doneStatus: 'Resolved',
+    fields: [
+      ['date','Date','date',null,false],
+      ['ticketNumber','Reference Number','text','ISS-2026-001',false],
+      ['issue','Issue Title','text','Brief issue description',true],
+      ['description','Description','textarea','Full details',true],
+      ['reportedBy','Reported By','text','Person who reported',false],
+      ['assignedBy','Assigned To / Team','text','Person or team assigned',false],
+      ['priority','Priority','select',['High','Medium','Low'],false],
+      ['status','Status','select',['Pending','In Progress','Resolved'],false],
+      ['category','Category','select',['Critical','High Priority','Medium Priority','Low Priority'],false]
+    ],
+    defaults: { priority:'Medium', status:'Pending', category:'Medium Priority' },
+    titleField: 'issue', numField: 'ticketNumber',
+    col3Label: 'Reported By', col2Label: 'Issue'
+  },
+  impls: {
+    label: 'Implementations', sub: 'Feature and rollout tracking', doneStatus: 'Completed',
+    fields: [
+      ['date','Date','date',null,false],
+      ['number','Request Number','text','IMP-2026-001',false],
+      ['title','Title','text','Implementation title',true],
+      ['description','Description','textarea','Full details',true],
+      ['requestedBy','Requested By','text','Requester name',false],
+      ['assignedTo','Assigned To / Team','text','Technician or team',false],
+      ['priority','Priority','select',['High','Medium','Low'],false],
+      ['status','Status','select',['Pending','In Progress','Completed'],false],
+      ['category','Category','select',['Application','Infrastructure','Network','Security','Other'],false]
+    ],
+    defaults: { priority:'Medium', status:'Pending', category:'Other' },
+    titleField: 'title', numField: 'number',
+    col3Label: 'Requested By', col2Label: 'Title'
+  }
+};
+
+/* ─────────────────────── UTIL ────────────────────────────────────────────── */
+function e(s){ return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function gv(id){ const el=document.getElementById(id); return el ? el.value.trim() : ''; }
+function setText(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+function normDate(value){
+  if(value===null||value===undefined||value==='') return '';
+  if(typeof value==='string'){
+    const v=value.trim();
+    if(/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+    if(/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(v)){const [d,m,y]=v.split('/');return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;}
+    const m=v.match(/^(\d{4}-\d{2}-\d{2})[T\s]/); if(m) return m[1];
+    const dt=new Date(v); if(!isNaN(dt)) return dt.toISOString().slice(0,10);
+    return v;
+  }
+  const dt=new Date(value); return isNaN(dt)?String(value):dt.toISOString().slice(0,10);
+}
+function normDateTime(value){
+  if(!value) return '';
+  const dt=new Date(value); return isNaN(dt)?String(value):dt.toISOString();
+}
+function fmtDate(s){ const n=normDate(s); if(!n) return '—'; const dt=new Date(n+'T12:00:00'); return isNaN(dt)?n:dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtDateTime(s){ const n=normDateTime(s); if(!n) return '—'; const dt=new Date(n); return isNaN(dt)?n:dt.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function opts(list,sel){ return list.map(o=>`<option value="${o}"${sel===o?' selected':''}>${o}</option>`).join(''); }
+
+function ageDays(dateStr){
+  const n=normDate(dateStr); if(!n) return null;
+  const dt=new Date(n+'T12:00:00'); const now=new Date(); const d=Math.floor((now-dt)/(1000*60*60*24));
+  return isNaN(d)||d<0?null:d;
+}
+function ageBadge(item){
+  const d=ageDays(item.date);
+  if(d===null) return '';
+  const done=item.status==='Resolved'||item.status==='Completed';
+  if(done) return `<span class="age-badge age-done">${d}d ago</span>`;
+  if(d<=2) return `<span class="age-badge age-fresh">${d===0?'Today':`${d}d`}</span>`;
+  if(d<=7) return `<span class="age-badge age-warn">${d}d old</span>`;
+  return `<span class="age-badge age-old">${d}d old !</span>`;
+}
+
+function normalizeStoreData(raw){
+  const out={tickets:[],issues:[],impls:[]};
+  ['tickets','issues','impls'].forEach(mod=>{
+    out[mod]=(raw?.[mod]||[]).map(item=>({...item,date:normDate(item.date),updated:normDateTime(item.updated)}));
+  });
+  return out;
+}
+
+/* STATUS / PRIORITY BADGES */
+function statusBadge(s){
+  const m={
+    'Pending':'b-pending','In Progress':'b-progress','Resolved':'b-done','Completed':'b-done','On Hold':'b-hold'
+  };
+  return `<span class="badge ${m[s]||'b-pending'}">${e(s||'—')}</span>`;
+}
+function statusClickBadge(s,id){
+  const m={
+    'Pending':'b-pending','In Progress':'b-progress','Resolved':'b-done','Completed':'b-done','On Hold':'b-hold'
+  };
+  return `<span class="badge ${m[s]||'b-pending'} status-click" onclick="event.stopPropagation();cycleStatus('${id}')" title="Click to change status">${e(s||'—')}</span>`;
+}
+function prioBadge(p){
+  const m={High:'b-high',Medium:'b-med',Low:'b-low'};
+  return `<span class="badge ${m[p]||'b-med'}">${e(p||'—')}</span>`;
+}
+function downloadFile(content,filename,type){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([content],{type})); a.download=filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
+
+/* ─────────────────────── AUTH ────────────────────────────────────────────── */
+async function sha256(msg){ const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(msg)); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
+function togglePw(){ const i=document.getElementById('loginPw'),ic=document.getElementById('eyeIcon'); i.type=i.type==='password'?'text':'password'; ic.className=i.type==='password'?'fas fa-eye':'fas fa-eye-slash'; }
+async function doLogin(){
+  const pw=gv('loginPw'); if(!pw) return showLoginErr('Please enter your password.');
+  const btn=document.getElementById('loginBtn'); btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner spin"></i> Verifying...';
+  const hash=await sha256(pw);
+  if(hash!==PW_HASH){ showLoginErr('Incorrect password.'); btn.disabled=false; btn.innerHTML='<i class="fas fa-arrow-right-to-bracket"></i> Sign In'; return; }
+  sessionStorage.setItem(SESSION_KEY,'1');
+  document.getElementById('loginWrap').classList.add('fade-out');
+  setTimeout(async()=>{ document.getElementById('loginWrap').style.display='none'; await startApp(); },300);
+}
+function showLoginErr(msg){ const el=document.getElementById('loginErr'); document.getElementById('loginErrMsg').textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),4000); }
+function doLogout(){ sessionStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(STORE_CACHE_KEY); location.reload(); }
+
+document.addEventListener('DOMContentLoaded',()=>{
+  setInterval(()=>{ const el=document.getElementById('clock'); if(el) el.textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}); },1000);
+  if(sessionStorage.getItem(SESSION_KEY)==='1'){ document.getElementById('loginWrap').style.display='none'; startApp(); }
+  document.getElementById('loginPw').addEventListener('keydown',ev=>{ if(ev.key==='Enter') doLogin(); });
+  // keyboard shortcut "/" → focus search
+  document.addEventListener('keydown',ev=>{ if(ev.key==='/'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){ ev.preventDefault(); const el=document.getElementById('searchInput'); if(el) el.focus(); } });
+});
+
+/* ─────────────────────── APP START ──────────────────────────────────────── */
+async function startApp(){
+  document.getElementById('app').classList.add('show');
+  // Try loading from cache first for instant display
+  const cached=sessionStorage.getItem(STORE_CACHE_KEY);
+  if(cached){ try{ STORE=normalizeStoreData(JSON.parse(cached)); refreshDashboard(); }catch(e){} }
+  await syncNow(true);
+  showToast('Welcome back — data loaded!','ok');
+}
+
+/* ─────────────────────── API ─────────────────────────────────────────────── */
+async function api(action,payload={}){
+  if(!WEB_APP_URL||WEB_APP_URL.includes('PASTE_YOUR')) throw new Error('Configure WEB_APP_URL first.');
+  const res=await fetch(WEB_APP_URL,{ method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({action,...payload}) });
+  const data=await res.json();
+  if(!data.ok) throw new Error(data.message||'Server error');
+  return data;
+}
+
+function setSyncState(state){ // 'syncing' | 'ok' | 'fail'
+  const dot=document.getElementById('tbDot');
+  const text=document.getElementById('syncText');
+  if(state==='syncing'){ dot.className='tbDot warn'; text.textContent='Syncing...'; }
+  else if(state==='ok'){ dot.className='tbDot'; text.textContent='Synced'; }
+  else{ dot.className='tbDot err'; text.textContent='Sync Failed'; }
+}
+
+async function syncNow(silent=false){
+  try{
+    setSyncState('syncing');
+    const data=await api('getAll');
+    STORE=normalizeStoreData(data);
+    sessionStorage.setItem(STORE_CACHE_KEY,JSON.stringify(STORE));
+    refreshDashboard();
+    if(CURRENT_MOD){ renderView(); updateStatRow(); }
+    setSyncState('ok');
+    if(!silent) showToast('Data synced successfully','ok');
+  }catch(err){
+    console.error(err); setSyncState('fail');
+    showToast(err.message,'er');
+  }
+}
+
+/* ─────────────────────── DASHBOARD ──────────────────────────────────────── */
+function refreshDashboard(){
+  const T=STORE.tickets||[],I=STORE.issues||[],M=STORE.impls||[];
+  const all=[...T,...I,...M];
+  setText('ovPend',all.filter(x=>x.status==='Pending').length);
+  setText('ovProg',all.filter(x=>x.status==='In Progress').length);
+  setText('ovDone',all.filter(x=>x.status==='Resolved'||x.status==='Completed').length);
+  setText('t_p',T.filter(x=>x.status==='Pending').length); setText('t_i',T.filter(x=>x.status==='In Progress').length); setText('t_r',T.filter(x=>x.status==='Resolved').length);
+  setText('i_p',I.filter(x=>x.status==='Pending').length); setText('i_i',I.filter(x=>x.status==='In Progress').length); setText('i_r',I.filter(x=>x.status==='Resolved').length);
+  setText('m_p',M.filter(x=>x.status==='Pending').length); setText('m_i',M.filter(x=>x.status==='In Progress').length); setText('m_c',M.filter(x=>x.status==='Completed').length);
+}
+
+/* ─────────────────────── MODULE ──────────────────────────────────────────── */
+function openModule(type){
+  CURRENT_MOD=type; EDITING_ID=null; ACTIVE_FILTER='all'; CURRENT_VIEW='table';
+  const cfg=MODS[type];
+  document.getElementById('dashView').style.display='none';
+  document.getElementById('modView').classList.add('show');
+  setText('mvTitle',cfg.label); setText('mvSub',cfg.sub);
+  document.getElementById('mvActions').innerHTML=`
+    <button class="btn btn-ghost btn-sm" onclick="exportCSV()"><i class="fas fa-download"></i> Export CSV</button>
+    <button class="btn btn-primary" onclick="openFormModal(null)"><i class="fas fa-plus"></i> Add New</button>`;
+  updateStatRow(); renderView(); setView('table');
+}
+function closeModule(){ CURRENT_MOD=null; EDITING_ID=null; ACTIVE_FILTER='all'; document.getElementById('dashView').style.display='block'; document.getElementById('modView').classList.remove('show'); refreshDashboard(); }
+function currentData(){ return STORE[CURRENT_MOD]||[]; }
+
+function setView(v){
+  CURRENT_VIEW=v;
+  document.getElementById('viewBtnTable').classList.toggle('active',v==='table');
+  document.getElementById('viewBtnKanban').classList.toggle('active',v==='kanban');
+  document.getElementById('tableView').classList.toggle('hidden',v!=='table');
+  document.getElementById('kanbanView').classList.toggle('hidden',v!=='kanban');
+  renderView();
+}
+function renderView(){ if(CURRENT_VIEW==='table') renderTable(); else renderKanban(); }
+
+/* ─────────────────────── STAT ROW ───────────────────────────────────────── */
+function updateStatRow(){
+  if(!CURRENT_MOD) return;
+  const cfg=MODS[CURRENT_MOD], items=currentData();
+  const pending=items.filter(x=>x.status==='Pending').length;
+  const prog=items.filter(x=>x.status==='In Progress').length;
+  const done=items.filter(x=>x.status===cfg.doneStatus).length;
+  const total=items.length;
+  const high=items.filter(x=>x.priority==='High'&&x.status!==cfg.doneStatus).length;
+  const pct=total?Math.round((done/total)*100):0;
+  document.getElementById('statRow').innerHTML=`
+    <div class="stat-box ${ACTIVE_FILTER==='all'?'active-filter':''}" onclick="setFilter('all')">
+      <div class="sb-icon" style="background:rgba(99,102,241,.1);color:var(--accent2)"><i class="fas fa-list"></i></div>
+      <div><div class="sb-val" style="color:var(--accent2)">${total}</div><div class="sb-lbl">All Records</div><div class="sb-percent">${pct}% resolved</div></div>
+    </div>
+    <div class="stat-box ${ACTIVE_FILTER==='pending'?'active-pending':''}" onclick="setFilter('pending')">
+      <div class="sb-icon" style="background:var(--pending-bg);color:var(--pending)"><i class="fas fa-hourglass-half"></i></div>
+      <div><div class="sb-val" style="color:var(--pending)">${pending}</div><div class="sb-lbl">Pending</div><div class="sb-percent" style="color:var(--pending)">${total?Math.round(pending/total*100):0}% of total</div></div>
+    </div>
+    <div class="stat-box ${ACTIVE_FILTER==='progress'?'active-progress':''}" onclick="setFilter('progress')">
+      <div class="sb-icon" style="background:var(--progress-bg);color:var(--progress)"><i class="fas fa-gears"></i></div>
+      <div><div class="sb-val" style="color:var(--progress)">${prog}</div><div class="sb-lbl">In Progress</div></div>
+    </div>
+    <div class="stat-box ${ACTIVE_FILTER==='done'?'active-done':''}" onclick="setFilter('done')">
+      <div class="sb-icon" style="background:var(--done-bg);color:var(--done)"><i class="fas fa-circle-check"></i></div>
+      <div><div class="sb-val" style="color:var(--done)">${done}</div><div class="sb-lbl">${cfg.doneStatus}</div></div>
+    </div>`;
+}
+function setFilter(f){ ACTIVE_FILTER=f; updateStatRow(); renderView(); }
+
+/* ─────────────────────── PILL FILTERS ───────────────────────────────────── */
+function buildPillFilters(){
+  if(!CURRENT_MOD) return;
+  const cfg=MODS[CURRENT_MOD], items=currentData();
+  const counts={ all:items.length, pending:items.filter(x=>x.status==='Pending').length,
+    progress:items.filter(x=>x.status==='In Progress').length, done:items.filter(x=>x.status===cfg.doneStatus).length,
+    high:items.filter(x=>x.priority==='High').length, med:items.filter(x=>x.priority==='Medium').length,
+    low:items.filter(x=>x.priority==='Low').length };
+  const pf=document.getElementById('pillFilters');
+  pf.innerHTML=`
+    <span class="pill all ${ACTIVE_FILTER==='all'?'active':''}" onclick="setFilter('all')">All <span class="count">${counts.all}</span></span>
+    <span class="pill p-pending" onclick="setFilter('pending')" style="${ACTIVE_FILTER==='pending'?'opacity:1':'opacity:.7'}">🟡 Pending <span class="count">${counts.pending}</span></span>
+    <span class="pill p-progress" onclick="setFilter('progress')" style="${ACTIVE_FILTER==='progress'?'opacity:1':'opacity:.7'}">🔵 In Progress <span class="count">${counts.progress}</span></span>
+    <span class="pill p-done" onclick="setFilter('done')" style="${ACTIVE_FILTER==='done'?'opacity:1':'opacity:.7'}">🟢 ${cfg.doneStatus} <span class="count">${counts.done}</span></span>
+    <span style="width:1px;height:20px;background:var(--border);margin:0 4px;display:inline-block"></span>
+    <span class="pill p-high" onclick="setFilter('high')" style="${ACTIVE_FILTER==='high'?'opacity:1':'opacity:.65'}">🔴 High Priority <span class="count">${counts.high}</span></span>
+    <span class="pill p-med" onclick="setFilter('med')" style="${ACTIVE_FILTER==='med'?'opacity:1':'opacity:.65'}">🟠 Medium <span class="count">${counts.med}</span></span>
+    <span class="pill p-low" onclick="setFilter('low')" style="${ACTIVE_FILTER==='low'?'opacity:1':'opacity:.65'}">🩵 Low <span class="count">${counts.low}</span></span>`;
+}
+
+/* ─────────────────────── FILTER & SORT ──────────────────────────────────── */
+function getFilteredItems(){
+  if(!CURRENT_MOD) return [];
+  const cfg=MODS[CURRENT_MOD];
+  const term=gv('searchInput').toLowerCase();
+  const sort=gv('sortSelect')||'status';
+  const doneStatus=cfg.doneStatus;
+  let items=[...currentData()].filter(item=>{
+    const hay=JSON.stringify(item).toLowerCase();
+    if(term&&!hay.includes(term)) return false;
+    if(ACTIVE_FILTER==='pending'&&item.status!=='Pending') return false;
+    if(ACTIVE_FILTER==='progress'&&item.status!=='In Progress') return false;
+    if(ACTIVE_FILTER==='done'&&item.status!==doneStatus) return false;
+    if(ACTIVE_FILTER==='high'&&item.priority!=='High') return false;
+    if(ACTIVE_FILTER==='med'&&item.priority!=='Medium') return false;
+    if(ACTIVE_FILTER==='low'&&item.priority!=='Low') return false;
+    return true;
+  });
+  const statusRank={'Pending':1,'In Progress':2,'Resolved':3,'Completed':3,'On Hold':4};
+  const prioRank={'High':1,'Medium':2,'Low':3};
+  items.sort((a,b)=>{
+    if(sort==='priority') return (prioRank[a.priority]||9)-(prioRank[b.priority]||9)||String(b.date).localeCompare(String(a.date));
+    if(sort==='date_desc') return String(b.date).localeCompare(String(a.date));
+    if(sort==='date_asc') return String(a.date).localeCompare(String(b.date));
+    if(sort==='age') return (ageDays(b.date)||0)-(ageDays(a.date)||0);
+    return (statusRank[a.status]||9)-(statusRank[b.status]||9)||String(b.date).localeCompare(String(a.date));
+  });
+  return items;
+}
+
+/* ─────────────────────── TABLE RENDER ───────────────────────────────────── */
+function debounceRender(){ clearTimeout(renderTimer); renderTimer=setTimeout(renderTable,160); }
+
+function renderTable(){
+  if(!CURRENT_MOD) return;
+  buildPillFilters();
+  const cfg=MODS[CURRENT_MOD];
+  const items=getFilteredItems();
+  setText('tableCount',`${items.length} item${items.length===1?'':'s'}`);
+
+  if(!items.length){
+    document.getElementById('tableBody').innerHTML=`<div class="empty-state"><i class="fas fa-inbox"></i><h4>No records found</h4><p>Add a new record or adjust the filters above.</p></div>`;
+    return;
+  }
+
+  const isTickets=CURRENT_MOD==='tickets',isImpls=CURRENT_MOD==='impls',isIssues=CURRENT_MOD==='issues';
+  const head=`<tr><th>Date / Age</th><th>${cfg.col2Label}</th><th>${cfg.col3Label}</th><th>Priority</th><th>Status</th><th>Actions</th></tr>`;
+
+  const body=items.map(item=>{
+    const titleVal=item[cfg.titleField]||'—';
+    const numVal=item[cfg.numField]||'';
+    const prioClass=item.priority==='High'?'priority-high':item.priority==='Low'?'priority-low':'priority-med';
+    const stClass=item.status==='Pending'?'status-pending':item.status==='In Progress'?'status-progress':'status-done';
+
+    let meta='';
+    if(isTickets) meta=`<span><i class="fas fa-user"></i>${e(item.createdBy||'—')}</span><span><i class="fas fa-user-check"></i>${e(item.assignedTo||'—')}</span><span><i class="fas fa-tag"></i>${e(item.category||'—')}</span>`;
+    else if(isIssues) meta=`<span><i class="fas fa-user"></i>${e(item.reportedBy||'—')}</span><span><i class="fas fa-user-check"></i>${e(item.assignedBy||'—')}</span><span><i class="fas fa-tag"></i>${e(item.category||'—')}</span>`;
+    else meta=`<span><i class="fas fa-user"></i>${e(item.requestedBy||'—')}</span><span><i class="fas fa-user-check"></i>${e(item.assignedTo||'—')}</span><span><i class="fas fa-tag"></i>${e(item.category||'—')}</span>`;
+
+    let col3='';
+    if(isTickets) col3=`<span class="ticket-num">${e(numVal)}</span>`;
+    else if(isIssues) col3=e(item.reportedBy||'—');
+    else col3=e(item.requestedBy||'—');
+
+    // Detail expand content
+    const allFields=Object.entries(item).filter(([k])=>!['id','description','updated'].includes(k));
+    const detFields=allFields.map(([k,v])=>`<div class="det-field"><label>${e(k)}</label><p>${k==='date'?e(fmtDate(v)):e(v)}</p></div>`).join('');
+
+    const statuses=CURRENT_MOD==='impls'?['Pending','In Progress','Completed']:['Pending','In Progress','Resolved'];
+    const quickBtns=statuses.map(s=>{
+      const cls=item.status===s?(s==='Pending'?'active-pending':s==='In Progress'?'active-progress':'active-done'):'';
+      return `<button class="det-quick-btn ${cls}" onclick="event.stopPropagation();quickStatus('${item.id}','${s}')">${s}</button>`;
+    }).join('');
+
+    return `
+      <tr class="data-row ${prioClass} ${stClass}" onclick="toggleDetails('${item.id}')">
+        <td>
+          <div style="font-family:var(--M);font-size:12px;color:var(--tx2)">${fmtDate(item.date)}</div>
+          <div style="margin-top:4px">${ageBadge(item)}</div>
+        </td>
+        <td>
+          <div class="item-title">${e(titleVal)}</div>
+          <div class="item-meta">${meta}</div>
+        </td>
+        <td>${col3}</td>
+        <td>${prioBadge(item.priority)}</td>
+        <td>${statusClickBadge(item.status,item.id)}</td>
+        <td>
+          <div class="row-actions">
+            <button class="ra-btn edit" onclick="event.stopPropagation();editItem('${item.id}')" title="Edit"><i class="fas fa-pen"></i></button>
+            <button class="ra-btn del" onclick="event.stopPropagation();deleteItem('${item.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+      <tr class="det-row" id="det_${item.id}">
+        <td colspan="6">
+          <div class="det-inner">
+            ${detFields}
+            <div class="det-full">
+              <label>Description</label>
+              <p>${e(item.description||'—')}</p>
+            </div>
+            <div class="det-full">
+              <label>Quick Status Update</label>
+              <div class="det-quick-status">${quickBtns}</div>
+            </div>
+            <div class="det-full" style="display:flex;gap:8px;align-items:center">
+              <label style="display:inline;margin:0">Last updated: </label>
+              <span style="font-size:12px;color:var(--tx2);font-family:var(--M)">${fmtDateTime(item.updated)}</span>
+              <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();editItem('${item.id}')"><i class="fas fa-pen"></i> Edit Record</button>
+            </div>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('tableBody').innerHTML=`<table><thead>${head}</thead><tbody>${body}</tbody></table>`;
+}
+function toggleDetails(id){ const row=document.getElementById(`det_${id}`); if(row) row.classList.toggle('open'); }
+
+/* ─────────────────────── KANBAN ──────────────────────────────────────────── */
+function renderKanban(){
+  if(!CURRENT_MOD) return;
+  buildPillFilters(); // still show pill filters
+  document.getElementById('tableCount').textContent=''; // hide count in kanban header
+  const cfg=MODS[CURRENT_MOD];
+  const items=getFilteredItems();
+  const statuses=['Pending','In Progress',cfg.doneStatus];
+  const colors={Pending:['var(--pending)','var(--pending-bg)'],
+                'In Progress':['var(--progress)','var(--progress-bg)'],
+                [cfg.doneStatus]:['var(--done)','var(--done-bg)']};
+  const board=document.getElementById('kanbanBoard');
+  board.innerHTML=statuses.map(status=>{
+    const col=items.filter(x=>x.status===status);
+    const [color,bg]=colors[status]||['var(--tx2)','var(--surface)'];
+    const cards=col.map(item=>{
+      const titleVal=item[cfg.titleField]||'—';
+      const numVal=item[cfg.numField]||'';
+      const prioClass=item.priority==='High'?'prio-high':item.priority==='Low'?'prio-low':'prio-med';
+      return `<div class="kcard ${prioClass}" onclick="editItem('${item.id}')">
+        <div class="kcard-title">${e(titleVal)}</div>
+        <div class="kcard-meta">
+          ${numVal?`<span class="kcard-num">${e(numVal)}</span>`:''}
+          ${prioBadge(item.priority)}
+          ${ageBadge(item)}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="kanban-col">
+      <div class="kanban-head">
+        <div class="kanban-head-title">
+          <span class="kanban-dot" style="background:${color}"></span>${status}
+        </div>
+        <span class="kanban-count">${col.length}</span>
+      </div>
+      <div class="kanban-body">${cards||`<div style="text-align:center;color:var(--tx3);font-size:12px;padding:20px">No items</div>`}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ─────────────────────── QUICK STATUS ───────────────────────────────────── */
+async function cycleStatus(id){
+  if(!CURRENT_MOD) return;
+  const cfg=MODS[CURRENT_MOD];
+  const statuses=CURRENT_MOD==='impls'?['Pending','In Progress','Completed']:['Pending','In Progress','Resolved'];
+  const item=currentData().find(x=>x.id===id); if(!item) return;
+  const idx=statuses.indexOf(item.status);
+  const next=statuses[(idx+1)%statuses.length];
+  await quickStatus(id,next);
+}
+async function quickStatus(id,newStatus){
+  if(!CURRENT_MOD) return;
+  const item=currentData().find(x=>x.id===id); if(!item) return;
+  const updated={...item, status:newStatus, updated:new Date().toISOString()};
+  // Optimistic update
+  const arr=STORE[CURRENT_MOD]; const idx=arr.findIndex(x=>x.id===id);
+  if(idx>-1) arr[idx]=updated;
+  sessionStorage.setItem(STORE_CACHE_KEY,JSON.stringify(STORE));
+  renderView(); updateStatRow(); refreshDashboard();
+  showSaveIndicator('Updating status...');
+  try{ await api('upsert',{module:CURRENT_MOD,item:updated}); hideSaveIndicator(); showToast(`Status → ${newStatus}`,'ok'); }
+  catch(err){ hideSaveIndicator(); showToast(err.message,'er'); await syncNow(true); }
+}
+
+/* ─────────────────────── FORM MODAL ─────────────────────────────────────── */
+function openFormModal(item=null){
+  if(!CURRENT_MOD) return;
+  EDITING_ID=item?item.id:null;
+  const cfg=MODS[CURRENT_MOD];
+  document.getElementById('formModalTitle').innerHTML=item?'<i class="fas fa-pen"></i> Edit Record':'<i class="fas fa-plus"></i> Add New Record';
+  const grid=document.getElementById('formGrid');
+  grid.innerHTML=cfg.fields.map(([key,label,type,data,full])=>{
+    const value=item?.[key]??( key==='date'?todayStr():cfg.defaults[key]||'' );
+    const wrapClass=full?'form-group full':'form-group';
+    if(type==='textarea') return `<div class="${wrapClass}"><label>${label}</label><textarea id="f_${key}" placeholder="${e(data||'')}">${e(value)}</textarea></div>`;
+    if(type==='select') return `<div class="${wrapClass}"><label>${label}</label><select id="f_${key}">${opts(data,value)}</select></div>`;
+    return `<div class="${wrapClass}"><label>${label}</label><input id="f_${key}" type="${type}" value="${e(value)}" placeholder="${e(data||'')}"></div>`;
+  }).join('');
+  document.getElementById('formModal').classList.add('show');
+  // focus first text input
+  setTimeout(()=>{ const first=document.querySelector('#formGrid input[type=text]'); if(first) first.focus(); },50);
+}
+function closeFormModal(){ EDITING_ID=null; document.getElementById('formModal').classList.remove('show'); }
+function editItem(id){ const item=currentData().find(x=>x.id===id); if(item) openFormModal(item); }
+
+async function saveCurrentItem(){
+  if(!CURRENT_MOD) return;
+  const cfg=MODS[CURRENT_MOD];
+  const obj={id:EDITING_ID||crypto.randomUUID(),updated:new Date().toISOString()};
+  for(const [key,,type] of cfg.fields){ obj[key]=gv(`f_${key}`); }
+  obj.date=normDate(obj.date)||todayStr();
+  if(!obj[cfg.titleField]) return showToast('Please fill the title field.','er');
+  // Optimistic update
+  const arr=STORE[CURRENT_MOD];
+  if(EDITING_ID){ const idx=arr.findIndex(x=>x.id===EDITING_ID); if(idx>-1) arr[idx]=obj; }
+  else arr.unshift(obj);
+  sessionStorage.setItem(STORE_CACHE_KEY,JSON.stringify(STORE));
+  closeFormModal(); renderView(); updateStatRow(); refreshDashboard();
+  showSaveIndicator('Saving to cloud...');
+  try{ await api('upsert',{module:CURRENT_MOD,item:obj}); hideSaveIndicator(); showToast(EDITING_ID?'Record updated':'Record added','ok'); }
+  catch(err){ hideSaveIndicator(); showToast(err.message,'er'); await syncNow(true); }
+}
+
+/* ─────────────────────── DELETE ─────────────────────────────────────────── */
+async function deleteItem(id){
+  if(!confirm('Delete this record? This cannot be undone.')) return;
+  // Optimistic delete
+  const arr=STORE[CURRENT_MOD]; const idx=arr.findIndex(x=>x.id===id);
+  if(idx>-1) arr.splice(idx,1);
+  sessionStorage.setItem(STORE_CACHE_KEY,JSON.stringify(STORE));
+  renderView(); updateStatRow(); refreshDashboard();
+  showSaveIndicator('Deleting...');
+  try{ await api('deleteOne',{module:CURRENT_MOD,id}); hideSaveIndicator(); showToast('Record deleted','ok'); }
+  catch(err){ hideSaveIndicator(); showToast(err.message,'er'); await syncNow(true); }
+}
+
+/* ─────────────────────── CLEAR MODAL ───────────────────────────────────── */
+function openClearModal(){ document.getElementById('clearModal').classList.add('show'); document.getElementById('clearPw').value=''; document.getElementById('clearErr').classList.remove('show'); }
+function closeClearModal(){ document.getElementById('clearModal').classList.remove('show'); }
+async function confirmClear(){
+  const pw=gv('clearPw'); if(!pw) return;
+  const hash=await sha256(pw);
+  if(hash!==PW_HASH){ document.getElementById('clearErr').classList.add('show'); return; }
+  try{ await api('clearModule',{module:CURRENT_MOD}); closeClearModal(); await syncNow(true); renderView(); updateStatRow(); refreshDashboard(); showToast('Module cleared','ok'); }
+  catch(err){ showToast(err.message,'er'); }
+}
+
+/* ─────────────────────── EXPORT ─────────────────────────────────────────── */
+function exportBackup(){ downloadFile(JSON.stringify(STORE,null,2),`it-nexus-backup-${todayStr()}.json`,'application/json'); showToast('Backup downloaded','ok'); }
+function exportCSV(){
+  if(!CURRENT_MOD) return;
+  const data=currentData(); if(!data.length) return showToast('No data to export','er');
+  const keys=[...new Set(data.flatMap(x=>Object.keys(x)))];
+  const csv=[keys.join(',')].concat(data.map(row=>keys.map(k=>`"${String(row[k]??'').replace(/"/g,'""')}"`).join(','))).join('\n');
+  downloadFile(csv,`${CURRENT_MOD}-${todayStr()}.csv`,'text/csv');
+  showToast('CSV exported','ok');
+}
+
+/* ─────────────────────── TOAST / INDICATORS ─────────────────────────────── */
+function showToast(msg,type='in'){
+  const area=document.getElementById('toastArea');
+  const icons={ok:'fa-circle-check',er:'fa-circle-exclamation',in:'fa-circle-info'};
+  const div=document.createElement('div'); div.className=`toast ${type}`;
+  div.innerHTML=`<i class="fas ${icons[type]||icons.in} toast-icon ${type}"></i><span>${e(msg)}</span>`;
+  area.appendChild(div); setTimeout(()=>div.remove(),3500);
+}
+function showSaveIndicator(msg='Saving...'){
+  const si=document.getElementById('saveIndicator'); si.classList.add('show');
+  document.getElementById('saveText').textContent=msg;
+}
+function hideSaveIndicator(){ document.getElementById('saveIndicator').classList.remove('show'); }
+
+// Close modals on overlay click
+document.getElementById('formModal').addEventListener('click',function(e){ if(e.target===this) closeFormModal(); });
+document.getElementById('clearModal').addEventListener('click',function(e){ if(e.target===this) closeClearModal(); });
+// ESC key
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeFormModal(); closeClearModal(); } });
+</script>
+</body>
+</html>
