@@ -186,7 +186,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
     </div>
     <div class="l-card">
       <h2>Welcome back</h2>
-      <div class="demo-box">🔑 JobinTech <strong>****</strong><br><span style="font-size:.72rem;color:var(--t3)">*********</span></div>
+      <div class="demo-box">🔑 JobinTech: <strong>JobinTech</strong><br><span style="font-size:.72rem;color:var(--t3)">Change it later — instructions are in the code</span></div>
       <label class="flbl">Password</label>
       <div class="fw">
         <input type="password" id="pwInp" placeholder="Enter your password" autocomplete="current-password"/>
@@ -287,9 +287,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
    ⚙️  CONFIGURATION — edit these two lines
 ============================================================ */
 var PASSWORD_HASH  = "8a4ed630c5556ab78c847b7b3a5dd6761a372b22ddff9fb4d5d5696262162c8c";
-// SHA-256 of "" — generate your own at emn178.github.io/online-tools/sha256.html
+// SHA-256 of "finflow123" — generate your own at emn178.github.io/online-tools/sha256.html
 
-var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_1UE1Y2kG81MIfJT8KtdxOvb7Gw8ZrFYhFC62mxa5vlxkpOB_3vHzbhNeu256Xrka/exec";
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxZNIJyh436Et0oqnfWn2ezs_meqy0nw20Gl3uQ8U4YN1JNrgRVpos4bsuV9S1wkfGt/exec";
 // Paste your Google Apps Script Web App URL here after setup
 
 /* ============================================================
@@ -386,25 +386,63 @@ function saveLS(){try{localStorage.setItem(LS,JSON.stringify(txns));}catch(e){}}
 function loadLS(){try{var r=localStorage.getItem(LS);return r?JSON.parse(r):[]; }catch(e){return[];}}
 
 /* ============================================================
-   GOOGLE SHEETS — XHR GET (no fetch, no CORS preflight)
+   GOOGLE SHEETS SYNC
 ============================================================ */
 function syncUI(s,l){var p=ge('spill'),lb=ge('slbl');if(p)p.className='spill'+(s?' '+s:'');if(lb)lb.textContent=l;}
+
 function sheetsReq(params,cb){
   if(!APPS_SCRIPT_URL){if(cb)cb(null);return;}
   var qs='?_t='+Date.now();
-  for(var k in params)qs+='&'+k+'='+encodeURIComponent(String(params[k]));
-  var xhr=new XMLHttpRequest();
-  xhr.open('GET',APPS_SCRIPT_URL+qs,true);
-  xhr.onload=function(){try{if(cb)cb(JSON.parse(xhr.responseText));}catch(e){if(cb)cb(null);}};
-  xhr.onerror=function(){if(cb)cb(null);};
-  xhr.send();
+  for(var k in params) qs+='&'+encodeURIComponent(k)+'='+encodeURIComponent(String(params[k]));
+  var url=APPS_SCRIPT_URL+qs;
+  // Use fetch (handles Google's 302 redirects correctly)
+  if(typeof fetch!=='undefined'){
+    fetch(url,{redirect:'follow'})
+      .then(function(r){return r.json();})
+      .then(function(d){if(cb)cb(d);})
+      .catch(function(err){
+        console.log('fetch failed, trying XHR:',err);
+        xhrGet(url,cb);
+      });
+  } else {
+    xhrGet(url,cb);
+  }
 }
+function xhrGet(url,cb){
+  try{
+    var x=new XMLHttpRequest();
+    x.open('GET',url,true);
+    x.onload=function(){try{if(cb)cb(JSON.parse(x.responseText));}catch(e){if(cb)cb(null);}};
+    x.onerror=function(){if(cb)cb(null);};
+    x.send();
+  }catch(e){if(cb)cb(null);}
+}
+
+// After loading txns, auto-jump to the most recent month that has data
+function autoMonth(){
+  if(!txns.length)return;
+  var months={};
+  for(var i=0;i<txns.length;i++) if(txns[i].month) months[txns[i].month]=true;
+  var keys=Object.keys(months).sort().reverse();
+  if(keys.length&&!months[curMon]) curMon=keys[0];
+}
+
 function manSync(){
   if(!APPS_SCRIPT_URL){toast('Google Sheets URL not set','err');return;}
   syncUI('sync','Syncing…');
   sheetsReq({action:'getAll'},function(d){
-    if(d&&d.success){txns=d.entries||[];saveLS();refreshDash();syncUI('ok','Synced ✓');toast('Synced ✓','ok');}
-    else{syncUI('fail','Failed');toast('Sync failed','err');}
+    if(d&&d.success&&d.entries&&d.entries.length>0){
+      txns=d.entries;
+      saveLS(); autoMonth(); buildMonths(); refreshDash();
+      syncUI('ok','Synced ✓ — '+txns.length+' entries');
+      toast('Loaded '+txns.length+' entries from Google Sheets','ok');
+    } else if(d&&d.success){
+      syncUI('ok','Synced (empty)');
+      toast('Google Sheet has no data yet','inf');
+    } else {
+      syncUI('fail','Sync Failed');
+      toast('Sync failed — check your Apps Script URL','err');
+    }
   });
 }
 function pushS(action,extra){
@@ -419,16 +457,29 @@ function pushS(action,extra){
 ============================================================ */
 function buildMonths(){
   var sel=ge('msel');sel.innerHTML='';
-  var now=new Date(),seen={};
-  for(var i=-2;i<=24;i++){
-    var d=new Date(now.getFullYear(),now.getMonth()-i,1);
+  var seen={};
+
+  // First add all months that actually have data (most important)
+  for(var i=0;i<txns.length;i++){
+    var m=txns[i].month;
+    if(m&&!seen[m]) seen[m]=1;
+  }
+
+  // Also add current month and ±24 months from now so user can add future entries
+  var now=new Date();
+  for(var j=-2;j<=24;j++){
+    var d=new Date(now.getFullYear(),now.getMonth()-j,1);
     var ym=d.getFullYear()+'-'+zp(d.getMonth()+1);
-    if(!seen[ym]){seen[ym]=1;
-      var o=document.createElement('option');
-      o.value=ym;o.textContent=monN(ym);
-      if(ym===curMon)o.selected=true;
-      sel.appendChild(o);
-    }
+    if(!seen[ym]) seen[ym]=1;
+  }
+
+  // Sort descending (newest first)
+  var keys=Object.keys(seen).sort().reverse();
+  for(var k=0;k<keys.length;k++){
+    var o=document.createElement('option');
+    o.value=keys[k]; o.textContent=monN(keys[k]);
+    if(keys[k]===curMon) o.selected=true;
+    sel.appendChild(o);
   }
 }
 function chMon(m){curMon=m;refreshDash();}
@@ -453,15 +504,29 @@ function filtTxns(){
 function initDash(){
   curMon=nowMon();
   txns=loadLS();
+  autoMonth();      // jump to most recent month with data
   buildMonths();
   ge('noBanner').style.display=APPS_SCRIPT_URL?'none':'flex';
-  if(!APPS_SCRIPT_URL)syncUI('','Local');
+  if(!APPS_SCRIPT_URL) syncUI('','Local');
   refreshDash();
+
   if(APPS_SCRIPT_URL){
     syncUI('sync','Syncing…');
     sheetsReq({action:'getAll'},function(d){
-      if(d&&d.success){txns=d.entries||[];saveLS();refreshDash();syncUI('ok','Synced ✓');}
-      else syncUI('fail','Failed');
+      if(d&&d.success&&d.entries&&d.entries.length>0){
+        txns=d.entries;           // Google Sheets is the source of truth
+        saveLS();                 // cache locally
+        autoMonth();              // jump to correct month
+        buildMonths();            // rebuild month list from actual data
+        refreshDash();            // update all cards + charts
+        syncUI('ok','Synced ✓');
+      } else if(d&&d.success){
+        syncUI('ok','Online');    // Sheets empty — local data stays
+        refreshDash();
+      } else {
+        syncUI('fail','Offline'); // Network error — local data stays
+        toast('Could not reach Google Sheets. Showing local data.','inf');
+      }
     });
   }
 }
