@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHM · Network Operations Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg:#0f1923; --bg2:#162030; --bg3:#1c2a3a;
+  --surface:rgba(22,32,48,0.92); --surface2:rgba(28,42,58,0.75);
+  --border:rgba(100,180,255,0.15); --border2:rgba(100,180,255,0.3);
+  --cyan:#5bc8f5; --cyan2:#3ab0e0;
+  --cyan-glow:rgba(91,200,245,0.15); --cyan-glow2:rgba(91,200,245,0.08);
+  --teal:#3dffd0; --amber:#ffd166; --red:#ff6b6b; --green:#51e898;
+  --text:#f0f4ff; --text2:#bdd0e8; --text3:#7a9bbf;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'Barlow',sans-serif;
+  --display:'Barlow Condensed',sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:600;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── GRID BG ── */
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(91,200,245,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(91,200,245,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,80,180,0.1),transparent);pointer-events:none}
+.app{position:relative;z-index:1;padding:20px;max-width:1900px;margin:0 auto}
+
+/* ── SCANLINE ── */
+.scanline{position:fixed;inset:0;z-index:9999;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.008) 3px,rgba(0,0,0,0.008) 4px);pointer-events:none;animation:scanMove 12s linear infinite}
+@keyframes scanMove{from{background-position:0 0}to{background-position:0 40px}}
+
+/* ── LOGIN ── */
+.login-wrapper{position:fixed;inset:0;z-index:10000;display:flex;background:#0a0f17;transition:opacity .8s cubic-bezier(.4,0,.2,1),visibility .8s}
+.login-wrapper.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.login-left{flex:1.2;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 30% 40%,#1a2f3f 0%,#0a121c 80%)}
+.login-left::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(91,200,245,0.15) 0%,transparent 30%),radial-gradient(circle at 80% 70%,rgba(61,255,208,0.12) 0%,transparent 35%),radial-gradient(circle at 40% 80%,rgba(255,107,255,0.1) 0%,transparent 40%),radial-gradient(circle at 70% 20%,rgba(255,209,102,0.08) 0%,transparent 30%),repeating-linear-gradient(45deg,rgba(0,0,0,0.2) 0px,rgba(0,0,0,0.2) 2px,transparent 2px,transparent 8px);animation:nebulaBreathe 8s ease-in-out infinite}
+@keyframes nebulaBreathe{0%,100%{opacity:.8;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+.hex-grid{position:absolute;inset:0;background-image:linear-gradient(45deg,transparent 92%,rgba(91,200,245,0.08) 92%),linear-gradient(-45deg,transparent 92%,rgba(61,255,208,0.08) 92%);background-size:60px 60px;animation:gridMove 20s linear infinite;opacity:.5}
+@keyframes gridMove{0%{background-position:0 0}100%{background-position:60px 60px}}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.3;animation:orbFloat 15s ease-in-out infinite}
+.orb-1{width:400px;height:400px;background:rgba(91,200,245,0.4);top:-100px;right:-100px;animation-delay:0s}
+.orb-2{width:500px;height:500px;background:rgba(61,255,208,0.3);bottom:-200px;left:-200px;animation-delay:-5s}
+.orb-3{width:300px;height:300px;background:rgba(255,107,255,0.25);top:40%;left:30%;animation-delay:-2s}
+.orb-4{width:350px;height:350px;background:rgba(255,209,102,0.2);bottom:20%;right:20%;animation-delay:-8s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-30px) scale(1.1)}66%{transform:translate(-20px,20px) scale(.9)}}
+.energy-rings{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.ring{position:absolute;border:1px solid rgba(91,200,245,0.3);border-radius:50%;animation:ringExpand 3s ease-out infinite;box-shadow:0 0 30px rgba(91,200,245,0.2)}
+.ring-1{width:200px;height:200px;animation-delay:0s}.ring-2{width:400px;height:400px;animation-delay:1s}.ring-3{width:600px;height:600px;animation-delay:2s}
+@keyframes ringExpand{0%{opacity:1;transform:scale(.5)}100%{opacity:0;transform:scale(1.5)}}
+.particles{position:absolute;inset:0;overflow:hidden}
+.particle{position:absolute;width:4px;height:4px;border-radius:50%;filter:blur(2px);opacity:.6;animation:particleDrift 10s linear infinite}
+@keyframes particleDrift{from{transform:translateY(100vh) translateX(0)}to{transform:translateY(-100px) translateX(50px)}}
+.scanline-login{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,255,255,0.02) 3px,rgba(0,255,255,0.02) 6px);pointer-events:none;animation:scanMove 8s linear infinite;z-index:10}
+.login-content{position:relative;z-index:20;max-width:500px;padding:40px}
+.hospital-brand{display:flex;align-items:center;gap:16px;margin-bottom:60px}
+.brand-icon{width:64px;height:64px;background:linear-gradient(135deg,rgba(91,200,245,0.2),rgba(61,255,208,0.1));border:1px solid rgba(91,200,245,0.3);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--cyan);box-shadow:0 0 30px rgba(91,200,245,0.2)}
+.brand-text h2{font-family:var(--display);font-size:1.4rem;font-weight:800;color:var(--text);letter-spacing:2px}
+.brand-text p{font-size:.8rem;color:var(--text3);font-family:var(--mono);margin-top:4px}
+.login-headline{font-size:3.5rem;font-weight:800;font-family:var(--display);line-height:1.1;margin-bottom:40px}
+.gradient-text{background:linear-gradient(135deg,var(--cyan),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block}
+.info-chips{display:flex;gap:20px;flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:12px;padding:16px 28px;background:rgba(91,200,245,0.05);border:1px solid rgba(91,200,245,0.15);border-radius:100px;backdrop-filter:blur(10px);cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1)}
+.chip:hover{transform:translateX(8px);border-color:var(--cyan);background:rgba(91,200,245,0.12);box-shadow:0 0 30px rgba(91,200,245,0.2)}
+.chip i{font-size:20px;color:var(--text2);transition:all .3s}.chip:hover i{color:var(--cyan);text-shadow:0 0 10px var(--cyan)}
+.chip span{font-size:1rem;font-weight:700;color:var(--text2)}.chip:hover span{color:var(--cyan)}
+.login-right{flex:.9;background:rgba(12,20,28,0.95);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;position:relative;border-left:1px solid rgba(91,200,245,0.2);box-shadow:-20px 0 50px rgba(0,0,0,0.5)}
+.login-right::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--teal));animation:accentPulse 2s ease-in-out infinite}
+@keyframes accentPulse{0%,100%{opacity:.8}50%{opacity:1;box-shadow:0 0 20px var(--cyan)}}
+.login-form-container{width:80%;max-width:380px;padding:40px 0}
+.secure-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(81,232,152,0.1);border:1px solid rgba(81,232,152,0.3);border-radius:100px;margin-bottom:30px}
+.pulse-dot-green{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 10px var(--green);animation:pulse 2s ease-in-out infinite}
+.secure-badge span{color:var(--green);font-weight:700;font-size:.8rem;letter-spacing:1px}
+.login-form{display:flex;flex-direction:column;gap:24px}
+.form-group{display:flex;flex-direction:column;gap:8px}
+.form-group label{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text3)}
+.password-wrapper{position:relative}
+.password-wrapper input{width:100%;padding:14px 50px 14px 16px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--sans);font-size:.9rem;transition:all .25s}
+.password-wrapper input:focus{outline:none;border-color:var(--cyan);background:rgba(91,200,245,0.04);box-shadow:0 0 0 3px rgba(91,200,245,0.08)}
+.password-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;padding:8px;border-radius:8px;transition:all .25s;display:flex;align-items:center;justify-content:center}
+.password-toggle:hover{color:var(--cyan);background:rgba(91,200,245,0.1);transform:translateY(-50%) scale(1.1)}
+.password-strength{margin-top:8px}
+.strength-label{font-size:.7rem;color:var(--text3);margin-bottom:6px;display:block}
+.strength-bars{display:flex;gap:4px}
+.strength-segment{height:4px;flex:1;background:rgba(255,255,255,0.1);border-radius:4px;transition:all .3s}
+.strength-segment.filled-1{background:#ffd700;box-shadow:0 0 8px #ffd700}.strength-segment.filled-2{background:#ffd700;box-shadow:0 0 8px #ffd700}.strength-segment.filled-3{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}.strength-segment.filled-4{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}.strength-segment.filled-5{background:var(--teal);box-shadow:0 0 8px var(--teal)}
+.auth-btn{position:relative;padding:16px;background:linear-gradient(135deg,rgba(91,200,245,0.1),rgba(61,255,208,0.1));border:1px solid rgba(91,200,245,0.3);border-radius:12px;color:var(--text);font-family:var(--sans);font-size:1rem;font-weight:800;letter-spacing:2px;cursor:pointer;overflow:hidden;transition:all .3s cubic-bezier(.4,0,.2,1);margin-top:16px}
+.auth-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(91,200,245,0.3),transparent);transition:left .5s}
+.auth-btn:hover{transform:translateY(-3px);border-color:var(--cyan);box-shadow:0 0 30px rgba(91,200,245,0.3),0 8px 20px rgba(0,0,0,0.4);background:linear-gradient(135deg,rgba(91,200,245,0.2),rgba(61,255,208,0.2))}
+.auth-btn:hover::before{left:100%}
+.auth-btn i{margin-left:8px;transition:transform .3s}.auth-btn:hover i{transform:translateX(5px)}
+.error-message{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(255,107,107,0.05);border-left:3px solid var(--red);border-radius:8px;margin-top:20px;font-size:.85rem;color:var(--red)}
+.demo-hint{margin-top:30px;padding-top:20px;border-top:1px solid rgba(91,200,245,0.1);font-size:.75rem;color:var(--text3);font-family:var(--mono);text-align:center}
+.demo-hint code{color:var(--cyan);background:rgba(91,200,245,0.1);padding:2px 6px;border-radius:4px}
+
+/* ── HEADER ── */
+.header{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:30px;padding:20px 28px;background:var(--surface);border:1px solid var(--border2);border-radius:16px;margin-bottom:20px;backdrop-filter:blur(20px);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--teal),transparent);animation:borderFlow 4s linear infinite}
+@keyframes borderFlow{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.logo-wrap{display:flex;align-items:center;gap:16px}
+.logo-icon{width:52px;height:52px;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(0,255,204,0.1));border:1px solid var(--border2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--cyan);position:relative;box-shadow:0 0 20px rgba(0,212,255,0.2),inset 0 1px 0 rgba(255,255,255,0.1)}
+.logo-text h1{font-family:var(--display);font-size:1.25rem;font-weight:800;color:var(--text);letter-spacing:1.5px;text-transform:uppercase;line-height:1.2}
+.logo-text p{font-size:.78rem;color:var(--text3);font-family:var(--sans);font-weight:500;margin-top:4px;letter-spacing:.5px;display:flex;align-items:center;gap:4px}
+.logo-text p i{color:var(--cyan)}
+.header-center{display:flex;flex-direction:column;align-items:center;gap:8px}
+.status-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center}
+.status-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);border-radius:20px;font-size:.78rem;color:var(--green);font-family:var(--sans);font-weight:800;letter-spacing:.5px}
+.pulse-dot{width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.header-controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.ctrl-btn{display:flex;align-items:center;gap:7px;padding:9px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-family:var(--sans);font-size:.8rem;font-weight:700;cursor:pointer;transition:all .22s cubic-bezier(.4,0,.2,1);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;position:relative;overflow:hidden}
+.ctrl-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,0.12),transparent);opacity:0;transition:opacity .22s}
+.ctrl-btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,0.1);box-shadow:0 0 20px rgba(0,212,255,0.25),0 4px 12px rgba(0,0,0,0.3);transform:translateY(-2px) scale(1.04)}
+.ctrl-btn:hover::after{opacity:1}
+.ctrl-btn:hover i{transform:scale(1.2) rotate(-5deg);filter:drop-shadow(0 0 6px var(--cyan))}
+.ctrl-btn i{transition:all .22s;display:inline-block}
+.ctrl-btn:active{transform:translateY(0) scale(.98)}
+.ctrl-btn.active{background:rgba(0,212,255,0.12);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 15px rgba(0,212,255,0.15)}
+.ctrl-btn.save-btn{background:rgba(0,255,204,0.08);border-color:rgba(0,255,204,0.3);color:var(--teal)}
+.ctrl-btn.save-btn:hover{background:rgba(0,255,204,0.18);border-color:var(--teal);color:var(--teal);box-shadow:0 0 24px rgba(0,255,204,0.3),0 4px 14px rgba(0,0,0,0.3);transform:translateY(-2px) scale(1.04)}
+.ctrl-btn.json-import{background:rgba(255,209,102,0.06);border-color:rgba(255,209,102,0.25);color:var(--amber)}
+.ctrl-btn.json-import:hover{background:rgba(255,209,102,0.18);border-color:var(--amber);box-shadow:0 0 24px rgba(255,209,102,0.25),0 4px 14px rgba(0,0,0,0.3);color:var(--amber);transform:translateY(-2px) scale(1.04)}
+.ctrl-btn.json-export{background:rgba(156,39,176,0.06);border-color:rgba(156,39,176,0.25);color:#ce93d8}
+.ctrl-btn.json-export:hover{background:rgba(156,39,176,0.18);border-color:#ce93d8;box-shadow:0 0 24px rgba(156,39,176,0.25),0 4px 14px rgba(0,0,0,0.3);color:#ce93d8;transform:translateY(-2px) scale(1.04)}
+.clock-wrap{text-align:right}
+.clock-time{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:var(--cyan);letter-spacing:3px;text-shadow:0 0 20px rgba(91,200,245,0.4);line-height:1}
+.clock-date{font-size:.7rem;color:var(--text3);letter-spacing:1px;font-family:var(--sans);margin-top:4px}
+
+/* ── STORAGE BADGE ── */
+.storage-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:.72rem;font-weight:800;letter-spacing:.8px;font-family:var(--mono);border:1px solid transparent;transition:all .3s;white-space:nowrap}
+.storage-idb {background:rgba(61,255,208,0.08);border-color:rgba(61,255,208,0.3);color:var(--teal)}
+.storage-ls  {background:rgba(255,209,102,0.08);border-color:rgba(255,209,102,0.3);color:var(--amber)}
+.storage-mem {background:rgba(255,107,107,0.08);border-color:rgba(255,107,107,0.3);color:var(--red)}
+
+/* ── AUTO-SAVE FLASH ── */
+.autosave-flash{position:fixed;top:20px;right:20px;padding:9px 18px;background:rgba(61,255,208,0.12);border:1px solid rgba(61,255,208,0.4);border-radius:8px;font-family:var(--mono);font-size:.72rem;color:var(--teal);display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(-10px);transition:all .35s cubic-bezier(.4,0,.2,1);z-index:9998;pointer-events:none}
+.autosave-flash.visible{opacity:1;transform:translateY(0)}
+
+/* ── DATA MANAGEMENT STRIP ── */
+.data-mgmt-strip{display:flex;align-items:center;gap:10px;padding:10px 20px;background:rgba(0,0,0,0.2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.dm-label{font-size:.7rem;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-family:var(--sans)}
+.dm-sep{width:1px;height:20px;background:var(--border);margin:0 4px}
+.storage-info-inline{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--text3);font-family:var(--mono)}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px;position:relative;overflow:hidden;backdrop-filter:blur(20px);transition:all .3s cubic-bezier(.4,0,.2,1);cursor:default;animation:cardIn .6s ease both}
+.stat-card:nth-child(1){animation-delay:.05s}.stat-card:nth-child(2){animation-delay:.1s}.stat-card:nth-child(3){animation-delay:.15s}.stat-card:nth-child(4){animation-delay:.2s}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-5px) scale(1.01);box-shadow:0 16px 48px rgba(0,0,0,0.4),0 0 30px rgba(0,212,255,0.1)}
+.stat-card:hover .stat-icon-wrap{transform:scale(1.15) rotate(-8deg);filter:brightness(1.4)}
+.stat-icon-wrap{transition:all .3s cubic-bezier(.4,0,.2,1)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-card:nth-child(1)::before{background:linear-gradient(90deg,var(--cyan),var(--teal))}
+.stat-card:nth-child(2)::before{background:linear-gradient(90deg,var(--green),var(--teal))}
+.stat-card:nth-child(3)::before{background:linear-gradient(90deg,var(--amber),#ff8c00)}
+.stat-card:nth-child(4)::before{background:linear-gradient(90deg,#9c27b0,var(--cyan))}
+.stat-card-inner{display:flex;align-items:flex-start;justify-content:space-between}
+.stat-icon-wrap{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.stat-card:nth-child(1) .stat-icon-wrap{background:rgba(0,212,255,0.1);color:var(--cyan)}
+.stat-card:nth-child(2) .stat-icon-wrap{background:rgba(0,230,118,0.1);color:var(--green)}
+.stat-card:nth-child(3) .stat-icon-wrap{background:rgba(255,184,0,0.1);color:var(--amber)}
+.stat-card:nth-child(4) .stat-icon-wrap{background:rgba(156,39,176,0.1);color:#ce93d8}
+.stat-num{font-family:var(--mono);font-size:2.4rem;font-weight:700;line-height:1;margin-bottom:4px;background:linear-gradient(135deg,var(--text),var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:.82rem;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;font-weight:700;margin-top:2px}
+.stat-sub{font-size:.75rem;color:var(--text3);margin-top:8px;font-family:var(--sans);font-weight:600}
+.stat-sub span{color:var(--green)}
+.stat-bar{height:3px;background:var(--border);border-radius:2px;margin-top:12px;overflow:hidden}
+.stat-bar-fill{height:100%;border-radius:2px;animation:barFill 1.5s ease both;animation-delay:.5s}
+@keyframes barFill{from{width:0}}
+.stat-card:nth-child(1) .stat-bar-fill{background:linear-gradient(90deg,var(--cyan),var(--teal));width:95%}
+.stat-card:nth-child(2) .stat-bar-fill{background:linear-gradient(90deg,var(--green),var(--teal));width:99%}
+.stat-card:nth-child(3) .stat-bar-fill{background:linear-gradient(90deg,var(--amber),#ff8c00);width:52%}
+.stat-card:nth-child(4) .stat-bar-fill{background:linear-gradient(90deg,#9c27b0,var(--cyan));width:18%}
+
+/* ── MAIN PANEL ── */
+.main-panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;backdrop-filter:blur(20px);animation:cardIn .6s ease .25s both}
+.toolbar{display:flex;gap:12px;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.2);flex-wrap:wrap}
+.search-wrap{flex:1;min-width:220px;position:relative}
+.search-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px;transition:color .2s}
+.search-input{width:100%;padding:10px 14px 10px 38px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--sans);font-size:.85rem;font-weight:600;transition:all .25s;letter-spacing:.3px}
+.search-input::placeholder{color:var(--text3)}
+.search-input:focus{outline:none;border-color:var(--cyan);background:rgba(0,212,255,0.04);box-shadow:0 0 0 3px rgba(0,212,255,0.08)}
+.result-count{font-family:var(--sans);font-size:.76rem;font-weight:800;color:var(--text3);padding:10px 16px;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:10px;white-space:nowrap}
+.result-count span{color:var(--cyan)}
+.unsaved-hint{display:none;align-items:center;gap:10px;padding:10px 18px;background:rgba(255,184,0,0.07);border-bottom:1px solid rgba(255,184,0,0.2);font-size:.78rem;color:var(--amber);font-family:var(--mono)}
+.unsaved-hint.show{display:flex}
+.unsaved-hint strong{cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* ── DATA MGMT STRIP ── */
+.data-mgmt-strip{display:flex;align-items:center;gap:10px;padding:9px 20px;background:rgba(0,0,0,0.15);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.dm-label{font-size:.68rem;font-weight:800;color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-family:var(--mono)}
+.dm-sep{width:1px;height:16px;background:rgba(100,180,255,0.1);margin:0 2px}
+
+/* ── TABS ── */
+.tabs-bar{display:flex;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.15);overflow-x:auto;scrollbar-width:none}
+.tabs-bar::-webkit-scrollbar{display:none}
+.tab-btn{display:flex;align-items:center;gap:8px;padding:14px 22px;font-family:var(--sans);font-size:.8rem;font-weight:700;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .22s cubic-bezier(.4,0,.2,1);white-space:nowrap;text-transform:uppercase;letter-spacing:.8px;border:none;background:none;position:relative}
+.tab-btn:hover{color:var(--cyan);background:rgba(0,212,255,0.07);transform:translateY(-1px)}
+.tab-btn:hover i{transform:scale(1.3) rotate(-8deg);filter:drop-shadow(0 0 5px var(--cyan));color:var(--cyan)}
+.tab-btn i{transition:all .22s;display:inline-block}
+.tab-btn.active{color:var(--cyan);border-bottom:2px solid var(--cyan);background:rgba(0,212,255,0.06);text-shadow:0 0 12px rgba(0,212,255,0.3)}
+.tab-chip{padding:2px 8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);border-radius:10px;font-size:.68rem;color:var(--cyan);font-family:var(--mono);transition:all .2s}
+.tab-btn.active .tab-chip{background:var(--cyan);color:var(--bg);box-shadow:0 0 8px rgba(0,212,255,0.4)}
+.tab-pane{display:none}
+.tab-pane.active{display:block;animation:fadeSlide .3s ease}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;max-height:580px;overflow-y:auto}
+.table-wrap::-webkit-scrollbar{width:6px;height:6px}
+.table-wrap::-webkit-scrollbar-track{background:transparent}
+.table-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+table{width:100%;border-collapse:collapse;min-width:800px}
+thead th{padding:12px 16px;font-family:var(--sans);font-size:.75rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;background:rgba(0,0,0,0.3);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5;text-align:left;white-space:nowrap}
+tbody tr{border-bottom:1px solid rgba(0,212,255,0.05);transition:all .2s cubic-bezier(.4,0,.2,1);animation:rowIn .4s ease both}
+tbody tr:nth-child(odd){background:rgba(255,255,255,0.01)}
+tbody tr:hover{background:rgba(0,212,255,0.07);border-bottom-color:rgba(0,212,255,0.2);box-shadow:inset 3px 0 0 var(--cyan);transform:translateX(2px)}
+@keyframes rowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+td{padding:11px 16px;font-size:.86rem;font-weight:600;color:var(--text2);vertical-align:middle}
+.ip-tag{font-family:var(--mono);font-size:.88rem;font-weight:600;color:var(--cyan);background:rgba(91,200,245,0.06);padding:5px 10px;border-radius:6px;border:1px solid rgba(91,200,245,0.15);cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1);display:inline-block;letter-spacing:.5px}
+.ip-tag:hover{background:rgba(0,212,255,0.18);border-color:var(--cyan);box-shadow:0 0 18px rgba(0,212,255,0.35),0 0 6px rgba(0,212,255,0.2);transform:translateY(-2px) scale(1.05);color:#fff;text-shadow:0 0 8px var(--cyan)}
+.ip-tag.flood{color:var(--red);border-color:rgba(255,69,96,0.2);background:rgba(255,69,96,0.06);cursor:default}
+.zone-tag{font-family:var(--sans);font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.5px;display:inline-block;white-space:nowrap}
+.zone-tag.zone-blue{background:rgba(0,212,255,0.08);color:var(--cyan);border:1px solid rgba(0,212,255,0.2)}
+.zone-tag.zone-green{background:rgba(0,230,118,0.08);color:var(--green);border:1px solid rgba(0,230,118,0.2)}
+.zone-tag.zone-amber{background:rgba(255,184,0,0.08);color:var(--amber);border:1px solid rgba(255,184,0,0.2)}
+.zone-tag.zone-purple{background:rgba(156,39,176,0.08);color:#ce93d8;border:1px solid rgba(156,39,176,0.2)}
+.zone-tag.zone-teal{background:rgba(0,255,204,0.08);color:var(--teal);border:1px solid rgba(0,255,204,0.2)}
+.cat-tag{font-size:.72rem;font-family:var(--sans);font-weight:800;padding:3px 10px;border-radius:4px;letter-spacing:.5px;white-space:nowrap}
+.cat-tag.token{background:rgba(0,212,255,0.1);color:var(--cyan)}
+.cat-tag.ward{background:rgba(0,255,204,0.1);color:var(--teal)}
+.cat-tag.printer{background:rgba(255,184,0,0.1);color:var(--amber)}
+.cat-tag.dr{background:rgba(156,39,176,0.1);color:#ce93d8}
+.acts{display:none}
+.actions-col{display:none}
+.act-btn{width:30px;height:30px;border-radius:7px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s cubic-bezier(.4,0,.2,1)}
+.act-btn i{transition:all .2s;display:inline-block}
+.act-btn.edit{background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.15)}
+.act-btn.edit:hover{background:rgba(0,212,255,0.25);box-shadow:0 0 16px rgba(0,212,255,0.4);transform:translateY(-2px) scale(1.15);border-color:var(--cyan)}
+.act-btn.edit:hover i{transform:rotate(-15deg) scale(1.1)}
+.act-btn.del{background:rgba(255,69,96,0.1);color:var(--red);border:1px solid rgba(255,69,96,0.15)}
+.act-btn.del:hover{background:rgba(255,69,96,0.25);box-shadow:0 0 16px rgba(255,69,96,0.4);transform:translateY(-2px) scale(1.15);border-color:var(--red)}
+.act-btn.del:hover i{transform:scale(1.2)}
+.copy-btn{background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);color:var(--cyan);padding:5px 12px;border-radius:7px;font-family:var(--sans);font-size:.74rem;font-weight:700;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1);display:inline-flex;align-items:center;gap:5px}
+.copy-btn i{transition:all .2s;display:inline-block}
+.copy-btn:hover{background:rgba(0,212,255,0.2);box-shadow:0 0 16px rgba(0,212,255,0.3);transform:translateY(-2px) scale(1.05);border-color:var(--cyan);color:#fff}
+.copy-btn:hover i{transform:scale(1.2) rotate(-10deg)}
+.copy-btn.copied{color:var(--green);border-color:rgba(0,230,118,0.3);background:rgba(0,230,118,0.08)}
+.dev-name{color:var(--text);font-weight:800;font-size:.88rem}
+.host-mono{font-family:var(--mono);font-size:.78rem;color:var(--text2);font-weight:600}
+.author-name{color:var(--cyan);font-weight:700;font-size:.8rem;letter-spacing:1px}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s}
+.modal-bg.open{opacity:1;visibility:visible}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:18px;width:90%;max-width:560px;max-height:90vh;overflow-y:auto;transform:translateY(30px) scale(.97);transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 30px 80px rgba(0,0,0,0.5),0 0 40px rgba(0,212,255,0.08)}
+.modal-bg.open .modal{transform:translateY(0) scale(1)}
+.modal::-webkit-scrollbar{width:5px}
+.modal::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.modal-head{padding:22px 26px 18px;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.modal-head::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--teal))}
+.modal-head h2{font-family:var(--display);font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:3px;text-transform:uppercase}
+.modal-head p{font-size:.78rem;color:var(--text3);margin-top:4px}
+.modal-body{padding:22px 26px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fgroup{margin-bottom:14px}
+.fgroup label{display:block;margin-bottom:6px;font-family:var(--sans);font-size:.74rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+.fgroup input,.fgroup select{width:100%;padding:10px 14px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--mono);font-size:.83rem;transition:all .25s}
+.fgroup input:focus,.fgroup select:focus{outline:none;border-color:var(--cyan);background:rgba(0,212,255,0.04);box-shadow:0 0 0 3px rgba(0,212,255,0.08)}
+.fgroup select option{background:var(--bg2)}
+.modal-foot{padding:16px 26px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+.mbtn{padding:10px 22px;border-radius:9px;border:none;font-family:var(--sans);font-size:.8rem;font-weight:800;cursor:pointer;transition:all .25s;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:7px}
+.mbtn.cancel{background:rgba(255,255,255,0.05);color:var(--text3);border:1px solid var(--border)}
+.mbtn.cancel:hover{color:var(--text);border-color:var(--text3)}
+.mbtn.confirm{background:linear-gradient(135deg,var(--cyan),var(--teal));color:var(--bg);font-weight:700;box-shadow:0 4px 15px rgba(0,212,255,0.3)}
+.mbtn.confirm:hover{box-shadow:0 8px 28px rgba(0,212,255,0.5);transform:translateY(-2px) scale(1.04);filter:brightness(1.15)}
+
+/* ── FAB ── */
+.fab{position:fixed;bottom:28px;right:28px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--teal));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--bg);box-shadow:0 6px 20px rgba(0,212,255,0.35),0 0 40px rgba(0,212,255,0.15);transition:all .3s cubic-bezier(.4,0,.2,1);z-index:100;opacity:0;transform:scale(0) rotate(-90deg)}
+.fab.show{opacity:1;transform:scale(1) rotate(0deg)}
+.fab:hover{transform:scale(1.1) rotate(90deg);box-shadow:0 8px 28px rgba(0,212,255,0.5),0 0 60px rgba(0,212,255,0.2)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);padding:12px 22px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;font-family:var(--mono);font-size:.78rem;color:var(--text);display:flex;align-items:center;gap:10px;z-index:9000;opacity:0;transition:all .35s cubic-bezier(.4,0,.2,1);box-shadow:0 8px 30px rgba(0,0,0,0.4);white-space:nowrap;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success .t-icon{color:var(--green)}
+.toast.error   .t-icon{color:var(--red)}
+.toast.info    .t-icon{color:var(--cyan)}
+
+/* ── FOOTER ── */
+.footer{margin-top:20px;padding:18px 24px;background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;backdrop-filter:blur(20px)}
+.footer-stats{display:flex;gap:24px;flex-wrap:wrap}
+.fstat{display:flex;align-items:center;gap:8px;font-family:var(--sans);font-size:.76rem;font-weight:700;color:var(--text3)}
+.fstat-val{color:var(--cyan);font-weight:700}
+.footer-copy{font-size:.7rem;color:var(--text3);font-family:var(--mono)}
+
+/* ── EMPTY STATE ── */
+.empty-state{padding:60px 20px;text-align:center}
+.empty-state i{font-size:3rem;color:var(--text3);margin-bottom:14px;display:block}
+.empty-state p{color:var(--text3);font-family:var(--mono);font-size:.85rem}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.header{grid-template-columns:auto 1fr}.clock-wrap{display:none}}
+@media(max-width:768px){.header{grid-template-columns:1fr;gap:14px}.stats-grid{grid-template-columns:1fr 1fr}.header-controls{justify-content:flex-start}.form-grid{grid-template-columns:1fr}.login-content{padding:20px}.login-headline{font-size:2.5rem}.chip{padding:12px 20px}}
+@media(max-width:480px){.stats-grid{grid-template-columns:1fr}.app{padding:12px}.info-chips{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+
+<!-- AUTO-SAVE FLASH -->
+<div class="autosave-flash" id="autoSaveFlash">
+  <i class="fas fa-check-circle"></i> AUTO-SAVED
+</div>
+
+<!-- HIDDEN JSON IMPORT INPUT -->
+<input type="file" id="jsonImportInput" accept=".json" style="display:none" onchange="handleImport(event)">
+
+<!-- LOGIN PAGE -->
+<div class="login-wrapper" id="loginWrapper">
+  <div class="login-left">
+    <div class="hex-grid"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div>
+    <div class="energy-rings"><div class="ring ring-1"></div><div class="ring ring-2"></div><div class="ring ring-3"></div></div>
+    <div class="particles" id="particles"></div>
+    <div class="scanline-login"></div>
+    <div class="login-content">
+      <div class="hospital-brand">
+        <div class="brand-icon"><i class="fas fa-hospital-user"></i></div>
+        <div class="brand-text"><h2>JoBiN Cj</h2><p>Network Operations Center</p></div>
+      </div>
+      <div class="login-headline">AHM <span class="gradient-text">IT Dashboard</span></div>
+      <div class="info-chips">
+        <div class="chip" onclick="showFeature('servers')"><i class="fas fa-server"></i><span>Servers</span></div>
+        <div class="chip" onclick="showFeature('interfaces')"><i class="fas fa-network-wired"></i><span>Interfaces</span></div>
+        <div class="chip" onclick="showFeature('security')"><i class="fas fa-shield-alt"></i><span>Security</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="login-right">
+    <div class="login-form-container">
+      <div class="secure-badge"><div class="pulse-dot-green"></div><span>SECURE PORTAL</span></div>
+      <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-wrapper">
+            <input type="password" placeholder="Enter your password" id="password" oninput="checkPasswordStrength(this.value)" autofocus>
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility()" id="togglePassword"><i class="fas fa-eye"></i></button>
+          </div>
+          <div class="password-strength" id="strengthContainer" style="display:none">
+            <span class="strength-label" id="strengthLabel">Password strength: Fair</span>
+            <div class="strength-bars">
+              <div class="strength-segment filled-2" id="strength1"></div>
+              <div class="strength-segment filled-2" id="strength2"></div>
+              <div class="strength-segment" id="strength3"></div>
+              <div class="strength-segment" id="strength4"></div>
+              <div class="strength-segment" id="strength5"></div>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="auth-btn">AUTHENTICATE <i class="fas fa-arrow-right"></i></button>
+        <div class="error-message" id="loginError" style="display:none"><i class="fas fa-exclamation-triangle"></i><span>Invalid password.</span></div>
+        <div class="demo-hint"><code>CJ..</code> — Tech..</div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN DASHBOARD -->
+<div class="app">
+  <header class="header">
+    <div class="logo-wrap">
+      <div class="logo-icon"><i class="fas fa-hospital-symbol"></i></div>
+      <div class="logo-text">
+        <h1>AHM IT Operations Dashboard</h1>
+        <p><i class="fas fa-network-wired"></i> &nbsp;Network Management System &nbsp;•&nbsp; <span class="author-name">JOBIN CJ</span></p>
+      </div>
+    </div>
+    <div class="header-center">
+      <div class="status-bar">
+        <div class="status-pill"><div class="pulse-dot"></div>SYSTEM ONLINE</div>
+        <div class="status-pill" style="background:rgba(91,200,245,0.06);border-color:rgba(91,200,245,0.2);color:var(--cyan)"><i class="fas fa-shield-alt" style="font-size:10px"></i>SECURE</div>
+        <div class="status-pill" style="background:rgba(61,255,208,0.06);border-color:rgba(61,255,208,0.2);color:var(--teal)"><i class="fas fa-heartbeat" style="font-size:10px"></i>ALL SYSTEMS GO</div>
+        <div class="storage-badge storage-mem" id="storageBadge"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+      </div>
+      <div class="header-controls">
+        <button class="ctrl-btn active" id="adminToggle"><i class="fas fa-lock" id="adminIcon"></i>ADMIN: <span id="adminStatus">OFF</span></button>
+        <button class="ctrl-btn save-btn" id="exportBtn"><i class="fas fa-file-code"></i>SAVE HTML</button>
+        <button class="ctrl-btn json-export" id="exportJsonBtn" onclick="exportJSON()"><i class="fas fa-file-download"></i>EXPORT JSON</button>
+        <button class="ctrl-btn json-import" id="importJsonBtn" onclick="triggerImport()"><i class="fas fa-file-upload"></i>IMPORT JSON</button>
+        <button class="ctrl-btn" id="resetBtn"><i class="fas fa-redo-alt"></i>RESET</button>
+      </div>
+    </div>
+    <div class="clock-wrap">
+      <div class="clock-time" id="clkTime">00:00:00</div>
+      <div class="clock-date" id="clkDate">---</div>
+    </div>
+  </header>
+
+  <!-- STAT CARDS -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-card-inner"><div><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total Devices</div><div class="stat-sub">Across all zones &amp; facilities</div></div><div class="stat-icon-wrap"><i class="fas fa-server"></i></div></div><div class="stat-bar"><div class="stat-bar-fill"></div></div></div>
+    <div class="stat-card"><div class="stat-card-inner"><div><div class="stat-num" id="stat-online">0</div><div class="stat-label">Online Devices</div><div class="stat-sub">Status: <span>OPERATIONAL</span></div></div><div class="stat-icon-wrap"><i class="fas fa-wifi"></i></div></div><div class="stat-bar"><div class="stat-bar-fill"></div></div></div>
+    <div class="stat-card"><div class="stat-card-inner"><div><div class="stat-num" id="stat-printers">0</div><div class="stat-label">Network Printers</div><div class="stat-sub">Across AHM · ADSE · ADSC</div></div><div class="stat-icon-wrap"><i class="fas fa-print"></i></div></div><div class="stat-bar"><div class="stat-bar-fill"></div></div></div>
+    <div class="stat-card"><div class="stat-card-inner"><div><div class="stat-num" id="stat-offline">0</div><div class="stat-label">Needs Attention</div><div class="stat-sub">Review flagged devices</div></div><div class="stat-icon-wrap"><i class="fas fa-exclamation-triangle"></i></div></div><div class="stat-bar"><div class="stat-bar-fill"></div></div></div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div class="main-panel">
+    <div class="toolbar">
+      <div class="search-wrap"><i class="fas fa-search"></i><input type="text" id="searchInput" class="search-input" placeholder="Search IP · device · location · department..."></div>
+      <div class="result-count" id="resultCount">ALL <span id="rcNum">0</span> DEVICES</div>
+    </div>
+    <div class="data-mgmt-strip">
+      <span class="dm-label"><i class="fas fa-database" style="margin-right:5px;color:var(--cyan)"></i>Storage</span>
+      <div class="dm-sep"></div>
+      <span id="storageModeLabel" style="font-family:var(--mono);font-size:.7rem;color:var(--text3)">Initialising...</span>
+      <div class="dm-sep"></div>
+      <span class="dm-label" style="margin-left:4px"><i class="fas fa-info-circle" style="margin-right:4px;color:var(--text3)"></i>Data persists across browser restarts via IndexedDB + LocalStorage backup</span>
+    </div>
+    <div class="unsaved-hint show" id="saveHint">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>UNSAVED HTML EXPORT — click <strong id="saveLink">SAVE HTML</strong> to embed data into a downloadable file. Data is auto-saved to browser storage.</span>
+    </div>
+    <div class="tabs-bar">
+      <button class="tab-btn" data-tab="token"><i class="fas fa-desktop"></i>TOKEN DISPLAYS<span class="tab-chip" id="tc-token">0</span></button>
+      <button class="tab-btn active" data-tab="ward"><i class="fas fa-procedures"></i>WARD DISPLAYS<span class="tab-chip" id="tc-ward">0</span></button>
+      <button class="tab-btn" data-tab="printer"><i class="fas fa-print"></i>PRINTERS<span class="tab-chip" id="tc-printer">0</span></button>
+      <button class="tab-btn" data-tab="dr"><i class="fas fa-user-md"></i>DOCTOR CLINICS<span class="tab-chip" id="tc-dr">0</span></button>
+      <button class="tab-btn" data-tab="all"><i class="fas fa-list-ul"></i>ALL DEVICES<span class="tab-chip" id="tc-all">0</span></button>
+    </div>
+    <div class="tab-pane" id="tab-token"><div class="table-wrap"><table><thead><tr><th>Zone</th><th>Device</th><th>IP Address</th><th>Location</th><th>Copy IP</th><th class="actions-col">Actions</th></tr></thead><tbody id="tb-token"></tbody></table></div></div>
+    <div class="tab-pane active" id="tab-ward"><div class="table-wrap"><table><thead><tr><th>SL</th><th>Device</th><th>IP Address</th><th>Rooms</th><th>Floor/Area</th><th>Location</th><th>Copy IP</th><th class="actions-col">Actions</th></tr></thead><tbody id="tb-ward"></tbody></table></div></div>
+    <div class="tab-pane" id="tab-printer"><div class="table-wrap"><table><thead><tr><th>#</th><th>Host</th><th>IP Address</th><th>Model</th><th>Department</th><th>Facility</th><th>Copy IP</th><th class="actions-col">Actions</th></tr></thead><tbody id="tb-printer"></tbody></table></div></div>
+    <div class="tab-pane" id="tab-dr"><div class="table-wrap"><table><thead><tr><th>SL</th><th>Clinic</th><th>IP Address</th><th>Zone</th><th>Host Name</th><th>Copy IP</th><th class="actions-col">Actions</th></tr></thead><tbody id="tb-dr"></tbody></table></div></div>
+    <div class="tab-pane" id="tab-all"><div class="table-wrap"><table><thead><tr><th>Category</th><th>Device</th><th>IP Address</th><th>Location / Dept</th><th>Zone / Floor</th><th>Copy IP</th><th class="actions-col">Actions</th></tr></thead><tbody id="tb-all"></tbody></table></div></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-stats">
+      <div class="fstat"><i class="fas fa-server" style="color:var(--cyan);font-size:11px"></i>Total: <span class="fstat-val" id="ft-total">0</span></div>
+      <div class="fstat"><i class="fas fa-circle" style="color:var(--green);font-size:8px"></i>Online: <span class="fstat-val" id="ft-online">0</span></div>
+      <div class="fstat"><i class="fas fa-print" style="color:var(--amber);font-size:11px"></i>Printers: <span class="fstat-val" id="ft-printers">0</span></div>
+      <div class="fstat"><i class="fas fa-map-marker-alt" style="color:var(--text3);font-size:11px"></i>Zones: <span class="fstat-val">12+</span></div>
+    </div>
+    <div class="footer-copy">AHM IT OPS DASHBOARD v5.0 · IndexedDB + LocalStorage Persistence · USE "EXPORT JSON" FOR PORTABLE BACKUP</div>
+  </footer>
+  <button class="fab" id="fab"><i class="fas fa-plus"></i></button>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div class="modal-bg" id="pwModalBg">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-head"><h2><i class="fas fa-lock" style="color:var(--cyan);margin-right:10px"></i>Admin Access</h2><p id="pwModalSub">Enter your admin password to continue</p></div>
+    <div class="modal-body">
+      <div class="fgroup"><label><i class="fas fa-key" style="margin-right:6px;color:var(--amber)"></i>Password</label>
+        <div style="position:relative"><input type="password" id="pwInput" placeholder="Enter admin password..." style="padding-right:44px"><button onclick="togglePwVis()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px" id="pwEyeBtn"><i class="fas fa-eye"></i></button></div>
+      </div>
+      <div id="pwError" style="color:var(--red);font-size:.78rem;font-family:var(--sans);margin-top:-6px;display:none"><i class="fas fa-exclamation-circle"></i> Incorrect password.</div>
+    </div>
+    <div class="modal-foot"><button class="mbtn cancel" id="pwCancel"><i class="fas fa-times"></i>Cancel</button><button class="mbtn confirm" id="pwConfirm"><i class="fas fa-unlock"></i>Unlock</button></div>
+  </div>
+</div>
+
+<!-- EDIT/ADD MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-head"><h2 id="modalTitle">EDIT DEVICE</h2><p id="modalSub">Fill in the device details below</p></div>
+    <div class="modal-body">
+      <div class="fgroup"><label>Device Type</label><select id="devType"><option value="">-- Select Type --</option><option value="token">Token Display</option><option value="ward">Ward Display</option><option value="printer">Printer</option><option value="dr">Doctor Clinic</option></select></div>
+      <div id="dynFields"></div>
+      <input type="hidden" id="editIdx"><input type="hidden" id="editType">
+    </div>
+    <div class="modal-foot"><button class="mbtn cancel" id="modalCancel"><i class="fas fa-times"></i>Cancel</button><button class="mbtn confirm" id="modalSave"><i class="fas fa-check"></i>Save Device</button></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast success" id="toast"><i class="t-icon fas fa-check-circle"></i><span id="toastMsg">Ready</span></div>
+<script>
+
+// ================================================================
+// BASE DATA (used only when no stored data exists)
+// ================================================================
+const originalTokenData = [
+  {zone:"Zone 5",device:"Mini PC",ip:"172.19.24.77",  location:"Counter 7",       url:"View Display"},
+  {zone:"Zone 3",device:"Mini PC",ip:"172.19.24.231", location:"Ortho OPD",       url:"View Display"},
+  {zone:"Zone 4",device:"Mini PC",ip:"172.19.13.116", location:"Cardiology OPD",  url:"View Display"},
+  {zone:"Zone 2",device:"Mini PC",ip:"172.19.12.90",  location:"Gynaec OPD",      url:"View Display"},
+  {zone:"Zone 1",device:"Mini PC",ip:"172.19.24.126", location:"Pediatric Old",   url:"View Display"},
+  {zone:"Zone 9",device:"Mini PC",ip:"172.19.13.248", location:"Pharmacy counter",url:"View Display"},
+  {zone:"Zone 5",device:"Mini PC",ip:"172.19.13.186", location:"Main Reception",  url:"View Display"},
+  {zone:"Zone 1",device:"Mini PC",ip:"172.19.24.17",  location:"Pediatric New",   url:"View Display"},
+  {zone:"Zone 4",device:"Mini PC",ip:"172.19.24.118", location:"Cadiology Dr sachin",url:"View Display"},
+  {zone:"Zone 18",device:"Mini PC",ip:"172.19.13.108",location:"Radiology",       url:"View Display"},
+  {zone:"Zone 15",device:"Mini PC",ip:"172.19.13.106",location:"Sample collection",url:"View Display"},
+  {zone:"Zone 22",device:"Mini PC",ip:"172.19.13.105",location:"Dr Neena OPD",    url:"View Display"}
+];
+const originalWardData = [
+  {sl:"1",device:"Mini PC",ip:"172.19.13.241",rooms:"501 to 510 (510a/510b)",    floor:"5th Floor",    location:"E Wing"},
+  {sl:"2",device:"Mini PC",ip:"172.19.13.242",rooms:"415 to 427 (420a/b,427a/b)",floor:"4th Floor",    location:"D Wing"},
+  {sl:"3",device:"Mini PC",ip:"172.19.13.243",rooms:"401 to 414 (412a/412b)",    floor:"4th Floor",    location:"C Wing"},
+  {sl:"4",device:"Mini PC",ip:"172.19.13.244",rooms:"314 to 324 (324a/324b)",    floor:"3rd Floor",    location:"B Wing"},
+  {sl:"5",device:"Mini PC",ip:"172.19.13.245",rooms:"room 301 to 313",           floor:"3rd Floor",    location:"A Wing"},
+  {sl:"6",device:"Mini PC",ip:"172.19.13.246",rooms:"2201 to 2005",              floor:"ICU",          location:"ICU"},
+  {sl:"7",device:"Mini PC",ip:"172.19.13.247",rooms:"2001 to 2006",              floor:"LDR Room",     location:"LDR Room"},
+  {sl:"8",device:"Mini PC",ip:"172.19.13.249",rooms:"C001 to C005",              floor:"CICU",         location:"CICU"},
+  {sl:"9",device:"Mini PC",ip:"172.19.13.95", rooms:"Triage",                    floor:"ER Triage Token Display",location:"ER Triage"},
+  {sl:"10",device:"Mini PC",ip:"172.19.13.100",rooms:"C001 to C005",             floor:"ER Display",   location:"ER Display"},
+  {sl:"11",device:"Mini PC",ip:"172.19.13.105",rooms:"C001 to C005",             floor:"HR Bday",      location:"HR Bday"},
+  {sl:"12",device:"Mini PC",ip:"172.19.13.102",rooms:"C001 to C005",             floor:"OT Display",   location:"OT Display"},
+  {sl:"13",device:"Mini PC",ip:"172.19.1.244", rooms:"Media player",             floor:"ADSC Display", location:"ADSC Display"},
+  {sl:"14",device:"Mini PC",ip:"172.19.1.245", rooms:"Media Player",             floor:"ADSC Display", location:"adsc Display"},
+  {sl:"15",device:"Mini PC",ip:"172.19.13.36", rooms:"Blood request",            floor:"Lab Reception",location:"Lab Reception"}
+];
+const originalPrinterData = [
+  {cn:"1", host:"AH-AHM-OT",                     ip:"172.19.25.162",model:"CNBRQ308P2",            dept:"OT",                 facility:"AHM"},
+  {cn:"2", host:"AH-AHM-GYNEC-NS",               ip:"172.19.25.163",model:"CNBRQ308PD",            dept:"Gynec NS",           facility:"AHM"},
+  {cn:"3", host:"AH-AHM-NICU",                   ip:"172.19.24.42", model:"CNBRQ308K4",            dept:"NICU",               facility:"AHM"},
+  {cn:"4", host:"AH-AHM-RADIOLOGY-Billing",      ip:"172.19.25.164",model:"CNBRQ308P6",            dept:"Radiology Billing",  facility:"AHM"},
+  {cn:"5", host:"AH-AHM-INSURANCE-OP",           ip:"172.19.25.199",model:"CNBRQ308RK",            dept:"Insurance Paedia",   facility:"AHM"},
+  {cn:"6", host:"AH-AHM-MAIN-STORE",             ip:"172.19.25.166",model:"CNBRQ308Q3",            dept:"MAIN STORE",         facility:"AHM"},
+  {cn:"7", host:"AH-AHM-BIOMED",                 ip:"Flood",        model:"HP LJ MGD MFP E42540F", dept:"BIOMED",             facility:"AHM"},
+  {cn:"8", host:"AH-AHM-PEDIATRIC-RECEPTION",    ip:"172.19.25.167",model:"CNBRQ308SR",            dept:"Pediatric Rec",      facility:"AHM"},
+  {cn:"9", host:"AH-AHM-ICU",                    ip:"172.19.25.168",model:"CNBRQ790FS",            dept:"ICU",                facility:"AHM"},
+  {cn:"10",host:"AH-AHM-2ND-DSU",               ip:"172.19.25.169",model:"CNBRQ308RP",            dept:"2ND DSU",            facility:"AHM"},
+  {cn:"11",host:"AH-AHM-LABOUR",                ip:"172.19.25.170",model:"CNBRQ30908",             dept:"Labour NS",          facility:"AHM"},
+  {cn:"12",host:"AH-AHM-RadioReception",         ip:"172.19.25.77", model:"CNBRQ308ZD",            dept:"ER Radiology Rec",   facility:"AHM"},
+  {cn:"13",host:"AH-AHM-GYNEC-RECEPTION",       ip:"172.19.25.171",model:"CNBRQ308WP",            dept:"Gynaec Rec",         facility:"AHM"},
+  {cn:"14",host:"AH-AHM-BWING",                 ip:"172.19.25.172",model:"CNBRQ308Z2",            dept:"B wing",             facility:"AHM"},
+  {cn:"15",host:"AH-AHM-CWING",                 ip:"172.19.25.173",model:"CNBRQ3092P",            dept:"C Wing",             facility:"AHM"},
+  {cn:"16",host:"AH-AHM-ORTHO-RECEPTION",       ip:"172.19.25.174",model:"CNBRQ3092G",            dept:"Ortho Rec",          facility:"AHM"},
+  {cn:"17",host:"AH-AHM-IMOPD",                 ip:"172.19.25.175",model:"CNBRQ308FC",            dept:"IM OPD",             facility:"AHM"},
+  {cn:"18",host:"Ast-Hos-mankhool-4thfloor-DWING",ip:"172.19.25.176",model:"CNBRQ308KF",          dept:"D Wing",             facility:"AHM"},
+  {cn:"19",host:"AH-AHM-EWING",                 ip:"172.19.25.177",model:"CNBRQ308JW",            dept:"E Wing",             facility:"AHM"},
+  {cn:"20",host:"AH-AHM-OBSERVATION",           ip:"172.19.25.178",model:"CNBRQ308LS",            dept:"ER Observation",     facility:"AHM"},
+  {cn:"21",host:"AH-AHM-KITCHEN",               ip:"172.19.25.179",model:"CNBRQ308F1",            dept:"Kitchen",            facility:"AHM"},
+  {cn:"22",host:"AH-AHM-AWING",                 ip:"172.19.25.180",model:"CNBRQ308WY",            dept:"A Wing",             facility:"AHM"},
+  {cn:"23",host:"AH-AHM-MAINRECEPTION-N",       ip:"172.19.25.181",model:"CNBRQ308V8",            dept:"MAINRECEPTION-N",    facility:"AHM"},
+  {cn:"24",host:"AH-AHM-PEDIATRIC-NS",          ip:"172.19.25.182",model:"CNBRQ308QJ",            dept:"PEDIATRIC-NS",       facility:"AHM"},
+  {cn:"25",host:"AH-AHM-MRD",                   ip:"172.19.25.183",model:"CNBRQ308QP",            dept:"MRD",                facility:"AHM"},
+  {cn:"26",host:"AH-AHM-PHARMACYSTORE",         ip:"172.19.25.184",model:"CNBRQ308VQ",            dept:"Pharmavcy Store",    facility:"AHM"},
+  {cn:"27",host:"AH-AHM-ERNS",                  ip:"172.19.25.185",model:"CNBRQ308WB",            dept:"ER NS",              facility:"AHM"},
+  {cn:"28",host:"AH-AHM-CSE",                   ip:"172.19.25.186",model:"CNBRQ308CW",            dept:"CSE",                facility:"AHM"},
+  {cn:"29",host:"AH-AHM-PSYCHIATRY",            ip:"172.19.25.187",model:"CNBRQ308JZ",            dept:"IP Billing",         facility:"AHM"},
+  {cn:"30",host:"AH-AHM-Pharmacy Approval",     ip:"172.19.25.188",model:"CNBRQ4814G",            dept:"Pharmacy Approval",  facility:"AHM"},
+  {cn:"31",host:"AH-AHM-LAB",                   ip:"172.19.25.189",model:"CNBRQ4811Z",            dept:"LAB",                facility:"AHM"},
+  {cn:"32",host:"AHMPHARMACYCOUNTER",           ip:"172.19.25.190",model:"CNBRQ7902W",            dept:"Pharmacy Counter",   facility:"AHM"},
+  {cn:"33",host:"AH-AHM-INSURANCE",             ip:"172.19.25.191",model:"CNBRQ4812W",            dept:"INSURANCE",          facility:"AHM"},
+  {cn:"34",host:"H-AHM-MEDICAL-TRANSCRIPTION",  ip:"172.19.25.192",model:"CNBRQ4815P",            dept:"MT",                 facility:"AHM"},
+  {cn:"35",host:"AH-AHM-Main-Billing",          ip:"172.19.25.193",model:"CNBRQ308PK",            dept:"Main Billing",       facility:"AHM"},
+  {cn:"36",host:"AH-AHM-HR",                    ip:"172.19.25.194",model:"CNBRQ308M3",            dept:"HR",                 facility:"AHM"},
+  {cn:"37",host:"AH-AHM-CARDIOLOGY-REC",        ip:"172.19.25.195",model:"CNBRQ308RX",            dept:"Cardiology Rec",     facility:"AHM"},
+  {cn:"38",host:"AH-AHM-COVID-RECEPTION",       ip:"172.19.25.196",model:"CNBRQ4810P",            dept:"New OPD",            facility:"AHM"},
+  {cn:"39",host:"AH-AHM-ADMISSION-COUNTER",     ip:"172.19.25.197",model:"CNBRQ308H3",            dept:"Admission Counter",  facility:"AHM"},
+  {cn:"40",host:"AH-AHM-OPINSURANCE",           ip:"172.19.25.198",model:"CNBRQ308YQ",            dept:"OP Insurance",       facility:"AHM"},
+  {cn:"41",host:"AH-AHM-ER MOD",                ip:"172.19.....",  model:"CNBRQ308N5",            dept:"ER MOD",             facility:"AHM"},
+  {cn:"42",host:"AH-AHM-PHARMACY",              ip:"172.19.25.200",model:"HP LJ MGD MFP E42540F", dept:"Pharmacy",           facility:"AHM"},
+  {cn:"43",host:"NPI57B189",                    ip:"172.19.24.93", model:"CNBRQ308F8",            dept:"OLD Endoscopy",      facility:"AHM"},
+  {cn:"44",host:"AH-AHM-DRNAVEED",              ip:"172.19.24.34", model:"CNBRQ308LD",            dept:"Dr Naveed",          facility:"AHM"},
+  {cn:"45",host:"AH-AHM-NURSINGADMIN",          ip:"172.19.24.46", model:"CNBRQ308W4",            dept:"Nursing Admin",      facility:"AHM"},
+  {cn:"46",host:"ADSE Reception",               ip:"172.19.1.141", model:"CNBRQ480KN",            dept:"ADSE Reception",     facility:"ADSE"},
+  {cn:"47",host:"ADSE-NS",                      ip:"172.19.1.162", model:"CNBRQ480LS",            dept:"ADSE-NS",            facility:"ADSE"},
+  {cn:"48",host:"AH-AHM-CICU",                  ip:"172.19.24.48", model:"CNBRQ480JW",            dept:"CICU",               facility:"ADSE"},
+  {cn:"49",host:"AH-AHM-RECOVERY",              ip:"172.19.24.40", model:"CNBRQ480KH",            dept:"Recovery",           facility:"AHM"},
+  {cn:"50",host:"ADSC-P-PHARMACY",              ip:"172.19.1.179", model:"CNBRQ480M9",            dept:"ADSE Pharmacy",      facility:"ADSE"},
+  {cn:"51",host:"AH-AHM-MEP",                   ip:"172.19.24.24", model:"CNBRQ308VH",            dept:"MEP",                facility:"ADSE"},
+  {cn:"52",host:"AH-AHM-ER-BILLING",            ip:"172.19.24.9",  model:"CNBRQ308T8",            dept:"ER Reception",       facility:"AHM"},
+  {cn:"53",host:"AH-AHM-NEWEDOSCOPY",           ip:"172.19.24.92", model:"CNBRQ308TD",            dept:"NEW EDOSCOPY",       facility:"AHM"},
+  {cn:"54",host:"AH-AHM-GASTROOPD",             ip:"172.19.24.91", model:"CNBRQ30918",            dept:"Gastro OPD",         facility:"AHM"},
+  {cn:"55",host:"AH-AHM-IP-PHARMACY",           ip:"172.19.24.99", model:"CNBRQ308YX",            dept:"IP Pharmacy",        facility:"AHM"},
+  {cn:"56",host:"AH-AHM-DSU5",                  ip:"172.19.24.7",  model:"CNBRQ3090P",            dept:"DSU 5",              facility:"AHM"},
+  {cn:"57",host:"AH-AHM-COO",                   ip:"172.19.24.27", model:"CNCRQ3H2SH",            dept:"Colour Kalesh",      facility:"AHM"},
+  {cn:"58",host:"AH-AHM-DIALYSIS",              ip:"172.19.24.94", model:"CNBRQ308HM",            dept:"DIALYSIS",           facility:"AHM"},
+  {cn:"59",host:"AH-AHM-warclerkB",             ip:"172.19.24.95", model:"CNBRQ308ML",            dept:"Ward Clerk B",       facility:"AHM"},
+  {cn:"60",host:"NPI52F3DE",                    ip:"172.19.24.244",model:"CNBRQ308NV",            dept:"CSSD",               facility:"AHM"},
+  {cn:"61",host:"AH-AHM-CATHLAB",               ip:"172.19.24.96", model:"CNBRQ48151",            dept:"CATHLAB",            facility:"AHM"},
+  {cn:"62",host:"ADSE OPD",                     ip:"172.19.1.157", model:"HP LJ MGD MFP E42540F", dept:"ADSE OPD",           facility:"ADSE"},
+  {cn:"63",host:"AH-AHM-ORTHO-NS",              ip:"172.19.24.49", model:"CNBRQ308Y7",            dept:"Ortho NS",           facility:"AHM"},
+  {cn:"64",host:"ADSE OBSERVATION",             ip:"172.19.1.177", model:"CNBRQ4812M",            dept:"ADSE OBSERVATION",   facility:"ADSE"},
+  {cn:"65",host:"ADSE OT",                      ip:"172.19.1.206", model:"CNBRQ79174",            dept:"ADSE OT",            facility:"ADSE"},
+  {cn:"66",host:"AH-AHM-MAINRECEPTION1",        ip:"172.19.24.119",model:"CNBRQ308T3",            dept:"MAINRECEPTION1",     facility:"AHM"},
+  {cn:"67",host:"AH-AHM-PHARMACY STORE NEW",    ip:"172.19.24.8",  model:"CNBRQ7902K",            dept:"PHARMACY STORE NEW", facility:"AHM"},
+  {cn:"68",host:"AH-AHM-BIOMED1",               ip:"172.19.24.5",  model:"CNBRQ480J2",            dept:"BioMed New",         facility:"AHM"},
+  {cn:"69",host:"ADSC Colour",                  ip:"172.19.1.161", model:"CNCRSDB493",            dept:"ADSC Colour",        facility:"ADSC"},
+  {cn:"70",host:"BKP",                          ip:"11",           model:"CNBRQ788JS",            dept:"BKP",                facility:"AHM"},
+  {cn:"71",host:"BKP",                          ip:"11",           model:"CNCRQDP5TD",            dept:"BKP",                facility:"AHM"},
+  {cn:"72",host:"Cardiology NS",                ip:"172.19.25.118",model:"CNBRQ480KW",            dept:"Cardiology NS",      facility:"AHM"},
+  {cn:"73",host:"BKP",                          ip:"11",           model:"CNBRQ480SN",            dept:"BKP",                facility:"ADSC"},
+  {cn:"74",host:"AHM-ASNATH",                   ip:"172.19.24.26", model:"CNCRQDP5TD",            dept:"Asnath",             facility:"AHM"}
+];
+const originalDrData = [
+  {sl:"1", ip:"172.19.25.1",   clinic:"Clinic 1",      zone:"4",    host:"AHM-D-CLINIC2"},
+  {sl:"2", ip:"172.19.25.2",   clinic:"Clinic 2",      zone:"4",    host:"AHM-D-DRNAVEED"},
+  {sl:"3", ip:"172.19.25.3",   clinic:"Clinic 3",      zone:"5",    host:"AHM-D-CLINIC03"},
+  {sl:"4", ip:"172.19.25.4",   clinic:"Clinic 4",      zone:"5",    host:"AHM-D-CLINIC-4"},
+  {sl:"5", ip:"172.19.25.5",   clinic:"Clinic 5",      zone:"5",    host:"AHM-D-CLINIC5"},
+  {sl:"6", ip:"172.19.25.6",   clinic:"Clinic 6",      zone:"5",    host:"AHM-D-CLINIC06"},
+  {sl:"7", ip:"172.19.25.7",   clinic:"Clinic 7",      zone:"3",    host:"AHM-D-CLINIC07"},
+  {sl:"8", ip:"172.19.25.8",   clinic:"Clinic 8",      zone:"3",    host:"AHM-D-CLINIC08"},
+  {sl:"9", ip:"172.19.25.9",   clinic:"Clinic 9",      zone:"3",    host:"AHM-D-CLINI9"},
+  {sl:"10",ip:"172.19.25.10",  clinic:"Clinic10",      zone:"3",    host:"AHM-D-CLINIC10N"},
+  {sl:"11",ip:"172.19.25.11",  clinic:"Clinic11",      zone:"3",    host:"AHM-D-CLINIC11"},
+  {sl:"12",ip:"172.19.25.12",  clinic:"Clinic12",      zone:"3",    host:"AHM-D-CLINIC12"},
+  {sl:"12",ip:"172.19.24.79",  clinic:"Clinic12A",     zone:"3",    host:"AHM-D-INS10"},
+  {sl:"13",ip:"172.19.25.13",  clinic:"Clinic 13",     zone:"5",    host:"AHM-D-CLINIC014"},
+  {sl:"14",ip:"172.19.25.14",  clinic:"Clinic 14",     zone:"5",    host:"AHM-D-CLINIC014"},
+  {sl:"15",ip:"172.19.25.15",  clinic:"Clinic 15",     zone:"5",    host:"AHM-D-CLINIC15"},
+  {sl:"16",ip:"172.19.25.16",  clinic:"Clinic 16",     zone:"5",    host:"AHM-D-CLINIC-16"},
+  {sl:"17",ip:"172.19.25.17",  clinic:"Clinic 17",     zone:"5",    host:"AHM-D-CLINIC017"},
+  {sl:"18",ip:"172.19.25.18",  clinic:"Clinic 18",     zone:"5",    host:"AHM-D-CLINIC018"},
+  {sl:"19",ip:"172.19.25.19",  clinic:"Clinic 19",     zone:"5",    host:"AHM-D-CLINIC29"},
+  {sl:"20",ip:"172.19.25.20",  clinic:"Clinic 20",     zone:"5",    host:"AHM-D-CLINIC020"},
+  {sl:"21",ip:"172.19.25.21",  clinic:"Clinic 21",     zone:"2",    host:"AHM-D-CLINIC21"},
+  {sl:"22",ip:"172.19.25.22",  clinic:"Clinic 22",     zone:"2",    host:"AHM-D-CLINIC-22"},
+  {sl:"23",ip:"172.19.25.23",  clinic:"Clinic 23",     zone:"2",    host:"AHM-D-CLINIC23"},
+  {sl:"24",ip:"172.19.25.24",  clinic:"Clinic 24",     zone:"2",    host:"AHM-D-CLINIC24"},
+  {sl:"25",ip:"172.19.25.25",  clinic:"Clinic 25",     zone:"1",    host:"AHM-D-CLINIC-25"},
+  {sl:"26",ip:"172.19.25.26",  clinic:"Clinic 26",     zone:"1",    host:"AHM-D-CLINIC26"},
+  {sl:"27",ip:"172.19.25.27",  clinic:"Clinic 27",     zone:"1",    host:"AHM-D-CLINIC27"},
+  {sl:"28",ip:"172.19.25.28",  clinic:"Clinic 28",     zone:"1",    host:"AHM-D-CLINIC028"},
+  {sl:"29",ip:"172.19.25.29",  clinic:"Clinic 29",     zone:"5",    host:"AHM-D-CLINIC-29"},
+  {sl:"30",ip:"172.19.25.30",  clinic:"Clinic 30",     zone:"5",    host:"AHM-D-CLINIC-30"},
+  {sl:"31",ip:"172.19.25.31",  clinic:"Clinic 31",     zone:"5",    host:"AHM-D-CLINIC31"},
+  {sl:"32",ip:"172.19.25.32",  clinic:"Clinic 32",     zone:"22",   host:"AHM-D-CLINIC32"},
+  {sl:"33",ip:"172.19.25.33",  clinic:"Clinic 33",     zone:"22",   host:"AHM-D-DRSACHIN"},
+  {sl:"34",ip:"172.19.25.34",  clinic:"Clinic 34",     zone:"22",   host:"Clinic 34"},
+  {sl:"35",ip:"172.19.25.35",  clinic:"Clinic 35",     zone:"22",   host:"Clinic 35"},
+  {sl:"36",ip:"172.19.10.46",  clinic:"DR launch OT",  zone:"ot",   host:"ot"},
+  {sl:"37",ip:"172.19.1.175",  clinic:"ADSC Clinic 01",zone:"ADSC", host:"ADSC"},
+  {sl:"38",ip:"172.19.1.187",  clinic:"ADSC Clinic 02",zone:"ADSC", host:"ADSC"},
+  {sl:"39",ip:"172.19.1.185",  clinic:"ADSC Clinic 03",zone:"ADSC", host:"ADSC"},
+  {sl:"40",ip:"172.19.1.101",  clinic:"ADSC Clinic 04",zone:"ADSC", host:"ADSC"},
+  {sl:"41",ip:"172.19.13.237", clinic:"ER Self Reg",   zone:"ER",   host:"ER"}
+];
+function def() {
+  return {
+    token:   JSON.parse(JSON.stringify(originalTokenData)),
+    ward:    JSON.parse(JSON.stringify(originalWardData)),
+    printer: JSON.parse(JSON.stringify(originalPrinterData)),
+    dr:      JSON.parse(JSON.stringify(originalDrData))
+  };
+}
+
+// ================================================================
+// LAYERED STORAGE ENGINE  (IndexedDB primary + localStorage backup)
+// ================================================================
+const DB_NAME    = 'AHM_NOC_DB';
+const DB_VERSION = 1;
+const IDB_STORE  = 'device_data';
+const LS_KEY     = 'ahm_noc_v5_backup';
+
+let idb         = null;
+let storageMode = 'default';
+let data        = def();         // mutable working copy
+let isAdmin     = false;
+
+// ── IndexedDB helpers ──────────────────────────────────────────
+function openIDB() {
+  return new Promise(resolve => {
+    if (!window.indexedDB) { resolve(null); return; }
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains(IDB_STORE))
+        d.createObjectStore(IDB_STORE, { keyPath: 'id' });
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = ()  => resolve(null);
+  });
+}
+function idbSave(d) {
+  if (!idb) return Promise.resolve(false);
+  return new Promise(resolve => {
+    const tx = idb.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).put({ id: 'main', data: d, ts: Date.now() });
+    tx.oncomplete = () => resolve(true);
+    tx.onerror    = () => resolve(false);
+  });
+}
+function idbLoad() {
+  if (!idb) return Promise.resolve(null);
+  return new Promise(resolve => {
+    const tx  = idb.transaction(IDB_STORE, 'readonly');
+    const req = tx.objectStore(IDB_STORE).get('main');
+    req.onsuccess = () => resolve(req.result ? req.result.data : null);
+    req.onerror   = () => resolve(null);
+  });
+}
+
+// ── localStorage helpers (backup layer) ───────────────────────
+function lsSave(d) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify({ data: d, ts: Date.now() })); return true; }
+  catch { return false; }
+}
+function lsLoad() {
+  try { const s = localStorage.getItem(LS_KEY); return s ? JSON.parse(s).data : null; }
+  catch { return null; }
+}
+
+// ── UI: storage badge + strip label ───────────────────────────
+function updateStorageBadge() {
+  const badge = document.getElementById('storageBadge');
+  const label = document.getElementById('storageModeLabel');
+  const map = {
+    indexeddb:    { icon:'fa-database',           text:'IndexedDB ✓',     cls:'storage-idb', label:'Primary: IndexedDB  |  Backup: LocalStorage  |  Data survives browser restarts & history clears' },
+    localstorage: { icon:'fa-hdd',                text:'LocalStorage ⚠',  cls:'storage-ls',  label:'IndexedDB unavailable — using LocalStorage (may clear with history)' },
+    default:      { icon:'fa-exclamation-triangle',text:'Memory Only ✗',   cls:'storage-mem', label:'No persistent storage available — data will be lost on refresh' }
+  };
+  const c = map[storageMode];
+  if (badge) { badge.innerHTML = `<i class="fas ${c.icon}"></i> ${c.text}`; badge.className = 'storage-badge ' + c.cls; }
+  if (label) label.textContent = c.label;
+}
+
+function showAutoSaveFlash() {
+  const el = document.getElementById('autoSaveFlash');
+  if (!el) return;
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 2400);
+}
+
+// ── Boot: load from best available storage ─────────────────────
+async function initStorage() {
+  idb = await openIDB();
+
+  // 1. IndexedDB (survives history clear)
+  if (idb) {
+    const d = await idbLoad();
+    if (d && d.token && d.ward && d.printer && d.dr) {
+      data = d;
+      storageMode = 'indexeddb';
+      updateStorageBadge();
+      return;
+    }
+  }
+
+  // 2. LocalStorage fallback
+  const ls = lsLoad();
+  if (ls && ls.token && ls.ward && ls.printer && ls.dr) {
+    data = ls;
+    storageMode = 'localstorage';
+    // promote to IndexedDB if possible
+    if (idb) { await idbSave(data); storageMode = 'indexeddb'; }
+    updateStorageBadge();
+    return;
+  }
+
+  // 3. Factory defaults
+  data = def();
+  storageMode = idb ? 'indexeddb' : (window.localStorage ? 'localstorage' : 'default');
+  await persist(false); // save defaults silently
+}
+
+// ── persist: write to IndexedDB + localStorage backup ─────────
+async function persist(flash = true) {
+  const idbOk = await idbSave(data);
+  lsSave(data);
+  storageMode = idbOk ? 'indexeddb' : 'localstorage';
+  updateStorageBadge();
+  if (flash) { showAutoSaveFlash(); document.getElementById('saveHint').classList.add('show'); }
+}
+
+// ================================================================
+// JSON IMPORT / EXPORT
+// ================================================================
+function exportJSON() {
+  const total   = Object.values(data).reduce((s, a) => s + a.length, 0);
+  const payload = { app:'AHM-NOC-Dashboard', exported: new Date().toISOString(), total, data };
+  const blob    = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url     = URL.createObjectURL(blob);
+  const a       = document.createElement('a');
+  a.href = url; a.download = 'AHM-NOC-backup-' + new Date().toISOString().slice(0,10) + '.json'; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  toast('JSON BACKUP EXPORTED — ' + total + ' DEVICES', 'success');
+}
+
+function triggerImport() { document.getElementById('jsonImportInput').click(); }
+
+function handleImport(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    try {
+      const parsed   = JSON.parse(ev.target.result);
+      const imported = parsed.data || parsed;
+      if (!imported.token || !imported.ward || !imported.printer || !imported.dr) {
+        toast('INVALID BACKUP — MISSING SECTIONS', 'error'); return;
+      }
+      const total = Object.values(imported).reduce((s, a) => s + a.length, 0);
+      if (!confirm(`Import ${total} devices from backup?\nThis replaces all current data.`)) return;
+      data = imported;
+      await persist();
+      renderAll();
+      toast('IMPORT SUCCESSFUL — ' + total + ' DEVICES', 'success');
+    } catch { toast('INVALID JSON FILE', 'error'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// ================================================================
+// CLOCK
+// ================================================================
+function tick() {
+  const n = new Date();
+  document.getElementById('clkTime').textContent = n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  document.getElementById('clkDate').textContent = n.toLocaleDateString('en-US',{weekday:'short',day:'numeric',month:'short',year:'numeric'}).toUpperCase();
+}
+setInterval(tick, 1000); tick();
+
+// ================================================================
+// STATS
+// ================================================================
+function animateCount(el, target) {
+  let cur = 0, step = Math.ceil(target / 40);
+  const t = setInterval(() => { cur = Math.min(cur + step, target); el.textContent = cur; if (cur >= target) clearInterval(t); }, 30);
+}
+function updateStats() {
+  const total   = Object.values(data).reduce((s, a) => s + a.length, 0);
+  const offline = data.printer.filter(p => p.ip.toLowerCase() === 'flood').length;
+  animateCount(document.getElementById('stat-total'),    total);
+  animateCount(document.getElementById('stat-online'),   total - offline);
+  animateCount(document.getElementById('stat-printers'), data.printer.length);
+  animateCount(document.getElementById('stat-offline'),  offline);
+  document.getElementById('ft-total').textContent    = total;
+  document.getElementById('ft-online').textContent   = total - offline;
+  document.getElementById('ft-printers').textContent = data.printer.length;
+  document.getElementById('tc-token').textContent   = data.token.length;
+  document.getElementById('tc-ward').textContent    = data.ward.length;
+  document.getElementById('tc-printer').textContent = data.printer.length;
+  document.getElementById('tc-dr').textContent      = data.dr.length;
+  document.getElementById('tc-all').textContent     = total;
+  document.getElementById('rcNum').textContent      = total;
+}
+
+// ================================================================
+// RENDER HELPERS
+// ================================================================
+function zoneClass(z) {
+  if (['ADSC','adsc'].includes(z)) return 'zone-teal';
+  if (['ER','er'].includes(z))     return 'zone-amber';
+  if (['ot','OT'].includes(z))     return 'zone-purple';
+  const n = parseInt(z);
+  if (n <= 3) return 'zone-blue'; if (n <= 6) return 'zone-green';
+  if (n <= 10) return 'zone-amber'; return 'zone-purple';
+}
+function zoneLabel(z) { return ['ADSC','ER','ot'].includes(z) ? z.toUpperCase() : `ZONE ${z}`; }
+function facilityClass(f) { if (f==='AHM') return 'zone-blue'; if (f==='ADSE') return 'zone-green'; return 'zone-teal'; }
+function ipTag(ip) {
+  const flood = ip.toLowerCase() === 'flood';
+  return `<span class="ip-tag${flood?' flood':''}" ${!flood?`onclick="copyIP('${ip}')" title="Click to copy"`:'title="Offline / Flood"'}>${ip}</span>`;
+}
+function copyBtn(ip)      { return `<button class="copy-btn" onclick="copyIP('${ip}',this)"><i class="fas fa-copy"></i></button>`; }
+function actBtns(type, i) { return `<div class="acts"><button class="act-btn edit" onclick="openEdit('${type}',${i})" title="Edit"><i class="fas fa-pen"></i></button><button class="act-btn del" onclick="delItem('${type}',${i})" title="Delete"><i class="fas fa-trash-alt"></i></button></div>`; }
+function empty()          { return `<tr><td colspan="10"><div class="empty-state"><i class="fas fa-satellite-dish"></i><p>NO DEVICES FOUND</p></div></td></tr>`; }
+
+// ================================================================
+// RENDER TABLES
+// ================================================================
+function renderAll() { renderToken(); renderWard(); renderPrinter(); renderDr(); renderAllTab(); updateStats(); }
+
+function renderToken() {
+  document.getElementById('tb-token').innerHTML = data.token.map((d,i) => `<tr>
+    <td><span class="zone-tag ${zoneClass(d.zone.replace('Zone ',''))}">${d.zone.toUpperCase()}</span></td>
+    <td class="dev-name">${d.device}</td>
+    <td>${ipTag(d.ip)}</td>
+    <td style="color:var(--text)">${d.location}</td>
+    <td>${copyBtn(d.ip)}</td>
+    <td>${actBtns('token',i)}</td>
+  </tr>`).join('') || empty();
+}
+function renderWard() {
+  document.getElementById('tb-ward').innerHTML = data.ward.map((d,i) => `<tr>
+    <td style="font-family:var(--mono);color:var(--cyan)">${d.sl}</td>
+    <td class="dev-name">${d.device}</td>
+    <td>${ipTag(d.ip)}</td>
+    <td style="color:var(--text2);font-size:.78rem">${d.rooms}</td>
+    <td><span class="zone-tag zone-blue">${d.floor.toUpperCase()}</span></td>
+    <td style="color:var(--text)">${d.location}</td>
+    <td>${copyBtn(d.ip)}</td>
+    <td>${actBtns('ward',i)}</td>
+  </tr>`).join('') || empty();
+}
+function renderPrinter() {
+  document.getElementById('tb-printer').innerHTML = data.printer.map((d,i) => `<tr>
+    <td style="font-family:var(--mono);color:var(--text3)">${d.cn}</td>
+    <td class="host-mono">${d.host}</td>
+    <td>${ipTag(d.ip)}</td>
+    <td style="font-size:.75rem;color:var(--text3);font-family:var(--mono)">${d.model}</td>
+    <td style="color:var(--text)">${d.dept}</td>
+    <td><span class="zone-tag ${facilityClass(d.facility)}">${d.facility}</span></td>
+    <td>${copyBtn(d.ip)}</td>
+    <td>${actBtns('printer',i)}</td>
+  </tr>`).join('') || empty();
+}
+function renderDr() {
+  document.getElementById('tb-dr').innerHTML = data.dr.map((d,i) => `<tr>
+    <td style="font-family:var(--mono);color:var(--cyan)">${d.sl}</td>
+    <td class="dev-name">${d.clinic}</td>
+    <td>${ipTag(d.ip)}</td>
+    <td><span class="zone-tag ${zoneClass(d.zone)}">${zoneLabel(d.zone)}</span></td>
+    <td class="host-mono">${d.host}</td>
+    <td>${copyBtn(d.ip)}</td>
+    <td>${actBtns('dr',i)}</td>
+  </tr>`).join('') || empty();
+}
+function renderAllTab() {
+  let rows = [];
+  data.token.forEach((d,i)   => rows.push({t:'token',  i, cat:'TOKEN',   dev:d.device, ip:d.ip, loc:d.location, z:d.zone}));
+  data.ward.forEach((d,i)    => rows.push({t:'ward',   i, cat:'WARD',    dev:d.device, ip:d.ip, loc:d.location, z:d.floor}));
+  data.printer.forEach((d,i) => rows.push({t:'printer',i, cat:'PRINTER', dev:d.host,   ip:d.ip, loc:d.dept,     z:d.facility}));
+  data.dr.forEach((d,i)      => rows.push({t:'dr',     i, cat:'CLINIC',  dev:d.clinic, ip:d.ip, loc:d.host,     z:['ADSC','ER','ot'].includes(d.zone)?d.zone.toUpperCase():'Zone '+d.zone}));
+  document.getElementById('tb-all').innerHTML = rows.map(r => `<tr>
+    <td><span class="cat-tag ${r.t}">${r.cat}</span></td>
+    <td class="dev-name">${r.dev}</td>
+    <td>${ipTag(r.ip)}</td>
+    <td style="color:var(--text2)">${r.loc}</td>
+    <td><span class="zone-tag zone-blue" style="font-size:.65rem">${r.z}</span></td>
+    <td>${copyBtn(r.ip)}</td>
+    <td>${actBtns(r.t,r.i)}</td>
+  </tr>`).join('') || empty();
+}
+
+// ================================================================
+// TABS
+// ================================================================
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    document.getElementById('searchInput').value = '';
+    resetSearch();
+  });
+});
+
+// ================================================================
+// SEARCH
+// ================================================================
+document.getElementById('searchInput').addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  if (!q) { resetSearch(); return; }
+  const active = document.querySelector('.tab-btn.active').dataset.tab;
+  const tbId   = {token:'tb-token',ward:'tb-ward',printer:'tb-printer',dr:'tb-dr',all:'tb-all'}[active];
+  const rows   = document.getElementById(tbId).querySelectorAll('tr');
+  let n = 0;
+  rows.forEach(r => {
+    if (!r.querySelector('.empty-state')) {
+      const show = r.textContent.toLowerCase().includes(q);
+      r.style.display = show ? '' : 'none';
+      if (show) n++;
+    }
+  });
+  document.getElementById('resultCount').innerHTML = `FOUND <span>${n}</span> MATCH${n===1?'':'ES'}`;
+});
+function resetSearch() {
+  const active = document.querySelector('.tab-btn.active').dataset.tab;
+  const counts = {token:data.token.length,ward:data.ward.length,printer:data.printer.length,dr:data.dr.length,all:Object.values(data).reduce((s,a)=>s+a.length,0)};
+  document.getElementById('resultCount').innerHTML = `ALL <span id="rcNum">${counts[active]}</span> DEVICES`;
+  document.querySelectorAll('tbody tr').forEach(r => r.style.display = '');
+}
+
+// ================================================================
+// COPY
+// ================================================================
+function copyIP(ip, btn) {
+  navigator.clipboard.writeText(ip).then(() => {
+    toast('IP COPIED: ' + ip, 'success');
+    if (btn) { btn.classList.add('copied'); setTimeout(() => btn.classList.remove('copied'), 1500); }
+  });
+}
+
+// ================================================================
+// ADMIN
+// ================================================================
+const ADMIN_PASSWORD = 'Jobin';
+function togglePwVis() {
+  const inp = document.getElementById('pwInput');
+  const i   = document.getElementById('pwEyeBtn').querySelector('i');
+  if (inp.type==='password') { inp.type='text'; i.className='fas fa-eye-slash'; }
+  else { inp.type='password'; i.className='fas fa-eye'; }
+}
+document.getElementById('pwCancel').addEventListener('click', () => {
+  document.getElementById('pwModalBg').classList.remove('open');
+  document.getElementById('pwInput').value = '';
+  document.getElementById('pwError').style.display = 'none';
+});
+document.getElementById('pwConfirm').addEventListener('click', () => {
+  if (document.getElementById('pwInput').value === ADMIN_PASSWORD) {
+    isAdmin = true;
+    document.getElementById('adminStatus').textContent = 'ON';
+    document.getElementById('adminToggle').classList.add('active');
+    document.getElementById('adminIcon').className = 'fas fa-lock-open';
+    document.getElementById('fab').classList.add('show');
+    document.getElementById('pwModalBg').classList.remove('open');
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwError').style.display = 'none';
+    setActionsVisible(true);
+    toast('ADMIN MODE ACTIVE — WELCOME, JOBIN CJ', 'success');
+  } else {
+    document.getElementById('pwError').style.display = 'block';
+    document.getElementById('pwInput').value = ''; document.getElementById('pwInput').focus();
+  }
+});
+document.getElementById('pwInput').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('pwConfirm').click(); });
+function setActionsVisible(v) {
+  document.querySelectorAll('.acts').forEach(el => el.style.display = v ? 'flex' : 'none');
+  document.querySelectorAll('th.actions-col').forEach(el => el.style.display = v ? '' : 'none');
+}
+document.getElementById('adminToggle').addEventListener('click', () => {
+  if (!isAdmin) { document.getElementById('pwModalBg').classList.add('open'); setTimeout(()=>document.getElementById('pwInput').focus(),300); }
+  else { isAdmin=false; document.getElementById('adminStatus').textContent='OFF'; document.getElementById('adminToggle').classList.remove('active'); document.getElementById('adminIcon').className='fas fa-lock'; document.getElementById('fab').classList.remove('show'); setActionsVisible(false); toast('ADMIN MODE OFF','info'); }
+});
+
+// ================================================================
+// FAB + MODAL
+// ================================================================
+document.getElementById('fab').addEventListener('click', () => openModal());
+function openModal(type='', idx='') {
+  if (!isAdmin) { toast('ENABLE ADMIN MODE FIRST','error'); return; }
+  document.getElementById('modalTitle').textContent = idx!==''?'EDIT DEVICE':'ADD DEVICE';
+  document.getElementById('devType').value  = type;
+  document.getElementById('editIdx').value  = idx;
+  document.getElementById('editType').value = type;
+  buildFields(type);
+  if (idx !== '') setTimeout(() => fillFields(type, parseInt(idx)), 20);
+  document.getElementById('modalBg').classList.add('open');
+}
+function openEdit(type,i) { openModal(type,i); }
+document.getElementById('modalCancel').addEventListener('click', () => document.getElementById('modalBg').classList.remove('open'));
+document.getElementById('modalBg').addEventListener('click', e => { if (e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+document.getElementById('devType').addEventListener('change', function() { buildFields(this.value); document.getElementById('editIdx').value=''; });
+function inp(id, label, ph='') { return `<div class="fgroup"><label>${label}</label><input id="${id}" placeholder="${ph||label}"></div>`; }
+function buildFields(type) {
+  const f = document.getElementById('dynFields');
+  if (type==='token')   f.innerHTML = `<div class="form-grid">${inp('f_zone','Zone','e.g. Zone 5')}${inp('f_device','Device','e.g. Mini PC')}</div>${inp('f_ip','IP Address','172.19.x.x')}${inp('f_location','Location','e.g. Counter 7')}`;
+  else if (type==='ward')    f.innerHTML = `<div class="form-grid">${inp('f_sl','SL No')}${inp('f_device','Device','e.g. Mini PC')}</div>${inp('f_ip','IP Address','172.19.x.x')}<div class="form-grid">${inp('f_rooms','Rooms','e.g. 501 to 510')}${inp('f_floor','Floor / Area','e.g. 5th Floor')}</div>${inp('f_location','Location','e.g. E Wing')}`;
+  else if (type==='printer') f.innerHTML = `<div class="form-grid">${inp('f_cn','Entry #')}${inp('f_host','Host Name','AH-AHM-...')}</div>${inp('f_ip','IP Address','172.19.x.x')}<div class="form-grid">${inp('f_model','Printer Model')}${inp('f_dept','Department')}</div>${inp('f_facility','Facility','AHM / ADSE / ADSC')}`;
+  else if (type==='dr')      f.innerHTML = `<div class="form-grid">${inp('f_sl','SL No')}${inp('f_clinic','Clinic Name','e.g. Clinic 1')}</div>${inp('f_ip','IP Address','172.19.x.x')}<div class="form-grid">${inp('f_zone','Zone','e.g. 4')}${inp('f_host','Host Name','AHM-D-...')}</div>`;
+  else f.innerHTML = '';
+}
+function fillFields(type, i) {
+  const d = data[type][i];
+  const s = (id,v) => { const el = document.getElementById(id); if (el) el.value = v||''; };
+  if (type==='token')        { s('f_zone',d.zone);s('f_device',d.device);s('f_ip',d.ip);s('f_location',d.location); }
+  else if (type==='ward')    { s('f_sl',d.sl);s('f_device',d.device);s('f_ip',d.ip);s('f_rooms',d.rooms);s('f_floor',d.floor);s('f_location',d.location); }
+  else if (type==='printer') { s('f_cn',d.cn);s('f_host',d.host);s('f_ip',d.ip);s('f_model',d.model);s('f_dept',d.dept);s('f_facility',d.facility); }
+  else if (type==='dr')      { s('f_sl',d.sl);s('f_clinic',d.clinic);s('f_ip',d.ip);s('f_zone',d.zone);s('f_host',d.host); }
+}
+document.getElementById('modalSave').addEventListener('click', async () => {
+  if (!isAdmin) { toast('ADMIN MODE REQUIRED','error'); return; }
+  const type = document.getElementById('devType').value;
+  const idx  = document.getElementById('editIdx').value;
+  if (!type) { toast('SELECT DEVICE TYPE','error'); return; }
+  const g   = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
+  const req = ids => ids.every(id => g(id) !== '');
+  let item  = {};
+  if (type==='token') {
+    if (!req(['f_zone','f_device','f_ip','f_location'])) { toast('FILL REQUIRED FIELDS','error'); return; }
+    item = {zone:g('f_zone'),device:g('f_device'),ip:g('f_ip'),location:g('f_location'),url:'View Display'};
+  } else if (type==='ward') {
+    if (!req(['f_sl','f_device','f_ip','f_floor','f_location'])) { toast('FILL REQUIRED FIELDS','error'); return; }
+    item = {sl:g('f_sl'),device:g('f_device'),ip:g('f_ip'),rooms:g('f_rooms'),floor:g('f_floor'),location:g('f_location')};
+  } else if (type==='printer') {
+    if (!req(['f_cn','f_host','f_ip','f_model','f_dept','f_facility'])) { toast('FILL REQUIRED FIELDS','error'); return; }
+    item = {cn:g('f_cn'),host:g('f_host'),ip:g('f_ip'),model:g('f_model'),dept:g('f_dept'),facility:g('f_facility')};
+  } else if (type==='dr') {
+    if (!req(['f_sl','f_clinic','f_ip','f_zone','f_host'])) { toast('FILL REQUIRED FIELDS','error'); return; }
+    item = {sl:g('f_sl'),ip:g('f_ip'),clinic:g('f_clinic'),zone:g('f_zone'),host:g('f_host')};
+  }
+  if (idx !== '') { data[type][parseInt(idx)] = item; toast('DEVICE UPDATED','success'); }
+  else { data[type].push(item); toast('DEVICE ADDED','success'); }
+  await persist(); renderAll();
+  document.getElementById('modalBg').classList.remove('open');
+});
+
+// ================================================================
+// DELETE
+// ================================================================
+async function delItem(type, i) {
+  if (!isAdmin) { toast('ADMIN MODE REQUIRED','error'); return; }
+  if (confirm('Delete this device from the registry?')) {
+    data[type].splice(i, 1);
+    await persist(); renderAll();
+    toast('DEVICE REMOVED','info');
+  }
+}
+
+// ================================================================
+// HTML EXPORT (embed data into self-contained HTML file)
+// ================================================================
+function exportHTML() {
+  const tJ = JSON.stringify(data.token,   null, 2);
+  const wJ = JSON.stringify(data.ward,    null, 2);
+  const pJ = JSON.stringify(data.printer, null, 2);
+  const dJ = JSON.stringify(data.dr,      null, 2);
+  let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const rep = (h, v, j) => h.replace(new RegExp('(const ' + v + ' = )\\[[\\s\\S]*?\\];'), '$1' + j + ';');
+  html = rep(html, 'originalTokenData',   tJ);
+  html = rep(html, 'originalWardData',    wJ);
+  html = rep(html, 'originalPrinterData', pJ);
+  html = rep(html, 'originalDrData',      dJ);
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'AHM-NOC-' + new Date().toISOString().slice(0,10) + '.html'; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  document.getElementById('saveHint').classList.remove('show');
+  toast('HTML FILE SAVED','success');
+}
+document.getElementById('exportBtn').addEventListener('click', exportHTML);
+document.getElementById('saveLink').addEventListener('click', exportHTML);
+
+// ================================================================
+// RESET
+// ================================================================
+document.getElementById('resetBtn').addEventListener('click', async () => {
+  if (confirm('Reset ALL data to factory defaults?\nThis cannot be undone.')) {
+    data = def();
+    await persist(false);
+    renderAll();
+    document.getElementById('saveHint').classList.remove('show');
+    toast('DATA RESET TO FACTORY DEFAULTS','info');
+  }
+});
+
+// ================================================================
+// TOAST
+// ================================================================
+let toastTimer;
+function toast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.querySelector('.t-icon').className = 't-icon fas fa-' + (type==='success'?'check-circle':type==='error'?'times-circle':'info-circle');
+  document.getElementById('toastMsg').textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ================================================================
+// LOGIN PAGE
+// ================================================================
+function createParticles() {
+  const c = document.getElementById('particles'); if (!c) return;
+  for (let i=0;i<40;i++) {
+    const p = document.createElement('div'); p.className='particle';
+    const colors=['#5bc8f5','#3dffd0','#b829ff'];
+    const col=colors[Math.floor(Math.random()*colors.length)];
+    p.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;background:${col};width:${2+Math.random()*4}px;height:${2+Math.random()*4}px;box-shadow:0 0 ${5+Math.random()*10}px ${col};animation:particleDrift ${5+Math.random()*10}s linear ${Math.random()*5}s infinite`;
+    c.appendChild(p);
+  }
+}
+function checkPasswordStrength(password) {
+  const sc=document.getElementById('strengthContainer'),sl=document.getElementById('strengthLabel');
+  const segs=[1,2,3,4,5].map(n=>document.getElementById('strength'+n));
+  if(!password){sc.style.display='none';return;}
+  sc.style.display='block';
+  segs.forEach(s=>s.className='strength-segment');
+  let str=0;
+  if(password.length>0)str+=.5;if(password.length>=6)str+=.5;if(password.length>=8)str+=1;
+  if(/[a-z]/.test(password))str+=1;if(/[A-Z]/.test(password))str+=1;if(/[0-9]/.test(password))str+=1;if(/[^a-zA-Z0-9]/.test(password))str+=1;
+  str=Math.min(5,Math.floor(str));
+  for(let i=0;i<str;i++)segs[i].classList.add('filled-'+str);
+  sl.textContent='Password strength: '+['','Very Weak','Weak','Fair','Good','Strong'][str];
+}
+function togglePasswordVisibility() {
+  const i=document.getElementById('password'),b=document.getElementById('togglePassword').querySelector('i');
+  if(i.type==='password'){i.type='text';b.className='fas fa-eye-slash';}else{i.type='password';b.className='fas fa-eye';}
+}
+function handleLogin(event) {
+  event.preventDefault();
+  const pw=document.getElementById('password').value;
+  const err=document.getElementById('loginError');
+  if(pw==='Jobin'){
+    document.getElementById('loginWrapper').classList.add('hidden');
+    err.style.display='none';
+    toast('WELCOME TO AHM NETWORK OPERATIONS CENTER','success');
+    document.getElementById('password').value='';
+    checkPasswordStrength('');
+  } else {
+    err.style.display='flex';
+    document.getElementById('password').value='';
+    checkPasswordStrength('');
+  }
+}
+function showFeature(feature) {
+  const m={servers:'🔧 SERVERS: All systems operational across 3 data centers',interfaces:'🌐 INTERFACES: 24 active network interfaces, 99.9% uptime',security:'🛡️ SECURITY: Intrusion prevention active, no threats detected'};
+  toast(m[feature],'info');
+}
+
+// ================================================================
+// BOOT
+// ================================================================
+document.addEventListener('DOMContentLoaded', async () => {
+  createParticles();
+  document.getElementById('password').addEventListener('keydown', e => { if(e.key==='Enter') handleLogin(e); });
+  document.getElementById('password').focus();
+
+  // Init layered storage, then render
+  await initStorage();
+  renderAll();
+
+  // Admin starts OFF
+  isAdmin=false;
+  document.getElementById('adminStatus').textContent='OFF';
+  document.getElementById('adminToggle').classList.remove('active');
+  document.getElementById('adminIcon').className='fas fa-lock';
+  document.getElementById('fab').classList.remove('show');
+  setActionsVisible(false);
+});
+</script>
+</body>
+</html>
