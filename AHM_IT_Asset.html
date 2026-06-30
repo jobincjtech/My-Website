@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHM IT Asset Registry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+
+:root{
+  --bg-void:#0a0d12;
+  --bg-deep:#0d1117;
+  --bg-panel:#11161d;
+  --bg-card:#151b23;
+  --bg-elevated:#1a212b;
+  --border-faint:rgba(255,255,255,0.06);
+  --border-soft:rgba(255,255,255,0.10);
+  --text-primary:#eef1f5;
+  --text-secondary:#9aa6b4;
+  --text-tertiary:#5d6b7a;
+  --accent:#3ddc97;
+  --accent-dim:#2a9d6f;
+  --accent-glow:rgba(61,220,151,0.18);
+  --accent-amber:#e8a23d;
+  --danger:#e35d6a;
+  --radius:14px;
+  --radius-sm:9px;
+  --mono:'IBM Plex Mono',monospace;
+  --sora:'Sora',sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg-void);
+  color:var(--text-primary);
+  font-family:var(--sora);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+.hidden{display:none !important;}
+
+/* ============ LOGIN ============ */
+.login-screen{
+  position:fixed; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+}
+.login-bg{position:absolute; inset:0; background:
+  radial-gradient(ellipse 120% 80% at 50% -10%, #131a22 0%, var(--bg-void) 55%);
+}
+.grid-overlay{
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse 70% 60% at 50% 35%, black 10%, transparent 75%);
+}
+.glow{position:absolute; border-radius:50%; filter:blur(80px); opacity:0.35;}
+.glow-1{width:480px; height:480px; background:var(--accent); top:-180px; left:-120px;}
+.glow-2{width:420px; height:420px; background:#2563eb; bottom:-160px; right:-100px; opacity:0.18;}
+
+.login-card{
+  position:relative; z-index:2;
+  width:min(420px, 90vw);
+  background:linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+  border:1px solid var(--border-soft);
+  border-radius:20px;
+  padding:44px 38px 34px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 30px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02) inset;
+  animation:cardIn 0.6s cubic-bezier(.16,1,.3,1);
+}
+@keyframes cardIn{from{opacity:0; transform:translateY(14px) scale(.98);} to{opacity:1; transform:translateY(0) scale(1);}}
+
+.login-mark{
+  width:56px; height:56px; border-radius:14px;
+  background:linear-gradient(145deg, var(--accent), var(--accent-dim));
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-weight:700; font-size:14px; letter-spacing:0.5px;
+  color:#06140f;
+  position:relative; margin-bottom:22px;
+  box-shadow:0 8px 24px -6px var(--accent-glow);
+}
+.mark-ring{
+  position:absolute; inset:-6px; border-radius:18px;
+  border:1px solid rgba(61,220,151,0.25);
+}
+.login-eyebrow{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:1.6px;
+  color:var(--accent); text-transform:uppercase; margin-bottom:10px; font-weight:500;
+}
+.login-title{
+  font-size:30px; font-weight:700; letter-spacing:-0.5px; margin:0 0 8px;
+}
+.login-sub{
+  color:var(--text-secondary); font-size:13.5px; margin:0 0 28px; line-height:1.5;
+}
+.field-label{
+  display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:1.2px;
+  color:var(--text-tertiary); text-transform:uppercase; margin-bottom:8px;
+}
+.pw-wrap{position:relative; margin-bottom:8px;}
+.pw-wrap input{
+  width:100%; padding:14px 44px 14px 16px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius-sm);
+  color:var(--text-primary);
+  font-size:15px; font-family:var(--mono);
+  letter-spacing:2px;
+  transition:border-color .2s, background .2s;
+}
+.pw-wrap input::placeholder{letter-spacing:2px; color:var(--text-tertiary);}
+.pw-wrap input:focus{outline:none; border-color:var(--accent); background:rgba(61,220,151,0.04);}
+.pw-eye{
+  position:absolute; right:10px; top:50%; transform:translateY(-50%);
+  background:none; border:none; color:var(--text-tertiary); cursor:pointer;
+  padding:6px; display:flex; border-radius:6px;
+}
+.pw-eye:hover{color:var(--text-secondary);}
+.login-error{
+  color:var(--danger); font-size:12.5px; min-height:18px; margin:6px 2px 10px;
+  font-family:var(--mono);
+}
+.login-btn{
+  width:100%; padding:14px 18px;
+  background:var(--accent); color:#06140f;
+  border:none; border-radius:var(--radius-sm);
+  font-family:var(--sora); font-weight:600; font-size:14.5px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  cursor:pointer; margin-top:6px;
+  transition:transform .15s, box-shadow .15s, background .15s;
+  box-shadow:0 10px 24px -8px var(--accent-glow);
+}
+.login-btn:hover{background:#4eedb0; transform:translateY(-1px); box-shadow:0 14px 30px -8px var(--accent-glow);}
+.login-btn:active{transform:translateY(0);}
+.login-footer{
+  text-align:center; margin-top:26px; font-size:11px; color:var(--text-tertiary);
+  font-family:var(--mono);
+}
+.shake{animation:shake .4s;}
+@keyframes shake{
+  10%,90%{transform:translateX(-1px);} 20%,80%{transform:translateX(2px);}
+  30%,50%,70%{transform:translateX(-5px);} 40%,60%{transform:translateX(5px);}
+}
+
+/* ============ APP SHELL ============ */
+.app{min-height:100vh; display:flex; flex-direction:column;}
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 32px; border-bottom:1px solid var(--border-faint);
+  background:rgba(13,17,23,0.85); backdrop-filter:blur(12px);
+  position:sticky; top:0; z-index:20;
+}
+.topbar-left{display:flex; align-items:center; gap:13px;}
+.brand-mark{
+  width:38px; height:38px; border-radius:10px;
+  background:linear-gradient(145deg, var(--accent), var(--accent-dim));
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-weight:700; font-size:11px; color:#06140f;
+}
+.brand-title{font-weight:700; font-size:15.5px; letter-spacing:-0.2px;}
+.brand-sub{font-size:11.5px; color:var(--text-tertiary); font-family:var(--mono); margin-top:1px;}
+.topbar-right{display:flex; gap:10px; align-items:center;}
+
+.btn{
+  display:flex; align-items:center; gap:7px;
+  padding:10px 16px; border-radius:9px; border:1px solid var(--border-soft);
+  font-family:var(--sora); font-size:13.5px; font-weight:600; cursor:pointer;
+  background:transparent; color:var(--text-primary);
+  transition:all .15s;
+}
+.btn-ghost{background:rgba(255,255,255,0.02);}
+.btn-ghost:hover{background:rgba(255,255,255,0.06); border-color:var(--border-soft);}
+.btn-primary{background:var(--accent); color:#06140f; border-color:transparent;}
+.btn-primary:hover{background:#4eedb0; transform:translateY(-1px);}
+.btn-danger{background:rgba(227,93,106,0.1); color:var(--danger); border-color:rgba(227,93,106,0.25);}
+.btn-danger:hover{background:rgba(227,93,106,0.18);}
+.btn-icon{padding:10px; }
+.btn-icon:hover{background:rgba(255,255,255,0.06);}
+
+.main{flex:1; padding:28px 32px 60px; max-width:1400px; width:100%; margin:0 auto;}
+
+/* ============ STATS ============ */
+.stats-row{
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
+  gap:14px; margin-bottom:26px;
+}
+.stat-card{
+  background:var(--bg-card); border:1px solid var(--border-faint);
+  border-radius:var(--radius); padding:18px 20px;
+  position:relative; overflow:hidden;
+}
+.stat-card::before{
+  content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
+  background:var(--accent); opacity:0.6;
+}
+.stat-num{font-family:var(--mono); font-size:26px; font-weight:600; letter-spacing:-0.5px;}
+.stat-label{font-size:11.5px; color:var(--text-secondary); margin-top:4px; font-weight:500;}
+
+/* ============ CONTROLS ============ */
+.controls{
+  display:flex; flex-direction:column; gap:16px; margin-bottom:22px;
+}
+.search-wrap{
+  position:relative; display:flex; align-items:center;
+  background:var(--bg-card); border:1px solid var(--border-faint);
+  border-radius:11px; padding:0 16px;
+}
+.search-wrap svg{color:var(--text-tertiary); flex-shrink:0;}
+.search-wrap input{
+  flex:1; background:none; border:none; outline:none;
+  color:var(--text-primary); font-family:var(--sora); font-size:14px;
+  padding:13px 12px;
+}
+.search-wrap input::placeholder{color:var(--text-tertiary);}
+.search-wrap:focus-within{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow);}
+
+.filter-wrap{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+.filter-label{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:1.2px;
+  color:var(--text-tertiary); text-transform:uppercase; flex-shrink:0;
+}
+.chip-row{display:flex; gap:8px; flex-wrap:wrap;}
+.chip{
+  padding:7px 14px; border-radius:20px; border:1px solid var(--border-soft);
+  background:var(--bg-card); color:var(--text-secondary);
+  font-size:12.5px; font-weight:500; cursor:pointer; transition:all .15s;
+  font-family:var(--sora);
+}
+.chip:hover{border-color:var(--accent); color:var(--text-primary);}
+.chip.active{background:var(--accent); color:#06140f; border-color:transparent; font-weight:600;}
+
+.location-select{
+  background:var(--bg-card); color:var(--text-primary); border:1px solid var(--border-soft);
+  border-radius:9px; padding:8px 14px; font-family:var(--sora); font-size:13px; cursor:pointer;
+  max-width:280px;
+}
+.location-select:focus{outline:none; border-color:var(--accent);}
+
+/* ============ TABLE ============ */
+.table-section{
+  background:var(--bg-card); border:1px solid var(--border-faint);
+  border-radius:var(--radius); overflow:hidden;
+}
+.table-meta{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 20px; border-bottom:1px solid var(--border-faint);
+  font-size:12.5px; color:var(--text-secondary); font-family:var(--mono);
+}
+#sortSelect{
+  background:var(--bg-elevated); color:var(--text-secondary); border:1px solid var(--border-soft);
+  border-radius:7px; padding:6px 10px; font-family:var(--sora); font-size:12px; cursor:pointer;
+}
+.table-wrap{overflow-x:auto; max-height:62vh;}
+table{width:100%; border-collapse:collapse; font-size:13.5px;}
+thead{position:sticky; top:0; background:var(--bg-elevated); z-index:5;}
+th{
+  text-align:left; padding:13px 16px; font-weight:600; font-size:11px;
+  letter-spacing:0.6px; text-transform:uppercase; color:var(--text-tertiary);
+  border-bottom:1px solid var(--border-faint); white-space:nowrap;
+}
+td{
+  padding:12px 16px; border-bottom:1px solid var(--border-faint);
+  color:var(--text-secondary); white-space:nowrap;
+}
+tbody tr{transition:background .12s;}
+tbody tr:hover{background:rgba(255,255,255,0.025);}
+td.sr{font-family:var(--mono); color:var(--text-tertiary); font-size:12.5px;}
+td.tag{font-family:var(--mono); color:var(--accent); font-size:12.5px;}
+td.primary{color:var(--text-primary); font-weight:500;}
+.sub-badge{
+  display:inline-block; padding:4px 10px; border-radius:6px;
+  background:rgba(61,220,151,0.08); color:var(--accent);
+  font-size:11.5px; font-weight:600; font-family:var(--mono);
+}
+.edit-cell{text-align:right;}
+.edit-link{
+  background:none; border:none; color:var(--text-tertiary); cursor:pointer;
+  padding:6px; border-radius:6px; display:inline-flex;
+}
+.edit-link:hover{color:var(--accent); background:rgba(61,220,151,0.08);}
+.new-tag{
+  font-family:var(--mono); font-size:9.5px; color:var(--accent-amber);
+  border:1px solid rgba(232,162,61,0.35); padding:1px 6px; border-radius:4px;
+  margin-left:8px; vertical-align:middle;
+}
+
+.empty-state{padding:70px 20px; text-align:center; color:var(--text-tertiary);}
+.empty-icon{font-size:34px; margin-bottom:10px; opacity:0.5;}
+
+/* ============ MODAL ============ */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(5,7,10,0.75); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center; z-index:100; padding:20px;
+  animation:fadeIn .18s;
+}
+@keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+.modal-card{
+  background:var(--bg-panel); border:1px solid var(--border-soft);
+  border-radius:18px; width:min(640px, 100%); max-height:88vh; overflow-y:auto;
+  box-shadow:0 40px 90px -20px rgba(0,0,0,0.7);
+  animation:cardIn .25s cubic-bezier(.16,1,.3,1);
+}
+.modal-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:22px 26px; border-bottom:1px solid var(--border-faint);
+  position:sticky; top:0; background:var(--bg-panel); z-index:2;
+}
+.modal-head h2{font-size:17px; font-weight:700; margin:0;}
+.modal-close{
+  background:none; border:none; color:var(--text-tertiary); cursor:pointer;
+  padding:6px; border-radius:6px;
+}
+.modal-close:hover{color:var(--text-primary); background:rgba(255,255,255,0.06);}
+.modal-form{padding:24px 26px;}
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+.form-field{display:flex; flex-direction:column; gap:7px;}
+.form-field label{
+  font-size:11px; font-family:var(--mono); letter-spacing:0.6px;
+  color:var(--text-tertiary); text-transform:uppercase;
+}
+.form-field input, .form-field select{
+  background:rgba(255,255,255,0.03); border:1px solid var(--border-soft);
+  border-radius:8px; padding:11px 13px; color:var(--text-primary);
+  font-family:var(--sora); font-size:13.5px; outline:none;
+}
+.form-field input:focus, .form-field select:focus{border-color:var(--accent); background:rgba(61,220,151,0.04);}
+.form-field select{cursor:pointer;}
+.modal-actions{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:24px; padding-top:20px; border-top:1px solid var(--border-faint);
+}
+.modal-actions-right{display:flex; gap:10px;}
+
+/* ============ TOAST ============ */
+.toast{
+  position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--bg-elevated); border:1px solid var(--border-soft);
+  color:var(--text-primary); padding:13px 22px; border-radius:10px;
+  font-size:13.5px; font-weight:500; z-index:200; opacity:0;
+  transition:all .25s; box-shadow:0 20px 40px -10px rgba(0,0,0,0.5);
+  display:flex; align-items:center; gap:10px;
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+.toast::before{content:'●'; color:var(--accent); font-size:9px;}
+
+@media (max-width:720px){
+  .main{padding:18px 14px 40px;}
+  .topbar{padding:14px 16px;}
+  .brand-sub{display:none;}
+  .form-grid{grid-template-columns:1fr;}
+  .topbar-right .btn span, #addBtn span, #exportBtn span{display:none;}
+  .btn{padding:10px;}
+  th, td{padding:10px 12px;}
+}
+
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-bg">
+    <div class="grid-overlay"></div>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+  </div>
+  <div class="login-card">
+    <div class="login-mark">
+      <div class="mark-ring"></div>
+      <span>AHM</span>
+    </div>
+    <div class="login-eyebrow">ASTER HOSPITAL MANKHOOL &middot; IT DEPARTMENT</div>
+    <h1 class="login-title">Asset Registry</h1>
+    <p class="login-sub">Restricted access. Authorized IT personnel only.</p>
+    <form id="loginForm" autocomplete="off">
+      <label class="field-label" for="pw">PASSCODE</label>
+      <div class="pw-wrap">
+        <input type="password" id="pw" placeholder="••••••••" required autocomplete="off">
+        <button type="button" id="togglePw" class="pw-eye" aria-label="Show password">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/></svg>
+        </button>
+      </div>
+      <div id="loginError" class="login-error"></div>
+      <button type="submit" class="login-btn">
+        <span>Unlock Registry</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </form>
+    <div class="login-footer">Built for Jobin CJ &middot; Senior IT Executive</div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div id="app" class="app hidden">
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand-mark">AHM</div>
+      <div class="brand-text">
+        <div class="brand-title">IT Asset Registry</div>
+        <div class="brand-sub">Aster Hospital Mankhool, Dubai &middot; Department-wise view</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button id="exportBtn" class="btn btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Export Excel
+      </button>
+      <button id="addBtn" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Add Asset
+      </button>
+      <button id="logoutBtn" class="btn btn-icon" aria-label="Lock">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V7a4 4 0 1 1 8 0v4" stroke="currentColor" stroke-width="1.8"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <section class="stats-row" id="statsRow"></section>
+
+    <section class="controls">
+      <div class="search-wrap">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by tag, serial, make, model, owner, department...">
+      </div>
+      <div class="filter-wrap">
+        <span class="filter-label">Sub-Category</span>
+        <div id="subFilters" class="chip-row"></div>
+      </div>
+      <div class="filter-wrap">
+        <span class="filter-label">Department</span>
+        <select id="locationFilter" class="location-select">
+          <option value="All">All Departments</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="table-section">
+      <div class="table-meta">
+        <span id="resultCount">256 assets</span>
+        <div class="table-meta-right">
+          <select id="sortSelect">
+            <option value="srNo">Sort: Sr. No.</option>
+            <option value="subCategory">Sort: Sub-Category</option>
+            <option value="make">Sort: Make</option>
+            <option value="owner">Sort: Owner</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="assetTable">
+          <thead>
+            <tr>
+              <th>Sr.</th>
+              <th>Sub-Category</th>
+              <th>Asset Tag</th>
+              <th>Make</th>
+              <th>Model</th>
+              <th>Serial Number</th>
+              <th>Department</th>
+              <th>Owner</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div id="emptyState" class="empty-state hidden">
+        <div class="empty-icon">⌖</div>
+        <p>No assets match your search</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ============ ADD/EDIT MODAL ============ -->
+<div id="modalOverlay" class="modal-overlay hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2 id="modalTitle">Add New Asset</h2>
+      <button id="modalClose" class="modal-close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <form id="assetForm" class="modal-form">
+      <input type="hidden" id="editIndex">
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Asset Sub-Category *</label>
+          <select id="f_subCategory" required></select>
+        </div>
+        <div class="form-field">
+          <label>Asset Name</label>
+          <input type="text" id="f_assetName" placeholder="NA">
+        </div>
+        <div class="form-field">
+          <label>Asset Tag *</label>
+          <input type="text" id="f_assetTag" required placeholder="e.g. 1008595">
+        </div>
+        <div class="form-field">
+          <label>Make</label>
+          <input type="text" id="f_make" placeholder="e.g. Zebra">
+        </div>
+        <div class="form-field">
+          <label>Model</label>
+          <input type="text" id="f_model" placeholder="e.g. ZD220t">
+        </div>
+        <div class="form-field">
+          <label>Serial Number</label>
+          <input type="text" id="f_serial" placeholder="e.g. D5J245113471">
+        </div>
+        <div class="form-field">
+          <label>Department (Ward/Counter/Unit)</label>
+          <input type="text" id="f_location" placeholder="Aster Hospital Mankhool, Dubai">
+        </div>
+        <div class="form-field">
+          <label>Asset Owner</label>
+          <input type="text" id="f_owner" placeholder="e.g. Junaid Bin Ahmed">
+        </div>
+        <div class="form-field">
+          <label>Region</label>
+          <input type="text" id="f_region" placeholder="MENA">
+        </div>
+        <div class="form-field">
+          <label>Country</label>
+          <input type="text" id="f_country" placeholder="UAE">
+        </div>
+        <div class="form-field">
+          <label>Business Vertical</label>
+          <input type="text" id="f_vertical" placeholder="Aster Hospital UAE">
+        </div>
+        <div class="form-field">
+          <label>Business Unit</label>
+          <input type="text" id="f_unit" placeholder="Aster Hospital Mankhool">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="deleteAssetBtn" class="btn btn-danger hidden">Delete Asset</button>
+        <div class="modal-actions-right">
+          <button type="button" id="cancelBtn" class="btn btn-ghost">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Asset</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+
+// ============ SEED DATA ============
+const SEED_DATA = [{"srNo": "1", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1008595", "make": "Zebra", "model": "ZD220t", "serial": "D5J245113471", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Ewing", "owner": "Junaid Bin Ahmed"}, {"srNo": "2", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "2007191", "make": "Zebra", "model": "GC420t", "serial": "54j163303071", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "5th DSU", "owner": "Junaid Bin Ahmed"}, {"srNo": "3", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1012030", "make": "Zebra", "model": "ZD220t", "serial": "D5J234002030", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Kitchen", "owner": "Junaid Bin Ahmed"}, {"srNo": "4", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "2012068", "make": "Zebra", "model": "ZD220t", "serial": "D5J230504815", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "lab", "owner": "Junaid Bin Ahmed"}, {"srNo": "5", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "11014215", "make": "Zebra", "model": "ZD220t", "serial": "D5J244204245", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "lab", "owner": "Junaid Bin Ahmed"}, {"srNo": "6", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "2012070", "make": "Zebra", "model": "ZD220t", "serial": "D5J234002049", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "lab", "owner": "Junaid Bin Ahmed"}, {"srNo": "7", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1014307", "make": "Zebra", "model": "ZD220t", "serial": "D5J212601399", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "D wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "8", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1008602", "make": "Zebra", "model": "ZD220t", "serial": "D5J244411403", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "C Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "9", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "11010803", "make": "Zebra", "model": "ZD220t", "serial": "d5j240805340", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "b WING", "owner": "Junaid Bin Ahmed"}, {"srNo": "10", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "22004668", "make": "Zebra", "model": "GC420t", "serial": "54J151803183", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "admission counter", "owner": "Junaid Bin Ahmed"}, {"srNo": "11", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "22003417", "make": "Zebra", "model": "GC420t", "serial": "54J151802989", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "dialysis", "owner": "Junaid Bin Ahmed"}, {"srNo": "12", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1012018", "make": "Zebra", "model": "ZD220t", "serial": "D5J233000369", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "A Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "13", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "11013669", "make": "Zebra", "model": "ZD220t", "serial": "D5J204402145", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Well Baby", "owner": "Junaid Bin Ahmed"}, {"srNo": "14", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "na", "make": "Zebra", "model": "ZD220t", "serial": "D5J243600025", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ip pharmacy", "owner": "Junaid Bin Ahmed"}, {"srNo": "15", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1014381", "make": "Zebra", "model": "ZD220t", "serial": "D5J214802306", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ip pharmacy", "owner": "Junaid Bin Ahmed"}, {"srNo": "16", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1014401", "make": "Zebra", "model": "GC420t", "serial": "54J151803228", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "LDR Room", "owner": "Junaid Bin Ahmed"}, {"srNo": "17", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "NA", "make": "Zebra", "model": "ZD220t", "serial": "D5J243504300", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "18", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "NA", "make": "Zebra", "model": "GC420t", "serial": "54J160303582", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "2nd DSU", "owner": "Junaid Bin Ahmed"}, {"srNo": "19", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "NA", "make": "Zebra", "model": "ZD220t", "serial": "D5J215102610", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "20", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "2007468", "make": "Zebra", "model": "GC420t", "serial": "54j151703156", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ENDOSCOPY", "owner": "Junaid Bin Ahmed"}, {"srNo": "21", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1008533", "make": "Zebra", "model": "GC420t", "serial": "d5j252600822", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "SPACIALITY CLUSTER", "owner": "Junaid Bin Ahmed"}, {"srNo": "22", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1011875", "make": "Zebra", "model": "GC420t", "serial": "54j162401169", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "PEDIATRIC  RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "23", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "2003615", "make": "Zebra", "model": "GC420t", "serial": "54j161905559", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Paediatric NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "24", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "NA", "make": "Zebra", "model": "ZD220t", "serial": "d5j241301932", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "GYNEC RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "25", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "11014130", "make": "Zebra", "model": "ZD220t", "serial": "d5j241303614", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "COUNTER 7", "owner": "Junaid Bin Ahmed"}, {"srNo": "26", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "11014140", "make": "Zebra", "model": "ZD220t", "serial": "d5j241303385", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "MAIN RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "27", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "11014139", "make": "Zebra", "model": "ZD220t", "serial": "d5j241303383", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "MAIN RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "28", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "11014129", "make": "Zebra", "model": "ZD220t", "serial": "d5j241303584", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ORTHO RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "29", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "22003487", "make": "Zebra", "model": "ZD220t", "serial": "d5j204402009", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "COVID RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "30", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1008530", "make": "Zebra", "model": "ZD220t", "serial": "d5j252208754", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ER RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "31", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1014558", "make": "Zebra", "model": "ZD220t", "serial": "d5j213700721", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ER RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "32", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1008614", "make": "Zebra", "model": "ZD220t", "serial": "d5j245111747", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ER NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "33", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1014521", "make": "Zebra", "model": "ZD220t", "serial": "d5j242903761", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ER OBSERVATION", "owner": "Junaid Bin Ahmed"}, {"srNo": "34", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1008584", "make": "Zebra", "model": "ZD220t", "serial": "d5j245113462", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "RADIOLOGY RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "35", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1002553", "make": "Zebra", "model": "GC420t", "serial": "54j162500442", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "RADIOLOGY RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "36", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "22002912", "make": "Zebra", "model": "ZD220t", "serial": "d5j210401567", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "RADIOLOGY LOUNGE", "owner": "Junaid Bin Ahmed"}, {"srNo": "37", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1014656", "make": "Zebra", "model": "ZD220t", "serial": "d5j244300403", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "38", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1008616", "make": "Zebra", "model": "ZD220t", "serial": "d5j241300543", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CARDIOLOGY RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "39", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "NA", "make": "Zebra", "model": "GC420t", "serial": "54j182001820", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CATHLAB", "owner": "Junaid Bin Ahmed"}, {"srNo": "40", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "na", "make": "Zebra", "model": "ZD220t", "serial": "d5j242902162", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "41", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1015512", "make": "Zebra", "model": "ZD220t", "serial": "d5j255113097", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "42", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "na", "make": "Zebra", "model": "ZD220t", "serial": "d5j230504645", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "43", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "11014134", "make": "Zebra", "model": "ZD220t", "serial": "d5j241303356", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "44", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "11014218", "make": "Zebra", "model": "ZD220t", "serial": "d5j244702309", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "45", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1011395", "make": "Zebra", "model": "ZD220t", "serial": "d5j213100503", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "46", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "NA", "make": "Zebra", "model": "ZD220t", "serial": "D5J230405544", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Sampl collection", "owner": "Junaid Bin Ahmed"}, {"srNo": "47", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "22002210", "make": "Zebra", "model": "GC420t", "serial": "54J161905971", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC Pharmacy", "owner": "Junaid Bin Ahmed"}, {"srNo": "48", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "2007251", "make": "Zebra", "model": "GC420t", "serial": "54J195200722", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC  Main Reception", "owner": "Junaid Bin Ahmed"}, {"srNo": "49", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1008599", "make": "Zebra", "model": "ZD220t", "serial": "D5J244703716", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC - Main Reception", "owner": "Junaid Bin Ahmed"}, {"srNo": "50", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "NA", "make": "Zebra", "model": "GC420t", "serial": "54J174200116", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC - Physiotheraphy", "owner": "Junaid Bin Ahmed"}, {"srNo": "51", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "1008598", "make": "Zebra", "model": "ZD220t", "serial": "D5J250605455", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC-Sample Collection", "owner": "Junaid Bin Ahmed"}, {"srNo": "52", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "NA", "make": "Zebra", "model": "GC420t", "serial": "54J174200877", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC - IP Med DSU", "owner": "Junaid Bin Ahmed"}, {"srNo": "53", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "2007308", "make": "Zebra", "model": "GC420t", "serial": "54J174200076", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC - OT", "owner": "Junaid Bin Ahmed"}, {"srNo": "54", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "22002949", "make": "Zebra", "model": "ZD220t", "serial": "D5J215101886", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OT NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "55", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "NA", "make": "Zebra", "model": "ZD220t", "serial": "D5J232404143", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ph store", "owner": "Junaid Bin Ahmed"}, {"srNo": "56", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "2003893", "make": "Zebra", "model": "GC420t", "serial": "54j165102010", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "MAIN STORE", "owner": "Junaid Bin Ahmed"}, {"srNo": "57", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "NA", "make": "Zebra", "model": "ZD220t", "serial": "D5J224613247", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Recovery", "owner": "Junaid Bin Ahmed"}, {"srNo": "58", "category": "POS Peripherals", "subCategory": "Barcode Printer", "assetName": "NA", "assetTag": "NA", "make": "Zebra", "model": "ZD220t", "serial": "D5J252207835", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OT-5", "owner": "Junaid Bin Ahmed"}, {"srNo": "59", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-OT", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308P2", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OT", "owner": "Junaid Bin Ahmed"}, {"srNo": "60", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-GYNEC-NS", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308PD", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Gynec NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "61", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-NICU", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308K4", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "62", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-RADIOLOGY-RECEPTION", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308P6", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Radiology Reception(BILLING)", "owner": "Junaid Bin Ahmed"}, {"srNo": "63", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-INSURANCE-MAIN-RECEPTION", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308RK", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Insurance Main Rec", "owner": "Junaid Bin Ahmed"}, {"srNo": "64", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-MAIN-STORE", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308Q3", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "MAIN STORE", "owner": "Junaid Bin Ahmed"}, {"srNo": "65", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-PEDIATRIC-RECEPTION", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308SR", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Pediatric Rec", "owner": "Junaid Bin Ahmed"}, {"srNo": "66", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-ICU", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ790FS", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "67", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-2ND-DSU", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308RP", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "2ND DSU", "owner": "Junaid Bin Ahmed"}, {"srNo": "68", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-LABOUR", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ30908", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Labour NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "69", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-R(25.77)", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308ZD", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "RADIOLOGY Reception2", "owner": "Junaid Bin Ahmed"}, {"srNo": "70", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-GYNEC-RECEPTION", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308WP", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Gynec Rec", "owner": "Junaid Bin Ahmed"}, {"srNo": "71", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-BWING", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308Z2", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "B WING", "owner": "Junaid Bin Ahmed"}, {"srNo": "72", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-CWING", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ3092P", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "C Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "73", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-ORTHO-RECEPTION", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ3092G", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Ortho Rec", "owner": "Junaid Bin Ahmed"}, {"srNo": "74", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-ORTHO-NS", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308Y7", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Ortho NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "75", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-IMOPD", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308FC", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "IM OPD", "owner": "Junaid Bin Ahmed"}, {"srNo": "76", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-DWING", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308KF", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "D Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "77", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-MARKETING", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308J8", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "BD 5th floor", "owner": "Junaid Bin Ahmed"}, {"srNo": "78", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-EWING", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308JW", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "E Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "79", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-OBSERVATION", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308LS", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ER NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "80", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-KITCHEN", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308F1", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Kitchen", "owner": "Junaid Bin Ahmed"}, {"srNo": "81", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-HR", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308M3", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "HR", "owner": "Junaid Bin Ahmed"}, {"srNo": "82", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-AWING", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308WY", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "A WING", "owner": "Junaid Bin Ahmed"}, {"srNo": "83", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-MAINRECEPTION-N", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308V8", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Main Reception", "owner": "Junaid Bin Ahmed"}, {"srNo": "84", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-PEDIATRIC-NS", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308QJ", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Pediatric NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "85", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-MRD", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308QP", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "MRD", "owner": "Junaid Bin Ahmed"}, {"srNo": "86", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-PHARMACYSTORE", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308VQ", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Pharmacy Store", "owner": "Junaid Bin Ahmed"}, {"srNo": "87", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-MEP", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308VH", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "MEP", "owner": "Junaid Bin Ahmed"}, {"srNo": "88", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-ERNS", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308WB", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OBSERVATION", "owner": "Junaid Bin Ahmed"}, {"srNo": "89", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-NURSINGADMIN", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308W4", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Nursing Admin", "owner": "Junaid Bin Ahmed"}, {"srNo": "90", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-CSE", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308CW", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CSE", "owner": "Junaid Bin Ahmed"}, {"srNo": "91", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-COO", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNCRQ3H2SH", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Near HR (inside glass door)", "owner": "Junaid Bin Ahmed"}, {"srNo": "92", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-CARDIOLOGY-REC", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308RX", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CARDIOLOGY RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "93", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-ER-BILLING", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308T8", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ER Reception", "owner": "Junaid Bin Ahmed"}, {"srNo": "94", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-ER MOD", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308N5", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "AHM", "owner": "Junaid Bin Ahmed"}, {"srNo": "95", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-IP-BILLING", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308JZ", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "IP-Billing", "owner": "Junaid Bin Ahmed"}, {"srNo": "96", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-PHARMACY-APPROVAL", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ4814G", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "PHARMACY-APPROVAL", "owner": "Junaid Bin Ahmed"}, {"srNo": "97", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-LAB", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ4811Z", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Lab", "owner": "Junaid Bin Ahmed"}, {"srNo": "98", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-PHARMACY-COUNTER", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ7902W", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "PHARMACY COUNTER", "owner": "Junaid Bin Ahmed"}, {"srNo": "99", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-IP-PHARMACY", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308YX", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "IP Pharmacy", "owner": "Junaid Bin Ahmed"}, {"srNo": "100", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-COVID-RECEPTION", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ4810P", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "COVID RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "101", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-INSURANCE", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ4812W", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "INSURANCE", "owner": "Junaid Bin Ahmed"}, {"srNo": "102", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-CATHLAB", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ48151", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CATHLAB", "owner": "Junaid Bin Ahmed"}, {"srNo": "103", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "ADSE Reception", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ480KN", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSE Reception", "owner": "Junaid Bin Ahmed"}, {"srNo": "104", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "ADSE-NS", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ480LS", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSE NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "105", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-CICU", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ480JW", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "106", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-RECOVERY", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ480KH", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Recovery", "owner": "Junaid Bin Ahmed"}, {"srNo": "107", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-MEDICAL-TRANSCRIPTION", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ4815P", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "MTR", "owner": "Junaid Bin Ahmed"}, {"srNo": "108", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-ADMISSION-COUNTER", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308H3", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADMISSION 4TH FLOOR", "owner": "Junaid Bin Ahmed"}, {"srNo": "109", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-MAINRECEPTION1", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308T3", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "MAIN RECEPTION 1", "owner": "Junaid Bin Ahmed"}, {"srNo": "110", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-GASTROOPD", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ30918", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Gastro OPD C-7", "owner": "Junaid Bin Ahmed"}, {"srNo": "111", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-DIALYSIS", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308HM", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Dialysis", "owner": "Junaid Bin Ahmed"}, {"srNo": "112", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-warclerkB", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308ML", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "WARD CLERK B WING", "owner": "Junaid Bin Ahmed"}, {"srNo": "113", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-OPINSURANCE", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308YQ", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "INSURANCE APPROVEL - mark", "owner": "Junaid Bin Ahmed"}, {"srNo": "114", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-ENDOSCOPYRECEPTION", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308JG", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Main Reception", "owner": "Junaid Bin Ahmed"}, {"srNo": "115", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "NPI52F3DE", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308NV", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CSSD", "owner": "Junaid Bin Ahmed"}, {"srNo": "116", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-DSU5", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ3090P", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "DSU 5TH FLOOR", "owner": "Junaid Bin Ahmed"}, {"srNo": "117", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "NPI57B189", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308F8", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OLD ENDOSCOPY", "owner": "Junaid Bin Ahmed"}, {"srNo": "118", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-DRNAVEED", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308LD", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Dr Naveed", "owner": "Junaid Bin Ahmed"}, {"srNo": "119", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "ADSC-P-PHARMACY", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ480M9", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSE-PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "120", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "ADSE OBSERVATION", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ4812M", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSE-OBSERVATION", "owner": "Junaid Bin Ahmed"}, {"srNo": "121", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "ADSE OT", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ79174", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSE insurance", "owner": "Junaid Bin Ahmed"}, {"srNo": "122", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-MAIN-BILLING", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308PK", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "COUNTER 15(MAIN BILLING)", "owner": "Junaid Bin Ahmed"}, {"srNo": "123", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "AH-AHM-PHARMACY STORE NEW", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ7902K", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Pharmacy Store", "owner": "Junaid Bin Ahmed"}, {"srNo": "124", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "CARDIOLOGY-NS", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ480KW", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NEAR CLINIC 1(CARDIO-NS)", "owner": "Junaid Bin Ahmed"}, {"srNo": "125", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "NEW OPD NS", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ480SN", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NEW OPD NS(1ST FLOOR)", "owner": "Junaid Bin Ahmed"}, {"srNo": "126", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "NEW OPD CSE", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ308TD", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NEW OPD CSE(1ST FLOOR)", "owner": "Junaid Bin Ahmed"}, {"srNo": "127", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "HR-ASNAT", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNCRQDP5TD", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "HR-ASNATH(NEAR OT WAITING AREA)", "owner": "Junaid Bin Ahmed"}, {"srNo": "128", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "BIOMED1", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ480J2", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "BIOMED BASEMENT2", "owner": "Junaid Bin Ahmed"}, {"srNo": "129", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "NA", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNCRSDB493", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "INSIDE SERVER ROOM ADSC", "owner": "Junaid Bin Ahmed"}, {"srNo": "130", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "NA", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQ788JS", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NEW BACKUP IT STORE ROOM GF", "owner": "Junaid Bin Ahmed"}, {"srNo": "131", "category": "POS Peripherals", "subCategory": "Printer MFP", "assetName": "NA", "assetTag": "NA", "make": "HP", "model": "HP LJ MGD MFP E42540F", "serial": "CNBRQDP0RG", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "IT", "owner": "Junaid Bin Ahmed"}, {"srNo": "132", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22251523025554", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "E-WING", "owner": "Junaid Bin Ahmed"}, {"srNo": "133", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22251523025317", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "E-WING", "owner": "Junaid Bin Ahmed"}, {"srNo": "134", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22252523023249", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "E-WING", "owner": "Junaid Bin Ahmed"}, {"srNo": "135", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014272", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523022879", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Kitchen", "owner": "Junaid Bin Ahmed"}, {"srNo": "136", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21068523020695", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "D Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "137", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014334", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523021246", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "D Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "138", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523021542", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "D Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "139", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523024394", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "D Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "140", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21068523020829", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "c wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "141", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523021865", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "c wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "142", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21068523021527", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "c wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "143", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21068523020634", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "c wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "144", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014332", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523024339", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "B wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "145", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014331", "make": "ZEBRA", "model": "TC 210K", "serial": "22284523024840", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "B wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "146", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014405", "make": "ZEBRA", "model": "TC 210K", "serial": "22252523023376", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "B wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "147", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1008583", "make": "ZEBRA", "model": "TC 210K", "serial": "22288523023318", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "dilysis", "owner": "Junaid Bin Ahmed"}, {"srNo": "148", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014392", "make": "ZEBRA", "model": "TC 210K", "serial": "21068523021581", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "A Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "149", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22288523022835", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "A Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "150", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014323", "make": "ZEBRA", "model": "TC 210K", "serial": "21068523020456", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "A Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "151", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014325", "make": "ZEBRA", "model": "TC 210K", "serial": "21068523021642", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "A Wing", "owner": "Junaid Bin Ahmed"}, {"srNo": "152", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014324", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523023326", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Well Baby", "owner": "Junaid Bin Ahmed"}, {"srNo": "153", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "222141523024262", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "IP Pharmacy", "owner": "Junaid Bin Ahmed"}, {"srNo": "154", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22141523024670", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "IP Pharmacy", "owner": "Junaid Bin Ahmed"}, {"srNo": "155", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014428", "make": "ZEBRA", "model": "TC 210K", "serial": "22251523025244", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OT", "owner": "Junaid Bin Ahmed"}, {"srNo": "156", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014406", "make": "ZEBRA", "model": "TC 210K", "serial": "22252523020391", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "LDR Room", "owner": "Junaid Bin Ahmed"}, {"srNo": "157", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014333", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523021676", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "LDR Room", "owner": "Junaid Bin Ahmed"}, {"srNo": "158", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22252523020590", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "159", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22252523023416", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "160", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22286523021396", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "161", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "20353523022456", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "162", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 200J", "serial": "18317521401636", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "163", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 200J", "serial": "17345521404284", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "164", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014681", "make": "ZEBRA", "model": "TC 210K", "serial": "22286523021595", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "2ND DSU", "owner": "Junaid Bin Ahmed"}, {"srNo": "165", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22141523023606", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "166", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22252523020173", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "167", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 25BJ", "serial": "s17345521404241", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ENDOSCOPY", "owner": "Junaid Bin Ahmed"}, {"srNo": "168", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523021785", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ENDOSCOPY", "owner": "Junaid Bin Ahmed"}, {"srNo": "169", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22285523023899", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ER NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "170", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523021786", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ER NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "171", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523021595", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ER NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "172", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "2168523020837", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ER OBSERVATION", "owner": "Junaid Bin Ahmed"}, {"srNo": "173", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014682", "make": "ZEBRA", "model": "TC 210K", "serial": "22252523023803", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "174", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014663", "make": "ZEBRA", "model": "TC 210K", "serial": "22251523025832", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "175", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "1014665", "make": "ZEBRA", "model": "TC 210K", "serial": "22252523022524", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "176", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 25BJ", "serial": "s17342521401202", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "177", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 200J", "serial": "s19007521402692", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "178", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22252523023358", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CATHLAB", "owner": "Junaid Bin Ahmed"}, {"srNo": "179", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 200J", "serial": "s18293521405993", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "CATHLAB", "owner": "Junaid Bin Ahmed"}, {"srNo": "180", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22284523024922", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC OT", "owner": "Junaid Bin Ahmed"}, {"srNo": "181", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22284523024614", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "182", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22284523024982", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "183", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22284523024452", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "184", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22252523023786", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Paediatric NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "185", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC200J", "serial": "19114521401449", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Paediatric NS", "owner": "Junaid Bin Ahmed"}, {"srNo": "186", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22142523020057", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ph store", "owner": "Junaid Bin Ahmed"}, {"srNo": "187", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "22252523023300", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ph store", "owner": "Junaid Bin Ahmed"}, {"srNo": "188", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21102523022868", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OT", "owner": "Junaid Bin Ahmed"}, {"srNo": "189", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21068523020682", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OT", "owner": "Junaid Bin Ahmed"}, {"srNo": "190", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523024333", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OT", "owner": "Junaid Bin Ahmed"}, {"srNo": "191", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21090523023443", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OT", "owner": "Junaid Bin Ahmed"}, {"srNo": "192", "category": "POS Peripherals", "subCategory": "Rover", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "TC 210K", "serial": "21102523022824", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OT", "owner": "Junaid Bin Ahmed"}, {"srNo": "193", "category": "POS Peripherals", "subCategory": "Kiosk Token", "assetName": "NA", "assetTag": "1008582", "make": "IMIN CRANE 1", "model": "Crane1-16", "serial": "NSC111XH1417F0025", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "paediatric", "owner": "Junaid Bin Ahmed"}, {"srNo": "194", "category": "POS Peripherals", "subCategory": "Kiosk Token", "assetName": "NA", "assetTag": "1008581", "make": "IMIN CRANE 1", "model": "Crane1-16", "serial": "NSC111XH1417F0050", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Gynaec", "owner": "Junaid Bin Ahmed"}, {"srNo": "195", "category": "POS Peripherals", "subCategory": "Kiosk Token", "assetName": "NA", "assetTag": "1008540", "make": "IMIN CRANE 1", "model": "Crane1-16", "serial": "NSC111XH1548F0190", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Cluster", "owner": "Junaid Bin Ahmed"}, {"srNo": "196", "category": "POS Peripherals", "subCategory": "Kiosk Token", "assetName": "NA", "assetTag": "1008560", "make": "IMIN CRANE 1", "model": "Crane1-16", "serial": "NSC111XH1420F0063", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "counter7", "owner": "Junaid Bin Ahmed"}, {"srNo": "197", "category": "POS Peripherals", "subCategory": "Kiosk Token", "assetName": "NA", "assetTag": "1008580", "make": "IMIN CRANE 1", "model": "Crane1-16", "serial": "NSC111XH1417F0017", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "main rec1", "owner": "Junaid Bin Ahmed"}, {"srNo": "198", "category": "POS Peripherals", "subCategory": "Kiosk Token", "assetName": "NA", "assetTag": "1008579", "make": "IMIN CRANE 1", "model": "Crane1-16", "serial": "NSC111XH1417F0014", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "main rec2", "owner": "Junaid Bin Ahmed"}, {"srNo": "199", "category": "POS Peripherals", "subCategory": "Kiosk Token", "assetName": "NA", "assetTag": "1008558", "make": "IMIN CRANE 1", "model": "Crane1-16", "serial": "NSC111XH1420F0027", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ortho", "owner": "Junaid Bin Ahmed"}, {"srNo": "200", "category": "POS Peripherals", "subCategory": "Kiosk Token", "assetName": "NA", "assetTag": "1008570", "make": "IMIN CRANE 1", "model": "Crane1-16", "serial": "NSC111XH1417F0029", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "pharmacy", "owner": "Junaid Bin Ahmed"}, {"srNo": "201", "category": "POS Peripherals", "subCategory": "Kiosk Token", "assetName": "NA", "assetTag": "1008559", "make": "IMIN CRANE 1", "model": "Crane1-16", "serial": "NSC111XH1420F0053", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "radiology", "owner": "Junaid Bin Ahmed"}, {"srNo": "202", "category": "POS Peripherals", "subCategory": "Kiosk Token", "assetName": "NA", "assetTag": "1008557", "make": "IMIN CRANE 1", "model": "Crane1-16", "serial": "NSC111XH1420F0036", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "cardiology", "owner": "Junaid Bin Ahmed"}, {"srNo": "203", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "22004503", "make": "samsung", "model": "GALAXY TAB S7 FE", "serial": "R52R909F1PT", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "E-WING", "owner": "Junaid Bin Ahmed"}, {"srNo": "204", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "GALAXY TAB S7 FE", "serial": "R52W30AV8XM", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "DUTY MANAGER", "owner": "Junaid Bin Ahmed"}, {"srNo": "205", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "GALAXY TAB S7 FE", "serial": "R52TC07XAMX", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "LABOUR ROOM", "owner": "Junaid Bin Ahmed"}, {"srNo": "206", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "GALAXY TAB S7 FE", "serial": "R52R909F0SB", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NICU", "owner": "Junaid Bin Ahmed"}, {"srNo": "207", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "GALAXY TAB S7 FE", "serial": "R52R909F8LM", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "208", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S9 FE", "serial": "RZ2Y300MC2N", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Consent Tab", "owner": "Junaid Bin Ahmed"}, {"srNo": "209", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S9 FE", "serial": "RZ2Y300N8SJ", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Consent Tab", "owner": "Junaid Bin Ahmed"}, {"srNo": "210", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S9 FE", "serial": "R52Y40ALK3R", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Consent Tab", "owner": "Junaid Bin Ahmed"}, {"srNo": "211", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S9 FE", "serial": "RZ2Y300MBHE", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Consent Tab", "owner": "Junaid Bin Ahmed"}, {"srNo": "212", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S9 FE", "serial": "RZ2Y300NBDV", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Consent Tab", "owner": "Junaid Bin Ahmed"}, {"srNo": "213", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S9 FE", "serial": "R52Y40ALB3L", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Consent Tab", "owner": "Junaid Bin Ahmed"}, {"srNo": "214", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S9 FE", "serial": "RZ2Y300KQ1K", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Consent Tab", "owner": "Junaid Bin Ahmed"}, {"srNo": "215", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S9 FE", "serial": "RZ2Y200BAXA", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Consent Tab", "owner": "Junaid Bin Ahmed"}, {"srNo": "216", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S9 FE", "serial": "RZ2Y300KD4Y", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Consent Tab", "owner": "Junaid Bin Ahmed"}, {"srNo": "217", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S9 FE", "serial": "RZ2Y300N6CZ", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Consent Tab", "owner": "Junaid Bin Ahmed"}, {"srNo": "218", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S7 FE", "serial": "R52W500E47J", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC -MAIN RECEPTION", "owner": "Junaid Bin Ahmed"}, {"srNo": "219", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S7 FE", "serial": "R52W500E33Z", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Consent Tab", "owner": "Junaid Bin Ahmed"}, {"srNo": "220", "category": "POS Peripherals", "subCategory": "Tab", "assetName": "NA", "assetTag": "NA", "make": "samsung", "model": "Galaxy Tab S7 FE", "serial": "R52R909F57X", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "NS SUPERWISER", "owner": "Junaid Bin Ahmed"}, {"srNo": "221", "category": "POS Peripherals", "subCategory": "Scanner", "assetName": "NA", "assetTag": "NA", "make": "Kodak", "model": "S2070", "serial": "63219098", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Lab", "owner": "Junaid Bin Ahmed"}, {"srNo": "222", "category": "POS Peripherals", "subCategory": "Scanner", "assetName": "NA", "assetTag": "NA", "make": "Kodak", "model": "S2070", "serial": "63169234", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "MRD", "owner": "Junaid Bin Ahmed"}, {"srNo": "223", "category": "POS Peripherals", "subCategory": "Scanner", "assetName": "NA", "assetTag": "11014159", "make": "Kodak", "model": "S2070", "serial": "63232048", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "MRD", "owner": "Junaid Bin Ahmed"}, {"srNo": "224", "category": "POS Peripherals", "subCategory": "Scanner", "assetName": "NA", "assetTag": "11010774", "make": "Kodak", "model": "S2070", "serial": "63229447", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "MRD", "owner": "Junaid Bin Ahmed"}, {"srNo": "225", "category": "POS Peripherals", "subCategory": "Scanner", "assetName": "NA", "assetTag": "NA", "make": "Kodak", "model": "S2070", "serial": "63209969", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Main Store", "owner": "Junaid Bin Ahmed"}, {"srNo": "226", "category": "POS Peripherals", "subCategory": "Scanner", "assetName": "NA", "assetTag": "11014160", "make": "Kodak", "model": "S2070", "serial": "63232417", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Pharmacy Store", "owner": "Junaid Bin Ahmed"}, {"srNo": "227", "category": "POS Peripherals", "subCategory": "Scanner", "assetName": "NA", "assetTag": "1008501", "make": "Kodak", "model": "S2070", "serial": "63240935", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Insurance", "owner": "Junaid Bin Ahmed"}, {"srNo": "228", "category": "POS Peripherals", "subCategory": "Wristband Printer", "assetName": "NA", "assetTag": "22002914", "make": "ZEBRA", "model": "ZD510", "serial": "61J202400640", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "admission counter", "owner": "Junaid Bin Ahmed"}, {"srNo": "229", "category": "POS Peripherals", "subCategory": "Wristband Printer", "assetName": "NA", "assetTag": "1011186", "make": "ZEBRA", "model": "ZD510", "serial": "61J192900522", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Labour Room", "owner": "Junaid Bin Ahmed"}, {"srNo": "230", "category": "POS Peripherals", "subCategory": "Wristband Printer", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "ZD510", "serial": "61j231100423", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "radiology reception", "owner": "Junaid Bin Ahmed"}, {"srNo": "231", "category": "POS Peripherals", "subCategory": "Wristband Printer", "assetName": "NA", "assetTag": "22003470", "make": "ZEBRA", "model": "ZD510", "serial": "09j171800235", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "TRIAGE", "owner": "Junaid Bin Ahmed"}, {"srNo": "232", "category": "POS Peripherals", "subCategory": "Wristband Printer", "assetName": "NA", "assetTag": "22003471", "make": "ZEBRA", "model": "ZD510", "serial": "61j215100014", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "TRIAGE", "owner": "Junaid Bin Ahmed"}, {"srNo": "233", "category": "POS Peripherals", "subCategory": "Wristband Printer", "assetName": "NA", "assetTag": "22003376", "make": "ZEBRA", "model": "ZD510", "serial": "09J171800252", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ADSC - Main Reception", "owner": "Junaid Bin Ahmed"}, {"srNo": "234", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "11014216", "make": "zebra", "model": "DS4608", "serial": "23126010560075", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "lab", "owner": "Junaid Bin Ahmed"}, {"srNo": "235", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "symbol", "model": "sr20007r", "serial": "Z4N6CP", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "lab", "owner": "Junaid Bin Ahmed"}, {"srNo": "236", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "DATALOGIC", "model": "GD 4500", "serial": "g22b07779", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "LAB", "owner": "Junaid Bin Ahmed"}, {"srNo": "237", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "11013716", "make": "symbol", "model": "sr20007r", "serial": "17039010500918", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "LAB", "owner": "Junaid Bin Ahmed"}, {"srNo": "238", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "symbol", "model": "sr20007r", "serial": "17039010500956", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ip pharmacy", "owner": "Junaid Bin Ahmed"}, {"srNo": "239", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "symbol", "model": "DS4308", "serial": "18282010501073", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ER TRIAGE", "owner": "Junaid Bin Ahmed"}, {"srNo": "240", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "symbol", "model": "DS4308", "serial": "17039010500992", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "ER TRIAGE", "owner": "Junaid Bin Ahmed"}, {"srNo": "241", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "symbol", "model": "BSDS9208", "serial": "16280010501798", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "242", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "symbol", "model": "BSDS9208", "serial": "16280010501731", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "243", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "symbol", "model": "BSDS9208", "serial": "16280010501760", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "244", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "symbol", "model": "BSDS9208", "serial": "19045010506976", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "245", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "symbol", "model": "BSDS9208", "serial": "16270010502173", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "246", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "DS4608", "serial": "24008010553436", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "247", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "ZEBRA", "model": "DS4608", "serial": "2427201055534", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "248", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "symbol", "model": "BSDS9208", "serial": "2427201055534", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "249", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "zebra", "model": "DS4608", "serial": "25265010550765", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "250", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "zebra", "model": "DS4608", "serial": "s26020010558217", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "251", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "zebra", "model": "DS4608", "serial": "s26020010558184", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY", "owner": "Junaid Bin Ahmed"}, {"srNo": "252", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "22004409", "make": "zebra", "model": "DS4308", "serial": "19061010507650", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY-ADSC", "owner": "Junaid Bin Ahmed"}, {"srNo": "253", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "2012063", "make": "zebra", "model": "DS4608", "serial": "23036010552974", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "OP PHARMACY-ADSC", "owner": "Junaid Bin Ahmed"}, {"srNo": "254", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "NA", "make": "symbol", "model": "BSDS9208", "serial": "1628002 501794", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "Sample Collection", "owner": "Junaid Bin Ahmed"}, {"srNo": "255", "category": "POS Peripherals", "subCategory": "Barcode Scanner", "assetName": "NA", "assetTag": "2003895", "make": "symbol", "model": "BSDS9208", "serial": "17039010500991", "region": "MENA", "country": "UAE", "vertical": "Aster Hospital UAE", "unit": "Aster Hospital Mankhool", "location": "MAIN STORE", "owner": "Junaid Bin Ahmed"}];
+
+const STORAGE_KEY = 'ahm_it_assets_v1';
+const VERSION_KEY = 'ahm_it_assets_version';
+const DATA_VERSION = 2; // bump this whenever SEED_DATA is updated, to force a refresh
+const AUTH_KEY = 'ahm_it_auth_v1';
+const PASSCODE = 'Jobin';
+
+function loadAssets(){
+  const storedVersion = parseInt(localStorage.getItem(VERSION_KEY) || '0');
+  const stored = localStorage.getItem(STORAGE_KEY);
+
+  if(stored && storedVersion >= DATA_VERSION){
+    try { return JSON.parse(stored); } catch(e){ /* fallthrough */ }
+  }
+
+  // Data is stale or missing: refresh from SEED_DATA, but keep any user-added
+  // assets (flagged _new) that aren't already part of the fresh seed.
+  let userAdded = [];
+  if(stored){
+    try {
+      const old = JSON.parse(stored);
+      const seedSerials = new Set(SEED_DATA.map(a=>(a.serial||'').toUpperCase().trim()));
+      userAdded = old.filter(a => a._new && !seedSerials.has((a.serial||'').toUpperCase().trim()));
+    } catch(e){ /* ignore */ }
+  }
+
+  const fresh = SEED_DATA.concat(userAdded);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
+  localStorage.setItem(VERSION_KEY, String(DATA_VERSION));
+  return fresh;
+}
+function saveAssets(list){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  localStorage.setItem(VERSION_KEY, String(DATA_VERSION));
+}
+
+let assets = loadAssets();
+let activeSub = 'All';
+let activeLocation = 'All';
+let searchTerm = '';
+let sortKey = 'srNo';
+
+const SUBCATS = Array.from(new Set(SEED_DATA.map(a=>a.subCategory))).sort();
+
+// ============ LOGIN ============
+const loginScreen = document.getElementById('loginScreen');
+const appEl = document.getElementById('app');
+const loginForm = document.getElementById('loginForm');
+const pwInput = document.getElementById('pw');
+const loginError = document.getElementById('loginError');
+
+function showApp(){
+  loginScreen.classList.add('hidden');
+  appEl.classList.remove('hidden');
+  init();
+}
+
+if(sessionStorage.getItem(AUTH_KEY) === '1'){
+  showApp();
+}
+
+loginForm.addEventListener('submit', function(e){
+  e.preventDefault();
+  if(pwInput.value === PASSCODE){
+    sessionStorage.setItem(AUTH_KEY, '1');
+    showApp();
+  } else {
+    loginError.textContent = 'Incorrect passcode. Please try again.';
+    loginForm.parentElement.classList.add('shake');
+    setTimeout(()=>loginForm.parentElement.classList.remove('shake'), 400);
+    pwInput.value='';
+    pwInput.focus();
+  }
+});
+
+document.getElementById('togglePw').addEventListener('click', function(){
+  pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
+});
+
+document.getElementById('logoutBtn').addEventListener('click', function(){
+  sessionStorage.removeItem(AUTH_KEY);
+  location.reload();
+});
+
+// ============ TOAST ============
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+// ============ INIT ============
+let inited = false;
+function init(){
+  if(inited) return;
+  inited = true;
+  renderStats();
+  renderFilters();
+  renderLocationFilter();
+  populateSubSelect();
+  renderTable();
+
+  document.getElementById('locationFilter').addEventListener('change', function(e){
+    activeLocation = e.target.value;
+    renderTable();
+  });
+
+  document.getElementById('searchInput').addEventListener('input', function(e){
+    searchTerm = e.target.value.toLowerCase().trim();
+    renderTable();
+  });
+
+  document.getElementById('sortSelect').addEventListener('change', function(e){
+    sortKey = e.target.value;
+    renderTable();
+  });
+
+  document.getElementById('addBtn').addEventListener('click', ()=>openModal());
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  document.getElementById('modalOverlay').addEventListener('click', function(e){
+    if(e.target === this) closeModal();
+  });
+  document.getElementById('assetForm').addEventListener('submit', handleSave);
+  document.getElementById('deleteAssetBtn').addEventListener('click', handleDelete);
+  document.getElementById('exportBtn').addEventListener('click', exportExcel);
+}
+
+// ============ STATS ============
+function renderStats(){
+  const total = assets.length;
+  const subCount = new Set(assets.map(a=>a.subCategory)).size;
+  const owners = new Set(assets.map(a=>a.owner).filter(Boolean)).size;
+  const makes = new Set(assets.map(a=>a.make).filter(Boolean)).size;
+  const locs = new Set(assets.map(a=>a.location).filter(Boolean)).size;
+  const stats = [
+    {num: total, label:'Total Assets'},
+    {num: subCount, label:'Sub-Categories'},
+    {num: locs, label:'Departments'},
+    {num: makes, label:'Distinct Makes'},
+    {num: owners, label:'Asset Owners'},
+  ];
+  document.getElementById('statsRow').innerHTML = stats.map(s=>
+    `<div class="stat-card"><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>`
+  ).join('');
+}
+
+// ============ FILTERS ============
+function renderFilters(){
+  const subs = Array.from(new Set(assets.map(a=>a.subCategory))).sort();
+  const wrap = document.getElementById('subFilters');
+  const chips = ['All', ...subs];
+  wrap.innerHTML = chips.map(c=>
+    `<button class="chip ${c===activeSub?'active':''}" data-sub="${escapeAttr(c)}">${escapeHtml(c)}${c!=='All' ? ' · '+assets.filter(a=>a.subCategory===c).length : ''}</button>`
+  ).join('');
+  wrap.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click', function(){
+      activeSub = this.dataset.sub;
+      renderFilters();
+      renderTable();
+    });
+  });
+}
+
+function renderLocationFilter(){
+  const sel = document.getElementById('locationFilter');
+  const locs = Array.from(new Set(assets.map(a=>a.location).filter(Boolean))).sort((a,b)=>a.localeCompare(b));
+  const current = activeLocation;
+  sel.innerHTML = `<option value="All">All Departments (${assets.length})</option>` +
+    locs.map(l=>{
+      const count = assets.filter(a=>a.location===l).length;
+      return `<option value="${escapeAttr(l)}">${escapeHtml(l)} · ${count}</option>`;
+    }).join('');
+  sel.value = locs.includes(current) || current==='All' ? current : 'All';
+}
+
+function populateSubSelect(){
+  const sel = document.getElementById('f_subCategory');
+  sel.innerHTML = SUBCATS.map(s=>`<option value="${escapeAttr(s)}">${escapeHtml(s)}</option>`).join('')
+    + `<option value="__custom__">+ New sub-category...</option>`;
+  sel.addEventListener('change', function(){
+    if(this.value === '__custom__'){
+      const v = prompt('Enter new sub-category name:');
+      if(v && v.trim()){
+        const opt = document.createElement('option');
+        opt.value = v.trim();
+        opt.textContent = v.trim();
+        opt.selected = true;
+        this.insertBefore(opt, this.lastElementChild);
+      } else {
+        this.value = SUBCATS[0];
+      }
+    }
+  });
+}
+
+// ============ TABLE ============
+function getFiltered(){
+  let list = assets.slice();
+  if(activeSub !== 'All'){
+    list = list.filter(a=>a.subCategory === activeSub);
+  }
+  if(activeLocation !== 'All'){
+    list = list.filter(a=>a.location === activeLocation);
+  }
+  if(searchTerm){
+    list = list.filter(a=>{
+      return [a.assetTag,a.serial,a.make,a.model,a.owner,a.location,a.assetName,a.subCategory]
+        .some(v=> (v||'').toLowerCase().includes(searchTerm));
+    });
+  }
+  list.sort((a,b)=>{
+    if(sortKey==='srNo') return (parseInt(a.srNo)||0) - (parseInt(b.srNo)||0);
+    return (a[sortKey]||'').localeCompare(b[sortKey]||'');
+  });
+  return list;
+}
+
+function renderTable(){
+  const list = getFiltered();
+  const tbody = document.getElementById('tableBody');
+  document.getElementById('resultCount').textContent = `${list.length} asset${list.length!==1?'s':''}`;
+  document.getElementById('emptyState').classList.toggle('hidden', list.length>0);
+  document.getElementById('assetTable').classList.toggle('hidden', list.length===0);
+
+  tbody.innerHTML = list.map((a, idx)=>{
+    const realIndex = assets.indexOf(a);
+    return `<tr>
+      <td class="sr">${escapeHtml(a.srNo||'-')}</td>
+      <td><span class="sub-badge">${escapeHtml(a.subCategory||'-')}</span>${a._new?'<span class="new-tag">NEW</span>':''}</td>
+      <td class="tag">${escapeHtml(a.assetTag||'-')}</td>
+      <td class="primary">${escapeHtml(a.make||'-')}</td>
+      <td>${escapeHtml(a.model||'-')}</td>
+      <td>${escapeHtml(a.serial||'-')}</td>
+      <td>${escapeHtml(a.location||'-')}</td>
+      <td>${escapeHtml(a.owner||'-')}</td>
+      <td class="edit-cell">
+        <button class="edit-link" data-idx="${realIndex}" aria-label="Edit">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  tbody.querySelectorAll('.edit-link').forEach(btn=>{
+    btn.addEventListener('click', function(){
+      openModal(parseInt(this.dataset.idx));
+    });
+  });
+}
+
+// ============ MODAL ============
+function openModal(index){
+  const form = document.getElementById('assetForm');
+  form.reset();
+  document.getElementById('deleteAssetBtn').classList.toggle('hidden', index===undefined);
+  document.getElementById('modalTitle').textContent = index===undefined ? 'Add New Asset' : 'Edit Asset';
+  document.getElementById('editIndex').value = index===undefined ? '' : index;
+
+  if(index !== undefined){
+    const a = assets[index];
+    document.getElementById('f_subCategory').value = a.subCategory || SUBCATS[0];
+    document.getElementById('f_assetName').value = a.assetName || '';
+    document.getElementById('f_assetTag').value = a.assetTag || '';
+    document.getElementById('f_make').value = a.make || '';
+    document.getElementById('f_model').value = a.model || '';
+    document.getElementById('f_serial').value = a.serial || '';
+    document.getElementById('f_location').value = a.location || '';
+    document.getElementById('f_owner').value = a.owner || '';
+    document.getElementById('f_region').value = a.region || '';
+    document.getElementById('f_country').value = a.country || '';
+    document.getElementById('f_vertical').value = a.vertical || '';
+    document.getElementById('f_unit').value = a.unit || '';
+  } else {
+    document.getElementById('f_subCategory').value = SUBCATS[0];
+    document.getElementById('f_region').value = 'MENA';
+    document.getElementById('f_country').value = 'UAE';
+    document.getElementById('f_vertical').value = 'Aster Hospital UAE';
+    document.getElementById('f_unit').value = 'Aster Hospital Mankhool';
+    document.getElementById('f_location').value = 'Aster Hospital Mankhool, Dubai';
+  }
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.getElementById('f_subCategory').focus();
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.add('hidden');
+}
+
+function handleSave(e){
+  e.preventDefault();
+  const idxRaw = document.getElementById('editIndex').value;
+  const isEdit = idxRaw !== '';
+  const payload = {
+    category: 'POS Peripherals',
+    subCategory: document.getElementById('f_subCategory').value.trim(),
+    assetName: document.getElementById('f_assetName').value.trim() || 'NA',
+    assetTag: document.getElementById('f_assetTag').value.trim(),
+    make: document.getElementById('f_make').value.trim(),
+    model: document.getElementById('f_model').value.trim(),
+    serial: document.getElementById('f_serial').value.trim(),
+    region: document.getElementById('f_region').value.trim(),
+    country: document.getElementById('f_country').value.trim(),
+    vertical: document.getElementById('f_vertical').value.trim(),
+    unit: document.getElementById('f_unit').value.trim(),
+    location: document.getElementById('f_location').value.trim(),
+    owner: document.getElementById('f_owner').value.trim(),
+  };
+
+  if(isEdit){
+    const idx = parseInt(idxRaw);
+    payload.srNo = assets[idx].srNo;
+    payload._new = assets[idx]._new;
+    assets[idx] = payload;
+    showToast('Asset updated successfully');
+  } else {
+    const maxSr = assets.reduce((m,a)=>Math.max(m, parseInt(a.srNo)||0), 0);
+    payload.srNo = String(maxSr+1);
+    payload._new = true;
+    assets.push(payload);
+    showToast('New asset added to registry');
+  }
+  saveAssets(assets);
+  closeModal();
+  renderStats();
+  renderFilters();
+  renderLocationFilter();
+  renderTable();
+}
+
+function handleDelete(){
+  const idx = parseInt(document.getElementById('editIndex').value);
+  if(isNaN(idx)) return;
+  if(!confirm('Remove this asset from the registry? This cannot be undone.')) return;
+  assets.splice(idx,1);
+  saveAssets(assets);
+  closeModal();
+  renderStats();
+  renderFilters();
+  renderLocationFilter();
+  renderTable();
+  showToast('Asset removed from registry');
+}
+
+// ============ EXPORT ============
+function exportExcel(){
+  const list = getFiltered();
+  const rows = list.map(a=>({
+    'Sr.No.': a.srNo,
+    'Asset Category': a.category || 'POS Peripherals',
+    'Asset Sub-Category': a.subCategory,
+    'Asset Name': a.assetName,
+    'Asset Tag': a.assetTag,
+    'Make': a.make,
+    'Model': a.model,
+    'Serial Number': a.serial,
+    'Region': a.region,
+    'Country': a.country,
+    'Business Vertical Name': a.vertical,
+    'Business Unit Name': a.unit,
+    'Department': a.location,
+    'Asset Owner': a.owner,
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws['!cols'] = [{wch:6},{wch:16},{wch:18},{wch:12},{wch:12},{wch:12},{wch:16},{wch:8},{wch:8},{wch:20},{wch:20},{wch:26},{wch:20}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'AHM IT Assets');
+  const dateStr = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb, `AHM_IT_Asset_Registry_${dateStr}.xlsx`);
+  showToast('Excel file exported');
+}
+
+// ============ UTIL ============
+function escapeHtml(str){
+  if(str===undefined||str===null) return '';
+  return String(str).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escapeAttr(str){ return escapeHtml(str); }
+
+</script>
+</body>
+</html>
