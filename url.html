@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JoBiN Digital Portal — Aster Hospital Mankhool</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --ink:#070c18;
+  --ink-2:#0b1322;
+  --panel:rgba(17,26,44,.72);
+  --panel-solid:#111a2c;
+  --line:rgba(148,170,205,.14);
+  --line-strong:rgba(148,170,205,.26);
+  --teal:#00d4aa;
+  --teal-soft:rgba(0,212,170,.12);
+  --gold:#e3b458;
+  --gold-soft:rgba(227,180,88,.12);
+  --text:#e9eef7;
+  --muted:#93a2ba;
+  --danger:#ff6b6b;
+  --radius:16px;
+  --radius-sm:10px;
+  --font-display:'Sora',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+  --shadow:0 18px 50px -18px rgba(0,0,0,.65);
+  --tr:all .28s cubic-bezier(.22,.8,.3,1);
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);
+  background:var(--ink);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  font-size:15px;
+  line-height:1.55;
+}
+
+/* ambient backdrop */
+body::before{
+  content:'';position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(900px 520px at 85% -10%, rgba(0,212,170,.09), transparent 60%),
+    radial-gradient(760px 480px at -10% 110%, rgba(227,180,88,.07), transparent 60%),
+    linear-gradient(160deg,#070c18 0%,#0a1120 55%,#081020 100%);
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(148,170,205,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(148,170,205,.05) 1px,transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,black 30%,transparent 100%);
+  mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,black 30%,transparent 100%);
+}
+/* ambient glow — static, GPU-cheap (no blur filter, no JS) */
+.aurora{position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(680px 460px at 88% -8%, rgba(0,212,170,.10), transparent 60%),
+    radial-gradient(620px 420px at -6% 106%, rgba(227,180,88,.08), transparent 60%),
+    radial-gradient(520px 380px at 60% 50%, rgba(60,120,255,.05), transparent 65%);}
+
+::selection{background:rgba(0,212,170,.28)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--ink-2)}
+::-webkit-scrollbar-thumb{background:#243450;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#2f4266}
+
+/* ============ LOGIN SCREEN ============ */
+.login-screen{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(1000px 600px at 70% 20%, rgba(0,212,170,.10), transparent 55%),
+    radial-gradient(800px 520px at 20% 90%, rgba(227,180,88,.08), transparent 55%),
+    linear-gradient(150deg,#060b16,#0a1424);
+  padding:1.5rem;
+}
+.login-card{
+  position:relative;z-index:2;
+  width:100%;max-width:410px;
+  background:linear-gradient(165deg,rgba(20,30,52,.9),rgba(12,19,34,.94));
+  border:1px solid var(--line-strong);
+  border-radius:22px;
+  padding:2.75rem 2.5rem 2.25rem;
+  box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.05);
+  text-align:center;
+  position:relative;overflow:hidden;
+  animation:loginIn .6s cubic-bezier(.2,.9,.3,1) both;
+}
+@keyframes loginIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+.login-card::before{
+  content:'';position:absolute;top:0;left:-50%;width:200%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--teal),var(--gold),transparent);
+  animation:railSlide 4s linear infinite;
+}
+@keyframes railSlide{0%{transform:translateX(-25%)}100%{transform:translateX(25%)}}
+.login-monogram{
+  width:76px;height:76px;margin:0 auto 1.4rem;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:20px;
+  background:linear-gradient(150deg,rgba(0,212,170,.16),rgba(227,180,88,.14));
+  border:1px solid rgba(227,180,88,.35);
+  font-family:var(--font-display);font-weight:800;font-size:1.55rem;
+  color:var(--gold);letter-spacing:.5px;
+  box-shadow:0 10px 30px -12px rgba(0,212,170,.35), inset 0 1px 0 rgba(255,255,255,.08);
+  position:relative;
+}
+.login-monogram::after{
+  content:'';position:absolute;inset:-6px;border-radius:24px;
+  border:1px solid rgba(0,212,170,.4);
+  animation:pulseRing 2.6s ease-out infinite;
+}
+@keyframes pulseRing{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.35);opacity:0}}
+.login-monogram i.spark{position:absolute;font-size:.55rem;color:var(--teal);top:8px;right:10px;animation:twinkle 2s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+.login-eyebrow{
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:.55rem;
+}
+.login-card h1{
+  font-family:var(--font-display);font-weight:700;font-size:1.55rem;
+  letter-spacing:-.01em;margin-bottom:.35rem;
+}
+.login-card .login-sub{color:var(--muted);font-size:.86rem;margin-bottom:1.9rem}
+.login-field{position:relative;margin-bottom:1rem;text-align:left}
+.login-field label{
+  display:block;font-family:var(--font-mono);font-size:.66rem;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  margin-bottom:.5rem;
+}
+.login-input-wrap{position:relative}
+.login-input-wrap .fa-key{
+  position:absolute;left:1rem;top:50%;transform:translateY(-50%);
+  color:var(--muted);font-size:.85rem;pointer-events:none;transition:var(--tr);
+}
+#passwordInput{
+  width:100%;padding:.95rem 3rem .95rem 2.7rem;
+  background:rgba(7,12,24,.7);
+  border:1px solid var(--line-strong);border-radius:12px;
+  color:var(--text);font-size:1rem;font-family:var(--font-body);
+  transition:var(--tr);letter-spacing:.12em;
+}
+#passwordInput:focus{
+  outline:none;border-color:var(--teal);
+  box-shadow:0 0 0 3px rgba(0,212,170,.15);
+}
+#passwordInput:focus ~ .fa-key,
+.login-input-wrap:focus-within .fa-key{color:var(--teal)}
+.pw-toggle{
+  position:absolute;right:.6rem;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  padding:.5rem;border-radius:8px;transition:var(--tr);
+}
+.pw-toggle:hover{color:var(--text)}
+.login-btn{
+  width:100%;padding:.95rem;margin-top:.4rem;
+  background:linear-gradient(135deg,var(--teal),#0cbfa0);
+  border:none;border-radius:12px;cursor:pointer;
+  font-family:var(--font-display);font-weight:700;font-size:.95rem;
+  color:#04231c;letter-spacing:.02em;
+  transition:var(--tr);
+  box-shadow:0 12px 28px -10px rgba(0,212,170,.5);
+  display:flex;align-items:center;justify-content:center;gap:.55rem;
+}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px -10px rgba(0,212,170,.6)}
+.login-btn:active{transform:translateY(0)}
+.login-error{
+  display:none;margin-top:.9rem;padding:.6rem .9rem;
+  background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);
+  border-radius:10px;color:var(--danger);font-size:.82rem;
+}
+.login-error.show{display:block;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.login-foot{
+  margin-top:1.8rem;padding-top:1.3rem;border-top:1px solid var(--line);
+  font-family:var(--font-mono);font-size:.64rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted);
+  display:flex;justify-content:space-between;
+}
+.login-foot .dot{color:var(--teal)}
+
+/* ============ PORTAL ============ */
+#portalContent{display:none}
+#portalContent.on{display:block;animation:portalIn .5s ease both}
+@keyframes portalIn{from{opacity:0}to{opacity:1}}
+
+/* header */
+header{
+  position:sticky;top:0;z-index:1000;
+  background:rgba(9,15,28,.82);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+.header-content{
+  max-width:1480px;margin:0 auto;padding:.85rem 2rem;
+  display:flex;justify-content:space-between;align-items:center;gap:1.25rem;
+}
+.logo{
+  display:flex;align-items:center;gap:.75rem;text-decoration:none;color:var(--text);
+}
+.logo-mark{
+  width:40px;height:40px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(150deg,rgba(0,212,170,.18),rgba(227,180,88,.15));
+  border:1px solid rgba(227,180,88,.32);
+  color:var(--gold);font-family:var(--font-display);font-weight:800;font-size:.95rem;
+}
+.logo-text{line-height:1.15}
+.logo-text .t1{font-family:var(--font-display);font-weight:700;font-size:1.02rem;letter-spacing:-.01em}
+.logo-text .t1 em{font-style:normal;color:var(--teal)}
+.logo-text .t2{font-family:var(--font-mono);font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+nav{display:flex;align-items:center;gap:1rem}
+.nav-links{display:flex;list-style:none;gap:.2rem}
+.nav-links a{
+  color:var(--muted);text-decoration:none;font-size:.86rem;font-weight:500;
+  padding:.5rem .85rem;border-radius:9px;transition:var(--tr);
+  display:flex;align-items:center;gap:.45rem;
+}
+.nav-links a i{font-size:.75rem;color:var(--teal);opacity:.8}
+.nav-links a:hover{color:var(--text);background:rgba(148,170,205,.08)}
+.search-container{position:relative}
+.search-bar{
+  background:rgba(7,12,24,.6);border:1px solid var(--line);border-radius:22px;
+  padding:.52rem 2.4rem .52rem 1rem;color:var(--text);width:210px;
+  font-family:var(--font-body);font-size:.85rem;transition:var(--tr);
+}
+.search-bar::placeholder{color:var(--muted)}
+.search-bar:focus{outline:none;width:270px;border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,212,170,.12)}
+.search-icon{position:absolute;right:.9rem;top:50%;transform:translateY(-50%);color:var(--teal);font-size:.8rem;pointer-events:none}
+.header-logout{
+  background:none;border:1px solid var(--line);border-radius:9px;cursor:pointer;
+  color:var(--muted);padding:.5rem .8rem;font-size:.8rem;font-family:var(--font-body);
+  display:flex;align-items:center;gap:.45rem;transition:var(--tr);white-space:nowrap;
+}
+.header-logout:hover{color:var(--danger);border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.06)}
+.menu-toggle{display:none;flex-direction:column;cursor:pointer;padding:.5rem;gap:5px}
+.menu-toggle span{width:24px;height:2px;background:var(--teal);transition:var(--tr);border-radius:2px}
+.menu-toggle.active span:nth-child(1){transform:rotate(-45deg) translate(-5px,5px)}
+.menu-toggle.active span:nth-child(2){opacity:0}
+.menu-toggle.active span:nth-child(3){transform:rotate(45deg) translate(-5px,-5px)}
+
+/* container + sections */
+.container{max-width:1480px;margin:1.8rem auto 4rem;padding:0 2rem}
+.section-title{
+  font-family:var(--font-display);font-weight:700;font-size:1.35rem;letter-spacing:-.01em;
+  display:flex;align-items:center;gap:.7rem;margin-bottom:.35rem;
+}
+.section-title i{
+  font-size:.85rem;color:var(--gold);
+  width:34px;height:34px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--gold-soft);border:1px solid rgba(227,180,88,.28);
+}
+.section-sub{
+  color:var(--muted);font-size:.84rem;margin:0 0 1.3rem 2.85rem;
+}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.section-count{
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:.14em;color:var(--muted);
+  text-transform:uppercase;
+}
+
+/* ============ CATEGORIES — CENTERPIECE ============ */
+.categories-section{margin-bottom:2.8rem}
+
+/* hero stat bar */
+.cat-hero{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.2rem;
+  padding:1.5rem 1.7rem;margin-bottom:1.6rem;
+  background:linear-gradient(150deg,rgba(17,26,44,.9),rgba(11,19,34,.9));
+  border:1px solid var(--line);border-radius:var(--radius);position:relative;overflow:hidden;
+}
+.cat-hero::before{
+  content:'';position:absolute;top:0;left:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--teal),var(--gold));
+}
+.cat-hero-l h2{
+  font-family:var(--font-display);font-weight:700;font-size:1.35rem;letter-spacing:-.01em;
+  display:flex;align-items:center;gap:.65rem;
+}
+.cat-hero-l h2 i{color:var(--gold);font-size:1.05rem}
+.cat-hero-l p{color:var(--muted);font-size:.84rem;margin-top:.3rem}
+.cat-stats{display:flex;gap:1.8rem}
+.cat-stat{text-align:center}
+.cat-stat .num{
+  font-family:var(--font-display);font-weight:800;font-size:1.6rem;
+  background:linear-gradient(120deg,var(--teal),var(--gold));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;
+}
+.cat-stat .lbl{
+  font-family:var(--font-mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);margin-top:.35rem;
+}
+
+/* toolbar */
+.cat-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem;margin-bottom:1.1rem}
+.cat-search{position:relative;flex:1;min-width:220px;max-width:420px}
+.cat-search input{
+  width:100%;padding:.7rem 1rem .7rem 2.5rem;
+  background:var(--panel-solid);border:1px solid var(--line-strong);border-radius:11px;
+  color:var(--text);font-size:.88rem;font-family:var(--font-body);transition:border-color .2s ease,box-shadow .2s ease;
+}
+.cat-search input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,212,170,.12)}
+.cat-search .fa-magnifying-glass{position:absolute;left:.95rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.82rem}
+.cat-actions{display:flex;gap:.5rem}
+.cat-btn{
+  background:var(--panel-solid);border:1px solid var(--line-strong);color:var(--muted);
+  padding:.62rem 1rem;border-radius:10px;font-family:var(--font-display);font-weight:600;font-size:.8rem;
+  cursor:pointer;transition:all .2s ease;display:flex;align-items:center;gap:.45rem;
+}
+.cat-btn:hover{color:var(--text);border-color:var(--teal);background:var(--teal-soft)}
+.cat-btn i{font-size:.72rem;color:var(--teal)}
+
+/* grid + cards */
+.category-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;align-items:start}
+.category-card{
+  background:var(--panel-solid);
+  border:1px solid var(--line);border-radius:var(--radius-sm);
+  overflow:hidden;position:relative;
+  transition:border-color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+.category-card::before{
+  content:'';position:absolute;top:0;left:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--teal),var(--gold));
+  opacity:0;transition:opacity .2s ease;
+}
+.category-card:hover{border-color:var(--line-strong);transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(0,212,170,.4)}
+.category-card.active{border-color:rgba(0,212,170,.4);box-shadow:0 16px 34px -16px rgba(0,212,170,.3)}
+.category-card.active::before{opacity:1}
+.category-header{
+  padding:.95rem 1.1rem;cursor:pointer;user-select:none;
+  display:flex;justify-content:space-between;align-items:center;gap:.6rem;
+  transition:background .2s ease;
+}
+.category-header:hover{background:rgba(0,212,170,.05)}
+.category-header h3{
+  font-family:var(--font-display);font-weight:600;font-size:.9rem;color:var(--text);
+  display:flex;align-items:center;gap:.6rem;min-width:0;flex:1;
+}
+.category-header h3 i{
+  color:var(--gold);font-size:.8rem;flex-shrink:0;width:22px;height:22px;border-radius:7px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--gold-soft);border:1px solid rgba(227,180,88,.25);
+}
+.cat-count{
+  font-family:var(--font-mono);font-size:.64rem;font-weight:600;color:var(--teal);
+  background:var(--teal-soft);border:1px solid rgba(0,212,170,.25);
+  padding:.12rem .5rem;border-radius:20px;flex-shrink:0;letter-spacing:.03em;
+}
+.expand-icon{color:var(--muted);font-size:.7rem;transition:transform .3s ease;flex-shrink:0}
+.category-card.active .expand-icon{transform:rotate(180deg);color:var(--teal)}
+.category-content{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.category-links{padding:.4rem .7rem .85rem;border-top:1px solid var(--line)}
+.category-links a{
+  display:block;color:var(--muted);text-decoration:none;font-size:.82rem;
+  padding:.45rem .55rem .45rem 1.4rem;border-radius:8px;position:relative;
+  transition:color .15s ease,background .15s ease,padding .15s ease;
+}
+.category-links a::before{
+  content:'';position:absolute;left:.55rem;top:50%;transform:translateY(-50%);
+  width:5px;height:5px;border-radius:50%;background:var(--line-strong);transition:all .15s ease;
+}
+.category-links a:hover{color:var(--teal);background:var(--teal-soft);padding-left:1.6rem}
+.category-links a:hover::before{background:var(--teal);box-shadow:0 0 8px rgba(0,212,170,.7)}
+.cat-empty{
+  display:none;text-align:center;padding:3rem 1rem;color:var(--muted);
+  font-family:var(--font-mono);font-size:.85rem;
+}
+.cat-empty i{display:block;font-size:1.8rem;color:var(--line-strong);margin-bottom:.7rem}
+
+
+/* mobile sidebar */
+.mobile-sidebar{
+  position:fixed;top:0;left:-100%;width:290px;height:100vh;z-index:1200;
+  background:linear-gradient(170deg,#0d1526,#0a1120);
+  border-right:1px solid var(--line-strong);
+  transition:left .32s ease;overflow-y:auto;
+}
+.mobile-sidebar.active{left:0}
+.sidebar-header{
+  padding:1.8rem 1.5rem 1.4rem;border-bottom:1px solid var(--line);
+}
+.sidebar-header h2{font-family:var(--font-display);font-weight:700;font-size:1.15rem}
+.sidebar-header h2 em{font-style:normal;color:var(--teal)}
+.sidebar-header p{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+.sidebar-content{padding:1.1rem}
+.sidebar-links{list-style:none}
+.sidebar-links a{
+  color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:.7rem;
+  padding:.72rem .9rem;border-radius:10px;transition:var(--tr);font-size:.9rem;
+}
+.sidebar-links a i{color:var(--teal);width:16px;font-size:.8rem}
+.sidebar-links a:hover{background:var(--teal-soft);color:var(--text)}
+.overlay{
+  position:fixed;inset:0;background:rgba(4,8,16,.6);backdrop-filter:blur(3px);
+  opacity:0;visibility:hidden;transition:var(--tr);z-index:1100;
+}
+.overlay.active{opacity:1;visibility:visible}
+
+/* FAB */
+.fab{
+  position:fixed;bottom:1.8rem;right:1.8rem;width:54px;height:54px;z-index:100;
+  background:linear-gradient(135deg,var(--gold),#c99a3e);
+  border-radius:16px;display:flex;align-items:center;justify-content:center;
+  color:#241a05;font-size:1.1rem;cursor:pointer;
+  box-shadow:0 14px 32px -10px rgba(227,180,88,.5);transition:var(--tr);
+}
+.fab:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 18px 40px -10px rgba(227,180,88,.6)}
+
+/* search dimming */
+.search-hidden{display:none !important}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+@media (max-width:1200px){.quick-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:768px){
+  .nav-links{display:none}
+  .menu-toggle{display:flex}
+  .header-content{padding:.8rem 1rem}
+  .header-logout span{display:none}
+  .search-bar{width:130px}
+  .search-bar:focus{width:160px}
+  .container{padding:0 1rem}
+  .quick-grid{grid-template-columns:1fr 1fr}
+  .category-grid{grid-template-columns:1fr}
+  .his-form{flex-direction:column;align-items:stretch}
+  .his-form select,.his-form button{width:100%}
+  .section-sub{margin-left:0}
+}
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+
+<!-- ================= LOGIN ================= -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="login-monogram"><i class="fas fa-star spark"></i>JN</div>
+    <div class="login-eyebrow">Aster Hospital Mankhool</div>
+    <h1>JoBiN Digital Portal</h1>
+    <p class="login-sub">IT Operations Command Hub — restricted access</p>
+    <div class="login-field">
+      <label for="passwordInput">Enter Password</label>
+      <div class="login-input-wrap">
+        <i class="fas fa-key"></i>
+        <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="current-password">
+        <button type="button" class="pw-toggle" id="pwToggle" aria-label="Show password"><i class="fas fa-eye"></i></button>
+      </div>
+    </div>
+    <button class="login-btn" id="loginBtn"><i class="fas fa-unlock-alt"></i> Unlock Portal</button>
+    <div class="login-error" id="loginError"><i class="fas fa-triangle-exclamation"></i> Incorrect password. Try again.</div>
+    <div class="login-foot"><span>Aster DM Healthcare</span><span><span class="dot">●</span> Secure</span></div>
+  </div>
+</div>
+
+<!-- ================= PORTAL ================= -->
+<div id="portalContent">
+
+<header>
+  <div class="header-content">
+    <a class="logo" href="#categories">
+      <div class="logo-mark">JN</div>
+      <div class="logo-text">
+        <div class="t1">JoBiN <em>Digital Portal</em></div>
+        <div class="t2">Aster Hospital · IT Ops</div>
+      </div>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#categories"><i class="fas fa-list"></i> Categories</a></li>
+      </ul>
+      <div class="search-container">
+        <input type="text" class="search-bar" placeholder="Search portal..." id="searchInput">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+      <button class="header-logout" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></button>
+      <div class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></div>
+    </nav>
+  </div>
+</header>
+
+<div class="mobile-sidebar" id="mobileSidebar">
+  <div class="sidebar-header">
+    <h2>JoBiN <em>Portal</em></h2>
+    <p>Aster Hospital Mankhool</p>
+  </div>
+  <div class="sidebar-content">
+    <ul class="sidebar-links">
+      <li><a href="#categories"><i class="fas fa-list"></i> Categories</a></li>
+      <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+    </ul>
+  </div>
+</div>
+<div class="overlay" id="overlay"></div>
+
+<div class="container">
+
+  <!-- Categories -->
+  <section class="categories-section" id="categories">
+    <div class="cat-hero">
+      <div class="cat-hero-l">
+        <h2><i class="fas fa-layer-group"></i> Department Link Library</h2>
+        <p>Every system and tool, grouped by department — click a group to expand.</p>
+      </div>
+      <div class="cat-stats">
+        <div class="cat-stat"><div class="num" id="statGroups">0</div><div class="lbl">Groups</div></div>
+        <div class="cat-stat"><div class="num" id="statLinks">0</div><div class="lbl">Total Links</div></div>
+      </div>
+    </div>
+
+    <div class="cat-toolbar">
+      <div class="cat-search">
+        <i class="fas fa-magnifying-glass"></i>
+        <input type="text" id="catSearch" placeholder="Search any link or department…" autocomplete="off">
+      </div>
+      <div class="cat-actions">
+        <button class="cat-btn" id="expandAll"><i class="fas fa-chevron-down"></i> Expand all</button>
+        <button class="cat-btn" id="collapseAll"><i class="fas fa-chevron-up"></i> Collapse all</button>
+      </div>
+    </div>
+
+    <div class="category-grid">
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-pills"></i> E - Triage</h3><span class="cat-count">20</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://ahops.alif.onl/?EID=9">CTAS Token Aneesa</a>
+          <a target="_blank" href="https://ahops.alif.onl/erdisplay?EID=9">CTAS Display Aneesa</a>
+          <a target="_blank" href="https://ahops.alif.onl/Dashboard?EID=9">CTAS Dashboard Aneesa</a>
+          <a target="_blank" href="https://ahops.alif.onl/Dashboard/?EID=29&Room=1">CTAS Dashboard Aneesa New</a>
+          <a target="_blank" href="https://ahops.alif.onl/ERQ/?EID=29&Room=1">Etriage CTAS Token calling</a>
+          <a target="_blank" href="https://api.asterhospital.com/cTAS/tn.aspx?FID=9">Etriage CTAS New Token</a>
+          <a target="_blank" href="https://api.asterhospital.com/cTAS/ctas.aspx?FID=9">Etriage CTAS list</a>
+          <a target="_blank" href="https://ehr.ahosp.me/EMPChk/tn.aspx?FID=9">Etriage Digital Token</a>
+          <a target="_blank" href="https://ehr.ahosp.me/EMPChk/CTAS.aspx?FID=9">Etriage List New</a>
+          <a target="_blank" href="http://172.19.8.22:88/T/triage.aspx?FID=9">Etriage List Old</a>
+          <a target="_blank" href="https://api.asterhospital.com/s/triage.aspx?fid=9">Etriage List old api</a>
+          <a target="_blank" href="https://triage.dcas.gov.ae/Default.aspx">DCAS</a>
+          <a target="_blank" href="https://ahosp.me/SR/Login?Logout=1">ER Token Print</a>
+          <a target="_blank" href="https://ahosp.me/ersr/selfreg/?FID=9&Uid=1">ER Self Registration old</a>
+          <a target="_blank" href="https://ahosp.me/erk/?fid=9">ER- Self Registartion New</a>
+          <a target="_blank" href="http://172.19.8.22:888/ERDashboard/?FID=9">ER New Dashboard Display</a>
+          <a target="_blank" href="http://172.19.8.22:888/erdisplay?fid=9">ER Display</a>
+          <a target="_blank" href="http://172.19.25.50:8030//?FID=9&Uid=1">ER- Self Registartion old</a>
+          <a target="_blank" href="https://play.google.com/apps/test/com.astermateDoc06/38">ER- Dr AsterMate APP</a>
+          <a href="#" onclick="javascript:OpenUrl('EMR/ETriage.aspx?Mpg=P1516');">Etriage HIS</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-shield-alt"></i> Token</h3><span class="cat-count">15</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://ehr.ahosp.me/EMPChk/tn.aspx?FID=9">Etriage Digital Token</a>
+          <a target="_blank" href="https://qms.alif.onl/?EID=9&Zone=5&DS=1">Multiple Token</a>
+          <a target="_blank" href="https://qms.alif.onl/?EID=9&Zone=1">Aneesa OPD Token</a>
+          <a target="_blank" href="https://ahops.alif.onl/?EID=9">CTAS Token Aneesa</a>
+          <a target="_blank" href="https://api.asterhospital.com/cTAS/tn.aspx?FID=9">Etriage CTAS New Token</a>
+          <a target="_blank" href="https://ahosp.me/SR/Login?Logout=1">ER Token print</a>
+          <a target="_blank" href="https://api.asterhospital.com/TKn1xyz009876/?zoneId=5">New Token</a>
+          <a target="_blank" href="http://172.19.8.24:8088/?zoneid=5">Token</a>
+          <a target="_blank" href="https://ahosp.me/erk/tn?fid=9">ER Token print</a>
+          <a target="_blank" href="https://ahosp.me/WebToken/?ZoneId=9">Pharmacy Token Vinod</a>
+          <a target="_blank" href="http://172.19.241.4:8085/?Zoneid=9">Pharmacy Token New</a>
+          <a target="_blank" href="http://172.19.241.24/CreativeManager.aspx">OPD Token Video</a>
+          <a target="_blank" href="http://172.19.241.24:809/CreativeManager.aspx">Pharmacy Token Video</a>
+          <a target="_blank" href="https://ahops.alif.onl//CreativeManager.aspx?videoFolder=VideoAhm">Triage Token Video</a>
+          <a target="_blank" href="https://api.asterhospital.com/tk/ph/?zoneid=9&location=pharmacy">Pharmacy Token Old</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-laptop-medical"></i> PACS</h3><span class="cat-count">15</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="http://172.19.241.46">Moksha L</a>
+          <a target="_blank" href="https://risuae.alif.onl/risng/ui/html/1.php">Moksha Uae</a>
+          <a target="_blank" href="https://pacs.asterclinics.com/risng/ui/html/1.php">Moksha Clinic</a>
+          <a target="_blank" href="http://172.19.8.20:9999/mdathena/">Moksha Cache AHM</a>
+          <a target="_blank" href="http://172.19.58.110:9999/mdathena/">Moksha Cache AHQ</a>
+          <a target="_blank" href="http://172.19.170.110:9999/mdathena/">Moksha Cache AHSJ</a>
+          <a target="_blank" href="http://172.19.113.50:9999/mdathena/">Moksha Cache ACD</a>
+          <a target="_blank" href="http://172.19.241.47:9999/mdathena/">Moksha Central</a>
+          <a target="_blank" href="https://pacsuae.asterhospital.com/login">PACS UAE</a>
+          <a target="_blank" href="https://172.19.241.5/login">PACS Local</a>
+          <a target="_blank" href="https://172.19.241.7/login">PACS UAT</a>
+          <a target="_blank" href="http://172.19.8.25/login">AHM Cache</a>
+          <a target="_blank" href="http://172.19.58.25/login">AHQ Cache</a>
+          <a target="_blank" href="http://172.19.8.16/login">CEDAR Cache</a>
+          <a target="_blank" href="http://172.19.58.16/login">SHARJAH Cache</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-flask"></i> AHM Asset</h3><span class="cat-count">3</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://asterdmhealthcare-my.sharepoint.com/:x:/r/personal/tanka_prasad_asterdmhealthcare_com/_layouts/15/doc2.aspx?sourcedoc=%7B9C953860-2580-487D-8FC9-B74C2A24E585%7D&file=AHM%20Asset%20details.xlsx&action=default&mobileredirect=true">AHM IP Tanka</a>
+          <a target="_blank" href="https://asterdmhealthcare-my.sharepoint.com/:x:/r/personal/jobin_joseph_asterhospital_com/_layouts/15/Doc.aspx?sourcedoc=%7B21ED3EBB-96E3-4249-8291-66ED94170968%7D&file=AHM%20Asset%20Jobin.xlsx&action=default&mobileredirect=true">AHM IP Jobin</a>
+          <a target="_blank" href="https://asterdmhealthcare-my.sharepoint.com/:x:/r/personal/jobin_joseph_asterhospital_com/_layouts/15/Doc.aspx?sourcedoc=%7B94D81190-E3D9-4795-9F25-0D4757247481%7D&file=AHM%20PC%20IP.xlsx&fromShare=true&action=default&mobileredirect=true">AHM static IP </a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Server Info</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="file:///C:/Users/ASTER/OneDrive%20-%20Aster%20DM%20Healthcare/Desktop/CJ/Server%20New.html">Server Info</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Jobin CJ</h3><span class="cat-count">6</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://online.dib.ae/">DIB</a>
+          <a target="_blank" href="https://web.whatsapp.com/">Whatsapp web</a>
+          <a target="_blank" href="https://mail.google.com/mail/u/0/#inbox/">Gmail</a>
+          <a target="_blank" href="https://mail.yahoo.com/d/folders/1?guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&guce_referrer_sig=AQAAADkQs1H2-SqgkTg86ZhQLhu_rGuU3AFFT5F1U3fe40RAcVnxsE8OGW4zYve8MtVbHxENwU0d2ADCmeWslfyOE6C4duVDM9VtRNkfZWqaG52i8ZNq2xRy8kKBMEXTWFfJ-HilDI-_OpG7Ut35oFIxyzTLyPtq2rfiGYVzfkHCK-BS/">Yahoo</a>
+          <a target="_blank" href="https://www.facebook.com//">FB</a>
+          <a target="_blank" href="https://www.hik-connect.com/views/login/index.html?jump=1#/login">Hik Connect</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-chart-bar"></i> CCTV AHM</h3><span class="cat-count">18</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://cloud.jarvis.live">JAVRIS</a>
+          <a target="_blank" href="https://aster.irisvisionai.io/login">Iris Vision</a>
+          <a target="_blank" href="http://172.19.25.240/doc/index.html#/portal/login">NVR3</a>
+          <a target="_blank" href="http://172.19.25.241/doc/index.html#/portal/login">NVR6</a>
+          <a target="_blank" href="http://172.19.25.242/doc/index.html#/portal/login">NVR4</a>
+          <a target="_blank" href="http://172.19.25.243/doc/index.html#/portal/login">NVR1</a>
+          <a target="_blank" href="http://172.19.25.244/doc/index.html#/portal/login">NVR2</a>
+          <a target="_blank" href="http://172.19.25.245/doc/index.html#/portal/login">NVR5</a>
+          <a target="_blank" href="http://172.19.113.100/doc/index.html#/portal/login">Cedar Admin</a>
+          <a target="_blank" href="http://172.19.128.223/doc/index.html#/portal/login">Sonapur1</a>
+          <a target="_blank" href="http://172.19.128.225/doc/index.html#/portal/login">Sonapur2</a>
+          <a target="_blank" href="http://172.19.125.224/doc/index.html#/portal/login">Sonapur3</a>
+          <a target="_blank" href="http://172.19.112.150/doc/index.html#/portal/login">Cedar Hospital</a>
+          <a target="_blank" href="http://172.19.113.75/?_=187466397807">Cedar New</a>
+          <a target="_blank" href="http://172.19.1.143/doc/index.html#/portal/login">ADSC</a>
+          <a target="_blank" href="http://172.19.49.236">IT Cam</a>
+          <a target="_blank" href="http://172.19.161.10/">Sharjah Admin Office</a>
+          <a target="_blank" href="https://www.hik-connect.com/views/login/index.html?jump=1#/login">Hik Connect</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> PA System</h3><span class="cat-count">4</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="http://172.19.1.250/cgi-bin/luci">PA ADSC</a>
+          <a target="_blank" href="http://172.19.17.25/cgi-bin/luci">PA AHM</a>
+          <a target="_blank" href="http://172.19.168.15/cgi-bin/luci">PA Sharja</a>
+          <a target="_blank" href="http://172.19.132.10/cgi-bin/luci">PA Sonapur</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Patient Portal</h3><span class="cat-count">2</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://pp.ahosp.me/admin">Patient Portal Admin</a>
+          <a target="_blank" href="https://pp.ahosp.me/">Patient Portal</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> QMS</h3><span class="cat-count">2</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://app.aster.om/qmsadmnew/">QMS Oman</a>
+          <a target="_blank" href="https://ahosp.me/adm/Login">QMS dubai</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Eligibility Check</h3><span class="cat-count">2</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://rcm.mantys.in/dashboard/v2/eligibility/dashboard">Eligibility Dashboard</a>
+          <a target="_blank" href="https://rcm-dev.mantys.in/">Eligibility Dashboard new</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> OXE</h3><span class="cat-count">2</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://172.19.17.10/#/login">AHM OXE</a>
+          <a target="_blank" href="https://172.19.56.5/#/home/configuration">AHQ OXE</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> OmniVista</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://asterhospitaluae.ov.ovcirrus.com/login.html">Omni Vista AP</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> AsterLite</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://ahosp.me/rxl/">Aster Lite</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> OT</h3><span class="cat-count">6</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://ahops.alif.onl/OTD?EID=9">OT Display New Aneesa</a>
+          <a target="_blank" href="http://172.19.8.22:888/?FacilityID=9">OT Display New</a>
+          <a target="_blank" href="http://172.19.8.22:888/">OT Display Old</a>
+          <a target="_blank" href="http://172.19.8.22:8008/changestatus?FacilityID=9">Change OT status</a>
+          <a target="_blank" href="https://ahosp.me/OT/">OT Video Upload Portal</a>
+          <a target="_blank" href="https://ahosp.me/DigitalOT/Login">Digital OT</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Nursing Assignment</h3><span class="cat-count">3</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="http://172.19.58.3:88/assignment">Nurse Assignment</a>
+          <a target="_blank" href="http://172.19.8.85:8008/assignment">OT NS Assignment</a>
+          <a target="_blank" href="http://172.19.8.22:8008/changestatus?FACILITYID=9">Nurse Assignment E Wing</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Census</h3><span class="cat-count">2</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://pp.ahosp.me/hospitalCensus">Census New</a>
+          <a target="_blank" href="https://ahospcencus.azurewebsites.net/">Census Old</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Token Display URL</h3><span class="cat-count">3</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="http://172.19.241.24/?zoneid=5">AHM Display</a>
+          <a target="_blank" href="http://172.19.241.24:809/?zoneid=9">AHM Pharmacy Display</a>
+          <a target="_blank" href="https://api.asterhospital.com/QMS/?zoneid=5">Coomon</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> ward Display URL</h3><span class="cat-count">13</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=5FE">E Wing Display</a>
+          <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=4FD">D wing</a>
+          <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=4FC">C wing</a>
+          <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=3FB">B wing</a>
+          <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=3FA">A wing</a>
+          <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=ICU">ICU</a>
+          <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=LR">LDR </a>
+          <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=CICU">CICU</a>
+          <a target="_blank" href="https://ahops.alif.onl/OTD?EID=9">OT Display</a>
+          <a target="_blank" href="https://ahops.alif.onl/erdisplay?EID=9">Triage display</a>
+          <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=NICU">NICU </a>
+          <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=DIALYSIS">Dialisys </a>
+          <a target="_blank" href="https://ahops.alif.onl/WD?EID=9&Zone=ENDOSCOPY">Endoscopy </a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Lab</h3><span class="cat-count">15</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="http://172.19.241.10/Login.aspx?ReturnUrl=%2fWardManagement%2fWardDetaildoctorwise.aspx%3fMpg%3dP312&Mpg=P312">BCMA</a>
+          <a href="#" onclick="javascript:OpenUrl('Bloodbank/BloodProcess.aspx?Mpg=P1554');">Blood tran (BCBT)</a>
+          <a href="#" onclick="javascript:OpenUrl('Bloodbank/BloodProcess.aspx?Mpg=P1554');">Blood Request</a>
+          <a target="_blank" href="https://bct.asterhospital.com/Barcode.aspx">BCT</a>
+          <a target="_blank" href="http://172.19.8.85:6323/?fid=9">TV Blood Request</a>
+          <a target="_blank" href="https://bct.asterhospital.com/BcBtList.aspx">BCBT List</a>
+          <a target="_blank" href="https://ehr.ahosp.me/EMPChk/Emp.aspx/?FID=9">Health Chkp</a>
+          <a href="#" onclick="javascript:OpenUrl('LIS/Phlebotomy/ChangeStation.aspx?MD=LIS&Mpg=P598');">***For Do Change Station***</a>
+          <a href="#" onclick="javascript:OpenUrl('LIS/Format/TemplateLabMachine.aspx');">Machine Setup</a>
+          <a href="#" onclick="javascript:OpenUrl('EMR/Dashboard/ProviderParts/LabResults.aspx?Mpg=P952');">Provide Dashboard</a>
+          <a href="#" onclick="javascript:OpenUrl('LIS/Format/SignatureSetup.aspx?MD=BOTH&Mpg=P568');">Lab Signature Setup</a>
+          <a href="#" onclick="javascript:OpenUrl('MPages/ServiceLokup.aspx?MD=BOTH&Mpg=P567');">Service Tagging</a>
+          <a href="#" onclick="javascript:OpenUrl('LIS/Phlebotomy/InvestigationResult.aspx?Mpg=P599');">LAB Result Entry</a>
+          <a href="#" onclick="javascript:OpenUrl('LIS/Phlebotomy/Phlebotomy.aspx?PT=COLL&MD=');">Phlebotomy</a>
+          <a href="#" onclick="javascript:OpenUrl('LIS/Phlebotomy/Phlebotomy.aspx?PT=COLL&MD=');">LIS</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Barcoded</h3><span class="cat-count">7</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a href="#" onclick="javascript:OpenUrl('Bloodbank/BloodProcess.aspx?Mpg=P1554');">BCBT-LAB-Screen</a>
+          <a href="#" onclick="javascript:OpenUrl('LIS/Phlebotomy/InvestigationResult.aspx');">Result Entry</a>
+          <a href="#" onclick="javascript:OpenUrl('LIS/Phlebotomy/Phlebotomy.aspx?PT=STATUS&MD=LIS');">LIS Search</a>
+          <a href="https://bct.asterhospital.com/Barcode.aspx" onclick="">BarCode URL</a>
+          <a href="https://bct.asterhospital.com/BcBtList.aspx" onclick="">BCBT Rover Page</a>
+          <a href="https://bct.asterhospital.com/BCSSIssueReturn.aspx" onclick="">BCSS</a>
+          <a href="http://172.19.8.85:6323/?fid=9" target="_blank">Lab BCBT TV</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Oracle password</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://asterconnect.asterdmhealthcare.com/">Oracle Password rst</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Manage Engine</h3><span class="cat-count">2</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://itservicedesk.asterdmhealthcare.com/">Ticket</a>
+          <a target="_blank" href="https://medc.asterdmhealthcare.com:8383//">ME</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Doctor SMS</h3><span class="cat-count">2</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="http://172.19.241.37:801/pcr/smsx?auto=1">Doctors SMS</a>
+          <a target="_blank" href="https://smartmessaging.etisalat.ae:9093/login">Etisalat SMS</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Wish List</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://pp.ahosp.me/wishas">Wishlist</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> OPD Pathway</h3><span class="cat-count">2</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://pp.ahosp.me/opdpathway?x=NTA3NDkxOTc3eDIwMjUtMDItMjU=">OPD Pathway</a>
+          <a target="_blank" href="https://astermate.ahosp.me/PatientPathway">OPD Pathway New</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Asset Tag</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="http://10.10.232.104/FAT_ASTER/login">Asset Tag</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Silver Peak</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://20.203.28.64/9.3.5.40043/webclient/html/login.html">Aruba</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Intranet Page</h3><span class="cat-count">3</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="http://172.19.8.32:88/">8.32</a>
+          <a target="_blank" href="http://172.19.241.36:88/">241.36</a>
+          <a target="_blank" href="https://pp.ahosp.me/intranet">JD</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> ISBAR</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://pp.ahosp.me/ISBAR/">Isbar</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Referal MGT System</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://ehr.ahosp.me/LR/login?Dest=REF">Clinic Referal</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Patient Service Rqst</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://ehr.ahosp.me/LR/login?Dest=REF">Clinic Referal</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> WVD Url</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://client.wvd.microsoft.com/arm/webclient/index.html">WVD</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Turbo List</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="http://172.19.8.24:8088/turbo//?fid=9">Turbo List</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> MPT</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://www.ezetap.com/portal/login/">MPT Login</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> External Billing</h3><span class="cat-count">2</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://ahosp.me/econ/payment/pd.aspx">Auto Bill</a>
+          <a target="_blank" href="https://payment.asterhospital.com/payment">Manual Bill</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Printer HP</h3><span class="cat-count">3</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://hp-sds-europe.insightportal.net/PortalWeb/login">AHM & ADSC List</a>
+          <a target="_blank" href="https://hp-sds-europe.insightportal.net/PortalWeb/login">Token Below 20%</a>
+          <a target="_blank" href="https://hp-sds-europe.insightportal.net/PortalWeb/login">HP</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> AMS</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://ahosp.me/ams/">AMS</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Offline EMR</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="file:///C:/Users/ASTER/OneDrive%20-%20Aster%20DM%20Healthcare/Desktop/Offline%20EMR.html">Offline EMR AHM</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Email Pswrd rst</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://passwordreset.asterdmhealthcare.com/authorization.do">Email Pasrd reset</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Email Pswrd rst</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://passwordreset.asterdmhealthcare.com/authorization.do">Email Pasrd reset</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Solventum</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://mum.fluency.solventum.ae/">Fluency 3M</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> BioMetric</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://app.ezpz.ae/">BioMetric new</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Astermate OTP$tagging </h3><span class="cat-count">2</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://astermate.ahosp.me/UserAuthDetails">Astermate OTP</a>
+          <a target="_blank" href="https://astermate.ahosp.me/DeviceMapping">Payment tagging</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> HTML Editor</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://html-online.com/">Html Editor</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Self registration</h3><span class="cat-count">3</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://ss.alif.onl/?EID=9&Zone=5">OP Self Registartion</a>
+          <a target="_blank" href="https://ahops.alif.onl/?EID=9">ER Self Registartion</a>
+          <a target="_blank" href="https://myhealth.alif.onl/SelfRegistration">Self Registartion</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Etisalat SMS</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="https://html-online.com/">Html Editor</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Referal DR</h3><span class="cat-count">1</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="http://172.19.241.10/ICM/ReferralFeedback.aspx?Mpg=P1511">Referal DR</a>
+        </div></div>
+      </div>
+
+      <div class="category-card">
+        <div class="category-header" onclick="toggleCategory(this)">
+          <h3><i class="fas fa-globe"></i> Inventory</h3><span class="cat-count">10</span><i class="fas fa-chevron-down expand-icon"></i>
+        </div>
+        <div class="category-content"><div class="category-links">
+          <a target="_blank" href="http://172.19.241.10/Pharmacy/Indent/IndentApprovalSetup.aspx">Indent Approval Access</a>
+          <a target="_blank" href="http://172.19.241.10/EMRBILLING/Popup/PatientIntimationStatus.aspx?PT=PHR&Mpg=P343#">Inventory</a>
+          <a target="_blank" href="http://172.19.241.10/Pharmacy/ChangeStore.aspx?Mpg=P335">Change Store</a>
+          <a target="_blank" href="http://172.19.241.10/Pharmacy/Indent/DEPIndent.aspx?Mpg=P420">Dept Indent Status</a>
+          <a target="_blank" href="http://172.19.241.10/Pharmacy/Indent/DEPIndentSearch.aspx?Mpg=P421">Indent Approval</a>
+          <a target="_blank" href="http://172.19.241.10/Pharmacy/Master/ItemWiseStock.aspx?Mpg=P775">Ittem Wise Stock</a>
+          <a target="_blank" href="http://172.19.241.10/Pharmacy/ItemMasterDetails.aspx">Ittem Master</a>
+          <a target="_blank" href="http://172.19.241.10/Pharmacy/Indent/IndentApprovalSetup.aspx">Grant Store Access</a>
+          <a target="_blank" href="http://172.19.241.10/Pharmacy/ReportCommonSTB.aspx?RN=STB&Mpg=P354">Stock Ledger/Bin Card</a>
+          <a target="_blank" href="http://172.19.241.10/Pharmacy/SaleIssue/PharmacyRequestFromWard.aspx">Requst from Ward</a>
+        </div></div>
+      </div>
+
+    </div>
+    <div class="cat-empty" id="catEmpty">
+      <i class="fas fa-folder-open"></i>
+      No links match your search.
+    </div>
+  </section>
+
+</div><!-- /container -->
+
+<div class="fab" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></div>
+
+</div><!-- /portalContent -->
+
+<script>
+/* ============ AUTH (password: single field) ============ */
+// SHA-256 of the password — never stored in plain text in this file
+const PASS_HASH = '8a4ed630c5556ab78c847b7b3a5dd6761a372b22ddff9fb4d5d5696262162c8c';
+
+async function sha256(str){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+const loginScreen = document.getElementById('loginScreen');
+const portalContent = document.getElementById('portalContent');
+const passwordInput = document.getElementById('passwordInput');
+const loginError = document.getElementById('loginError');
+
+async function tryLogin(){
+  const val = passwordInput.value;
+  if(!val){ loginError.classList.add('show'); return; }
+  let ok = false;
+  try{
+    ok = (await sha256(val)) === PASS_HASH;
+  }catch(e){
+    // crypto.subtle unavailable (e.g. plain http on some browsers) — fallback compare
+    ok = (val === atob('Sm9iaW4='));
+  }
+  if(ok){
+    sessionStorage.setItem('authenticated','true');
+    showPortal();
+  }else{
+    loginError.classList.add('show');
+    passwordInput.value='';
+    passwordInput.focus();
+    setTimeout(()=>loginError.classList.remove('show'), 2600);
+  }
+}
+
+function showPortal(){
+  loginScreen.style.display='none';
+  portalContent.classList.add('on');
+}
+function showLogin(){
+  loginScreen.style.display='flex';
+  portalContent.classList.remove('on');
+  passwordInput.value='';
+  setTimeout(()=>passwordInput.focus(),100);
+}
+function logout(){
+  sessionStorage.removeItem('authenticated');
+  showLogin();
+}
+
+document.getElementById('loginBtn').addEventListener('click', tryLogin);
+passwordInput.addEventListener('keyup', e=>{ if(e.key==='Enter') tryLogin(); });
+
+document.getElementById('pwToggle').addEventListener('click', function(){
+  const shown = passwordInput.type === 'text';
+  passwordInput.type = shown ? 'password' : 'text';
+  this.innerHTML = shown ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+  passwordInput.focus();
+});
+
+/* ============ PORTAL BEHAVIOUR ============ */
+function toggleCategory(header){
+  const card = header.parentElement;
+  const content = card.querySelector('.category-content');
+  card.classList.toggle('active');
+  content.style.maxHeight = card.classList.contains('active') ? content.scrollHeight+'px' : '0';
+}
+
+
+/* Mobile menu */
+const menuToggle = document.getElementById('menuToggle');
+const mobileSidebar = document.getElementById('mobileSidebar');
+const overlay = document.getElementById('overlay');
+menuToggle.addEventListener('click', function(){
+  this.classList.toggle('active');
+  mobileSidebar.classList.toggle('active');
+  overlay.classList.toggle('active');
+});
+overlay.addEventListener('click', function(){
+  this.classList.remove('active');
+  mobileSidebar.classList.remove('active');
+  menuToggle.classList.remove('active');
+});
+mobileSidebar.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>{
+  overlay.classList.remove('active');
+  mobileSidebar.classList.remove('active');
+  menuToggle.classList.remove('active');
+}));
+
+/* ============ CATEGORY FILTER + CONTROLS ============ */
+const cards = Array.from(document.querySelectorAll('.category-card'));
+const catEmpty = document.getElementById('catEmpty');
+
+// Pre-cache lowercased text for each card + its links (perf: no re-reading DOM text on every keystroke)
+const cardIndex = cards.map(card=>{
+  const title = card.querySelector('.category-header h3').textContent.toLowerCase();
+  const links = Array.from(card.querySelectorAll('.category-links a'))
+    .map(a=>({el:a, txt:a.textContent.toLowerCase()}));
+  return {card, title, links, content:card.querySelector('.category-content')};
+});
+
+function setOpen(entry, open){
+  entry.card.classList.toggle('active', open);
+  entry.content.style.maxHeight = open ? entry.content.scrollHeight+'px' : '0';
+}
+
+let searchRAF;
+function runFilter(raw){
+  const q = raw.trim().toLowerCase();
+  let anyVisible = false;
+  cardIndex.forEach(entry=>{
+    if(!q){
+      entry.card.classList.remove('search-hidden');
+      entry.links.forEach(l=>l.el.classList.remove('search-hidden'));
+      setOpen(entry, false);
+      anyVisible = true;
+      return;
+    }
+    const titleHit = entry.title.includes(q);
+    let linkHits = 0;
+    entry.links.forEach(l=>{
+      const hit = titleHit || l.txt.includes(q);
+      l.el.classList.toggle('search-hidden', !hit);
+      if(hit) linkHits++;
+    });
+    const show = titleHit || linkHits>0;
+    entry.card.classList.toggle('search-hidden', !show);
+    if(show){ anyVisible = true; setOpen(entry, true); }
+    else setOpen(entry, false);
+  });
+  catEmpty.style.display = anyVisible ? 'none' : 'block';
+}
+
+function onSearch(val){
+  cancelAnimationFrame(searchRAF);
+  searchRAF = requestAnimationFrame(()=>runFilter(val));
+}
+
+// Both the header bar and the toolbar search drive the same filter, kept in sync
+const headerSearch = document.getElementById('searchInput');
+const catSearch = document.getElementById('catSearch');
+[headerSearch, catSearch].forEach(inp=>{
+  if(!inp) return;
+  inp.addEventListener('input', function(){
+    const other = inp===headerSearch ? catSearch : headerSearch;
+    if(other) other.value = this.value;
+    onSearch(this.value);
+  });
+});
+
+// Expand / collapse all
+document.getElementById('expandAll').addEventListener('click', ()=>{
+  cardIndex.forEach(e=>{ if(!e.card.classList.contains('search-hidden')) setOpen(e, true); });
+});
+document.getElementById('collapseAll').addEventListener('click', ()=>{
+  cardIndex.forEach(e=>setOpen(e, false));
+});
+
+// Stats
+document.getElementById('statGroups').textContent = cards.length;
+document.getElementById('statLinks').textContent =
+  document.querySelectorAll('.category-links a').length;
+
+/* Init */
+document.addEventListener('DOMContentLoaded', function(){
+  if(sessionStorage.getItem('authenticated')==='true'){ showPortal(); }
+  else{ showLogin(); }
+});
+</script>
+</body>
+</html>
